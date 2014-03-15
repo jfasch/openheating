@@ -56,6 +56,11 @@ class TransportTest(unittest.TestCase):
         transport.move()
         self.failUnless(pump.is_running())
 
+        # rises right below wanted, pump still running
+        consumer.set_temperature(39)
+        transport.move()
+        self.failUnless(pump.is_running())
+
     def test_restart_delay(self):
         # consumer is satisfied with its temperature, pump not running
         # initially. consumer's temperature falls, say, 1 degree below
