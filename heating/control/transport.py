@@ -1,5 +1,13 @@
+from .producer import Producer
+from .consumer import Consumer
+from .pump import Pump
+
 class Transport:
     def __init__(self, producer, consumer, anti_oscillating_threshold, pump):
+        assert isinstance(producer, Producer)
+        assert isinstance(consumer, Consumer)
+        assert isinstance(pump, Pump)
+        
         self.__producer = producer
         self.__consumer = consumer
         self.__anti_oscillating_threshold = anti_oscillating_threshold
