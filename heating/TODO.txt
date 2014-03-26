@@ -1,9 +1,6 @@
 * formalize Consumer and Producer interfaces, as used by Transport and
   Activator
 
-* have Activator(check) and Transport(move) implement some doit() or
-  check() method, as dictated by a common "repeatedly-pollable"
-  interface
+* introduced some common "do poll me" interface (aka Transport.move())
 
-* producer temperature lower than consumer's wanted, but above
-  consumer's current? -> should take whats there
+* producer.peek()
