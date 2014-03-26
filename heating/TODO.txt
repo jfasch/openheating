@@ -1,6 +1,4 @@
-* formalize Consumer and Producer interfaces, as used by Transport and
-  Activator
-
-* introduced some common "do poll me" interface (aka Transport.move())
-
 * producer.peek()
+
+* introduce some common "do poll me" interface (aka Transport.move())
+

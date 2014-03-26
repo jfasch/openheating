@@ -21,8 +21,7 @@ class Transport:
 
     def move(self):
         if self.__consumer.temperature() >= self.__consumer.wanted_temperature():
-            if self.__pump.is_running():
-                self.__pump.stop()
+            self.__pump.stop()
             self.__falling = True
             return
 
