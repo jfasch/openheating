@@ -25,6 +25,9 @@ class Transport:
             self.__falling = True
             return
 
+        if self.__producer.temperature() < self.__consumer.wanted_temperature():
+            self.__producer.peek()
+
         if self.__producer.temperature() - 7 <= self.__consumer.temperature():
             self.__pump.stop()
             self.__falling = False

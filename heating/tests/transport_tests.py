@@ -67,6 +67,20 @@ class TransportBasicTest(unittest.TestCase):
 
         self.failUnless(pump.is_running())
 
+    def test__producer_below_wanted_but_doesnt_pay_off(self):
+        '''
+        Producer's temperature is well below consumer's wanted temperature,
+        and it does not pay off to take this small amount of temperature.
+        '''
+        consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
+        producer = TestProducer(initial_temperature=21)
+        pump = TestPump(running=False)
+        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+
+        transport.move()
+
+        self.failIf(pump.is_running())
+
     def test__producer_has_nothing__pump_not_initially_running(self):
         '''
         Consumer is unsatisfied. producer has nothing to satisfy
@@ -93,11 +107,34 @@ class TransportBasicTest(unittest.TestCase):
 
         transport.move()
         self.failIf(pump.is_running())
+
+class TransportPeekTest(unittest.TestCase):
+    def test__producer_not_peeked_when_consumer_satisfied(self):
+        consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
+        producer = TestProducer(initial_temperature=80)
+        pump = TestPump(running=False)
+        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+
+        transport.move()
+
+        self.failIf(producer.peeked())
+        
+    def test__producer_peeked_when_consumer_not_satisfied(self):
+        consumer = TestConsumer(wanted_temperature=40, initial_temperature=30)
+        producer = TestProducer(initial_temperature=20)
+        pump = TestPump(running=False)
+        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+
+        transport.move()
+
+        self.failIf(pump.is_running())
+        self.failUnless(producer.peeked())
         
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
+#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
+#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportPeekTest))
 
-#suite.addTest(TransportTest("test__producer_somewhat_above_consumer__consumer_not_satisfied"))
+suite.addTest(TransportPeekTest("test__producer_peeked_when_consumer_not_satisfied"))
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
