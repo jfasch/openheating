@@ -6,7 +6,7 @@ from ..control.transport import Transport
 
 import unittest
 
-class TransportTest(unittest.TestCase):
+class TransportBasicTest(unittest.TestCase):
     def test_pump_on_off_simple(self):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=80)
@@ -36,9 +36,11 @@ class TransportTest(unittest.TestCase):
         self.failUnless(pump.is_running())
 
     def test_restart_delay(self):
-        # consumer is satisfied with its temperature, pump not running
-        # initially. consumer's temperature falls, say, 1 degree below
-        # wanted, pump *not* switched on immediately.
+        '''
+        Consumer is satisfied with its temperature, pump not running
+        initially. consumer's temperature falls, say, 1 degree below
+        wanted, pump *not* switched on immediately.
+        '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=40)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
@@ -66,9 +68,11 @@ class TransportTest(unittest.TestCase):
         self.failUnless(pump.is_running())
 
     def test__producer_has_nothing__pump_not_initially_running(self):
-        # consumer is unsatisfied. producer has nothing to satisfy
-        # him. pump *is not* initially running, and *is not* switched
-        # on.
+        '''
+        Consumer is unsatisfied. producer has nothing to satisfy
+        him. pump *is not* initially running, and *is not* switched
+        on.
+        '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
@@ -78,8 +82,10 @@ class TransportTest(unittest.TestCase):
         self.failIf(pump.is_running())
 
     def test__producer_has_nothing__pump_initially_running(self):
-        # consumer is unsatisfied. producer has nothing to satisfy
-        # him. pump *is* initially running, and *is switched off*.
+        '''
+        Consumer is unsatisfied. producer has nothing to satisfy
+        him. pump *is* initially running, and *is switched off*.
+        '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=True)
@@ -89,7 +95,7 @@ class TransportTest(unittest.TestCase):
         self.failIf(pump.is_running())
         
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
 
 #suite.addTest(TransportTest("test__producer_somewhat_above_consumer__consumer_not_satisfied"))
 
