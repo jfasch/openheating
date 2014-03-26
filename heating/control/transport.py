@@ -20,26 +20,23 @@ class Transport:
         self.__falling = False
 
     def move(self):
-        # off if consumer's wanted_temperature reached.
         if self.__consumer.temperature() >= self.__consumer.wanted_temperature():
             if self.__pump.is_running():
                 self.__pump.stop()
             self.__falling = True
             return
 
-        # don't care if pump is on; leave it running.
-        if self.__pump.is_running():
+        if self.__producer.temperature() - 7 <= self.__consumer.temperature():
+            self.__pump.stop()
+            self.__falling = False
             return
-
-        # consumer's temperature below wanted. are we falling? if so,
-        # then we better wait until the temperature is below our
-        # anti-oscillating threshold
 
         if not self.__falling:
-            self.__falling = False
             self.__pump.start()
             return
 
+        # falling ...
         if self.__consumer.temperature() < self.__consumer.wanted_temperature() - self.__anti_oscillating_threshold:
             self.__pump.start()
+            self.__falling = False
             return
