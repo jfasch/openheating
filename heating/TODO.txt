@@ -2,3 +2,9 @@
 
 * introduce some common "do poll me" interface (aka Transport.move())
 
+* consumer, producer: use Thermometer interface to determine
+  temperatures, rather than hardwiring (mainly test code that needs
+  changing)
+
+* WolfBurner: better switch definitions. switches are naturally closed
+  or open initially, should we intro
