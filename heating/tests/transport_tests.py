@@ -5,13 +5,14 @@ from heating.tests.pumps import TestPump
 from heating.control.transport import Transport
 
 import unittest
+import logging
 
 class TransportBasicTest(unittest.TestCase):
-    def test_pump_on_off_simple(self):
+    def test__pump_on_off_simple(self):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         # pump is off initially. switched on after first move, due to
         # difference of 40 degrees.
@@ -19,8 +20,9 @@ class TransportBasicTest(unittest.TestCase):
         transport.move()
         self.failUnless(pump.is_running())
 
-        # consumer reaches temperature, pump switched off
-        consumer.set_temperature(40)
+        # consumer reaches temperature, pump switched off. take into
+        # account that we overheat by 7 degrees.
+        consumer.set_temperature(40+7)
         transport.move()
         self.failIf(pump.is_running())
 
@@ -44,7 +46,7 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=40)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         transport.move()
         self.failIf(pump.is_running())
@@ -61,7 +63,7 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=28)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=5, range_high=5, pump=pump)
 
         transport.move()
 
@@ -75,7 +77,7 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=21)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         transport.move()
 
@@ -90,7 +92,7 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         transport.move()
         self.failIf(pump.is_running())
@@ -103,7 +105,7 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=True)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         transport.move()
         self.failIf(pump.is_running())
@@ -119,10 +121,11 @@ class TransportPeeksProducerTest(unittest.TestCase):
         Simplest thing: when nobody needs anything,
         then we don't produce
         '''
-        consumer = TestConsumer(wanted_temperature=40, initial_temperature=40)
+        logging.basicConfig(level=logging.DEBUG)
+        consumer = TestConsumer(wanted_temperature=40, initial_temperature=48)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         transport.move()
 
@@ -136,7 +139,7 @@ class TransportPeeksProducerTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         transport.move()
 
@@ -146,7 +149,7 @@ class TransportPeeksProducerTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=30)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
-        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         transport.move()
 
@@ -157,7 +160,10 @@ suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportPeeksProducerTest))
 
-#suite.addTest(TransportPeekTest("test__producer_peeked_when_consumer_not_satisfied"))
+# suite.addTest(TransportBasicTest("test__pump_on_off_simple"))
+# suite.addTest(TransportPeeksProducerTest("test__producer_not_peeked_when_consumer_satisfied"))
+
+# logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
