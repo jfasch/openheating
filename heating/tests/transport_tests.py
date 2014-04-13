@@ -1,8 +1,8 @@
-from .producers import TestProducer
-from .consumers import TestConsumer
-from .pumps import TestPump
+from heating.tests.producers import TestProducer
+from heating.tests.consumers import TestConsumer
+from heating.tests.pumps import TestPump
 
-from ..control.transport import Transport
+from heating.control.transport import Transport
 
 import unittest
 
@@ -108,8 +108,31 @@ class TransportBasicTest(unittest.TestCase):
         transport.move()
         self.failIf(pump.is_running())
 
-class TransportPeekTest(unittest.TestCase):
+class TransportPeeksProducerTest(unittest.TestCase):
+    '''
+    Transport coordinates between consumer's needs and a producer.
+    It can peek the producer to make some temperature if the consumer needs it.
+    '''
+    
     def test__producer_not_peeked_when_consumer_satisfied(self):
+        '''
+        Simplest thing: when nobody needs anything,
+        then we don't produce
+        '''
+        consumer = TestConsumer(wanted_temperature=40, initial_temperature=40)
+        producer = TestProducer(initial_temperature=20)
+        pump = TestPump(running=False)
+        transport = Transport(producer=producer, consumer=consumer, anti_oscillating_threshold=7, pump=pump)
+
+        transport.move()
+
+        self.failIf(producer.peeked())
+        
+    def test__producer_not_peeked_when_producer_has_enough_temperature(self):
+        '''
+        Producer's temperature is enough to satisfy consumer.
+        Producer not peeked.
+        '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
@@ -131,10 +154,10 @@ class TransportPeekTest(unittest.TestCase):
         self.failUnless(producer.peeked())
         
 suite = unittest.TestSuite()
-#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
-#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportPeekTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportPeeksProducerTest))
 
-suite.addTest(TransportPeekTest("test__producer_peeked_when_consumer_not_satisfied"))
+#suite.addTest(TransportPeekTest("test__producer_peeked_when_consumer_not_satisfied"))
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
