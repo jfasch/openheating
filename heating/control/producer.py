@@ -6,6 +6,11 @@ class Producer(metaclass=ABCMeta):
         assert False, 'abstract'
         return 25.4
     @abstractmethod
-    def peek(self):
+    def acquire(self):
+        ''' Called when temperature is needed but not there '''
+        assert False, 'abstract'
+    @abstractmethod
+    def release(self):
+        ''' Called when temperature is not needed anymore '''
         assert False, 'abstract'
     pass

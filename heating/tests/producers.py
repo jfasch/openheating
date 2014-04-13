@@ -3,10 +3,14 @@ from ..control.producer import Producer
 class TestProducer(Producer):
     def __init__(self, initial_temperature):
         self.__temperature = initial_temperature
-        self.__peeked = False
+        self.__acquired = False
     def temperature(self):
         return self.__temperature
-    def peek(self):
-        self.__peeked = True
-    def peeked(self):
-        return self.__peeked
+    def acquire(self):
+        self.__acquired = True
+    def release(self):
+        self.__acquired = False
+    def is_acquired(self):
+        return self.__acquired
+    def set_temperature(self, temperature):
+        self.__temperature = temperature

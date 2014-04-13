@@ -110,13 +110,13 @@ class TransportBasicTest(unittest.TestCase):
         transport.move()
         self.failIf(pump.is_running())
 
-class TransportPeeksProducerTest(unittest.TestCase):
+class TransportAcquireReleaseProducerTest(unittest.TestCase):
     '''
     Transport coordinates between consumer's needs and a producer.
     It can peek the producer to make some temperature if the consumer needs it.
     '''
     
-    def test__producer_not_peeked_when_consumer_satisfied(self):
+    def test__producer_not_acquired_when_consumer_satisfied(self):
         '''
         Simplest thing: when nobody needs anything,
         then we don't produce
@@ -129,12 +129,12 @@ class TransportPeeksProducerTest(unittest.TestCase):
 
         transport.move()
 
-        self.failIf(producer.peeked())
+        self.failIf(producer.is_acquired())
         
-    def test__producer_not_peeked_when_producer_has_enough_temperature(self):
+    def test__producer_not_acquired_when_producer_has_enough_temperature(self):
         '''
         Producer's temperature is enough to satisfy consumer.
-        Producer not peeked.
+        Producer not acquired.
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=80)
@@ -143,9 +143,9 @@ class TransportPeeksProducerTest(unittest.TestCase):
 
         transport.move()
 
-        self.failIf(producer.peeked())
+        self.failIf(producer.is_acquired())
         
-    def test__producer_peeked_when_consumer_not_satisfied(self):
+    def test__producer_acquired_when_consumer_not_satisfied(self):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=30)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
@@ -154,11 +154,25 @@ class TransportPeeksProducerTest(unittest.TestCase):
         transport.move()
 
         self.failIf(pump.is_running())
-        self.failUnless(producer.peeked())
+        self.failUnless(producer.is_acquired())
+
+        producer.set_temperature(70)
+
+        transport.move()
+
+        self.failUnless(pump.is_running())
+        self.failUnless(producer.is_acquired())
+
+        consumer.set_temperature(47)
+
+        transport.move()
+
+        self.failIf(pump.is_running())
+        self.failIf(producer.is_acquired())
         
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportPeeksProducerTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportAcquireReleaseProducerTest))
 
 # suite.addTest(TransportBasicTest("test__pump_on_off_simple"))
 # suite.addTest(TransportPeeksProducerTest("test__producer_not_peeked_when_consumer_satisfied"))

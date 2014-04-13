@@ -17,10 +17,15 @@ class BurnerTest(unittest.TestCase):
         self.failUnless(inhibit_switch.is_on())
         self.failIf(burn_switch.is_on())
 
-        burner.peek()
+        burner.acquire()
 
         self.failUnless(inhibit_switch.is_on())
         self.failUnless(burn_switch.is_on())
+
+        burner.release()
+
+        self.failUnless(inhibit_switch.is_on())
+        self.failIf(burn_switch.is_on())
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BurnerTest))

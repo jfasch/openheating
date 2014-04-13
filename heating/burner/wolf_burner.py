@@ -18,5 +18,9 @@ class WolfBurner(Producer):
     def temperature(self):
         return self.__thermometer.temperature()
 
-    def peek(self):
+    def acquire(self):
         self.__burn_switch.on()
+
+    def release(self):
+        self.__burn_switch.off()
+        
