@@ -1,6 +1,7 @@
 from heating.tests.producers import TestProducer
 from heating.tests.consumers import TestConsumer
 from heating.tests.pumps import TestPump
+from heating.tests.switches import TestSwitch
 
 from heating.control.transport import Transport
 
@@ -12,7 +13,8 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         # pump is off initially. switched on after first move, due to
         # difference of 40 degrees.
@@ -46,7 +48,8 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=40)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
         self.failIf(pump.is_running())
@@ -63,7 +66,8 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=28)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=5, range_high=5, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=5, range_high=5, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
 
@@ -77,7 +81,8 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=21)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
 
@@ -92,7 +97,8 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
         self.failIf(pump.is_running())
@@ -105,7 +111,8 @@ class TransportBasicTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=True)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
         self.failIf(pump.is_running())
@@ -121,11 +128,11 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         Simplest thing: when nobody needs anything,
         then we don't produce
         '''
-        logging.basicConfig(level=logging.DEBUG)
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=48)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
 
@@ -139,7 +146,8 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer = TestProducer(initial_temperature=80)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
 
@@ -149,7 +157,8 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=30)
         producer = TestProducer(initial_temperature=20)
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=TestSwitch(on=False))
 
         transport.move()
 
@@ -169,10 +178,63 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
 
         self.failIf(pump.is_running())
         self.failIf(producer.is_acquired())
+
+class TransportProducerNeedsCoolingTest(unittest.TestCase):
+    '''
+    A producer can flag that he needs cooling.
+    No matter what the consumer says, heat is being transported in this case.
+    Provided that the consumer's temperature is not higher than the producer's,
+    of course - in this case an alarm is raised.
+    '''
+    
+    def test__producer_needs_cooling(self):
+        consumer = TestConsumer(wanted_temperature=40, initial_temperature=48)
+        producer = TestProducer(initial_temperature=100)
+        pump = TestPump(running=False)
+        alarm_switch = TestSwitch(on=False)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
+                              alarm_switch=alarm_switch)
+
+        transport.move()
+
+        # producer is left alone because consumer is all
+        # satisfied. 100 degrees don't matter unless producer flags an
+        # emergency condition.
+        self.failIf(producer.is_acquired())
+        self.failIf(pump.is_running())
+
+        # flag emergency condition
+        producer.set_needs_cooling(True)
+
+        transport.move()
+
+        self.failIf(producer.is_acquired())
+        self.failUnless(pump.is_running())
+
+        # cooling did help, temperatures are equal now. anyway,
+        # producer still needs cooling -> ALARM rings
+        producer.set_temperature(60)
+        consumer.set_temperature(60)
+
+        transport.move()
+
+        self.failIf(producer.is_acquired())
+        self.failIf(pump.is_running())
+        self.failUnless(alarm_switch.is_on())
+
+        # no cooling needed anymore -> alarm off
+        producer.set_needs_cooling(False)
         
+        transport.move()
+
+        self.failIf(alarm_switch.is_on())
+        self.failIf(pump.is_running())
+        self.failIf(producer.is_acquired())
+
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportAcquireReleaseProducerTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportProducerNeedsCoolingTest))
 
 # suite.addTest(TransportBasicTest("test__pump_on_off_simple"))
 # suite.addTest(TransportPeeksProducerTest("test__producer_not_peeked_when_consumer_satisfied"))

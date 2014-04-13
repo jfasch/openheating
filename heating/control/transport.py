@@ -6,7 +6,12 @@ import logging
 
 class Transport:
 
-    def __init__(self, name, producer, consumer, range_low, range_high, pump):
+    def __init__(self,
+                 name,
+                 producer,
+                 consumer, range_low, range_high,
+                 pump,
+                 alarm_switch):
         assert isinstance(producer, Producer)
         assert isinstance(consumer, Consumer)
         assert isinstance(pump, Pump)
@@ -15,6 +20,7 @@ class Transport:
         self.__producer = producer
         self.__consumer = consumer
         self.__pump = pump
+        self.__alarm_switch = alarm_switch
 
         self.__round = 0
 
@@ -24,26 +30,52 @@ class Transport:
         self.__pump_running = False
         self.__pump.stop()
 
+        self.__alarm_switch.off()
+
     def move(self):
         self.__round += 1
         
         if self.__pump_running:
-            # stop if consumer is at the high end of its range
+            # handle emergency condition where producer is about to
+            # explode
+            if self.__producer.needs_cooling():
+                if self.__pumping_pays_off():
+                    self.__debug('producer needs cooling, leave pump running')
+                else:
+                    self.__debug('producer needs cooling, but cannot')
+                    self.__stop_pump()
+                    self.__alarm_switch.on()
+                return
+            self.__alarm_switch.off()
+
+            # stop if consumer is satisfied (is at the high end of its
+            # range)
             if self.__consumer.temperature() >= self.__consumer.wanted_temperature() + self.__range_high:
                 self.__debug('consumer satisfied, switching pump off')
                 self.__stop_pump()
                 self.__producer.release()
                 return
-            # producer out of temperature. if producer has only
-            # slightly more than consumer wants, there's no need for
-            # pumping.
+            # producer is out of temperature, stop
             if not self.__pumping_pays_off():
                 self.__debug('producer out of temperature')
                 self.__stop_pump()
                 self.__producer.acquire()
                 return
             self.__debug('keep on pumping')
+
         else: # pump not running
+            # handle emergency condition where producer is about to
+            # explode
+            if self.__producer.needs_cooling():
+                if self.__pumping_pays_off():
+                    self.__debug('producer needs cooling, switch on pump')
+                    self.__start_pump()
+                else:
+                    self.__debug('producer needs cooling, but cannot')
+                    self.__alarm_switch.on()
+                return
+            self.__alarm_switch.off()
+            
             if self.__consumer.temperature() >= self.__consumer.wanted_temperature() + self.__range_high:
                 self.__debug('consumer satisfied, leaving pump off')
                 return

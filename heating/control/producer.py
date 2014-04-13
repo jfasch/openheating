@@ -5,12 +5,21 @@ class Producer(metaclass=ABCMeta):
     def temperature(self):
         assert False, 'abstract'
         return 25.4
+
     @abstractmethod
     def acquire(self):
         ''' Called when temperature is needed but not there '''
         assert False, 'abstract'
+
     @abstractmethod
     def release(self):
         ''' Called when temperature is not needed anymore '''
         assert False, 'abstract'
-    pass
+        
+    @abstractmethod
+    def needs_cooling(self):
+        ''' Needs cooling, or else damage may be caused '''
+        assert False, 'abstract'
+        return True
+        
+    
