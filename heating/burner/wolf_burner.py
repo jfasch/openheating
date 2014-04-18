@@ -24,3 +24,5 @@ class WolfBurner(Producer):
     def release(self):
         self.__burn_switch.off()
         
+    def needs_cooling(self):
+        return False
