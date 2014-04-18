@@ -53,13 +53,13 @@ class Transport:
             if self.__consumer.temperature() >= self.__consumer.wanted_temperature() + self.__range_high:
                 self.__debug('consumer satisfied, switching pump off')
                 self.__stop_pump()
-                self.__producer.release()
+                self.__producer.release(self.__name)
                 return
             # producer is out of temperature, stop
             if not self.__pumping_pays_off():
                 self.__debug('producer out of temperature')
                 self.__stop_pump()
-                self.__producer.acquire()
+                self.__producer.acquire(self.__name)
                 return
             self.__debug('keep on pumping')
 
@@ -84,7 +84,7 @@ class Transport:
             # that we will need temperature soon - peek producer.
             if self.__producer.temperature() < self.__consumer.wanted_temperature():
                 self.__debug('peek producer')
-                self.__producer.acquire()
+                self.__producer.acquire(self.__name)
 
             # consumer has fallen below watermark, see if we can do
             # someting
