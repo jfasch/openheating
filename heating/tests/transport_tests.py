@@ -13,32 +13,32 @@ class TransportBasicTest(unittest.TestCase):
     def test__pump_on_off_simple(self):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
         producer_backend = TestProducerBackend(initial_temperature=80)
-        producer = Producer(backend=producer_backend)
+        producer = Producer(name='Producer', backend=producer_backend,
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
         # pump is off initially. switched on after first move, due to
         # difference of 40 degrees.
         self.failIf(pump.is_running())
-        transport.move()
+        transport.poll()
         self.failUnless(pump.is_running())
 
         # consumer reaches temperature, pump switched off. take into
         # account that we overheat by 7 degrees.
         consumer.set_temperature(40+7)
-        transport.move()
+        transport.poll()
         self.failIf(pump.is_running())
 
         # consumer's temperature falls by a lot of degrees (20 is a
         # lot), pump switched on again.
         consumer.set_temperature(20)        
-        transport.move()
+        transport.poll()
         self.failUnless(pump.is_running())
 
         # rises right below wanted, pump still running
         consumer.set_temperature(39)
-        transport.move()
+        transport.poll()
         self.failUnless(pump.is_running())
 
     def test_restart_delay(self):
@@ -48,16 +48,16 @@ class TransportBasicTest(unittest.TestCase):
         wanted, pump *not* switched on immediately.
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=40)
-        producer = Producer(backend=TestProducerBackend(initial_temperature=80))
+        producer = Producer(name='Producer', backend=TestProducerBackend(initial_temperature=80),
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
-        transport.move()
+        transport.poll()
         self.failIf(pump.is_running())
 
         consumer.set_temperature(39)
-        transport.move()
+        transport.poll()
         self.failIf(pump.is_running())
 
     def test__producer_below_wanted_but_pays_off(self):
@@ -66,12 +66,12 @@ class TransportBasicTest(unittest.TestCase):
         but we take what we can get.
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
-        producer = Producer(backend=TestProducerBackend(initial_temperature=28))
+        producer = Producer(name='Producer', backend=TestProducerBackend(initial_temperature=28),
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=5, range_high=5, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=5, range_high=5, pump=pump)
 
-        transport.move()
+        transport.poll()
 
         self.failUnless(pump.is_running())
 
@@ -81,12 +81,12 @@ class TransportBasicTest(unittest.TestCase):
         and it does not pay off to take this small amount of temperature.
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
-        producer = Producer(backend=TestProducerBackend(initial_temperature=21))
+        producer = Producer(name='Producer', backend=TestProducerBackend(initial_temperature=21),
+                            overheat_temperature=100, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
-        transport.move()
+        transport.poll()
 
         self.failIf(pump.is_running())
 
@@ -97,12 +97,12 @@ class TransportBasicTest(unittest.TestCase):
         on.
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
-        producer = Producer(backend=TestProducerBackend(initial_temperature=20))
+        producer = Producer(name='Producer', backend=TestProducerBackend(initial_temperature=20),
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
-        transport.move()
+        transport.poll()
         self.failIf(pump.is_running())
 
     def test__producer_has_nothing__pump_initially_running(self):
@@ -111,12 +111,12 @@ class TransportBasicTest(unittest.TestCase):
         him. pump *is* initially running, and *is switched off*.
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
-        producer = Producer(backend=TestProducerBackend(initial_temperature=20))
+        producer = Producer(name='Producer', backend=TestProducerBackend(initial_temperature=20),
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=True)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
-        transport.move()
+        transport.poll()
         self.failIf(pump.is_running())
 
 class TransportAcquireReleaseProducerTest(unittest.TestCase):
@@ -131,12 +131,12 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         then we don't produce
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=48)
-        producer = Producer(backend=TestProducerBackend(initial_temperature=20))
+        producer = Producer(name='Producer', backend=TestProducerBackend(initial_temperature=20),
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
-        transport.move()
+        transport.poll()
 
         self.failIf(producer.is_acquired())
         
@@ -146,38 +146,38 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         Producer not acquired.
         '''
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=20)
-        producer = Producer(backend=TestProducerBackend(initial_temperature=80))
+        producer = Producer(name='Producer', backend=TestProducerBackend(initial_temperature=80),
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
-        transport.move()
+        transport.poll()
 
         self.failIf(producer.is_acquired())
         
     def test__producer_acquired_when_consumer_not_satisfied(self):
         consumer = TestConsumer(wanted_temperature=40, initial_temperature=30)
         producer_backend = TestProducerBackend(initial_temperature=20)
-        producer = Producer(backend=producer_backend)
+        producer = Producer(name='Producer', backend=producer_backend,
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
         pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump,
-                              alarm_switch=TestSwitch(on=False))
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
 
-        transport.move()
+        transport.poll()
 
         self.failIf(pump.is_running())
         self.failUnless(producer.is_acquired())
 
         producer_backend.set_temperature(70)
 
-        transport.move()
+        transport.poll()
 
         self.failUnless(pump.is_running())
         self.failUnless(producer.is_acquired())
 
         consumer.set_temperature(47)
 
-        transport.move()
+        transport.poll()
 
         self.failIf(pump.is_running())
         self.failIf(producer.is_acquired())
@@ -189,20 +189,19 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         '''
 
         producer_backend = TestProducerBackend(initial_temperature=20)
-        producer = Producer(backend=producer_backend)
+        producer = Producer(name='Producer', backend=producer_backend,
+                            overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
 
         consumerA = TestConsumer(wanted_temperature=40, initial_temperature=30)
         pumpA = TestPump(running=False)
-        transportA = Transport(name='Transport-A', producer=producer, consumer=consumerA, range_low=7, range_high=7, pump=pumpA,
-                               alarm_switch=TestSwitch(on=False))
+        transportA = Transport(name='Transport-A', producer=producer, consumer=consumerA, range_low=7, range_high=7, pump=pumpA)
 
         consumerB = TestConsumer(wanted_temperature=40, initial_temperature=30)
         pumpB = TestPump(running=False)
-        transportB = Transport(name='Transport-B', producer=producer, consumer=consumerB, range_low=7, range_high=7, pump=pumpB,
-                               alarm_switch=TestSwitch(on=False))
+        transportB = Transport(name='Transport-B', producer=producer, consumer=consumerB, range_low=7, range_high=7, pump=pumpB)
 
-        transportA.move()
-        transportB.move()
+        transportA.poll()
+        transportB.poll()
 
         # not yet hot enough ...
         self.failIf(pumpA.is_running())
@@ -214,8 +213,8 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         # heat is coming
         producer_backend.set_temperature(70)
 
-        transportA.move()
-        transportB.move()
+        transportA.poll()
+        transportB.poll()
 
         self.failUnless(pumpA.is_running())
         self.failUnless(pumpB.is_running())
@@ -224,8 +223,8 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         consumerA.set_temperature(47)
         consumerB.set_temperature(47)
 
-        transportA.move()
-        transportB.move()
+        transportA.poll()
+        transportB.poll()
 
         self.failIf(pumpA.is_running())
         self.failIf(pumpB.is_running())
@@ -238,20 +237,18 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
         '''
 
         producer_backend = TestProducerBackend(initial_temperature=20)
-        producer = Producer(backend=producer_backend)
+        producer = Producer(name='Producer', backend=producer_backend, overheat_temperature=1000, alarm_switch=TestSwitch(on=False))
 
         consumerA = TestConsumer(wanted_temperature=40, initial_temperature=30)
         pumpA = TestPump(running=False)
-        transportA = Transport(name='Transport-A', producer=producer, consumer=consumerA, range_low=7, range_high=7, pump=pumpA,
-                               alarm_switch=TestSwitch(on=False))
+        transportA = Transport(name='Transport-A', producer=producer, consumer=consumerA, range_low=7, range_high=7, pump=pumpA)
 
         consumerB = TestConsumer(wanted_temperature=40, initial_temperature=30)
         pumpB = TestPump(running=False)
-        transportB = Transport(name='Transport-B', producer=producer, consumer=consumerB, range_low=7, range_high=7, pump=pumpB,
-                               alarm_switch=TestSwitch(on=False))
+        transportB = Transport(name='Transport-B', producer=producer, consumer=consumerB, range_low=7, range_high=7, pump=pumpB)
 
-        transportA.move()
-        transportB.move()
+        transportA.poll()
+        transportB.poll()
 
         # not yet hot enough ...
         self.failIf(pumpA.is_running())
@@ -259,35 +256,35 @@ class TransportAcquireReleaseProducerTest(unittest.TestCase):
 
         # ... though heat is underway
         self.failUnless(producer.is_acquired())
-        self.failUnless(len(producer.acquirers()) == 2)
-        self.failUnless('Transport-A' in producer.acquirers())
-        self.failUnless('Transport-B' in producer.acquirers())
+        self.failUnless(len(producer.get_acquirers()) == 2)
+        self.failUnless('Transport-A' in producer.get_acquirers())
+        self.failUnless('Transport-B' in producer.get_acquirers())
 
         # heat is coming
         producer_backend.set_temperature(70)
 
-        transportA.move()
-        transportB.move()
+        transportA.poll()
+        transportB.poll()
 
         self.failUnless(pumpA.is_running())
         self.failUnless(pumpB.is_running())
         self.failUnless(producer.is_acquired())
-        self.failUnless(len(producer.acquirers()) == 2)
-        self.failUnless('Transport-A' in producer.acquirers())
-        self.failUnless('Transport-B' in producer.acquirers())
+        self.failUnless(len(producer.get_acquirers()) == 2)
+        self.failUnless('Transport-A' in producer.get_acquirers())
+        self.failUnless('Transport-B' in producer.get_acquirers())
 
         # A is satisfied
         consumerA.set_temperature(47)
 
-        transportA.move()
-        transportB.move()
+        transportA.poll()
+        transportB.poll()
 
         # A down, B still wants more
         self.failIf(pumpA.is_running())
         self.failUnless(pumpB.is_running())
         self.failUnless(producer.is_acquired())
-        self.failUnless(len(producer.acquirers()) == 1)
-        self.failUnless('Transport-B' in producer.acquirers())
+        self.failUnless(len(producer.get_acquirers()) == 1)
+        self.failUnless('Transport-B' in producer.get_acquirers())
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))

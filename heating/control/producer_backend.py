@@ -15,11 +15,3 @@ class ProducerBackend(metaclass=ABCMeta):
     def stop_producing(self):
         ''' Called when temperature is not needed anymore '''
         assert False, 'abstract'
-        
-    @abstractmethod
-    def needs_cooling(self):
-        ''' Needs cooling, or else damage may be caused '''
-        assert False, 'abstract'
-        return True
-        
-    

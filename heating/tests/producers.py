@@ -18,6 +18,3 @@ class TestProducerBackend(ProducerBackend):
         return self.__producing
     def set_temperature(self, temperature):
         self.__temperature = temperature
-    def set_needs_cooling(self, needs_cooling):
-        self.__needs_cooling = needs_cooling
-        

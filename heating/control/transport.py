@@ -1,17 +1,17 @@
 from .producer import Producer
 from .consumer import Consumer
 from .pump import Pump
+from .polled import Polled
 
 import logging
 
-class Transport:
+class Transport(Polled):
 
     def __init__(self,
                  name,
                  producer,
                  consumer, range_low, range_high,
-                 pump,
-                 alarm_switch):
+                 pump):
         assert isinstance(producer, Producer)
         assert isinstance(consumer, Consumer)
         assert isinstance(pump, Pump)
@@ -20,7 +20,6 @@ class Transport:
         self.__producer = producer
         self.__consumer = consumer
         self.__pump = pump
-        self.__alarm_switch = alarm_switch
 
         self.__round = 0
 
@@ -30,9 +29,16 @@ class Transport:
         self.__pump_running = False
         self.__pump.stop()
 
-        self.__alarm_switch.off()
+        # register with my producer
+        self.__producer.add_transport(self)
 
-    def move(self):
+    def is_running(self):
+        return self.__pump_running
+
+    def producer_needs_cooling(self):
+        self.poll()
+
+    def poll(self):
         self.__round += 1
         
         if self.__pump_running:
@@ -44,9 +50,7 @@ class Transport:
                 else:
                     self.__debug('producer needs cooling, but cannot')
                     self.__stop_pump()
-                    self.__alarm_switch.on()
                 return
-            self.__alarm_switch.off()
 
             # stop if consumer is satisfied (is at the high end of its
             # range)
@@ -72,10 +76,8 @@ class Transport:
                     self.__start_pump()
                 else:
                     self.__debug('producer needs cooling, but cannot')
-                    self.__alarm_switch.on()
                 return
-            self.__alarm_switch.off()
-            
+
             if self.__consumer.temperature() >= self.__consumer.wanted_temperature() + self.__range_high:
                 self.__debug('consumer satisfied, leaving pump off')
                 return
@@ -107,4 +109,4 @@ class Transport:
         self.__pump_running = False
 
     def __debug(self, msg):
-        logging.debug('%s(%d): %s' % (self.__name, self.__round, msg))
+        logging.debug('transport %s(%d): %s' % (self.__name, self.__round, msg))
