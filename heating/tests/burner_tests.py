@@ -1,6 +1,7 @@
 from heating.tests.thermometers import TestThermometer
 from heating.tests.switches import TestSwitch
-from heating.burner.wolf_burner import WolfBurner
+
+from heating.wolf_burner import WolfBurner
 
 import unittest
 

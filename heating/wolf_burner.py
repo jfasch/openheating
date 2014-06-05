@@ -1,6 +1,6 @@
-from ..control.switch import Switch
-from ..control.producer import Producer
-from ..control.thermometer import Thermometer
+from .switch import Switch
+from .producer import Producer
+from .thermometer import Thermometer
 
 class WolfBurner(Producer):
     def __init__(self,

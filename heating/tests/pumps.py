@@ -1,4 +1,4 @@
-from ..control.pump import Pump
+from ..pump import Pump
 
 class TestPump(Pump):
     def __init__(self, running):

@@ -3,8 +3,8 @@ from heating.tests.consumers import TestConsumer
 from heating.tests.pumps import TestPump
 from heating.tests.switches import TestSwitch
 
-from heating.control.producer import Producer
-from heating.control.transport import Transport
+from heating.producer import Producer
+from heating.transport import Transport
 
 import unittest
 import logging

@@ -1,5 +1,5 @@
-from ..control.thermometer import Thermometer
-from ..control.error import HeatingException
+from .thermometer import Thermometer
+from .error import HeatingException
 
 import os
 

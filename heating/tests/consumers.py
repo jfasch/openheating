@@ -1,4 +1,4 @@
-from ..control.consumer import Consumer
+from ..consumer import Consumer
 
 class TestConsumer(Consumer):
     def __init__(self, wanted_temperature, initial_temperature):

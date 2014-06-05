@@ -1,4 +1,4 @@
-from ..control.producer_backend import ProducerBackend
+from ..producer_backend import ProducerBackend
 
 class TestProducerBackend(ProducerBackend):
     def __init__(self, initial_temperature):

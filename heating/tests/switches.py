@@ -1,4 +1,4 @@
-from ..control.switch import Switch
+from ..switch import Switch
 
 class TestSwitch(Switch):
     def __init__(self, on):

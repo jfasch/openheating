@@ -1,11 +1,11 @@
-from heating.control.producer import Producer
 from heating.tests.producers import TestProducerBackend
 from heating.tests.consumers import TestConsumer
 from heating.tests.pumps import TestPump
 from heating.tests.switches import TestSwitch
 from heating.tests.poller import TestPoller
 
-from heating.control.transport import Transport
+from heating.producer import Producer
+from heating.transport import Transport
 
 import logging
 import unittest
