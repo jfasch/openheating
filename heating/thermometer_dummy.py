@@ -1,6 +1,6 @@
-from heating.thermometer import Thermometer
+from .thermometer import Thermometer
 
-class TestThermometer(Thermometer):
+class DummyThermometer(Thermometer):
     def __init__(self, initial_temperature):
         self.__temperature = initial_temperature
     def temperature(self):
