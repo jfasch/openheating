@@ -1,4 +1,4 @@
-from heating.tests.thermometers import TestThermometer
+from heating.thermometer_dummy import DummyThermometer
 from heating.tests.switches import TestSwitch
 
 from heating.wolf_burner import WolfBurner
@@ -7,7 +7,7 @@ import unittest
 
 class BurnerTest(unittest.TestCase):
     def test(self):
-        thermometer = TestThermometer(initial_temperature=20)
+        thermometer = DummyThermometer(initial_temperature=20)
         inhibit_switch = TestSwitch(on=True)
         burn_switch = TestSwitch(on=False)
         burner = WolfBurner(inhibit_switch=inhibit_switch,
