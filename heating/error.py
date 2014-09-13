@@ -1,6 +1,6 @@
 class HeatingException(Exception):
     '''
-    Base class for all exception thrown here.
+    Base class for all exceptions thrown here.
 
     This helps to differentiate between Python SyntaxError,
     ImportError and whatnot, and our own errors.

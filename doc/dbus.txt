@@ -1,0 +1,65 @@
+Basic Thermometer Startup
+=========================
+
+Start Bus-Daemon
+----------------
+
+  $ dbus-daemon --config-file=/home/jfasch/work/heating-control/config/session.conf --print-address
+  tcp:host=localhost,port=6666,guid=91b82e1cdb9b2239853f77575413fd3a;unix:path=/tmp/heating-faschingbauer,guid=751839b29031226393c8f3295413fd3a
+
+Clients
+-------
+
+* DBUS_SESSION_BUS_ADDRESS is the most convenient way to direct a
+  client to a particular bus.
+
+  $ export DBUS_SESSION_BUS_ADDRESS=tcp:host=localhost,port=6666
+
+* Start Service.
+
+  $ ./bin/thermometer-dbus-service.py
+
+  jjj add output (--print-name, or some such)
+
+* qdbus for method calling and sanity checks
+
+  * List services on the bus. A service is, as I understand, a
+    connection. Our connection has a dedicated bus name, which is what
+    we see here.
+  
+    $ qdbus
+    ...
+    org.openheating.Thermometer.the-connection-from-boiler
+    ...
+
+  * List object paths offered by our service
+
+    $ qdbus org.openheating.Thermometer.the-connection-from-boiler
+    /
+    /org
+    /org/openheating
+    /org/openheating/Thermometer
+    /org/openheating/Thermometer/boiler
+    /org/openheating/Thermometer/boiler/one
+    /org/openheating/Thermometer/boiler/two
+
+  * List methods (etc.) offered by one object. Object is addressed by
+    path.
+
+    $ qdbus org.openheating.Thermometer.the-connection-from-boiler /org/openheating/Thermometer/boiler/one
+    ...
+    method double org.openheating.Thermometer.temperature()
+    ...
+
+  * Call method "temperature"
+
+    $ qdbus org.openheating.Thermometer.the-connection-from-boiler /org/openheating/Thermometer/boiler/one temperature
+    23.4
+
+Problems to Solve
+=================
+
+DBus Daemon restart
+-------------------
+
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=495257
