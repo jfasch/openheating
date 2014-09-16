@@ -2,7 +2,6 @@
 
 from heating.thermometer_dummy import DummyThermometer
 from heating.thermometer_dbus_object import DBusThermometerObject
-
 import heating.dbus_util as dbus_util
 
 import dbus
