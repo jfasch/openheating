@@ -21,21 +21,27 @@ class DBusThermometerServer(dbus.service.Object):
 
     @dbus.service.method(dbus_interface=dbus_util.DBUS_THERMOMETER_IFACE_STRING, out_signature = 'd')
     def temperature(self):
-        print('fuut')
         return self.__thermometer.temperature()
 
+name, path = dbus_util.dbus_thermometer_object_name_path('boiler')
 
 mainloop = DBusGMainLoop(set_as_default=True)
 connection = dbus.bus.BusConnection('tcp:host=localhost,port=6666', mainloop=mainloop)
-busname = dbus.service.BusName('org.openheating.Thermometer.the-connection-from-boiler', connection)
+connection.set_exit_on_disconnect(True)
+
+busname = dbus.service.BusName(name, connection)
 
 DBusThermometerServer(
     connection=connection,
-    object_path='/org/openheating/Thermometer/boiler/one',
-    thermometer=DummyThermometer(23.4))
+    object_path=path+'/top',
+    thermometer=DummyThermometer(85.6))
 DBusThermometerServer(
     connection=connection,
-    object_path='/org/openheating/Thermometer/boiler/two',
-    thermometer=DummyThermometer(34.5))
+    object_path=path+'/middle',
+    thermometer=DummyThermometer(81.2))
+DBusThermometerServer(
+    connection=connection,
+    object_path=path+'/bottom',
+    thermometer=DummyThermometer(76.9))
 
 GLib.MainLoop().run()

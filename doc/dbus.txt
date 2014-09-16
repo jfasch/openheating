@@ -10,31 +10,33 @@ Start Bus-Daemon
 Clients
 -------
 
-* DBUS_SESSION_BUS_ADDRESS is the most convenient way to direct a
-  client to a particular bus.
-
-  $ export DBUS_SESSION_BUS_ADDRESS=tcp:host=localhost,port=6666
-
 * Start Service.
 
   $ ./bin/thermometer-dbus-service.py
+
+  The program has the bus address built-in.
 
   jjj add output (--print-name, or some such)
 
 * qdbus for method calling and sanity checks
 
+  Crap tool, but the best I could find. Take care with its
+  commandline; it wants qdbus --address ADDRESS, but not qdbus
+  --address=ADDRESS
+
   * List services on the bus. A service is, as I understand, a
     connection. Our connection has a dedicated bus name, which is what
     we see here.
   
-    $ qdbus
+    $ qdbus --address tcp:host=localhost,port=6666
     ...
-    org.openheating.Thermometer.the-connection-from-boiler
+    org.openheating.Thermometer.boiler
     ...
 
   * List object paths offered by our service
 
-    $ qdbus org.openheating.Thermometer.the-connection-from-boiler
+    $ qdbus --address tcp:host=localhost,port=6666 \
+         org.openheating.Thermometer.boiler
     /
     /org
     /org/openheating
@@ -46,14 +48,19 @@ Clients
   * List methods (etc.) offered by one object. Object is addressed by
     path.
 
-    $ qdbus org.openheating.Thermometer.the-connection-from-boiler /org/openheating/Thermometer/boiler/one
+    $ qdbus --address tcp:host=localhost,port=6666 \
+         org.openheating.Thermometer.boiler \
+	 /org/openheating/Thermometer/boiler/one
     ...
     method double org.openheating.Thermometer.temperature()
     ...
 
   * Call method "temperature"
 
-    $ qdbus org.openheating.Thermometer.the-connection-from-boiler /org/openheating/Thermometer/boiler/one temperature
+    $ qdbus --address tcp:host=localhost,port=6666 \
+         org.openheating.Thermometer.boiler \
+	 /org/openheating/Thermometer/boiler/middle \
+	 temperature
     23.4
 
 Problems to Solve
