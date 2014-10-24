@@ -6,7 +6,6 @@ from heating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
 import heating.dbus_util as dbus_util
 
 import dbus
-import dbus.bus
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 import logging
@@ -34,19 +33,5 @@ for t in config.thermometers():
     ctor_params = { 'connection': connection }
     ctor_params.update(t)
     DBusThermometerObject(**ctor_params)
-    
-
-# DBusThermometerObject(
-#     connection = connection,
-#     object_path = PARENT_PATH+'/top',
-#     thermometer = DummyThermometer(85.6))
-# DBusThermometerObject(
-#     connection = connection,
-#     object_path = PARENT_PATH+'/middle',
-#     thermometer = DummyThermometer(81.2))
-# DBusThermometerObject(
-#     connection = connection,
-#     object_path = PARENT_PATH+'/bottom',
-#     thermometer = DummyThermometer(76.9))
 
 GLib.MainLoop().run()
