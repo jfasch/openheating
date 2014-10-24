@@ -19,7 +19,21 @@ class HWMON_Thermometer(Thermometer):
 
 class HWMON_I2C_Thermometer(HWMON_Thermometer):
     def __init__(self, bus_number, address):
-        device_dir = '/sys/bus/i2c/devices/i2c-%d/%d-%04x' % (bus_number, bus_number, address)
+        self.__bus_number = bus_number
+        self.__address = address
+        pass
+
+    def bus_number(self):
+        return self.__bus_number
+    def address(self):
+        return self.__address
+
+    def temperature(self):
+        self.__lazy_init()
+        return HWMON_Thermometer.temperature(self)
+
+    def __lazy_init(self):
+        device_dir = '/sys/bus/i2c/devices/i2c-%d/%d-%04x' % (self.__bus_number, self.__bus_number, self.__address)
         if not os.path.isdir(device_dir):
             raise HeatingException('HWMON I2C Thermometer: no such device: '+device_dir)
         device_hwmon_dir = os.path.join(device_dir, 'hwmon')
