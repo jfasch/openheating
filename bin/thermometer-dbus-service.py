@@ -2,6 +2,7 @@
 
 from heating.thermometer_dummy import DummyThermometer
 from heating.thermometer_dbus_object import DBusThermometerObject
+from heating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
 import heating.dbus_util as dbus_util
 
 import dbus
@@ -12,43 +13,40 @@ import logging
 from argparse import ArgumentParser
 import sys
 
-# parameters
-ADDRESS = BUS_NAME = PARENT_PATH = None
-
 parser = ArgumentParser()
-
-parser.add_argument('--address', type=str, help='DBus daemon address')
-parser.add_argument('--bus-name', type=str, help='Bus name (also known as connection name)')
-parser.add_argument('--parent-path', type=str, help='Path where thermometer objects appear under')
-
+parser.add_argument('--config', type=str, help='Configuration file (to be documented)')
 args = parser.parse_args()
 
-ADDRESS = args.address
-BUS_NAME = args.bus_name
-PARENT_PATH = args.parent_path
+config = ThermometerDBusServiceConfigParser().parse(open(args.config).read())
 
 mainloop = DBusGMainLoop(set_as_default=True)
 
 try:
-    connection = dbus.bus.BusConnection(ADDRESS, mainloop=mainloop)
+    connection = dbus.bus.BusConnection(config.daemon_address(), mainloop=mainloop)
 except dbus.exceptions.DBusException as e:
-    logging.exception('cannot connect to '+ADDRESS)
+    logging.exception('cannot connect to '+config.daemon_address())
     sys.exit(1)
     
 connection.set_exit_on_disconnect(True)
-busname = dbus.service.BusName(BUS_NAME, connection)
+busname = dbus.service.BusName(config.bus_name(), connection)
 
-DBusThermometerObject(
-    connection = connection,
-    object_path = PARENT_PATH+'/top',
-    thermometer = DummyThermometer(85.6))
-DBusThermometerObject(
-    connection = connection,
-    object_path = PARENT_PATH+'/middle',
-    thermometer = DummyThermometer(81.2))
-DBusThermometerObject(
-    connection = connection,
-    object_path = PARENT_PATH+'/bottom',
-    thermometer = DummyThermometer(76.9))
+for t in config.thermometers():
+    ctor_params = { 'connection': connection }
+    ctor_params.update(t)
+    DBusThermometerObject(**ctor_params)
+    
+
+# DBusThermometerObject(
+#     connection = connection,
+#     object_path = PARENT_PATH+'/top',
+#     thermometer = DummyThermometer(85.6))
+# DBusThermometerObject(
+#     connection = connection,
+#     object_path = PARENT_PATH+'/middle',
+#     thermometer = DummyThermometer(81.2))
+# DBusThermometerObject(
+#     connection = connection,
+#     object_path = PARENT_PATH+'/bottom',
+#     thermometer = DummyThermometer(76.9))
 
 GLib.MainLoop().run()
