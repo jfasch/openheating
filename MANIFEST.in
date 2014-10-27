@@ -1,0 +1,6 @@
+recursive-include heating *.py
+recursive-include bin *.py
+recursive-include tests *.py
+recursive-include config *.conf
+recursive-include doc *.txt
+recursive-include debian *

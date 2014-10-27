@@ -1,0 +1,4 @@
+Copy /usr/share/openheating scripts to /etc/init.d
+
+groupadd openheating
+useradd --home-dir /var/run/openheating --gid openheating --no-create-home --shell /bin/false openheating

@@ -11,27 +11,36 @@ from gi.repository import GLib
 import logging
 from argparse import ArgumentParser
 import sys
+import os
+import time
 
 parser = ArgumentParser()
-parser.add_argument('--config', type=str, help='Configuration file (to be documented)')
+parser.add_argument('--config-file', type=str, help='Configuration file (to be documented)')
 args = parser.parse_args()
 
-config = ThermometerDBusServiceConfigParser().parse(open(args.config).read())
+config = ThermometerDBusServiceConfigParser().parse(open(args.config_file).read())
 
-mainloop = DBusGMainLoop(set_as_default=True)
+while True:
+    pid = os.fork()
+    if pid > 0:
+        # parent. wait for child, restart and backoff
+        died, status = os.wait()
+        time.sleep(2)
+    else:
+        mainloop = DBusGMainLoop(set_as_default=True)
 
-try:
-    connection = dbus.bus.BusConnection(config.daemon_address(), mainloop=mainloop)
-except dbus.exceptions.DBusException as e:
-    logging.exception('cannot connect to '+config.daemon_address())
-    sys.exit(1)
-    
-connection.set_exit_on_disconnect(True)
-busname = dbus.service.BusName(config.bus_name(), connection)
+        try:
+            connection = dbus.bus.BusConnection(config.daemon_address(), mainloop=mainloop)
+        except dbus.exceptions.DBusException as e:
+            logging.exception('cannot connect to '+config.daemon_address())
+            sys.exit(1)
+ 
+        connection.set_exit_on_disconnect(True)
+        busname = dbus.service.BusName(config.bus_name(), connection)
 
-for t in config.thermometers():
-    ctor_params = { 'connection': connection }
-    ctor_params.update(t)
-    DBusThermometerObject(**ctor_params)
+        for t in config.thermometers():
+            ctor_params = { 'connection': connection }
+            ctor_params.update(t)
+            DBusThermometerObject(**ctor_params)
 
-GLib.MainLoop().run()
+        GLib.MainLoop().run()

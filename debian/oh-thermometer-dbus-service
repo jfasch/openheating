@@ -1,0 +1,17 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          oh-thermometer-dbus-service
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Openheating Thermometer Service
+# Description:       blah
+### END INIT INFO
+
+set -e
+
+OH_SERVICENAME=oh-thermometer-dbus-service
+OH_DESC="Openheating Thermometer Service"
+OH_PROGRAM=/usr/bin/thermometer-dbus-service.py
+OH_PROGRAM_ARGS="--config-file=/home/jfasch/dummy-thermometer-service.conf"
+    
+. ./oh-functions

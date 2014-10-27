@@ -1,0 +1,36 @@
+# -*- shell-script -*-
+
+# Define LSB log_* functions.
+. /lib/lsb/init-functions
+
+OH_USER=openheating
+OH_GROUP=openheating
+OH_WORKDIR=/var/run/openheating
+
+OH_PIDFILE=$OH_WORKDIR/$OH_SERVICENAME.pid
+OH_SCRIPTNAME=/etc/init.d/$OH_SERVICENAME
+
+[ -x "$OH_PROGRAM" ] || exit 1
+
+case "$1" in
+    start)
+	log_daemon_msg "Starting $OH_DESC" "$OH_SERVICENAME"
+	mkdir -p $OH_WORKDIR 2>/dev/null || echo -n
+	start-stop-daemon --start --background --user=$OH_USER --group=$OH_GROUP --pidfile $OH_PIDFILE --exec $OH_PROGRAM -- $OH_PROGRAM_ARGS
+	;;
+    stop)
+	log_daemon_msg "Stopping $OH_DESC" "$OH_SERVICENAME"
+	start-stop-daemon --stop --pidfile $OH_PIDFILE --exec $OH_PROGRAM
+	;;
+    restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+    status)
+	status_of_proc -p $OH_PIDFILE $OH_PROGRAM $OH_SERVICENAME && exit 0 || exit $?
+	;;
+    *)
+	echo "Usage: $OH_SCRIPTNAME {start|stop|rotate|restart|force-reload|status}" >&2
+	exit 3
+	;;
+esac
