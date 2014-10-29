@@ -14,4 +14,4 @@ OH_DESC="Openheating DBus Daemon"
 OH_PROGRAM=/usr/bin/dbus-daemon
 OH_PROGRAM_ARGS="--config-file=/home/jfasch/oh-dbus.conf"
     
-. ./oh-functions
+. ./oh-service
