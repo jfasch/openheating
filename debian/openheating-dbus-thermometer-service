@@ -1,0 +1,19 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          openheating-dbus-thermometer-service
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Openheating DBus Thermometer Service
+# Description:       blah
+### END INIT INFO
+
+set -e
+
+. /etc/init.d/openheating-lib.sh
+
+openheating_run_service \
+    openheating-dbus-thermometer-service \
+    "Openheating DBus Thermometer Service" \
+    /usr/bin/openheating-dbus-thermometer-service.py \
+    --config-file=$OH_CONFDIR/openheating-dbus-thermometer-service.conf \
+    $*

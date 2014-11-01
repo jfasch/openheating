@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys
 import os.path
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))
 
-from heating.tests.suite import suite
+from openheating.tests.suite import suite
 
 import unittest
 

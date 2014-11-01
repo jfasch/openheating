@@ -1,7 +1,7 @@
-from heating.thermometer_dummy import DummyThermometer
-from heating.tests.switches import TestSwitch
+from openheating.thermometer_dummy import DummyThermometer
+from openheating.tests.switches import TestSwitch
 
-from heating.wolf_burner import WolfBurner
+from openheating.wolf_burner import WolfBurner
 
 import unittest
 

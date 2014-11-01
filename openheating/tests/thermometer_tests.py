@@ -1,6 +1,6 @@
-from heating.thermometer_manager import ThermometerManager
-from heating.error import HeatingException
-from heating.thermometer_dummy import DummyThermometer
+from openheating.thermometer_manager import ThermometerManager
+from openheating.error import HeatingException
+from openheating.thermometer_dummy import DummyThermometer
 
 import unittest
 

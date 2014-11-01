@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
-from heating.thermometer_dummy import DummyThermometer
-from heating.thermometer_dbus_object import DBusThermometerObject
-from heating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
-import heating.dbus_util as dbus_util
+from openheating.thermometer_dbus_object import DBusThermometerObject
+from openheating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
+import openheating.dbus_util as dbus_util
 
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
@@ -15,7 +14,7 @@ import os
 import time
 
 parser = ArgumentParser()
-parser.add_argument('--config-file', type=str, help='Configuration file (to be documented)')
+parser.add_argument('--config-file', type=str, help='Configuration file (to be documented)', required=True)
 args = parser.parse_args()
 
 config = ThermometerDBusServiceConfigParser().parse(open(args.config_file).read())

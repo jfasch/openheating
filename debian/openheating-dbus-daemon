@@ -1,0 +1,19 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          openheating-dbus-daemon
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Openheating DBus Daemon
+# Description:       blah
+### END INIT INFO
+
+set -e
+
+. /etc/init.d/openheating-lib.sh
+
+openheating_run_service \
+    openheating-dbus-daemon \
+    "Openheating DBus Daemon" \
+    /usr/bin/dbus-daemon \
+    --config-file=$OH_CONFDIR/openheating-dbus-daemon.conf \
+    $*

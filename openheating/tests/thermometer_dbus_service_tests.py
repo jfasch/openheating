@@ -1,6 +1,6 @@
-from heating.thermometer_dummy import DummyThermometer
-from heating.thermometer_hwmon import HWMON_I2C_Thermometer
-from heating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
+from openheating.thermometer_dummy import DummyThermometer
+from openheating.thermometer_hwmon import HWMON_I2C_Thermometer
+from openheating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
 
 import unittest
 

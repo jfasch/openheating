@@ -1,4 +1,17 @@
-Copy /usr/share/openheating scripts to /etc/init.d
+* Package installation
 
-groupadd openheating
-useradd --home-dir /var/run/openheating --gid openheating --no-create-home --shell /bin/false openheating
+  python3 setup.py install --prefix=/usr --install-layout=deb
+
+* Setup init scripts
+
+  Symlink to /etc/init.d/ from /usr/share/openheating/debian/ as needed.
+
+* Setup config files
+
+  Copy to /etc/openheating/ from /usr/share/openheating/debian/ as
+  needed, and edit.
+
+* Add user and group
+
+  groupadd openheating
+  useradd --home-dir /var/run/openheating --gid openheating --no-create-home --shell /bin/false openheating

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from heating import version
+from openheating import version
 
 import distutils.core
 import os
@@ -17,18 +17,23 @@ distutils.core.setup(
     url='http://dev.null.org',
 
     packages=[
-        'heating',
+        'openheating',
         ],
 
     scripts=[
-        'bin/thermometer-dbus-service.py',
+        'bin/openheating-dbus-thermometer-service.py',
         ],
 
     data_files=[(os.path.join('share', name, 'debian'),
                  (
-                     'debian/oh-functions',
-                     'debian/oh-dbus-daemon',
-                     'debian/oh-thermometer-dbus-service',
+                     'debian/openheating-lib.sh',
+                     'debian/openheating-dbus-daemon',
+                     'debian/openheating-dbus-thermometer-service',
+                     )),
+                (os.path.join('share', name, 'config'),
+                 (
+                     'config/openheating-dbus-daemon.conf',
+                     'config/openheating-dbus-thermometer-service.conf',
                      )),
     ]
 

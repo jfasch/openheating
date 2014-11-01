@@ -1,11 +1,11 @@
-from heating.tests.producers import TestProducerBackend
-from heating.tests.consumers import TestConsumer
-from heating.tests.pumps import TestPump
-from heating.tests.switches import TestSwitch
-from heating.tests.poller import TestPoller
+from openheating.tests.producers import TestProducerBackend
+from openheating.tests.consumers import TestConsumer
+from openheating.tests.pumps import TestPump
+from openheating.tests.switches import TestSwitch
+from openheating.tests.poller import TestPoller
 
-from heating.producer import Producer
-from heating.transport import Transport
+from openheating.producer import Producer
+from openheating.transport import Transport
 
 import logging
 import unittest
