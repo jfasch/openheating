@@ -2,6 +2,7 @@
 
 from openheating.thermometer_dbus_object import DBusThermometerObject
 from openheating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
+from openheating.pidfile import PIDFile
 import openheating.dbus_util as dbus_util
 
 import dbus
@@ -15,9 +16,13 @@ import time
 
 parser = ArgumentParser()
 parser.add_argument('--config-file', type=str, help='Configuration file (to be documented)', required=True)
+parser.add_argument('--pid-file', type=str, help='PID file (to be documented)')
 args = parser.parse_args()
 
 config = ThermometerDBusServiceConfigParser().parse(open(args.config_file).read())
+
+if args.pid_file is not None:
+    pidfile = PIDFile(filename=args.pid_file, main_pid=os.getpid())
 
 while True:
     pid = os.fork()

@@ -15,5 +15,5 @@ openheating_run_service \
     openheating-dbus-thermometer-service \
     "Openheating DBus Thermometer Service" \
     /usr/bin/openheating-dbus-thermometer-service.py \
-    --config-file=$OH_CONFDIR/openheating-dbus-thermometer-service.conf \
+    "--config-file=$OH_CONFDIR/openheating-dbus-thermometer-service.conf --pid-file=$OH_WORKDIR/openheating-dbus-thermometer-service.pid"
     $*
