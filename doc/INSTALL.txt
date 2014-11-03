@@ -1,5 +1,6 @@
 * Package installation
 
+  python3 setup.py sdist --formats=bztar
   python3 setup.py install --prefix=/usr --install-layout=deb
 
 * Setup init scripts
