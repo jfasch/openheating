@@ -9,11 +9,40 @@
 
 set -e
 
+. /lib/lsb/init-functions
 . /etc/init.d/openheating-lib.sh
 
-openheating_run_service \
-    openheating-dbus-thermometer-service \
-    "Openheating DBus Thermometer Service" \
-    /usr/bin/openheating-dbus-thermometer-service.py \
-    "--config-file=$OH_CONFDIR/openheating-dbus-thermometer-service.conf --pid-file=$OH_WORKDIR/openheating-dbus-thermometer-service.pid"
-    $*
+oh_desc="Openheating DBus Thermometer Service"
+oh_name=openheating-dbus-thermometer-service
+oh_prog=/usr/bin/openheating-dbus-thermometer-service.py
+oh_pidfile=$OH_WORKDIR/openheating-dbus-thermometer-service.pid
+oh_sensors=/usr/bin/openheating-sensors.py
+oh_sensors_conf=$OH_CONFDIR/openheating-sensors.conf
+
+case "$1" in
+    start)
+	log_daemon_msg "Starting $oh_desc" $oh_name
+	$oh_sensors --config-file=$oh_sensors_conf --action=add || exit $?
+	start-stop-daemon --start --background --chuid=$OH_USER:$OH_GROUP \
+	    --pidfile $oh_pidfile \
+	    --exec $oh_prog -- \
+	    --config-file=$OH_CONFDIR/openheating-dbus-thermometer-service.conf \
+	    --pid-file=$oh_pidfile
+	;;
+    stop)
+	log_daemon_msg "Stopping $oh_desc" $oh_name
+	$oh_sensors --config-file=$oh_sensors_conf --action=remove || exit $?
+	start-stop-daemon --stop --pidfile $oh_pidfile
+	;;
+    restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+    status)
+	status_of_proc -p $oh_pidfile $oh_prog $oh_name && exit 0 || exit $?
+	;;
+    *)
+	echo "Usage: $scriptname {start|stop|rotate|restart|force-reload|status}" >&2
+	exit 3
+	;;
+esac

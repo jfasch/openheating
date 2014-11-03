@@ -22,6 +22,7 @@ distutils.core.setup(
 
     scripts=[
         'bin/openheating-dbus-thermometer-service.py',
+        'bin/openheating-sensors.py',
         ],
 
     data_files=[(os.path.join('share', name, 'debian'),
@@ -34,6 +35,7 @@ distutils.core.setup(
                  (
                      'config/openheating-dbus-daemon.conf',
                      'config/openheating-dbus-thermometer-service.conf',
+                     'config/openheating-sensors.conf',
                      )),
     ]
 

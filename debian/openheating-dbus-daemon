@@ -9,11 +9,34 @@
 
 set -e
 
+. /lib/lsb/init-functions
 . /etc/init.d/openheating-lib.sh
 
-openheating_run_service \
-    openheating-dbus-daemon \
-    "Openheating DBus Daemon" \
-    /usr/bin/dbus-daemon \
-    --config-file=$OH_CONFDIR/openheating-dbus-daemon.conf \
-    $*
+oh_desc="Openheating DBus Daemon"
+oh_name=openheating-dbus-daemon
+oh_prog=/usr/bin/dbus-daemon
+oh_pidfile=$OH_WORKDIR/openheating-dbus-daemon.pid
+
+case "$1" in
+    start)
+	log_daemon_msg "Starting $oh_desc" $oh_name
+	start-stop-daemon --start --background --chuid=$OH_USER:$OH_GROUP \
+	    --pidfile $oh_pidfile \
+	    --exec $oh_prog -- --config-file=$OH_CONFDIR/openheating-dbus-daemon.conf
+	;;
+    stop)
+	log_daemon_msg "Stopping $oh_desc" $oh_name
+	start-stop-daemon --stop --pidfile $oh_pidfile
+	;;
+    restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+    status)
+	status_of_proc -p $oh_pidfile $oh_prog $oh_name && exit 0 || exit $?
+	;;
+    *)
+	echo "Usage: $scriptname {start|stop|rotate|restart|force-reload|status}" >&2
+	exit 3
+	;;
+esac
