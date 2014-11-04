@@ -2,6 +2,7 @@
 ### BEGIN INIT INFO
 # Provides:          openheating-dbus-thermometer-service
 # Required-Start:    openheating-sensors
+# Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Openheating DBus Thermometer Service
