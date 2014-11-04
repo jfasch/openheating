@@ -21,22 +21,29 @@ args = parser.parse_args()
 
 config = ThermometerDBusServiceConfigParser().parse(open(args.config_file).read())
 
-child = None
+childpid = None
+parentpid = os.getpid()
 
 def terminate_handler(signal, frame):
-    if child is not None:
-        # kill child. the terminate-signal could well arrive *after*
-        # the child has exited and *before* it is restarted, so its
-        # pid might not be valid - so we have to ignore errors.
+    # kill child. the terminate-signal could well arrive *after*
+    # the child has exited and *before* it is restarted, so its
+    # pid might not be valid - so we have to ignore errors.
+    if childpid is not None:
         try:
-            os.kill(child, signal)
+            os.kill(childpid, signal)
         except OSError: pass
+    # remove pidfile
+    if args.pid_file is not None:
+        os.remove(args.pid_file)
     sys.exit(0)
 signal.signal(signal.SIGTERM, terminate_handler)
 
+if args.pid_file is not None:
+    open(args.pid_file, 'w').write(str(parentpid)+'\n')
+
 while True:
-    child = os.fork()
-    if child > 0:
+    childpid = os.fork()
+    if childpid > 0:
         # parent. wait for child, restart and backoff
         died, status = os.wait()
         time.sleep(2)

@@ -21,15 +21,18 @@ oh_pidfile=$OH_WORKDIR/openheating-dbus-thermometer-service.pid
 case "$1" in
     start)
 	log_daemon_msg "Starting $oh_desc" $oh_name
-	start-stop-daemon --start --background --chuid=$OH_USER:$OH_GROUP \
+	start-stop-daemon --start \
+	    --background \
+	    --chuid=$OH_USER:$OH_GROUP \
 	    --pidfile $oh_pidfile \
-	    --exec $oh_prog -- \
+	    --startas $oh_prog -- \
 	    --config-file=$OH_CONFDIR/openheating-dbus-thermometer-service.conf \
 	    --pid-file=$oh_pidfile
 	;;
     stop)
 	log_daemon_msg "Stopping $oh_desc" $oh_name
-	start-stop-daemon --stop --pidfile $oh_pidfile
+	start-stop-daemon --stop \
+	    --pidfile $oh_pidfile
 	;;
     restart|force-reload)
 	$0 stop
