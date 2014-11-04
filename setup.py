@@ -30,6 +30,7 @@ distutils.core.setup(
                      'debian/openheating-lib.sh',
                      'debian/openheating-dbus-daemon',
                      'debian/openheating-dbus-thermometer-service',
+                     'debian/openheating-sensors',
                      )),
                 (os.path.join('share', name, 'config'),
                  (

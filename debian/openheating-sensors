@@ -1,0 +1,37 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          openheating-sensors
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Openheating DBus Daemon
+# Description:       blah
+### END INIT INFO
+
+set -e
+
+. /lib/lsb/init-functions
+. /etc/init.d/openheating-lib.sh
+
+oh_desc="Openheating Sensors"
+oh_name=openheating-sensors
+oh_prog=/usr/bin/openheating-sensors.py
+oh_configfile=$OH_CONFDIR/openheating-sensors.conf
+
+case "$1" in
+    start)
+	log_daemon_msg "Starting $oh_desc" $oh_name
+	$oh_prog --config-file=$oh_configfile --action=add
+	;;
+    stop)
+	log_daemon_msg "Stopping $oh_desc" $oh_name
+	$oh_prog --config-file=$oh_configfile --action=remove
+	;;
+    restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $scriptname {start|stop}" >&2
+	exit 3
+	;;
+esac

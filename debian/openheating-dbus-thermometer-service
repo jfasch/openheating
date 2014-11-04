@@ -1,6 +1,7 @@
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          openheating-dbus-thermometer-service
+# Required-Start:    openheating-sensors
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Openheating DBus Thermometer Service
@@ -16,13 +17,10 @@ oh_desc="Openheating DBus Thermometer Service"
 oh_name=openheating-dbus-thermometer-service
 oh_prog=/usr/bin/openheating-dbus-thermometer-service.py
 oh_pidfile=$OH_WORKDIR/openheating-dbus-thermometer-service.pid
-oh_sensors=/usr/bin/openheating-sensors.py
-oh_sensors_conf=$OH_CONFDIR/openheating-sensors.conf
 
 case "$1" in
     start)
 	log_daemon_msg "Starting $oh_desc" $oh_name
-	$oh_sensors --config-file=$oh_sensors_conf --action=add || exit $?
 	start-stop-daemon --start --background --chuid=$OH_USER:$OH_GROUP \
 	    --pidfile $oh_pidfile \
 	    --exec $oh_prog -- \
@@ -31,7 +29,6 @@ case "$1" in
 	;;
     stop)
 	log_daemon_msg "Stopping $oh_desc" $oh_name
-	$oh_sensors --config-file=$oh_sensors_conf --action=remove || exit $?
 	start-stop-daemon --stop --pidfile $oh_pidfile
 	;;
     restart|force-reload)
