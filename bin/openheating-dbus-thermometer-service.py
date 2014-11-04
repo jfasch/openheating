@@ -12,6 +12,7 @@ from argparse import ArgumentParser
 import sys
 import os
 import time
+import signal
 
 parser = ArgumentParser()
 parser.add_argument('--config-file', type=str, help='Configuration file (to be documented)', required=True)
@@ -20,9 +21,22 @@ args = parser.parse_args()
 
 config = ThermometerDBusServiceConfigParser().parse(open(args.config_file).read())
 
+child = None
+
+def terminate_handler(signal, frame):
+    if child is not None:
+        # kill child. the terminate-signal could well arrive *after*
+        # the child has exited and *before* it is restarted, so its
+        # pid might not be valid - so we have to ignore errors.
+        try:
+            os.kill(child, signal)
+        except OSError: pass
+    sys.exit(0)
+signal.signal(signal.SIGTERM, terminate_handler)
+
 while True:
-    pid = os.fork()
-    if pid > 0:
+    child = os.fork()
+    if child > 0:
         # parent. wait for child, restart and backoff
         died, status = os.wait()
         time.sleep(2)
