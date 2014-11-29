@@ -1,0 +1,20 @@
+* GPIO
+
+  * Rpi.GPIO installed in Raspbian
+
+* LCD
+
+  * https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code
+
+    Hmm whats that? Contains Adafruit_CharLCD, completely
+    different. Looks good nonetheless. No dependencies like
+    Adafruit_CharLCD by Tony DiCola. Made for copying, no plans to
+    make an installer for the package -> simply copy it out and diff
+    it at times to see if update is necessary.
+
+  * https://github.com/adafruit/Adafruit_Python_GPIO
+
+    Small wrapper around Rpi.GPIO and Beaglebone's IO, used by LCD
+    code.
+  
+  * https://github.com/adafruit/Adafruit_Python_CharLCD
