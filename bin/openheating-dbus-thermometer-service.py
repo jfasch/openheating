@@ -2,7 +2,6 @@
 
 from openheating.thermometer_dbus_object import DBusThermometerObject
 from openheating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
-import openheating.dbus_util as dbus_util
 
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
