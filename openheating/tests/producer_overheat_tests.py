@@ -1,6 +1,5 @@
 from openheating.tests.producers import TestProducerBackend
 from openheating.tests.consumers import TestConsumer
-from openheating.tests.pumps import TestPump
 from openheating.tests.switches import TestSwitch
 from openheating.tests.poller import TestPoller
 
@@ -23,8 +22,8 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
         producer_backend = TestProducerBackend(initial_temperature=70)
         alarm_switch = TestSwitch(on=False)
         producer = Producer(name='Producer', backend=producer_backend, overheat_temperature=100, alarm_switch=alarm_switch)
-        pump = TestPump(running=False)
-        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump=pump)
+        pump_switch = TestSwitch(on=False)
+        transport = Transport(name='xxx', producer=producer, consumer=consumer, range_low=7, range_high=7, pump_switch=pump_switch)
 
         # first round, all easy
         if True:
@@ -33,7 +32,7 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
             # producer is left alone because consumer is all
             # satisfied, and producer is not yet overheating
             self.failIf(producer.is_acquired())
-            self.failIf(pump.is_running())
+            self.failIf(pump_switch.is_on())
             self.failIf(alarm_switch.is_on())
 
         # producer's temperature rises -> overheating
@@ -43,7 +42,7 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
             transport.poll()
 
             self.failIf(producer.is_acquired())
-            self.failUnless(pump.is_running())
+            self.failUnless(pump_switch.is_on())
             self.failIf(alarm_switch.is_on())
 
         # consumer is satisfied, but is forced to give cooling. still
@@ -54,7 +53,7 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
             transport.poll()
 
             self.failIf(producer.is_acquired())
-            self.failUnless(pump.is_running())
+            self.failUnless(pump_switch.is_on())
             self.failIf(alarm_switch.is_on())
 
         # no cooling needed anymore -> alarm off
@@ -64,7 +63,7 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
             transport.poll()
 
             self.failIf(alarm_switch.is_on())
-            self.failIf(pump.is_running())
+            self.failIf(pump_switch.is_on())
             self.failIf(producer.is_acquired())
 
     def test__producer_needs_cooling__multiple_consumers(self):
@@ -74,12 +73,12 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
         producer = Producer(name='Producer', backend=producer_backend, overheat_temperature=90, alarm_switch=alarm_switch)
 
         consumerA = TestConsumer(wanted_temperature=40, initial_temperature=48)
-        pumpA = TestPump(running=False)
-        transportA = Transport(name='A', producer=producer, consumer=consumerA, range_low=7, range_high=7, pump=pumpA)
+        pumpA = TestSwitch(on=False)
+        transportA = Transport(name='A', producer=producer, consumer=consumerA, range_low=7, range_high=7, pump_switch=pumpA)
 
         consumerB = TestConsumer(wanted_temperature=40, initial_temperature=48)
-        pumpB = TestPump(running=False)
-        transportB = Transport(name='B', producer=producer, consumer=consumerB, range_low=7, range_high=7, pump=pumpB)
+        pumpB = TestSwitch(on=False)
+        transportB = Transport(name='B', producer=producer, consumer=consumerB, range_low=7, range_high=7, pump_switch=pumpB)
 
         poller = TestPoller([transportA, transportB, producer])
 
@@ -91,8 +90,8 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
         if True:
             poller.poll()
 
-            self.failIf(pumpA.is_running())
-            self.failIf(pumpB.is_running())
+            self.failIf(pumpA.is_on())
+            self.failIf(pumpB.is_on())
             self.failIf(producer.is_acquired())
 
 
@@ -103,8 +102,8 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
             poller.poll()
 
             # both transports must be running ...
-            self.failUnless(pumpA.is_running())
-            self.failUnless(pumpB.is_running())
+            self.failUnless(pumpA.is_on())
+            self.failUnless(pumpB.is_on())
             # ... although nobody explicitly demanded heating
             self.failIf(producer.is_acquired())
             # no need to flag alarm since cooling is underway
@@ -119,8 +118,8 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
             poller.poll()
 
             # A off, B still in cooling mode.
-            self.failIf(pumpA.is_running())
-            self.failUnless(pumpB.is_running())
+            self.failIf(pumpA.is_on())
+            self.failUnless(pumpB.is_on())
             # still nobody wants heat.            
             self.failIf(producer.is_acquired())
             # still no need to flag alarm
@@ -133,8 +132,8 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
             poller.poll()
 
             # no cooling, producer still cries bloody murder -> alarm
-            self.failIf(pumpA.is_running())
-            self.failIf(pumpB.is_running())
+            self.failIf(pumpA.is_on())
+            self.failIf(pumpB.is_on())
             self.failUnless(alarm_switch.is_on())
             self.failIf(producer.is_acquired())
 
@@ -146,8 +145,8 @@ class TransportProducerNeedsCoolingTest(unittest.TestCase):
 
             # alarm off, cooling in progress
             self.failIf(alarm_switch.is_on())
-            self.failIf(pumpB.is_running())
-            self.failUnless(pumpA.is_running())
+            self.failIf(pumpB.is_on())
+            self.failUnless(pumpA.is_on())
             self.failIf(producer.is_acquired())
 
 suite = unittest.TestSuite()

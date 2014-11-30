@@ -11,29 +11,27 @@ class Transport(Polled):
                  name,
                  producer,
                  consumer, range_low, range_high,
-                 pump):
+                 pump_switch):
         assert isinstance(producer, Producer)
         assert isinstance(consumer, Consumer)
-        assert isinstance(pump, Pump)
 
         self.__name = name
         self.__producer = producer
         self.__consumer = consumer
-        self.__pump = pump
+        self.__pump_switch = pump_switch
 
         self.__round = 0
 
         self.__range_low = range_low
         self.__range_high = range_high
 
-        self.__pump_running = False
-        self.__pump.stop()
+        self.__pump_switch.off()
 
         # register with my producer
         self.__producer.add_transport(self)
 
     def is_running(self):
-        return self.__pump_running
+        return self.__pump_switch.is_on()
 
     def producer_needs_cooling(self):
         self.poll()
@@ -41,7 +39,7 @@ class Transport(Polled):
     def poll(self):
         self.__round += 1
         
-        if self.__pump_running:
+        if self.__pump_switch.is_on():
             # handle emergency condition where producer is about to
             # explode
             if self.__producer.needs_cooling():
@@ -49,20 +47,20 @@ class Transport(Polled):
                     self.__debug('producer needs cooling, leave pump running')
                 else:
                     self.__debug('producer needs cooling, but cannot')
-                    self.__stop_pump()
+                    self.__pump_switch.off()
                 return
 
             # stop if consumer is satisfied (is at the high end of its
             # range)
             if self.__consumer.temperature() >= self.__consumer.wanted_temperature() + self.__range_high:
                 self.__debug('consumer satisfied, switching pump off')
-                self.__stop_pump()
+                self.__pump_switch.off()
                 self.__producer.release(self.__name)
                 return
             # producer is out of temperature, stop
             if not self.__pumping_pays_off():
                 self.__debug('producer out of temperature')
-                self.__stop_pump()
+                self.__pump_switch.off()
                 self.__producer.acquire(self.__name)
                 return
             self.__debug('keep on pumping')
@@ -73,7 +71,7 @@ class Transport(Polled):
             if self.__producer.needs_cooling():
                 if self.__pumping_pays_off():
                     self.__debug('producer needs cooling, switch on pump')
-                    self.__start_pump()
+                    self.__pump_switch.on()
                 else:
                     self.__debug('producer needs cooling, but cannot')
                 return
@@ -95,18 +93,10 @@ class Transport(Polled):
                     self.__debug('pumping does not pay off, leaving pump alone')
                 else:
                     self.__debug('switching on pump')
-                    self.__start_pump()
+                    self.__pump_switch.on()
 
     def __pumping_pays_off(self):
         return self.__producer.temperature() >= self.__consumer.temperature() + 5
                     
-    def __start_pump(self):
-        self.__pump.start()
-        self.__pump_running = True
-
-    def __stop_pump(self):
-        self.__pump.stop()
-        self.__pump_running = False
-
     def __debug(self, msg):
         logging.debug('transport %s(%d): %s' % (self.__name, self.__round, msg))
