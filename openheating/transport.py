@@ -17,6 +17,13 @@ class Transport(Polled):
         sink_temp = self.__sink.temperature()
         diff = source_temp - sink_temp
 
+        requesters = self.__source.requesters()
+        
+        if len(requesters) and not self.__sink in requesters:
+            self.__debug('pump off, somebody else needs it better')
+            self.__pump_switch.off()
+            return
+
         if self.__diff_hysteresis.above(diff):
             self.__debug('pump on')
             self.__pump_switch.on()

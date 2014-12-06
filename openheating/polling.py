@@ -7,10 +7,12 @@ class Polled(metaclass=ABCMeta):
         return
 
 class Poller:
-    def __init__(self):
+    def __init__(self, num_polls):
         self.__polled = set()
         self.__round = 0
+        self.__num_polls = num_polls
     def add(self, polled):
+        assert polled not in self.__polled
         self.__polled.add(polled)
     def poll(self, msg=''):
         if len(msg):
@@ -18,6 +20,8 @@ class Poller:
         else:
             logging.debug('poll round #%d', self.__round)
 
-        for p in self.__polled:
-            p.poll()            
+        for i in range(self.__num_polls):
+            for p in self.__polled:
+                p.poll()
+
         self.__round += 1

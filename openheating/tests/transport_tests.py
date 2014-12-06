@@ -13,7 +13,7 @@ import logging
 
 class TransportBasicTest(unittest.TestCase):
     def test__basic(self):
-        poller = Poller()
+        poller = Poller(num_polls=2)
         
         sink_thermometer = DummyThermometer(initial_temperature=20)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
@@ -87,13 +87,103 @@ class TransportBasicTest(unittest.TestCase):
             self.assertTrue(pump_switch.is_on())
             self.assertIn(sink, source.requesters())
 
+    def test__2sinks(self):
+        # Two sinks, one source. if there's temperature difference in
+        # both transports, there has to be some coordination between
+        # those.
+
+        # * requested: heat flows only to those who explictly
+        #   requested. the others remain off.
+
+        # * nothing requested: heat flows into all sinks where there
+        #   is difference. we don't want to leave heat in the source,
+        #   it would be wasted there.
+
+        
+        poller = Poller(num_polls=2)
+        
+        source_thermometer = DummyThermometer(initial_temperature=80)
+        source = Source(name='my-source', thermometer=source_thermometer)
+
+        sink1_thermometer = DummyThermometer(initial_temperature=20)
+        sink1 = Sink(name='my-sink-1', thermometer=sink1_thermometer,
+                    hysteresis=Hysteresis(33, 47))
+        poller.add(sink1)
+
+        sink2_thermometer = DummyThermometer(initial_temperature=20)
+        sink2 = Sink(name='my-sink-2', thermometer=sink2_thermometer,
+                    hysteresis=Hysteresis(33, 47))
+        poller.add(sink2)
+
+        pump1_switch = TestSwitch(on=False)
+        transport1 = Transport(name='my-transport-1', source=source, sink=sink1,
+                                diff_hysteresis=Hysteresis(0, 5),
+                                pump_switch=pump1_switch)
+        poller.add(transport1)
+
+        pump2_switch = TestSwitch(on=False)
+        transport2 = Transport(name='my-transport-2', source=source, sink=sink2,
+                               diff_hysteresis=Hysteresis(0, 5),
+                               pump_switch=pump2_switch)
+        poller.add(transport2)
+
+        # both sinks request some heat.
+        if True:
+            poller.poll('both sinks request')
+            self.assertIn(sink1, source.requesters())
+            self.assertIn(sink2, source.requesters())
+
+        # pumps on (done in a second poll round since poll sequence is
+        # not deterministic)
+        if True:
+            poller.poll('pumps on')
+            self.assertTrue(pump1_switch.is_on())
+            self.assertTrue(pump2_switch.is_on())
+
+        # both sinks reach their temperature -> release, both pumps
+        # remain on (because temperatures differ enough)
+        if True:
+            sink1_thermometer.set_temperature(50)
+            sink2_thermometer.set_temperature(50)
+            poller.poll('both sinks release, pumps still on')
+            self.assertEqual(len(source.requesters()), 0)
+            self.assertNotIn(sink1, source.requesters())
+            self.assertNotIn(sink2, source.requesters())
+            self.assertTrue(pump1_switch.is_on())
+            self.assertTrue(pump2_switch.is_on())
+
+        # sink1 cools down -> request. sink1 is the only requester, so
+        # only pump1 must be running, and pump2 must be off.
+        if True:
+            sink1_thermometer.set_temperature(0)
+            poller.poll('sink1 cools down')
+            self.assertEqual(len(source.requesters()), 1)
+            self.assertIn(sink1, source.requesters())
+            self.assertTrue(pump1_switch.is_on())
+            self.assertFalse(pump2_switch.is_on())
+
+        # sink1 heats up again, releases. both pumps running again.
+        if True:
+            sink1_thermometer.set_temperature(50)
+            poller.poll('sink1 releases')
+            self.assertEqual(len(source.requesters()), 0)
+            self.assertTrue(pump1_switch.is_on())
+            self.assertTrue(pump2_switch.is_on())
+
+        # source cools down -> both pumps off
+        if True:
+            source_thermometer.set_temperature(0)
+            poller.poll('source cool, both pumps off')
+            self.assertFalse(pump1_switch.is_on())
+            self.assertFalse(pump2_switch.is_on())
+            
+
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
 
-# suite.addTest(TransportBasicTest("test__pump_on_off_simple"))
-# suite.addTest(TransportPeeksProducerTest("test__producer_not_peeked_when_consumer_satisfied"))
+#suite.addTest(TransportBasicTest("test__2sinks"))
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
