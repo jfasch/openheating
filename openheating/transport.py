@@ -1,74 +1,30 @@
-from .producer import Producer
-from .consumer import Consumer
-from .pump import Pump
-from .polled import Polled
+from .polling import Polled
 
 import logging
 
 class Transport(Polled):
-
-    def __init__(self,
-                 name,
-                 producer,
-                 consumer, range_low, range_high,
-                 pump_switch):
-        assert isinstance(producer, Producer)
-        assert isinstance(consumer, Consumer)
-
+    def __init__(self, name, source, sink, diff_hysteresis, pump_switch):
         self.__name = name
-        self.__producer = producer
-        self.__consumer = consumer
+        self.__source = source
+        self.__sink = sink
         self.__pump_switch = pump_switch
+        self.__diff_hysteresis = diff_hysteresis
 
-        self.__round = 0
-
-        self.__range_low = range_low
-        self.__range_high = range_high
-
-        self.__pump_switch.off()
-
-        # register with my producer
-        self.__producer.add_transport(self)
-
-    def is_running(self):
-        return self.__pump_switch.is_on()
-
-    def producer_needs_cooling(self):
-        self.poll()
+        sink.set_source(source)
 
     def poll(self):
-        self.__round += 1
+        source_temp = self.__source.temperature()
+        sink_temp = self.__sink.temperature()
+        diff = source_temp - sink_temp
 
-        # handle emergency condition where producer is about to
-        # explode
-        if self.__producer.needs_cooling():
-            if self.__pumping_pays_off():
-                self.__debug('producer needs cooling, switch on pump')
-                self.__pump_switch.on()
-            else:
-                self.__debug('producer needs cooling, but cannot')
-                self.__pump_switch.off()
+        if self.__diff_hysteresis.above(diff):
+            self.__debug('pump on')
+            self.__pump_switch.on()
             return
-
-        # stop if consumer is satisfied (is at the high end of its
-        # range)
-        if self.__consumer.temperature() >= self.__consumer.wanted_temperature() + self.__range_high:
-            self.__debug('consumer satisfied, switching pump off')
+        if self.__diff_hysteresis.below(diff):
+            self.__debug('pump off')
             self.__pump_switch.off()
-            self.__producer.release(self.__name)
             return
 
-        # consumer not satisfied. do something.
-
-        # first, let producer know that there's need for temperature.
-        self.__producer.acquire(self.__name)
-
-        # compare temperatures
-        jjjj
-
-
-    def __pumping_pays_off(self):
-        return self.__producer.temperature() >= self.__consumer.temperature() + 5
-                    
     def __debug(self, msg):
-        logging.debug('transport %s(%d): %s' % (self.__name, self.__round, msg))
+        logging.debug('transport %s: %s' % (self.__name, msg))
