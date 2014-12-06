@@ -1,3 +1,4 @@
-* DBus reconnect
+* state finding like in confix
 
-  * dbus.connection.Connection.call_on_disconnection(callable)
+  * everybody who's poll()ed (-> rename) returns how much (>0 if
+    anything) changed -> next turn until nothing changed.

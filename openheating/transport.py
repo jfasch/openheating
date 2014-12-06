@@ -20,7 +20,7 @@ class Transport(Polled):
         requesters = self.__source.requesters()
         
         if len(requesters) and not self.__sink in requesters:
-            self.__debug('pump off, somebody else needs it better')
+            self.__debug('pump off, somebody else needs it better: ' + ','.join(r.name() for r in requesters))
             self.__pump_switch.off()
             return
 

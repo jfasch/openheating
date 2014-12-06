@@ -1,3 +1,5 @@
+from .sink import Sink
+
 class Source:
     def __init__(self, name, thermometer):
         self.__name = name
@@ -8,6 +10,7 @@ class Source:
         return self.__thermometer.temperature()
 
     def request(self, sink):
+        assert isinstance(sink, Sink)
         self.__requesters.add(sink)
 
     def release(self, sink):

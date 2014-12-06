@@ -9,6 +9,9 @@ class Sink(Polled):
         self.__hysteresis = hysteresis
         self.__source = None
 
+    def name(self):
+        return self.__name
+
     def set_source(self, source):
         assert self.__source is None
         self.__source = source
