@@ -183,7 +183,7 @@ suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTes
 
 #suite.addTest(TransportBasicTest("test__2sinks"))
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
