@@ -1,6 +1,6 @@
 from openheating.sink import Sink
 from openheating.source import Source
-from openheating.polling import Poller
+from openheating.thinking import Brain
 from openheating.hysteresis import Hysteresis
 from openheating.thermometer_dummy import DummyThermometer
 
@@ -9,33 +9,33 @@ import logging
 
 class SinkTest(unittest.TestCase):
     def test__basic(self):
-        poller = Poller(num_polls=2)
+        brain = Brain()
 
         sink_thermometer = DummyThermometer(initial_temperature=10)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
                     hysteresis=Hysteresis(23, 27))
         source = Source(name='my-source', thermometer=None)
         sink.set_source(source)
-        poller.add(sink)
+        brain.add(sink)
 
         # initial request
-        poller.poll()
+        brain.think()
         self.assertIn(sink, source.requesters())
 
         # heating up, right below lower hysteresis bound. still
         # requested
         sink_thermometer.set_temperature(22.9)
-        poller.poll()
+        brain.think()
         self.assertIn(sink, source.requesters())
 
         # heating up further, between low and high
         sink_thermometer.set_temperature(24)
-        poller.poll()
+        brain.think()
         self.assertIn(sink, source.requesters())
 
         # heating to the point where sink is satisfied
         sink_thermometer.set_temperature(27.1)
-        poller.poll()
+        brain.think()
         self.assertNotIn(sink, source.requesters())
 
 suite = unittest.TestSuite()
