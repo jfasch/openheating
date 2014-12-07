@@ -1,0 +1,8 @@
+* http://www.raspberrypi-spy.co.uk/2012/07/16x2-lcd-module-control-using-python/
+
+  RW to ground
+
+* https://learn.adafruit.com/drive-a-16x2-lcd-directly-with-a-raspberry-pi/wiring
+
+* http://www.instructables.com/id/Step-By-Step-LCD-wiring-4-Bit-Mode-and-Programmi/?lang=de
+
