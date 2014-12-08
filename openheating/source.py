@@ -1,13 +1,11 @@
+from abc import ABCMeta, abstractmethod
+
 from .sink import Sink
 
 class Source:
-    def __init__(self, name, thermometer):
+    def __init__(self, name):
         self.__name = name
-        self.__thermometer = thermometer
         self.__requesters = set()
-
-    def temperature(self):
-        return self.__thermometer.temperature()
 
     def request(self, sink):
         assert isinstance(sink, Sink)
@@ -18,3 +16,9 @@ class Source:
 
     def requesters(self):
         return self.__requesters
+
+    @abstractmethod
+    def temperature(self):
+        return 42.0
+
+    

@@ -1,5 +1,5 @@
 from .thermometer_hwmon import HWMON_I2C_Thermometer
-from .testutils.thermometer import DummyThermometer
+from .testutils.thermometer import TestThermometer
 from .error import HeatingException
 
 import os.path
@@ -7,7 +7,7 @@ import os.path
 class ThermometerDBusServiceConfigParser:
     def parse(self, content):
         context = {
-            'DummyThermometer': DummyThermometer,
+            'TestThermometer': TestThermometer,
             'HWMON_I2C_Thermometer': HWMON_I2C_Thermometer,
         }
         exec(content, context)

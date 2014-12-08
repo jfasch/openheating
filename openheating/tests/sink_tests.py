@@ -1,7 +1,7 @@
 from openheating.testutils.thermometer import TestThermometer
 
 from openheating.sink import Sink
-from openheating.source import Source
+from openheating.passive_source import PassiveSource
 from openheating.thinking import Brain
 from openheating.hysteresis import Hysteresis
 
@@ -15,7 +15,7 @@ class SinkTest(unittest.TestCase):
         sink_thermometer = TestThermometer(initial_temperature=10)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
                     hysteresis=Hysteresis(23, 27))
-        source = Source(name='my-source', thermometer=None)
+        source = PassiveSource(name='my-source', thermometer=None)
         sink.set_source(source)
         brain.add(sink)
 

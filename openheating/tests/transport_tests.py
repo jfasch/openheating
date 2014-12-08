@@ -2,8 +2,8 @@ from openheating.testutils.switch import TestSwitch
 from openheating.testutils.thermometer import TestThermometer
 
 from openheating.thinking import Brain
-from openheating.source import Source
 from openheating.sink import Sink
+from openheating.passive_source import PassiveSource
 from openheating.hysteresis import Hysteresis
 from openheating.transport import Transport
 
@@ -20,7 +20,7 @@ class TransportBasicTest(unittest.TestCase):
         brain.add(sink)
 
         source_thermometer = TestThermometer(initial_temperature=80)
-        source = Source(name='my-source', thermometer=source_thermometer)
+        source = PassiveSource(name='my-source', thermometer=source_thermometer)
 
         pump_switch = TestSwitch(TestSwitch.OPEN)
         transport = Transport(name='my-transport', source=source, sink=sink,
@@ -101,7 +101,7 @@ class TransportBasicTest(unittest.TestCase):
         brain = Brain()
         
         source_thermometer = TestThermometer(initial_temperature=80)
-        source = Source(name='my-source', thermometer=source_thermometer)
+        source = PassiveSource(name='my-source', thermometer=source_thermometer)
 
         sink1_thermometer = TestThermometer(initial_temperature=20)
         sink1 = Sink(name='my-sink-1', thermometer=sink1_thermometer,
