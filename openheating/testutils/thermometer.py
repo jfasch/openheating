@@ -1,4 +1,4 @@
-from .thermometer import Thermometer
+from ..thermometer import Thermometer
 
 class DummyThermometer(Thermometer):
     def __init__(self, initial_temperature):

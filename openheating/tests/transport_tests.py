@@ -2,7 +2,7 @@ from openheating.testutils.switches import TestSwitch
 
 
 from openheating.thinking import Brain
-from openheating.thermometer_dummy import DummyThermometer
+from openheating.testutils.thermometer import DummyThermometer
 from openheating.source import Source
 from openheating.sink import Sink
 from openheating.hysteresis import Hysteresis
