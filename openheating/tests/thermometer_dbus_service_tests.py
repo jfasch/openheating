@@ -1,4 +1,4 @@
-from openheating.testutils.thermometer import DummyThermometer
+from openheating.testutils.thermometer import TestThermometer
 from openheating.thermometer_hwmon import HWMON_I2C_Thermometer
 from openheating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
 
@@ -14,7 +14,7 @@ class ThermometerDBusServiceTest(unittest.TestCase):
              'THERMOMETERS = (',
              '    ("name_1", HWMON_I2C_Thermometer(bus_number=1, address=0x49)),',
              '    ("name_2", HWMON_I2C_Thermometer(bus_number=1, address=0x4a)),',
-             '    ("name_3", DummyThermometer(initial_temperature=4.5)),',
+             '    ("name_3", TestThermometer(initial_temperature=4.5)),',
              ')',
              ])
         
@@ -34,7 +34,7 @@ class ThermometerDBusServiceTest(unittest.TestCase):
         self.failUnlessEqual(config.thermometers()[1]['thermometer'].address(), 0x4a)
  
         self.failUnlessEqual(config.thermometers()[2]['object_path'], '/my/thermometers/name_3')
-        self.failUnless(isinstance(config.thermometers()[2]['thermometer'], DummyThermometer))
+        self.failUnless(isinstance(config.thermometers()[2]['thermometer'], TestThermometer))
         self.failUnlessAlmostEqual(config.thermometers()[2]['thermometer'].temperature(), 4.5)
 
 suite = unittest.TestSuite()

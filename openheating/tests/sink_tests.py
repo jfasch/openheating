@@ -1,4 +1,4 @@
-from openheating.testutils.thermometer import DummyThermometer
+from openheating.testutils.thermometer import TestThermometer
 
 from openheating.sink import Sink
 from openheating.source import Source
@@ -12,7 +12,7 @@ class SinkTest(unittest.TestCase):
     def test__basic(self):
         brain = Brain()
 
-        sink_thermometer = DummyThermometer(initial_temperature=10)
+        sink_thermometer = TestThermometer(initial_temperature=10)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
                     hysteresis=Hysteresis(23, 27))
         source = Source(name='my-source', thermometer=None)

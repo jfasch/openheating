@@ -1,5 +1,5 @@
 from openheating.testutils.switch import TestSwitch
-from openheating.testutils.thermometer import DummyThermometer
+from openheating.testutils.thermometer import TestThermometer
 
 from openheating.thinking import Brain
 from openheating.source import Source
@@ -14,12 +14,12 @@ class TransportBasicTest(unittest.TestCase):
     def test__basic(self):
         brain = Brain()
         
-        sink_thermometer = DummyThermometer(initial_temperature=20)
+        sink_thermometer = TestThermometer(initial_temperature=20)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
                     hysteresis=Hysteresis(33, 47))
         brain.add(sink)
 
-        source_thermometer = DummyThermometer(initial_temperature=80)
+        source_thermometer = TestThermometer(initial_temperature=80)
         source = Source(name='my-source', thermometer=source_thermometer)
 
         pump_switch = TestSwitch(TestSwitch.OPEN)
@@ -100,15 +100,15 @@ class TransportBasicTest(unittest.TestCase):
 
         brain = Brain()
         
-        source_thermometer = DummyThermometer(initial_temperature=80)
+        source_thermometer = TestThermometer(initial_temperature=80)
         source = Source(name='my-source', thermometer=source_thermometer)
 
-        sink1_thermometer = DummyThermometer(initial_temperature=20)
+        sink1_thermometer = TestThermometer(initial_temperature=20)
         sink1 = Sink(name='my-sink-1', thermometer=sink1_thermometer,
                      hysteresis=Hysteresis(33, 47))
         brain.add(sink1)
 
-        sink2_thermometer = DummyThermometer(initial_temperature=20)
+        sink2_thermometer = TestThermometer(initial_temperature=20)
         sink2 = Sink(name='my-sink-2', thermometer=sink2_thermometer,
                     hysteresis=Hysteresis(33, 47))
         brain.add(sink2)
