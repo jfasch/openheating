@@ -1,13 +1,11 @@
-import openheating.gpio
-
-from openheating.gpio import SysFS_GPIO_Manager
+import openheating.gpio as gpio
 
 import unittest
 import logging
 
 class GPIOTest(unittest.TestCase):
     def test__basic(self):
-        mgr = SysFS_GPIO_Manager()
+        mgr = gpio.SysFS_GPIO_Manager()
         io = mgr.create(4)
         io.set_direction(gpio.IN)
         io.set_value(1)

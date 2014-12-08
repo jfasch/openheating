@@ -11,7 +11,7 @@ class SysFS_GPIO_Manager:
     def create(self, number):
         path = '%s/gpio%d' % (_root, number)
         if not os.path.exists(path):
-            open(_root + '/export', 'wb').write(str(number)+'\n')
+            open(_root + '/export', 'w').write(str(number)+'\n')
         return _SysFS_GPIO(number)
         
 class _SysFS_GPIO:
@@ -20,13 +20,13 @@ class _SysFS_GPIO:
         self.__value = '%s/gpio%d/value' % (_root, number)
         self.__direction = '%s/gpio%d/direction' % (_root, number)
     def __del__(self):
-        open(_root + '/unexport', 'wb').write(str(number)+'\n')
+        open(_root + '/unexport', 'w').write(str(self.__number)+'\n')
     def set_direction(self, inout):
         assert inout in (IN, OUT)
-        open(self.__direction, 'wb').write(inout == IN and 'in' or 'out')
+        open(self.__direction, 'w').write(inout == IN and 'in' or 'out')
     def get_direction(self):
-        return open(self.__direction, 'rb').read() == 'in\n' and IN or OUT
+        return open(self.__direction, 'r').read() == 'in\n' and IN or OUT
     def set_value(self, value):
-        open(self.__value, 'wb').write(str(value)+'\n')
+        open(self.__value, 'w').write(str(value)+'\n')
     def get_value(self):
-        open(self.__value, 'rb').read() == '0\n' and 0 or 1
+        return open(self.__value, 'r').read() == '0\n' and 0 or 1
