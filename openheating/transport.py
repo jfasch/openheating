@@ -1,4 +1,5 @@
 from .thinking import Thinker
+from .switch import Switch
 
 import logging
 
@@ -14,7 +15,7 @@ class Transport(Thinker):
 
         # my state during thinking round. None when not thinking (or
         # nothing to do after a round, at sync())
-        self.__pump_on_off = None
+        self.__pump_open_closed = None
 
     def think(self):
         source_temp = self.__source.temperature()
@@ -25,25 +26,25 @@ class Transport(Thinker):
         
         if len(requesters) and not self.__sink in requesters:
             self.__debug('pump off, somebody else needs it better: ' + ','.join(r.name() for r in requesters))
-            return self.__switch_pump(False)
+            return self.__switch_pump(Switch.OPEN)
         if self.__diff_hysteresis.above(diff):
             self.__debug('pump on')
-            return self.__switch_pump(True)
+            return self.__switch_pump(Switch.CLOSED)
         if self.__diff_hysteresis.below(diff):
             self.__debug('pump off')
-            return self.__switch_pump(False)
+            return self.__switch_pump(Switch.OPEN)
 
         return 0
 
     def sync(self):
-        if self.__pump_on_off is not None:
-            self.__pump_switch.set_state(self.__pump_on_off)
-            self.__pump_on_off = None
+        if self.__pump_open_closed is not None:
+            self.__pump_switch.set_state(self.__pump_open_closed)
+            self.__pump_open_closed = None
 
-    def __switch_pump(self, value):
-        assert value is not None
-        if value != self.__pump_on_off:
-            self.__pump_on_off = value
+    def __switch_pump(self, state):
+        assert state is not None
+        if state != self.__pump_open_closed:
+            self.__pump_open_closed = state
             return 1
         return 0
 

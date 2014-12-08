@@ -1,8 +1,9 @@
+from openheating.testutils.thermometer import DummyThermometer
+
 from openheating.sink import Sink
 from openheating.source import Source
 from openheating.thinking import Brain
 from openheating.hysteresis import Hysteresis
-from openheating.testutils.thermometer import DummyThermometer
 
 import unittest
 import logging

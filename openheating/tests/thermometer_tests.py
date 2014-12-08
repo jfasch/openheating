@@ -1,6 +1,7 @@
+from openheating.testutils.thermometer import DummyThermometer
+
 from openheating.thermometer_manager import ThermometerManager
 from openheating.error import HeatingException
-from openheating.thermometer_dummy import DummyThermometer
 
 import unittest
 

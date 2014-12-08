@@ -1,5 +1,5 @@
 from .thermometer_hwmon import HWMON_I2C_Thermometer
-from .thermometer_dummy import DummyThermometer
+from .testutils.thermometer import DummyThermometer
 from .error import HeatingException
 
 import os.path

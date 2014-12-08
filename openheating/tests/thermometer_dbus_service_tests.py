@@ -1,4 +1,4 @@
-from openheating.thermometer_dummy import DummyThermometer
+from openheating.testutils.thermometer import DummyThermometer
 from openheating.thermometer_hwmon import HWMON_I2C_Thermometer
 from openheating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
 
