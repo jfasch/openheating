@@ -1,3 +1,5 @@
+assert False
+
 from abc import ABCMeta, abstractmethod
 
 class Pump(metaclass=ABCMeta):

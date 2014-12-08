@@ -1,4 +1,4 @@
-from openheating.tests.switches import TestSwitch
+from openheating.testutils.switches import TestSwitch
 
 
 from openheating.thinking import Brain
