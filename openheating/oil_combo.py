@@ -4,8 +4,19 @@ class OilCombo(Source):
     '''Burner with Riello schematics (simple thing I think), together with
     a thermometer to measure water storage temperature.
 
-    Simple on/off on request()/release(), though there's more: read
-    http://www.mikrocontroller.net/topic/141478
+    Simple on/off on request()/release(), though there's more: 
+
+    * http://www.mikrocontroller.net/topic/141478: minimum of 35deg
+      during heating.
+
+    * http://forum.electronicwerkstatt.de/phpBB/Bauteile/anschlussbelegung_oelbrenner-t91974f30_bs0.html
+
+    * http://www.mikrocontroller.net/topic/37080#273786: hysteresis
+      65-75deg
+
+    Kesseldatenblatt wegen Idealtemperatur?
+
+    Ruecklauf ueber Boiler zum Heizen von dem!?
 
     '''
     def __init__(self,
