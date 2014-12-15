@@ -4,6 +4,9 @@ class OilCombo(Source):
     '''Burner with Riello schematics (simple thing I think), together with
     a thermometer to measure water storage temperature.
 
+    Simple on/off on request()/release(), though there's more: read
+    http://www.mikrocontroller.net/topic/141478
+
     '''
     def __init__(self,
                  name,
