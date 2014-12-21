@@ -7,3 +7,8 @@ class PassiveSource(Source):
 
     def temperature(self):
         return self.__thermometer.temperature()
+
+    def do_request(self):
+        pass
+    def do_release(self):
+        pass
