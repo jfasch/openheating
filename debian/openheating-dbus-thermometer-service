@@ -28,7 +28,8 @@ case "$1" in
 	    --pidfile $oh_pidfile \
 	    --startas $oh_prog -- \
 	    --config-file=$OH_CONFDIR/openheating-dbus-thermometer-service.conf \
-	    --pid-file=$oh_pidfile
+	    --pid-file=$oh_pidfile \
+	    --syslog
 	;;
     stop)
 	log_daemon_msg "Stopping $oh_desc" $oh_name
