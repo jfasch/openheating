@@ -6,7 +6,7 @@ comprehends a historically grown constellation.
 
 * Two heat sources
   * Oil (fully automatic)
-  * Wood (manual firing, in the living room). Wood currently dominates oil in a brutal way, in that a bi-metal switch disbles oil burning abruptly)
+  * Wood (manual firing, in the living room). Wood currently dominates oil in a brutal way, in that a bi-metal switch disbles oil burning abruptly.
 * Two heat sinks
   * Water; a 1000l buffer, where potable water is exchanged through
   * Radiators across the house, in a single circuit
