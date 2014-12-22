@@ -28,15 +28,15 @@ apart as far as possible. For example, I have a wood/oil combination
 of heat sources. Software contains separate classes for each, combined
 by a dedicated third class.
 
-Here is a higher level list, by decreasing priority. Details are found
-in the issue tracker.
+This is a higher level wish list, by decreasing priority. Details are
+found in the issue tracker.
 
 * Coordinate heat sources and sinks in an intelligent automatic way
   * When wood heat is coming, oil should be faded out gently (there's plenty of time).
   * A switching valve is currently turned manually; this is due to that "heating control" we currently have. (Was about €300, gosh)
 * Bring the spare hot water in house heating. Not prio-1 right now, but will come.
 * Control solar water. Works as-is, so low prio. Can be done when all else is mature; will be trivial then.
-  * Thought: integrate with water buffer's mechanism. He needs heat when there's no sun, during noght for example. Could read weather forecast and defer his need.
+  * Thought: integrate with water buffer's mechanism. He needs heat when there's no sun, during night for example. Could read weather forecast and defer his need.
 * This list can be extended to no end
 
 Inner Beauty
