@@ -18,6 +18,7 @@ distutils.core.setup(
 
     packages=[
         'openheating',
+        'openheating.testutils',
         ],
 
     scripts=[
