@@ -1,4 +1,0 @@
-* state finding like in confix
-
-  * everybody who's poll()ed (-> rename) returns how much (>0 if
-    anything) changed -> next turn until nothing changed.
