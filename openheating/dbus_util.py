@@ -44,21 +44,19 @@ class DBusServiceCombo:
                 signal.signal(signal.SIGQUIT, signal.SIG_DFL)
                 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-                mainloop = DBusGMainLoop(set_as_default=True)
-        
                 try:
+                    mainloop = DBusGMainLoop(set_as_default=True)
                     connection = dbus.bus.BusConnection(self.__daemon_address, mainloop=mainloop)
-                except dbus.exceptions.DBusException as e:
-                    logging.exception('cannot connect to '+self.__daemon_address)
-                    sys.exit(1)
-         
-                connection.set_exit_on_disconnect(True)
-                busname = dbus.service.BusName(self.__busname, connection)
+                    connection.set_exit_on_disconnect(True)
+                    busname = dbus.service.BusName(self.__busname, connection)
 
-                # tell derived class to fill in what's needed
-                self.create_objects(connection)
+                    # tell derived class to fill in what's needed
+                    self.create_objects(connection)
         
-                GLib.MainLoop().run()
+                    GLib.MainLoop().run()
+                except Exception as e:
+                    logging.exception(str(e))
+                    exit(1)
 
     @abstractmethod
     def create_objects(self, connection):
