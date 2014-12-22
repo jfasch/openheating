@@ -24,3 +24,8 @@ openheating
 
   groupadd openheating
   useradd --home-dir /var/run/openheating --gid openheating --no-create-home --shell /bin/false openheating
+
+* Enable and start services
+
+  update-rc.d openheating-sensors defaults
+  

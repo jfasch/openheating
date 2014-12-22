@@ -1,0 +1,7 @@
+* i2c-bcm2708 is blacklisted
+
+  To be fixed in /etc/modprobe.d/raspi-blacklist.conf
+
+* Autoload i2c-bcm2708 and i2c-dev
+
+  Simply add them to /etc/modules
