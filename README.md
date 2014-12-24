@@ -30,7 +30,8 @@ burner, without touching the existing heating control.
 Since I started to think about this project, I have seen many house
 heatings built around a software that cannot be modified. This
 aberration - software harder than hardware - is not specific to house
-heating systems, as it seems.
+heating systems, as it seems. This little project is my contribution
+to revert that aberration.
 
 Wish List
 ---------
