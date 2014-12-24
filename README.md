@@ -1,12 +1,12 @@
 Heating Control System
 ======================
 
-Will once solve my needs for a heating control system which
-comprehends a historically grown constellation.
+Will once solve my needs for a heating control system that comprehends
+a historically grown constellation.
 
 * Two heat sources
   * Oil (fully automatic)
-  * Wood (manual firing, in the living room). Wood currently dominates oil in a brutal way, in that a bi-metal switch disbles oil burning abruptly.
+  * Wood (manual firing, in the living room). Wood currently dominates oil in a brutal way, in that a bi-metal temperature switch disbles oil burning abruptly when wood is coming.
 * Two heat sinks
   * Water; a 1000l buffer, where potable water is exchanged through
   * Radiators across the house, in a single circuit
@@ -18,6 +18,19 @@ controlled by a separate unit (which works and need not be replaced).
 There is a circuit which can take heat from hot water. When there is
 sun there is hot water. If the house needs heating (nights are still
 cold), this could be done. Currently it cannot.
+
+Rant
+----
+
+When I take a step back and look at the workarounds in our heating
+system, I can see that software is harder than hardware. It is common
+knowledge among plumbers how to install a wood oven alongside an oil
+burner, without touching the existing heating control.
+
+Since I started to think about this project, I have seen many house
+heatings built around a software that cannot be modified. This
+aberration - software harder than hardware - is not specific to house
+heating systems, as it seems.
 
 Wish List
 ---------
