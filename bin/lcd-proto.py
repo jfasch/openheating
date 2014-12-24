@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.hd44780 import HD44780_LCD
-from openheating.dbus import DBusThermometer
+from openheating.dbus.thermometer import DBusThermometer
 
 import dbus.bus
 import time
@@ -17,17 +17,17 @@ display = HD44780_LCD(
     cols=20,
     lines=4)
 
-boiler_top = DBusThermometer(name='org.openheating.boiler', path='/thermometers/top')
-boiler_middle = DBusThermometer(name='org.openheating.boiler', path='/thermometers/middle')
-boiler_bottom = DBusThermometer(name='org.openheating.boiler', path='/thermometers/bottom')
-hk_vl = DBusThermometer(name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')
-boiler_vl = DBusThermometer(name='org.openheating.heizraum', path='/thermometers/boiler_vl')
-ofen_vl = DBusThermometer(name='org.openheating.heizraum', path='/thermometers/ofen_vl')
+boiler_top = DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/top')
+boiler_middle = DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/middle')
+boiler_bottom = DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/bottom')
+hk_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')
+boiler_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/boiler_vl')
+ofen_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/ofen_vl')
 
 
 while True:
     temps = {
-        'boiler-top': boiler_top.temperature()),
+        'boiler-top': boiler_top.temperature(),
         'boiler-middle': boiler_middle.temperature(),
         'boiler-bottom': boiler_bottom.temperature(),
         'hk-vl': hk_vl.temperature(),
