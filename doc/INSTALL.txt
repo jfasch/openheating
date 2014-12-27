@@ -1,7 +1,14 @@
 Dependencies
 ============
 
-apt-get install python3-dbus
+* apt-get install python3-dbus
+
+* timezone
+
+  # cp /usr/share/zoneinfo/Europe/Vienna /etc/localtime
+  # date
+  Sun Dec 28 00:13:53 CET 2014
+  
 
 openheating
 ===========
