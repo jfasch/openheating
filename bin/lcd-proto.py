@@ -23,6 +23,7 @@ boiler_bottom = DBusThermometer(connection=connection, name='org.openheating.boi
 hk_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')
 boiler_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/boiler_vl')
 ofen_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/ofen_vl')
+ofen = DBusThermometer(connection=connection, name='org.openheating.ofen', path='/thermometers/ofen')
 
 
 while True:
@@ -33,11 +34,12 @@ while True:
         'hk-vl': hk_vl.temperature(),
         'boiler-vl': boiler_vl.temperature(),
         'ofen-vl': ofen_vl.temperature(),
+        'ofen': ofen.temperature(),
         }
     msg = \
         ('Boi:%(boiler-top).1f/%(boiler-middle).1f/%(boiler-bottom).1f\n' + \
         'HK:%(hk-vl).1f,WW:%(boiler-vl).1f\n' + \
-        'Ofen-VL:%(ofen-vl).1f') % temps
+        'Ofen:%(ofen).1f,VL:%(ofen-vl).1f') % temps
 
     print(msg+'\n--')
 
