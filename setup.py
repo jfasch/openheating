@@ -35,9 +35,9 @@ distutils.core.setup(
                      )),
                 (os.path.join('share', name, 'config'),
                  (
-                     'config/openheating-dbus-daemon.conf',
-                     'config/openheating-dbus-thermometer-service.conf',
-                     'config/openheating-sensors.conf',
+                     'config/faschingbauer/heizraum/etc/openheating/openheating-dbus-daemon.conf',
+                     'config/faschingbauer/heizraum/etc/openheating/openheating-dbus-thermometer-service.conf',
+                     'config/faschingbauer/heizraum/etc/openheating/openheating-sensors.conf',
                      )),
     ]
 
