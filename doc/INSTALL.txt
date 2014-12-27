@@ -1,7 +1,15 @@
 Dependencies
 ============
 
-* apt-get install python3-dbus
+* required
+
+  * apt-get install python3-dbus
+
+* development
+
+  * apt-get install emacs
+  * apt-get install git-el
+  * apt-get install i2c-tools
 
 * timezone
 
