@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from openheating.thermometer_manager import ThermometerManager
 from openheating.hd44780 import HD44780_LCD
 from openheating.dbus.thermometer import DBusThermometer
 from openheating.error import HeatingException
@@ -19,13 +20,23 @@ display = HD44780_LCD(
     cols=20,
     lines=4)
 
-boiler_top = DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/top')
-boiler_middle = DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/middle')
-boiler_bottom = DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/bottom')
-hk_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')
-boiler_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/boiler_vl')
-ofen_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/ofen_vl')
-ofen = DBusThermometer(connection=connection, name='org.openheating.ofen', path='/thermometers/ofen')
+thermo_mgr = ThermometerManager((
+        ('boiler-top', DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/top')),
+        ('boiler-middle', DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/middle')),
+        ('boiler-bottom', DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/bottom')),
+        ('hk-vl', DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')),
+        ('boiler-vl', DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/boiler_vl')),
+        ('ofen-vl', DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/ofen_vl')),
+        ('ofen', DBusThermometer(connection=connection, name='org.openheating.ofen', path='/thermometers/ofen')),
+        ))
+
+boiler_top = thermo_mgr.create_proxy_thermometer('boiler-top')
+boiler_middle = thermo_mgr.create_proxy_thermometer('boiler-middle')
+boiler_bottom = thermo_mgr.create_proxy_thermometer('boiler-bottom')
+hk_vl = thermo_mgr.create_proxy_thermometer('hk-vl')
+boiler_vl = thermo_mgr.create_proxy_thermometer('boiler-vl')
+ofen_vl = thermo_mgr.create_proxy_thermometer('ofen-vl')
+ofen = thermo_mgr.create_proxy_thermometer('ofen')
 
 def get_temperature(thermometer):
     try:

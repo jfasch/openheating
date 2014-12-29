@@ -29,6 +29,18 @@ class ThermometerTest(unittest.TestCase):
         self.assertAlmostEqual(th_man.temperature('one'), 23.4)
         self.assertEqual(th.num_calls(), 2)
 
+    def test_proxy_thermometer(self):
+        th1 = TestThermometer(42)
+        th2 = TestThermometer(666)
+        th_man = ThermometerManager((('one', th1), ('two', th2)))
+
+        th1_client = th_man.create_proxy_thermometer('one')
+        th2_client = th_man.create_proxy_thermometer('two')
+
+        self.assertAlmostEqual(th1_client.temperature(), 42)
+        self.assertAlmostEqual(th2_client.temperature(), 666)
+        
+
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerTest))
 
