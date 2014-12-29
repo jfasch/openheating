@@ -2,6 +2,7 @@
 
 from openheating.hd44780 import HD44780_LCD
 from openheating.dbus.thermometer import DBusThermometer
+from openheating.error import HeatingException
 
 import dbus.bus
 import time
@@ -26,23 +27,28 @@ boiler_vl = DBusThermometer(connection=connection, name='org.openheating.heizrau
 ofen_vl = DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/ofen_vl')
 ofen = DBusThermometer(connection=connection, name='org.openheating.ofen', path='/thermometers/ofen')
 
+def get_temperature(thermometer):
+    try:
+        return '%.1f' % thermometer.temperature()
+    except HeatingException:
+        return 'ERR!'
 
 while True:
     temps = {
         'now': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-        'boiler-top': boiler_top.temperature(),
-        'boiler-middle': boiler_middle.temperature(),
-        'boiler-bottom': boiler_bottom.temperature(),
-        'hk-vl': hk_vl.temperature(),
-        'boiler-vl': boiler_vl.temperature(),
-        'ofen-vl': ofen_vl.temperature(),
-        'ofen': ofen.temperature(),
+        'boiler-top': get_temperature(boiler_top),
+        'boiler-middle': get_temperature(boiler_middle),
+        'boiler-bottom': get_temperature(boiler_bottom),
+        'hk-vl': get_temperature(hk_vl),
+        'boiler-vl': get_temperature(boiler_vl),
+        'ofen-vl': get_temperature(ofen_vl),
+        'ofen': get_temperature(ofen),
         }
     msg = \
         ('%(now)s\n' + \
-         'Boi:%(boiler-top).1f/%(boiler-middle).1f/%(boiler-bottom).1f\n' + \
-         'HK:%(hk-vl).1f,WW:%(boiler-vl).1f\n' + \
-         'Ofen:%(ofen).1f,VL:%(ofen-vl).1f') % temps
+         'Boi:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
+         'HK:%(hk-vl)s,WW:%(boiler-vl)s\n' + \
+         'Ofen:%(ofen)s,VL:%(ofen-vl)s') % temps
 
     print(msg+'\n--')
 
