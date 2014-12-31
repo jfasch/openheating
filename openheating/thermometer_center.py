@@ -4,24 +4,24 @@ from .error import HeatingException
 from abc import ABCMeta, abstractmethod
 import time
 
-class ThermometerManagerBase(metaclass=ABCMeta):
+class ThermometerCenterBase(metaclass=ABCMeta):
 
     @abstractmethod
     def temperature(self, name):
         return 42.666
 
     def create_proxy_thermometer(self, name):
-        return self._ProxyThermometer(manager=self, name=name)
+        return self._Adapter(center=self, name=name)
 
-    class _ProxyThermometer(Thermometer):
-        def __init__(self, manager, name):
-            self.__manager = manager
+    class _Adapter(Thermometer):
+        def __init__(self, center, name):
+            self.__center = center
             self.__name = name
         def temperature(self):
-            return self.__manager.temperature(self.__name)
+            return self.__center.temperature(self.__name)
     
 
-class ThermometerManager(ThermometerManagerBase):
+class ThermometerCenter(ThermometerCenterBase):
     def __init__(self, thermometers, cache_age=None):
         self.__thermometers = {}
         for name, th in thermometers:
