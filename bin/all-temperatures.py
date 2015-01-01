@@ -1,24 +1,14 @@
 #!/usr/bin/python3
 
-from openheating.thermometer_center import ThermometerCenter
-from openheating.hd44780 import HD44780_LCD
 from openheating.dbus.thermometer_client import DBusThermometer
+from openheating.thermometer_center import ThermometerCenter
 from openheating.error import HeatingError
 
 import dbus.bus
-import time
 from datetime import datetime
+import time
 
 connection = dbus.bus.BusConnection('tcp:host=192.168.1.11,port=6666')
-display = HD44780_LCD(
-    rs=27,
-    en=22,
-    d4=25,
-    d5=24,
-    d6=23,
-    d7=18, 
-    cols=20,
-    lines=4)
 
 thermo_center = ThermometerCenter((
         ('boiler-top', DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/top')),
@@ -56,13 +46,13 @@ while True:
         'ofen': get_temperature(ofen),
         }
     msg = \
-        ('%(now)s\n' + \
-         'Boi:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
-         'HK:%(hk-vl)s,WW:%(boiler-vl)s\n' + \
-         'Ofen:%(ofen)s,VL:%(ofen-vl)s') % temps
+        ('Now: %(now)s\n' + \
+         'Boiler: %(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
+         'Heizkreis-VL: %(hk-vl)s\n' + \
+         'Warmwasser-VL: %(boiler-vl)s\n' + \
+         'Ofen: %(ofen)s\n' + \
+         'Ofen-VL:%(ofen-vl)s') % temps
 
     print(msg+'\n--')
 
-    display.clear()
-    display.message(msg)
-    time.sleep(15)
+    time.sleep(1)

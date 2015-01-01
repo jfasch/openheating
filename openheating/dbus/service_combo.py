@@ -9,8 +9,6 @@ import signal
 import os
 import time
 
-DBUS_THERMOMETER_IFACE_STRING = 'org.openheating.Thermometer'
-
 class DBusServiceCombo:
     def __init__(self, pidfile, daemon_address, busname):
         self.__pidfile = pidfile

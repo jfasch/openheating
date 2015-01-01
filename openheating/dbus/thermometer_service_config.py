@@ -1,5 +1,5 @@
-from .config import parse_config
-from .error import HeatingError
+from ..config import parse_config
+from ..error import HeatingError
 
 import os.path
 

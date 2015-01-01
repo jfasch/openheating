@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.thermometer_dbus_object import DBusThermometerObject
-from openheating.thermometer_dbus_config import ThermometerDBusServiceConfigParser
-from openheating.dbus_util import DBusServiceCombo
+from openheating.dbus.thermometer_object import DBusThermometerObject
+from openheating.dbus.thermometer_service_config import ThermometerDBusServiceConfigParser
+from openheating.dbus.service_combo import DBusServiceCombo
 
 from argparse import ArgumentParser
 import logging

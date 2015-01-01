@@ -1,3 +1,5 @@
+from .error import HeatingError
+
 from abc import ABCMeta, abstractmethod
 
 class Thermometer(metaclass=ABCMeta):
@@ -5,3 +7,9 @@ class Thermometer(metaclass=ABCMeta):
     def temperature(self):
         assert False, 'abstract'
         return 25.4
+
+    class PermanentError(HeatingError):
+        pass
+
+    class TransientError(HeatingError):
+        pass    

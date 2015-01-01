@@ -14,7 +14,17 @@ class HWMON_Thermometer(Thermometer):
             raise HeatingError('HWMON thermometer: missing '+self.__temp_input)
 
     def temperature(self):
-        temp = open(self.__temp_input, 'r').read()
+        try:
+            tempfile = open(self.__temp_input, 'r')
+        except FileNotFoundError as e:
+            raise Thermometer.PermanentError(msg=self.__temp_input+' not there', nested_errors=e)
+
+        try:
+            temp = tempfile.read()
+        except IOError as e:
+            # raise Thermometer.TransientError(msg='error reading '+self.__temp_input, nested_errors=e)
+            raise Thermometer.TransientError(msg='error reading '+self.__temp_input)
+
         return int(temp)/1000
 
 class HWMON_I2C_Thermometer(HWMON_Thermometer):
