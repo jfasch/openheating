@@ -31,8 +31,8 @@ ofen = thermo_center.get_thermometer('ofen')
 def get_temperature(thermometer):
     try:
         return '%.1f' % thermometer.temperature()
-    except HeatingError:
-        return 'ERR!'
+    except HeatingError as e:
+        return 'Error: '+str(e)
 
 while True:
     temps = {
