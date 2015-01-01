@@ -1,5 +1,5 @@
 from ..thermometer import Thermometer
-from ..error import HeatingException
+from ..error import HeatingError
 
 from dbus.exceptions import DBusException
 
@@ -10,5 +10,5 @@ class DBusThermometer(Thermometer):
         try:
             return float(self.__object.temperature())
         except DBusException as e:
-            raise HeatingException(msg='remote error', nested_errors=[e])
+            raise HeatingError(msg='remote error', nested_errors=[e])
                       

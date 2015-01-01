@@ -1,4 +1,4 @@
-class HeatingException(Exception):
+class HeatingError(Exception):
     '''
     Base class for all exceptions thrown here.
 

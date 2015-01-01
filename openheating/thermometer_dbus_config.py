@@ -1,5 +1,5 @@
 from .config import parse_config
-from .error import HeatingException
+from .error import HeatingError
 
 import os.path
 
@@ -13,13 +13,13 @@ class ThermometerDBusServiceConfigParser:
         thermometers = context.get('THERMOMETERS')
 
         if daemon_address is None:
-            raise HeatingException('"DAEMON_ADDRESS" not specified')
+            raise HeatingError('"DAEMON_ADDRESS" not specified')
         if bus_name is None:
-            raise HeatingException('"BUS_NAME" not specified')
+            raise HeatingError('"BUS_NAME" not specified')
         if parent_path is None:
-            raise HeatingException('"PARENT_PATH" not specified')
+            raise HeatingError('"PARENT_PATH" not specified')
         if thermometers is None:
-            raise HeatingException('"THERMOMETERS" not specified')
+            raise HeatingError('"THERMOMETERS" not specified')
 
         my_thermometers = []
         for t in thermometers:

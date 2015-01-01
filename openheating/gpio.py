@@ -1,4 +1,4 @@
-from .error import HeatingException
+from .error import HeatingError
 
 import os.path
 import os
@@ -23,7 +23,7 @@ def create(number):
         time.sleep(0.05)
         num_tries -= 1
         if num_tries == 0:
-            raise HeatingException(direction + " didn't become rw-able after 100 tries")
+            raise HeatingError(direction + " didn't become rw-able after 100 tries")
 
     return _SysFS_GPIO(number)
 

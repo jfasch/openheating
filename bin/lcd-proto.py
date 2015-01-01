@@ -3,7 +3,7 @@
 from openheating.thermometer_center import ThermometerCenter
 from openheating.hd44780 import HD44780_LCD
 from openheating.dbus.thermometer import DBusThermometer
-from openheating.error import HeatingException
+from openheating.error import HeatingError
 
 import dbus.bus
 import time
@@ -41,7 +41,7 @@ ofen = thermo_center.get_thermometer('ofen')
 def get_temperature(thermometer):
     try:
         return '%.1f' % thermometer.temperature()
-    except HeatingException:
+    except HeatingError:
         return 'ERR!'
 
 while True:
