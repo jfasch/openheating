@@ -30,7 +30,7 @@ thermo_center = ThermometerCenter((
         ('ofen', DBusThermometer(connection=connection, name='org.openheating.ofen', path='/thermometers/ofen')),
         ))
 
-boiler_top = thermo_center.create_proxy_thermometer('boiler-top')
+boiler_top = thermo_center.get_thermometer('boiler-top')
 boiler_middle = thermo_center.create_proxy_thermometer('boiler-middle')
 boiler_bottom = thermo_center.create_proxy_thermometer('boiler-bottom')
 hk_vl = thermo_center.create_proxy_thermometer('hk-vl')

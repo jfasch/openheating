@@ -10,7 +10,10 @@ class ThermometerCenterBase(metaclass=ABCMeta):
     def temperature(self, name):
         return 42.666
 
-    def create_proxy_thermometer(self, name):
+    def get_thermometer(self, name):
+        '''Returns an adapter onto self. The return Thermometer, asked for its
+        temperature, asks self by name
+        '''
         return self._Adapter(center=self, name=name)
 
     class _Adapter(Thermometer):
