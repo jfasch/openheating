@@ -31,12 +31,12 @@ thermo_center = ThermometerCenter((
         ))
 
 boiler_top = thermo_center.get_thermometer('boiler-top')
-boiler_middle = thermo_center.create_proxy_thermometer('boiler-middle')
-boiler_bottom = thermo_center.create_proxy_thermometer('boiler-bottom')
-hk_vl = thermo_center.create_proxy_thermometer('hk-vl')
-boiler_vl = thermo_center.create_proxy_thermometer('boiler-vl')
-ofen_vl = thermo_center.create_proxy_thermometer('ofen-vl')
-ofen = thermo_center.create_proxy_thermometer('ofen')
+boiler_middle = thermo_center.get_thermometer('boiler-middle')
+boiler_bottom = thermo_center.get_thermometer('boiler-bottom')
+hk_vl = thermo_center.get_thermometer('hk-vl')
+boiler_vl = thermo_center.get_thermometer('boiler-vl')
+ofen_vl = thermo_center.get_thermometer('ofen-vl')
+ofen = thermo_center.get_thermometer('ofen')
 
 def get_temperature(thermometer):
     try:
