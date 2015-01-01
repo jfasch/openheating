@@ -34,7 +34,8 @@ case "$1" in
     stop)
 	log_daemon_msg "Stopping $oh_desc" $oh_name
 	start-stop-daemon --stop \
-	    --pidfile $oh_pidfile
+	    --pidfile $oh_pidfile \
+	    --oknodo
 	;;
     restart|force-reload)
 	$0 stop
