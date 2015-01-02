@@ -18,3 +18,8 @@ class PermanentThermometerError(HeatingError):
 class TransientThermometerError(HeatingError):
     pass    
 
+class DBusNoConnectionError(HeatingError):
+    pass
+
+class DBusNoServiceError(HeatingError):
+    pass

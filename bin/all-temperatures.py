@@ -1,23 +1,23 @@
 #!/usr/bin/python3
 
 from openheating.dbus.thermometer_client import DBusThermometer
+from openheating.dbus.connection_proxy import DBusConnectionProxy
 from openheating.thermometer_center import ThermometerCenter
 from openheating.error import HeatingError
 
-import dbus.bus
 from datetime import datetime
 import time
 
-connection = dbus.bus.BusConnection('tcp:host=192.168.1.11,port=6666')
+connection_proxy = DBusConnectionProxy('tcp:host=192.168.1.11,port=6666')
 
 thermo_center = ThermometerCenter((
-        ('boiler-top', DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/top')),
-        ('boiler-middle', DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/middle')),
-        ('boiler-bottom', DBusThermometer(connection=connection, name='org.openheating.boiler', path='/thermometers/bottom')),
-        ('hk-vl', DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')),
-        ('boiler-vl', DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/boiler_vl')),
-        ('ofen-vl', DBusThermometer(connection=connection, name='org.openheating.heizraum', path='/thermometers/ofen_vl')),
-        ('ofen', DBusThermometer(connection=connection, name='org.openheating.ofen', path='/thermometers/ofen')),
+        ('boiler-top', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/top')),
+        ('boiler-middle', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/middle')),
+        ('boiler-bottom', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/bottom')),
+        ('hk-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')),
+        ('boiler-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/boiler_vl')),
+        ('ofen-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/ofen_vl')),
+        ('ofen', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.ofen', path='/thermometers/ofen')),
         ))
 
 boiler_top = thermo_center.get_thermometer('boiler-top')
@@ -55,4 +55,4 @@ while True:
 
     print(msg+'\n--')
 
-    time.sleep(1)
+    time.sleep(10)
