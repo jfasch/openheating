@@ -7,6 +7,10 @@ import time
 class ThermometerCenterBase(metaclass=ABCMeta):
 
     @abstractmethod
+    def all_names(self):
+        return ['blah']
+
+    @abstractmethod
     def temperature(self, name):
         return 42.666
 
@@ -35,6 +39,9 @@ class ThermometerCenter(ThermometerCenterBase):
         self.__cache_age = cache_age
         if self.__cache_age is not None:
             self.__cache = {}
+
+    def all_names(self):
+        return self.__thermometers.keys()
 
     def temperature(self, name):
         if self.__cache_age is not None:

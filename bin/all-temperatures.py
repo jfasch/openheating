@@ -1,58 +1,26 @@
 #!/usr/bin/python3
 
-from openheating.dbus.thermometer_client import DBusThermometer
-from openheating.dbus.connection_proxy import DBusConnectionProxy
-from openheating.thermometer_center import ThermometerCenter
+from openheating.dbus.thermometer_center_client import DBusThermometerCenter
+from openheating.dbus.rebind import DBusConnectionProxy
 from openheating.error import HeatingError
 
 from datetime import datetime
 import time
 
-connection_proxy = DBusConnectionProxy('tcp:host=192.168.1.11,port=6666')
-
-thermo_center = ThermometerCenter((
-        ('boiler-top', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/top')),
-        ('boiler-middle', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/middle')),
-        ('boiler-bottom', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/bottom')),
-        ('hk-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')),
-        ('boiler-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/boiler_vl')),
-        ('ofen-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/ofen_vl')),
-        ('ofen', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.ofen', path='/thermometers/ofen')),
-        ))
-
-boiler_top = thermo_center.get_thermometer('boiler-top')
-boiler_middle = thermo_center.get_thermometer('boiler-middle')
-boiler_bottom = thermo_center.get_thermometer('boiler-bottom')
-hk_vl = thermo_center.get_thermometer('hk-vl')
-boiler_vl = thermo_center.get_thermometer('boiler-vl')
-ofen_vl = thermo_center.get_thermometer('ofen-vl')
-ofen = thermo_center.get_thermometer('ofen')
-
-def get_temperature(thermometer):
+def make_temperature(center, name):
     try:
-        return '%.1f' % thermometer.temperature()
+        return '%.1f' % center.temperature(name)
     except HeatingError as e:
         return 'Error: '+str(e)
 
+connection_proxy = DBusConnectionProxy('tcp:host=192.168.1.11,port=6666')
+thermo_center = DBusThermometerCenter(connection_proxy=connection_proxy, name='org.openheating.thermometer_center', path='/thermometer_center')
+
+all_names = sorted(thermo_center.all_names())
+
 while True:
-    temps = {
-        'now': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-        'boiler-top': get_temperature(boiler_top),
-        'boiler-middle': get_temperature(boiler_middle),
-        'boiler-bottom': get_temperature(boiler_bottom),
-        'hk-vl': get_temperature(hk_vl),
-        'boiler-vl': get_temperature(boiler_vl),
-        'ofen-vl': get_temperature(ofen_vl),
-        'ofen': get_temperature(ofen),
-        }
-    msg = \
-        ('Now: %(now)s\n' + \
-         'Boiler: %(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
-         'Heizkreis-VL: %(hk-vl)s\n' + \
-         'Warmwasser-VL: %(boiler-vl)s\n' + \
-         'Ofen: %(ofen)s\n' + \
-         'Ofen-VL:%(ofen-vl)s') % temps
+    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    for name in all_names:
+        print('    %s: %s' % (name, make_temperature(thermo_center, name)))
+    time.sleep(5)
 
-    print(msg+'\n--')
-
-    time.sleep(10)

@@ -3,9 +3,9 @@ from .types import exception_local_to_dbus, DBUS_THERMOMETER_IFACE_STRING
 from ..thermometer import Thermometer
 from ..error import HeatingError
 
-
 import dbus
 import dbus.service
+
 
 class DBusThermometerObject(dbus.service.Object):
     def __init__(self, connection, object_path, thermometer):

@@ -6,6 +6,7 @@ from dbus.exceptions import DBusException
 #DBusException.include_traceback = True
 
 DBUS_THERMOMETER_IFACE_STRING = 'org.openheating.Thermometer'
+DBUS_THERMOMETER_CENTER_IFACE_STRING = 'org.openheating.ThermometerCenter'
 
 
 class _DBus_PermanentThermometerError(DBusException):
