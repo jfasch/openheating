@@ -9,9 +9,6 @@
 # Description:       blah
 ### END INIT INFO
 
-set -e
-
-. /lib/lsb/init-functions
 . /etc/init.d/openheating-lib.sh
 
 oh_desc="Openheating DBus Thermometer Service"
