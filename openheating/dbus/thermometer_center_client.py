@@ -1,10 +1,6 @@
-from .types import exception_dbus_to_local
+from .rebind import DBusObjectClient
 
 from ..thermometer_center import ThermometerCenterBase
-from .rebind import DBusObjectClient
-from ..error import HeatingError, DBusNoConnectionError, DBusNoServiceError
-
-from dbus.exceptions import DBusException
 
 
 class DBusThermometerCenter(ThermometerCenterBase, DBusObjectClient):
