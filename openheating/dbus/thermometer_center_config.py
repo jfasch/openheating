@@ -1,49 +1,37 @@
+from .service_config import DBusServiceConfig
 from .thermometer_client import DBusThermometer
 
-from ..config_parser import ConfigParser
 from ..thermometer_hwmon import HWMON_I2C_Thermometer
 from ..testutils.thermometer import TestThermometer
 
 from abc import ABCMeta, abstractmethod
 
 
-class ThermometerCenterConfig:
-    DAEMON_ADDRESS = 'DAEMON_ADDRESS'
-    BUS_NAME = 'BUS_NAME'
-
+class ThermometerCenterConfig(DBusServiceConfig):
     PATH = 'PATH'
     CACHE_AGE = 'CACHE_AGE'
     THERMOMETERS = 'THERMOMETERS'
     
     def __init__(self, content):
-        parser = ConfigParser(symbols={
+        DBusServiceConfig.__init__(
+            self,
+            symbols={
                 'HWMON_I2C_Thermometer': _HWMON_I2C_ThermometerCreator,
                 'TestThermometer': _TestThermometerCreator,
                 'DBusThermometer': _DBusThermometerCreator,
-                })
-        config = parser.parse(content)
+                },
+            content=content)
 
-        self.__daemon_address = config[self.DAEMON_ADDRESS]
-        self.__bus_name = config[self.BUS_NAME]
+        self.__path = self.config()[self.PATH]
+        self.__cache_age = self.config().get(self.CACHE_AGE)
+        self.__thermometers = self.config()[self.THERMOMETERS]
 
-        self.__path = config[self.PATH]
-        self.__cache_age = config.get(self.CACHE_AGE)
-        self.__thermometers = config[self.THERMOMETERS]
-
-        # early sanity
-        assert type(self.__daemon_address) is str
-        assert type(self.__bus_name) is str
         assert self.__cache_age is None or type(self.__cache_age) is int
 
         assert type(self.__path) is str
         for name, creator in self.__thermometers:
             assert type(name) is str
             assert isinstance(creator, _Creator)
-
-    def daemon_address(self):
-        return self.__daemon_address
-    def bus_name(self):
-        return self.__bus_name
 
     def path(self):
         return self.__path

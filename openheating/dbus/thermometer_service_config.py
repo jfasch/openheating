@@ -1,45 +1,35 @@
-from ..config import parse_config
-from ..error import HeatingError
+from .service_config import DBusServiceConfig
+
+from ..thermometer_hwmon import HWMON_I2C_Thermometer
+from ..testutils.thermometer import TestThermometer
 
 import os.path
 
-class ThermometerDBusServiceConfigParser:
-    def parse(self, content):
-        context = parse_config(content)
+class ThermometerServiceConfig(DBusServiceConfig):
+    PARENT_PATH = 'PARENT_PATH'
+    THERMOMETERS = 'THERMOMETERS'
+    
+    def __init__(self, content):
+        DBusServiceConfig.__init__(
+            self,
+            symbols={
+                'HWMON_I2C_Thermometer': HWMON_I2C_Thermometer,
+                'TestThermometer': TestThermometer,
+                },
+            content=content)
 
-        daemon_address = context.get('DAEMON_ADDRESS')
-        bus_name = context.get('BUS_NAME')
-        parent_path = context.get('PARENT_PATH')
-        thermometers = context.get('THERMOMETERS')
+        self.__parent_path = self.config().get('PARENT_PATH')
+        thermometers = self.config().get('THERMOMETERS')
 
-        if daemon_address is None:
-            raise HeatingError('"DAEMON_ADDRESS" not specified')
-        if bus_name is None:
-            raise HeatingError('"BUS_NAME" not specified')
-        if parent_path is None:
+        if self.__parent_path is None:
             raise HeatingError('"PARENT_PATH" not specified')
         if thermometers is None:
             raise HeatingError('"THERMOMETERS" not specified')
 
-        my_thermometers = []
+        self.__thermometers = []
         for t in thermometers:
-            my_thermometers.append({'object_path': os.path.join(parent_path, t[0]),
-                                    'thermometer': t[1]})
+            self.__thermometers.append({'object_path': os.path.join(self.__parent_path, t[0]),
+                                        'thermometer': t[1]})
 
-        return ThermometerDBusServiceConfig(
-            daemon_address=daemon_address,
-            bus_name=bus_name,
-            thermometers=my_thermometers)
-        
-class ThermometerDBusServiceConfig:
-    def __init__(self, daemon_address, bus_name, thermometers):
-        self.__daemon_address = daemon_address
-        self.__bus_name = bus_name
-        self.__thermometers = thermometers
-
-    def daemon_address(self):
-        return self.__daemon_address
-    def bus_name(self):
-        return self.__bus_name
     def thermometers(self):
         return self.__thermometers

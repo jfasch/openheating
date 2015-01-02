@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.dbus.thermometer_object import DBusThermometerObject
-from openheating.dbus.thermometer_service_config import ThermometerDBusServiceConfigParser
+from openheating.dbus.thermometer_service_config import ThermometerServiceConfig
 from openheating.dbus.service_combo import DBusServiceCombo
 
 from argparse import ArgumentParser
@@ -19,7 +19,7 @@ if args.syslog:
     h = logging.handlers.SysLogHandler(address='/dev/log')
     logging.getLogger().addHandler(h)
 
-config = ThermometerDBusServiceConfigParser().parse(open(args.config_file).read())
+config = ThermometerServiceConfig(open(args.config_file).read())
 
 class MyCombo(DBusServiceCombo):
     def __init__(self, pidfile, config):
