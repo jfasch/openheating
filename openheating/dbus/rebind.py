@@ -44,7 +44,7 @@ class DBusObjectClient:
     User code is supposed to derive and implement its methods using
     base's dbus_call(), with the name of the method and positional
     parameters. (Keyword parameters are not supported, as this is not
-    the nature of the DBus protocol.
+    the nature of the DBus protocol).
 
     '''
     
