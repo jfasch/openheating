@@ -11,7 +11,7 @@ class ThermometerCenterBase(metaclass=ABCMeta):
         return 42.666
 
     def get_thermometer(self, name):
-        '''Returns an adapter onto self. The return Thermometer, asked for its
+        '''Returns an adapter onto self. The returned Thermometer, asked for its
         temperature, asks self by name
         '''
         return self._Adapter(center=self, name=name)
