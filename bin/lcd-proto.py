@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.thermometer_center import ThermometerCenter
-from openheating.dbus.connection_proxy import DBusConnectionProxy
+from openheating.dbus.thermometer_center_client import DBusThermometerCenter
+from openheating.dbus.rebind import DBusConnectionProxy
 from openheating.hd44780 import HD44780_LCD
-from openheating.dbus.thermometer_client import DBusThermometer
 from openheating.error import HeatingError
 
 import time
@@ -20,15 +19,7 @@ display = HD44780_LCD(
     cols=20,
     lines=4)
 
-thermo_center = ThermometerCenter((
-        ('boiler-top', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/top')),
-        ('boiler-middle', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/middle')),
-        ('boiler-bottom', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.boiler', path='/thermometers/bottom')),
-        ('hk-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/heizkreis_vl')),
-        ('boiler-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/boiler_vl')),
-        ('ofen-vl', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.heizraum', path='/thermometers/ofen_vl')),
-        ('ofen', DBusThermometer(connection_proxy=connection_proxy, name='org.openheating.ofen', path='/thermometers/ofen')),
-        ))
+thermo_center = DBusThermometerCenter(connection_proxy=connection_proxy, name='org.openheating.thermometer_center', path='/thermometer_center')
 
 boiler_top = thermo_center.get_thermometer('boiler-top')
 boiler_middle = thermo_center.get_thermometer('boiler-middle')
