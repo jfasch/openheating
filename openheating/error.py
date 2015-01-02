@@ -11,3 +11,10 @@ class HeatingError(Exception):
         self.__nested_errors = nested_errors
         pass
     pass
+
+class PermanentThermometerError(HeatingError):
+    pass
+
+class TransientThermometerError(HeatingError):
+    pass    
+

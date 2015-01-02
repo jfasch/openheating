@@ -1,5 +1,5 @@
 from .thermometer import Thermometer
-from .error import HeatingError
+from .error import HeatingError, TransientThermometerError, PermanentThermometerError
 
 import os
 
@@ -17,13 +17,12 @@ class HWMON_Thermometer(Thermometer):
         try:
             tempfile = open(self.__temp_input, 'r')
         except FileNotFoundError as e:
-            raise Thermometer.PermanentError(msg=self.__temp_input+' not there', nested_errors=e)
+            raise PermanentThermometerError(msg=self.__temp_input+' not there', nested_errors=e)
 
         try:
             temp = tempfile.read()
         except IOError as e:
-            # raise Thermometer.TransientError(msg='error reading '+self.__temp_input, nested_errors=e)
-            raise Thermometer.TransientError(msg='error reading '+self.__temp_input)
+            raise TransientThermometerError(msg='error reading '+self.__temp_input)
 
         return int(temp)/1000
 

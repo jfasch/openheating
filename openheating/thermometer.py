@@ -8,8 +8,3 @@ class Thermometer(metaclass=ABCMeta):
         assert False, 'abstract'
         return 25.4
 
-    class PermanentError(HeatingError):
-        pass
-
-    class TransientError(HeatingError):
-        pass    
