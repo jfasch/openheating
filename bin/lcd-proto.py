@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
 from openheating.thermometer_center import ThermometerCenter
+from openheating.dbus.connection_proxy import DBusConnectionProxy
 from openheating.hd44780 import HD44780_LCD
 from openheating.dbus.thermometer_client import DBusThermometer
 from openheating.error import HeatingError
 
-import dbus.bus
 import time
 from datetime import datetime
 
