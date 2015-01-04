@@ -10,6 +10,7 @@ Dependencies
   * apt-get install emacs
   * apt-get install git-el
   * apt-get install i2c-tools
+  * apt-get install libncurses5-dev
 
 * timezone
 
