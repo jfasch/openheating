@@ -1,10 +1,10 @@
 from openheating.testutils.thermometer import TestThermometer
 from openheating.thermometer_hwmon import HWMON_I2C_Thermometer
-from openheating.dbus.thermometer_service_config import ThermometerDBusServiceConfigParser
+from openheating.dbus.thermometer_service_config import ThermometerServiceConfig
 
 import unittest
 
-class ThermometerDBusServiceTest(unittest.TestCase):
+class ThermometerServiceTest(unittest.TestCase):
     def test__configfile(self):
         content = '\n'.join(
             ['DAEMON_ADDRESS = "tcp:host=1.2.3.4,port=6666"',
@@ -18,7 +18,7 @@ class ThermometerDBusServiceTest(unittest.TestCase):
              ')',
              ])
         
-        config = ThermometerDBusServiceConfigParser().parse(content)
+        config = ThermometerServiceConfig(content)
 
         self.failUnlessEqual(config.daemon_address(), "tcp:host=1.2.3.4,port=6666")
         self.failUnlessEqual(config.bus_name(), "some.arbitrary.name")
@@ -38,7 +38,7 @@ class ThermometerDBusServiceTest(unittest.TestCase):
         self.failUnlessAlmostEqual(config.thermometers()[2]['thermometer'].temperature(), 4.5)
 
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerDBusServiceTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerServiceTest))
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

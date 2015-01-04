@@ -1,5 +1,5 @@
 from openheating.dbus.thermometer_center_config import ThermometerCenterConfig
-from openheating.dbus.connection_proxy import DBusConnectionProxy
+from openheating.dbus.rebind import DBusConnectionProxy
 from openheating.thermometer import Thermometer
 from openheating.thermometer_center import ThermometerCenter
 
