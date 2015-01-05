@@ -15,11 +15,14 @@ if not args.action in ('add', 'remove'):
     print("Action must be 'add' or 'remove'", file=sys.stderr)
     sys.exit(1)
 
-rex = re.compile(r'^\s*I2C\s+(\S+)\s+(\S+)\s+(\S+)\s*$')
-    
+rex_sensor = re.compile(r'^\s*I2C\s+(\S+)\s+(\S+)\s+(\S+)\s*$')
+rex_emptyline = re.compile(r'^\s*$')
+
 sensorsfile = open(args.config_file)
 for s in sensorsfile:
-    match = rex.search(s)
+    if rex_emptyline.search(s):
+        continue
+    match = rex_sensor.search(s)
     if match is None:
         print("Nix match", file=sys.stderr)
         sys.exit(1)
