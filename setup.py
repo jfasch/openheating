@@ -29,20 +29,25 @@ distutils.core.setup(
         ],
 
     data_files=[(os.path.join('share', name, 'debian'),
-                 (
-                     'debian/openheating-lib.sh',
-                     'debian/openheating-dbus-daemon',
-                     'debian/openheating-dbus-thermometer-service',
-                     'debian/openheating-dbus-thermometer-center',
-                     'debian/openheating-sensors',
-                     )),
-                (os.path.join('share', name, 'config'),
-                 (
-                     'config/faschingbauer/heizraum/etc/openheating/openheating-dbus-daemon.conf',
-                     'config/faschingbauer/heizraum/etc/openheating/openheating-dbus-thermometer-service.conf',
-                     'config/faschingbauer/heizraum/etc/openheating/openheating-dbus-thermometer-center.conf',
-                     'config/faschingbauer/heizraum/etc/openheating/openheating-sensors.conf',
-                     )),
-    ]
-
+                 ('debian/openheating-lib.sh',
+                  'debian/openheating-dbus-daemon',
+                  'debian/openheating-dbus-thermometer-service',
+                  'debian/openheating-dbus-thermometer-center',
+                  'debian/openheating-sensors',
+                  )),
+                (os.path.join('share', name, 'config/faschingbauer/heizraum/etc/openheating'),
+                 ('config/faschingbauer/heizraum/etc/openheating/openheating-dbus-daemon.conf',
+                  'config/faschingbauer/heizraum/etc/openheating/openheating-dbus-thermometer-service.conf',
+                  'config/faschingbauer/heizraum/etc/openheating/openheating-dbus-thermometer-center.conf',
+                  'config/faschingbauer/heizraum/etc/openheating/openheating-sensors.conf',
+                  )),
+                (os.path.join('share', name, 'config/faschingbauer/boiler/etc/openheating'),
+                 ('config/faschingbauer/boiler/etc/openheating/openheating-dbus-thermometer-service.conf',
+                  'config/faschingbauer/boiler/etc/openheating/openheating-sensors.conf',
+                  )),
+                (os.path.join('share', name, 'config/faschingbauer/ofen/etc/openheating'),
+                 ('config/faschingbauer/ofen/etc/openheating/openheating-dbus-thermometer-service.conf',
+                  'config/faschingbauer/ofen/etc/openheating/openheating-sensors.conf',
+                  )),
+                ]
     )
