@@ -28,6 +28,7 @@ hk_vl = thermo_center.get_thermometer('hk-vl')
 boiler_vl = thermo_center.get_thermometer('boiler-vl')
 ofen_vl = thermo_center.get_thermometer('ofen-vl')
 ofen = thermo_center.get_thermometer('ofen')
+oel_puffer = thermo_center.get_thermometer('oel-puffer')
 
 def get_temperature(thermometer):
     try:
@@ -45,12 +46,13 @@ while True:
         'boiler-vl': get_temperature(boiler_vl),
         'ofen-vl': get_temperature(ofen_vl),
         'ofen': get_temperature(ofen),
+        'oel-puffer': get_temperature(oel_puffer),
         }
     msg = \
         ('%(now)s\n' + \
-         'Boi:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
-         'HK:%(hk-vl)s,WW:%(boiler-vl)s\n' + \
-         'Ofen:%(ofen)s,VL:%(ofen-vl)s') % temps
+         'B:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
+         'HK:%(hk-vl)s;WW:%(boiler-vl)s\n' + \
+         'O:%(oel-puffer)s;H:%(ofen)s/%(ofen-vl)s') % temps
 
     print(msg+'\n--')
 
