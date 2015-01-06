@@ -8,6 +8,8 @@ import dbus.service
 
 
 class DBusThermometerObject(dbus.service.Object):
+    '''Adapt a Thermometer into a DBus object at object_path'''
+
     def __init__(self, connection, object_path, thermometer):
         self.__thermometer = thermometer
         dbus.service.Object.__init__(self, conn=connection, object_path=object_path)
