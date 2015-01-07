@@ -19,6 +19,7 @@ distutils.core.setup(
     packages=[
         'openheating',
         'openheating.dbus',
+        'openheating.hardware',
         'openheating.testutils',
         ],
 

@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 class Switch(metaclass=ABCMeta):
-    OPEN, CLOSED = 42, 666
+    states = OPEN, CLOSED = 42, 666
     
     @abstractmethod
     def set_state(self, value):
