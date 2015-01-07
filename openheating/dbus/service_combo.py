@@ -28,7 +28,9 @@ class DBusServiceCombo:
         signal.signal(signal.SIGINT, _terminate_handler)
 
         if self.__pidfile is not None:
-            open(self.__pidfile, 'w').write(str(os.getpid())+'\n')
+            pf = open(self.__pidfile, 'w')
+            pf.write(str(os.getpid())+'\n')
+            pf.close()
 
         while True:
             self.__child = os.fork()
