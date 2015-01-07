@@ -46,7 +46,7 @@ openheating
 * Add user and group
 
   groupadd openheating
-  useradd --home-dir /var/run/openheating --gid openheating --no-create-home --shell /bin/false openheating
+  useradd --home-dir /var/run/openheating --gid openheating --groups i2c,gpio --no-create-home --shell /bin/false openheating
 
 * Enable and start services
 
