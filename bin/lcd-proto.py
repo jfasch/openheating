@@ -19,7 +19,10 @@ display = HD44780_LCD(
     cols=20,
     lines=4)
 
-thermo_center = DBusThermometerCenter(connection_proxy=connection_proxy, name='org.openheating.thermometer_center', path='/thermometer_center')
+thermo_center = DBusThermometerCenter(
+    connection_proxy=connection_proxy,
+    name='org.openheating.thermometer_center',
+    path='/thermometer_center')
 
 boiler_top = thermo_center.get_thermometer('boiler-top')
 boiler_middle = thermo_center.get_thermometer('boiler-middle')
