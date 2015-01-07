@@ -1,4 +1,4 @@
-from .error import HeatingError
+from ..error import HeatingError
 
 import os.path
 import os
@@ -28,8 +28,9 @@ def create(number):
     return _SysFS_GPIO(number)
 
 class _SysFS_GPIO:
-    HI = '1\n'
-    LO = '0\n'
+
+    __HI = '1\n'
+    __LO = '0\n'
     
     def __init__(self, number):
         self.__number = number
@@ -45,8 +46,16 @@ class _SysFS_GPIO:
     def set_value(self, value):
         f = open(self.__value, 'w')
         if value:
-            f.write(self.HI)
+            f.write(self.__HI)
         else:
-            f.write(self.LO)
+            f.write(self.__LO)
     def get_value(self):
-        return open(self.__value, 'r').read() == '0\n' and 0 or 1
+        f = open(self.__value, 'r')
+        content = f.read()
+        f.close()
+
+        if content == self.__LO:
+            return 0
+        elif content == self.__HI:
+            return 1
+        assert False, content

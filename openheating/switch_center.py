@@ -12,7 +12,7 @@ class SwitchCenterBase(metaclass=ABCMeta):
         return ['blah']
 
     @abstractmethod
-    def set_state(self, name, state):
+    def set_state(self, name, value):
         pass
 
     @abstractmethod
@@ -38,10 +38,10 @@ class SwitchCenterBase(metaclass=ABCMeta):
         def __init__(self, center, name):
             self.__center = center
             self.__name = name
-        def set_state(self, state):
-            self.__center.set_state(self.__name, state)
+        def set_state(self, value):
+            self.__center.set_state(self.__name, value)
         def get_state(self):
-            self.__center.get_state(self.__name)
+            return self.__center.get_state(self.__name)
 
 
 class SwitchCenter(SwitchCenterBase):
@@ -55,11 +55,11 @@ class SwitchCenter(SwitchCenterBase):
     def all_names(self):
         return self.__switches.keys()
 
-    def set_state(self, name, state):
+    def set_state(self, name, value):
         sw = self.__switches.get(name)
         if sw is None:
             raise HeatingError('no switch "%s"' % name)
-        sw.set_state(state)
+        sw.set_state(value)
 
     def get_state(self, name):
         sw = self.__switches.get(name)

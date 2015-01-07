@@ -8,6 +8,8 @@ from dbus.exceptions import DBusException
 DBUS_THERMOMETER_IFACE_STRING = 'org.openheating.Thermometer'
 DBUS_THERMOMETER_CENTER_IFACE_STRING = 'org.openheating.ThermometerCenter'
 
+DBUS_SWITCH_IFACE_STRING = 'org.openheating.Switch'
+
 
 class _DBus_PermanentThermometerError(DBusException):
     NAME = 'org.openheating.PermanentThermometerError'
