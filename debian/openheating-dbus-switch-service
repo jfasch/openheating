@@ -1,0 +1,48 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          openheating-dbus-switch-service
+# Required-Start:    
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Openheating DBus Switch Service
+# Description:       blah
+### END INIT INFO
+
+. /etc/init.d/openheating-lib.sh
+
+oh_desc="Openheating DBus Switch Service"
+oh_name=openheating-dbus-switch-service
+oh_prog=/usr/bin/openheating-dbus-switch-service.py
+oh_pidfile=$OH_WORKDIR/openheating-dbus-switch-service.pid
+
+case "$1" in
+    start)
+	log_daemon_msg "Starting $oh_desc" $oh_name
+	start-stop-daemon --start \
+	    --background \
+	    --chuid=$OH_USER:$OH_GROUP \
+	    --pidfile $oh_pidfile \
+	    --startas $oh_prog -- \
+	    --config-file=$OH_CONFDIR/openheating-dbus-switch-service.conf \
+	    --pid-file=$oh_pidfile \
+	    --syslog
+	;;
+    stop)
+	log_daemon_msg "Stopping $oh_desc" $oh_name
+	start-stop-daemon --stop \
+	    --pidfile $oh_pidfile \
+	    --oknodo
+	;;
+    restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+    status)
+	status_of_proc -p $oh_pidfile $oh_prog $oh_name && exit 0 || exit $?
+	;;
+    *)
+	echo "Usage: $scriptname {start|stop|rotate|restart|force-reload|status}" >&2
+	exit 3
+	;;
+esac
