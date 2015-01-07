@@ -1,6 +1,6 @@
 from .service_config import DBusServiceConfig
 
-from ..thermometer_hwmon import HWMON_I2C_Thermometer
+from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from ..testutils.thermometer import TestThermometer
 
 import os.path

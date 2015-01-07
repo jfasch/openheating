@@ -1,5 +1,5 @@
 from openheating.testutils.thermometer import TestThermometer
-from openheating.thermometer_hwmon import HWMON_I2C_Thermometer
+from openheating.hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from openheating.dbus.thermometer_service_config import ThermometerServiceConfig
 
 import unittest

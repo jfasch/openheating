@@ -1,5 +1,5 @@
-from .thermometer import Thermometer
-from .error import HeatingError, TransientThermometerError, PermanentThermometerError
+from ..thermometer import Thermometer
+from ..error import HeatingError, TransientThermometerError, PermanentThermometerError
 
 import os
 
