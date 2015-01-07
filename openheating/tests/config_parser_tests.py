@@ -1,6 +1,4 @@
 from openheating.config_parser import ConfigParser
-from openheating.testutils.thermometer import TestThermometer
-from openheating.thermometer_hwmon import HWMON_I2C_Thermometer
 
 import unittest
 
