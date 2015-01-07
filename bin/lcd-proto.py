@@ -2,7 +2,7 @@
 
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
 from openheating.dbus.rebind import DBusConnectionProxy
-from openheating.hd44780 import HD44780_LCD
+from openheating.hardware.hd44780 import HD44780_LCD
 from openheating.error import HeatingError
 
 import time
