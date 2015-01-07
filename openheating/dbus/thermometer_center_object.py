@@ -1,6 +1,5 @@
 from .types import exception_local_to_dbus, DBUS_THERMOMETER_CENTER_IFACE_STRING
 
-from ..thermometer_center import ThermometerCenter
 from ..error import HeatingError
 
 import dbus
