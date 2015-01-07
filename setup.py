@@ -26,6 +26,7 @@ distutils.core.setup(
     scripts=[
         'bin/openheating-dbus-thermometer-service.py',
         'bin/openheating-dbus-thermometer-center.py',
+        'bin/openheating-dbus-switch-service.py',
         'bin/openheating-sensors.py',
         ],
 
@@ -34,6 +35,7 @@ distutils.core.setup(
                   'debian/openheating-dbus-daemon',
                   'debian/openheating-dbus-thermometer-service',
                   'debian/openheating-dbus-thermometer-center',
+                  'debian/openheating-dbus-switch-service',
                   'debian/openheating-sensors',
                   )),
                 (os.path.join('share', name, 'config/faschingbauer/heizraum/etc/openheating'),
@@ -48,6 +50,7 @@ distutils.core.setup(
                   )),
                 (os.path.join('share', name, 'config/faschingbauer/ofen/etc/openheating'),
                  ('config/faschingbauer/ofen/etc/openheating/openheating-dbus-thermometer-service.conf',
+                  'config/faschingbauer/ofen/etc/openheating/openheating-dbus-switch-service.conf',
                   'config/faschingbauer/ofen/etc/openheating/openheating-sensors.conf',
                   )),
                 ]
