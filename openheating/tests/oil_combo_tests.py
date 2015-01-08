@@ -19,8 +19,8 @@ class OilComboTest(unittest.TestCase):
         self.__brain.add(self.__sink)
 
         self.__oil_thermometer = TestThermometer(initial_temperature=20)
-        self.__oil_enable_switch = TestSwitch(initial_state=TestSwitch.OPEN)
-        self.__oil_burn_switch = TestSwitch(initial_state=TestSwitch.OPEN)
+        self.__oil_enable_switch = TestSwitch(name='oil-enable', initial_state=TestSwitch.OPEN)
+        self.__oil_burn_switch = TestSwitch(name='oil-burn', initial_state=TestSwitch.OPEN)
 
         self.__oil_combo = OilCombo(name='my-oil-combo', thermometer=self.__oil_thermometer,
                                     enable_switch=self.__oil_enable_switch, burn_switch=self.__oil_burn_switch)
@@ -28,7 +28,7 @@ class OilComboTest(unittest.TestCase):
         self.__transport = Transport(name='my-transport',
                                      source=self.__oil_combo, sink=self.__sink,
                                      diff_hysteresis=Hysteresis(0, 5),
-                                     pump_switch=TestSwitch(initial_state=TestSwitch.OPEN))
+                                     pump_switch=TestSwitch(name='pump', initial_state=TestSwitch.OPEN))
         self.__brain.add(self.__transport)
 
     def test__initial_state(self):
@@ -55,11 +55,28 @@ class OilComboTest(unittest.TestCase):
         # sink is way below wanted, so after thinking oil must be
         # requested
         self.__brain.think()
-
         self.assertIn(self.__sink, self.__oil_combo.requesters())
 
         # sink requests -> burn-switch is closed
         self.assertTrue(self.__oil_burn_switch.is_closed())
+
+    def test__release_by_sink(self):
+        self.__oil_combo.enable()
+        self.assertTrue(self.__oil_burn_switch.is_open())
+        
+        # sink is way below wanted, so after thinking oil must be
+        # requested
+        self.__brain.think()
+        self.assertIn(self.__sink, self.__oil_combo.requesters())
+        self.assertTrue(self.__oil_burn_switch.is_closed())
+        self.assertTrue(self.__oil_enable_switch.is_closed())
+
+        # sink temperature rises above wanted -> release
+        self.__sink_thermometer.set_temperature(50)
+        self.__brain.think()
+        self.assertNotIn(self.__sink, self.__oil_combo.requesters())
+        self.assertTrue(self.__oil_burn_switch.is_open())
+        self.assertTrue(self.__oil_enable_switch.is_closed())
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilComboTest))
