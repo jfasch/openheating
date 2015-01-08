@@ -10,7 +10,7 @@ Dependencies
   * apt-get install emacs
   * apt-get install git-el
   * apt-get install i2c-tools
-  * apt-get install libncurses5-dev
+  * apt-get install libncurses5-dev # menuconfig
 
 * timezone
 
@@ -36,7 +36,8 @@ openheating
 
 * Setup init scripts
 
-  Symlink to /etc/init.d/ from /usr/share/openheating/debian/ as needed.
+  ln -s /usr/share/openheating/debian/openheating-lib.sh  /etc/init.d/
+  ln -s /usr/share/openheating/debian/openheating-<as-needed>  /etc/init.d/
 
 * Setup config files
 

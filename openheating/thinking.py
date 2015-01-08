@@ -4,7 +4,8 @@ import logging
 class Thinker(metaclass=ABCMeta):
     @abstractmethod
     def think(self):
-        return
+        '''Return number of thoughts'''
+        return 7
     @abstractmethod
     def sync(self):
         return
@@ -13,7 +14,9 @@ class Brain:
     def __init__(self):
         self.__thinkers = set()
         self.__round = 0
+
     def add(self, thinker):
+        assert isinstance(thinker, Thinker)
         assert thinker not in self.__thinkers
         self.__thinkers.add(thinker)
 

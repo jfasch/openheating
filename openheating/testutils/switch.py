@@ -1,7 +1,8 @@
 from ..switch import Switch
 
 class TestSwitch(Switch):
-    def __init__(self, initial_state, output=None):
+    def __init__(self, name, initial_state, output=None):
+        self.__name = name
         self.__output = output
         self.set_state(initial_state)
 
@@ -16,9 +17,9 @@ class TestSwitch(Switch):
         if self.__output is None:
             return
         if state == self.OPEN:
-            print("open", file=self.__output)
+            print(self.__name+": opening", file=self.__output)
             return
         if state == self.CLOSED:
-            print("closed", file=self.__output)
+            print(self.__name +": closing", file=self.__output)
             return
         assert False, state
