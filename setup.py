@@ -56,5 +56,8 @@ distutils.core.setup(
                   'config/faschingbauer/ofen/etc/openheating/openheating-dbus-switch-service.conf',
                   'config/faschingbauer/ofen/etc/openheating/openheating-sensors.conf',
                   )),
+                (os.path.join('share', name, 'config/faschingbauer/switch-test/etc/openheating'),
+                 ('config/faschingbauer/switch-test/etc/openheating/openheating-dbus-switch-service.conf',
+                  )),
                 ]
     )
