@@ -32,7 +32,7 @@ class DBusSwitchCenterObject(dbus.service.Object):
     @dbus.service.method(dbus_interface=DBUS_SWITCH_CENTER_IFACE_STRING, in_signature='s', out_signature = 'b')
     def get_state(self, name):
         try:
-            value = self.__switch.get_state(name)
+            value = self.__center.get_state(name)
             if value == Switch.OPEN:
                 return False
             elif value == Switch.CLOSED:
