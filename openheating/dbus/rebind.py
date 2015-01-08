@@ -61,7 +61,9 @@ class DBusObjectClient:
             func = self.__object.get_dbus_method(funcname)
             return func(*args)
         except DBusException as e:
-            if e.get_dbus_name() in ('org.freedesktop.DBus.Error.Disconnected', 'org.freedesktop.DBus.Error.NoServer'):
+            if e.get_dbus_name() in ('org.freedesktop.DBus.Error.Disconnected',
+                                     'org.freedesktop.DBus.Error.NoServer',
+                                     'org.freedesktop.DBus.Error.NoReply'):
                 self.__connection_proxy.clear_connection()
                 self.__object = None
                 raise DBusNoConnectionError(msg=str(e))
