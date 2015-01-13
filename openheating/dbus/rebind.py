@@ -38,6 +38,7 @@ class DBusClientConnection(DBusConnection):
 
     def __init__(self, address):
         self.__address = address
+        self.__connection = None
 
     def get_connection(self):
         if self.__connection is None:
