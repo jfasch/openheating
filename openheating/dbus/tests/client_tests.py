@@ -7,7 +7,7 @@ import dbus.bus
 import unittest
 
 
-class RebindTest(DBusTestCase):
+class ClientTest(DBusTestCase):
     def test__establish_connection(self):
         connection = DBusClientConnection(address=self.daemon_address())
         bus_object = connection.get_connection().get_object('org.freedesktop.DBus', '/')
@@ -43,7 +43,7 @@ class RebindTest(DBusTestCase):
 
 
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(RebindTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ClientTest))
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

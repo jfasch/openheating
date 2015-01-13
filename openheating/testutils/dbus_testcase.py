@@ -1,5 +1,8 @@
 from openheating.testutils.persistent_test import PersistentTestCase
 
+import dbus.bus
+from dbus.exceptions import DBusException
+
 import subprocess
 import os.path
 import time
@@ -58,6 +61,20 @@ class DBusTestCase(PersistentTestCase):
     def restart_daemon(self):
         self.stop_daemon()
         self.start_daemon()
+
+    def wait_for_object(self, name, path):
+        timeout = 5
+        while True:
+            connection = dbus.bus.BusConnection(self.daemon_address())
+            try:
+                the_object = connection.get_object(name, path)
+                break
+            except DBusException:
+                timeout -= 0.1
+                if timeout <= 0:
+                    self.fail()
+                time.sleep(0.1)
+            
 
 
 _dbus_daemon_config = '''
