@@ -6,24 +6,15 @@ class PersistentTestCase(unittest.TestCase):
     
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
-        pass
 
     def rootpath(self):
-        return self.__my_rootpath
+        return self.__rootpath
 
     def setUp(self):
-        self.__my_rootpath = '/tmp/openheating.'+str(os.getpid())+'.'+ str(PersistentTestCase.sequential_number)+'.'+ self.__class__.__name__
-        os.mkdir(self.__my_rootpath)
-        PersistentTestCase.sequential_number += 1
-        pass
+        self.__rootpath = '/tmp/openheating.'+str(os.getpid())+'.'+ str(PersistentTestCase.sequential_number)+'.'+ self.__class__.__name__
+        os.mkdir(self.__rootpath)
+        self.sequential_number += 1
     
     def tearDown(self):
-        dir = os.sep.join(self.__my_rootpath)
-        if os.path.isdir(dir):
-            if os.environ.get('KEEP_PERSISTENT_TEST') is None:
-                shutil.rmtree(dir)
-                pass
-            pass
-        pass
-
-    pass
+        if os.environ.get('KEEP_PERSISTENT_TEST') is None:
+            shutil.rmtree(self.__rootpath)

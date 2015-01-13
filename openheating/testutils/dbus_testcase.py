@@ -32,11 +32,12 @@ class DBusTestCase(PersistentTestCase):
                     s.connect(daemon_socket)
                     break
                 except ConnectionRefusedError:
-                    print('nix connect')
                     continue
 
     def tearDown(self):
         self.__popen.terminate()
+        self.__popen.wait()
+
         super().tearDown()
 
     def daemon_address(self):
