@@ -10,38 +10,54 @@ class DBusTestCase(PersistentTestCase):
     def setUp(self):
         super().setUp()
 
-        daemon_socket = self.rootpath() + '/my-dbus.socket'
-        self.__daemon_address = 'unix:path=' + daemon_socket
+        self.__popen = None
+        self.__daemon_socket = self.rootpath() + '/my-dbus.socket'
+        self.__daemon_address = 'unix:path=' + self.__daemon_socket
+        self.__config_file = self.rootpath() + '/my-dbus.conf'
 
         config_content = _dbus_daemon_config % self.__daemon_address
-        config_file = self.rootpath() + '/my-dbus.conf'
-        with open(config_file, 'w') as f:
+        with open(self.__config_file, 'w') as f:
             f.write(config_content)
 
-        self.__popen = subprocess.Popen(['dbus-daemon', '--config-file='+config_file])
+        self.start_daemon()
+
+    def tearDown(self):
+        self.stop_daemon()
+        super().tearDown()
+
+    def daemon_address(self):
+        return self.__daemon_address
+
+    def start_daemon(self):
+        self.assertFalse(os.path.exists(self.__daemon_socket))
+        self.assertIsNone(self.__popen)
+            
+        self.__popen = subprocess.Popen(['dbus-daemon', '--config-file='+self.__config_file])
 
         # wait until daemon has started up and socket is functional
         for i in range(100):
-            if os.path.exists(daemon_socket):
+            if os.path.exists(self.__daemon_socket):
                 break
             time.sleep(0.1)
 
         for i in range(100):
             with socket.socket(socket.AF_UNIX) as s:
                 try:
-                    s.connect(daemon_socket)
+                    s.connect(self.__daemon_socket)
                     break
                 except ConnectionRefusedError:
                     continue
-
-    def tearDown(self):
+        
+    def stop_daemon(self):
+        if self.__popen is None:
+            return
         self.__popen.terminate()
         self.__popen.wait()
+        self.__popen = None
 
-        super().tearDown()
-
-    def daemon_address(self):
-        return self.__daemon_address
+    def restart_daemon(self):
+        self.stop_daemon()
+        self.start_daemon()
 
 
 _dbus_daemon_config = '''
