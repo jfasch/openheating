@@ -11,12 +11,18 @@ class DBusSwitchCenterObject(dbus.service.Object):
     '''Adapt a SwitchCenter into a DBus object at object_path'''
 
     def __init__(self, connection, object_path, center):
-        self.__center = center
-        dbus.service.Object.__init__(self, conn=connection, object_path=object_path)
+        self.__implementation = center
+        if connection.get_connection() is None:
+            # test-mode
+            return
+        dbus.service.Object.__init__(self, conn=connection.get_connection(), object_path=object_path)
+
+    def implementation(self):
+        return self.__implementation
 
     @dbus.service.method(dbus_interface=DBUS_SWITCH_CENTER_IFACE_STRING, out_signature='as')
     def all_names(self):
-        return self.__center.all_names()
+        return self.__implementation.all_names()
 
     @dbus.service.method(dbus_interface=DBUS_SWITCH_CENTER_IFACE_STRING, in_signature = 'sb')
     def set_state(self, name, value):
@@ -25,14 +31,14 @@ class DBusSwitchCenterObject(dbus.service.Object):
                 switch_state = Switch.CLOSED
             else:
                 switch_state = Switch.OPEN
-            self.__center.set_state(name, switch_state)
+            self.__implementation.set_state(name, switch_state)
         except HeatingError as e:
             raise exception_local_to_dbus(e)
 
     @dbus.service.method(dbus_interface=DBUS_SWITCH_CENTER_IFACE_STRING, in_signature='s', out_signature = 'b')
     def get_state(self, name):
         try:
-            value = self.__center.get_state(name)
+            value = self.__implementation.get_state(name)
             if value == Switch.OPEN:
                 return False
             elif value == Switch.CLOSED:

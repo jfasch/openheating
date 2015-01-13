@@ -29,7 +29,7 @@ class ThermometerCenterConfig(DBusServiceConfig):
         assert self.__cache_age is None or type(self.__cache_age) is int
 
         assert type(self.__path) is str
-        for name, creator in self.__thermometers:
+        for name, creator in self.__thermometers.items():
             assert type(name) is str
             assert isinstance(creator, _Creator)
 

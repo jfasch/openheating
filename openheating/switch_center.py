@@ -46,11 +46,14 @@ class SwitchCenterBase(metaclass=ABCMeta):
 
 class SwitchCenter(SwitchCenterBase):
     def __init__(self, switches):
-        self.__switches = {}
-        for name, sw in switches:
-            if name in self.__switches:
-                raise HeatingError('duplicate switch "%s"' % name)
-            self.__switches[name] = sw
+        # bail out early. users can configure it, passing "switches"
+        # as the wrong type.
+        assert type(switches) is dict
+        for name, switch in switches.items():
+            assert type(name) is str
+            assert isinstance(switch, Switch)
+
+        self.__switches = switches
 
     def all_names(self):
         return self.__switches.keys()
@@ -66,3 +69,11 @@ class SwitchCenter(SwitchCenterBase):
         if sw is None:
             raise HeatingError('no switch "%s"' % name)
         return sw.get_state()
+
+    def num_switches__test(self):
+        '''For tests only'''
+        return len(self.__switches)
+        
+    def get_switch__test(self, name):
+        '''For tests only'''
+        return self.__switches.get(name)

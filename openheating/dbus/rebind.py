@@ -18,17 +18,26 @@ from ..error import HeatingError, DBusNoConnectionError, DBusNoServiceError
 from dbus.exceptions import DBusException
 import dbus.bus
 
-class DBusConnectionProxy:
-    '''Recovery of DBus connection
+from abc import ABCMeta, abstractmethod
 
-    User code instantiates one and passes it to DBusObjectClient
-    instances which do the rest.
 
-    '''
+class DBusConnection(metaclass=ABCMeta):
+    @abstractmethod
+    def get_connection(self):
+        pass
+    @abstractmethod
+    def clear_connection(self):
+        pass
+
+class DBusClientConnection(DBusConnection):
+    '''Implements recovery of DBus connection, by-address
+
+    A connection is (re)established on get_connection(). this is the
+    "client mode"; it works best when used with DBusObjectClient which
+    does all the rest.  '''
 
     def __init__(self, address):
         self.__address = address
-        self.__connection = None
 
     def get_connection(self):
         if self.__connection is None:
@@ -37,6 +46,23 @@ class DBusConnectionProxy:
 
     def clear_connection(self):
         self.__connection = None
+
+class DBusServerConnection(DBusConnection):
+    '''Encapsulates a pre-existing DBus connection
+
+    This is the "server mode", where a connection pre-exists, and the
+    server process terminates once the connection goes down for some
+    reason. Best used together with DBusServiceCombo.
+    '''
+    
+    def __init__(self, connection):
+        self.__connection = connection
+    
+    def get_connection(self):
+        return self.__connection
+
+    def clear_connection(self):
+        raise HeatingError('server connection: client error: connection closed')
 
 class DBusObjectClient:
     '''Recovery of DBus object proxy
@@ -48,8 +74,8 @@ class DBusObjectClient:
 
     '''
     
-    def __init__(self, connection_proxy, name, path):
-        self.__connection_proxy = connection_proxy
+    def __init__(self, connection, name, path):
+        self.__connection = connection
         self.__name = name
         self.__path = path
         self.__object = None
@@ -57,14 +83,14 @@ class DBusObjectClient:
     def dbus_call(self, funcname, *args):
         try:
             if self.__object is None:
-                self.__object = self.__connection_proxy.get_connection().get_object(self.__name, self.__path)
+                self.__object = self.__connection.get_connection().get_object(self.__name, self.__path)
             func = self.__object.get_dbus_method(funcname)
             return func(*args)
         except DBusException as e:
             if e.get_dbus_name() in ('org.freedesktop.DBus.Error.Disconnected',
                                      'org.freedesktop.DBus.Error.NoServer',
                                      'org.freedesktop.DBus.Error.NoReply'):
-                self.__connection_proxy.clear_connection()
+                self.__connection.clear_connection()
                 self.__object = None
                 raise DBusNoConnectionError(msg=str(e))
             if e.get_dbus_name() in ('org.freedesktop.DBus.Error.ServiceUnknown'):

@@ -30,11 +30,12 @@ class ThermometerCenterBase(metaclass=ABCMeta):
 
 class ThermometerCenter(ThermometerCenterBase):
     def __init__(self, thermometers, cache_age=None):
-        self.__thermometers = {}
-        for name, th in thermometers:
-            if name in self.__thermometers:
-                raise HeatingError('duplicate thermometer "%s"' % name)
-            self.__thermometers[name] = th
+        assert type(thermometers) is dict
+        for name, thermometer in thermometers.items():
+            assert type(name) is str
+            assert isinstance(thermometer, Thermometer)
+        
+        self.__thermometers = thermometers
 
         self.__cache_age = cache_age
         if self.__cache_age is not None:
@@ -58,3 +59,11 @@ class ThermometerCenter(ThermometerCenterBase):
             self.__cache[name] = (temp, now)
         
         return temp
+
+    def num_thermometers__test(self):
+        '''For tests only'''
+        return len(self.__thermometers)
+        
+    def get_thermometer__test(self, name):
+        '''For tests only'''
+        return self.__thermometers.get(name)
