@@ -1,58 +1,6 @@
-from openheating.dbus.service_config import DBusServiceConfig
-from openheating.dbus.rebind import DBusServerConnection
-from openheating.dbus.service import DBusService
-from openheating.dbus.switch_center_object import DBusSwitchCenterObject
-from openheating.dbus.thermometer_center_object import DBusThermometerCenterObject
-from openheating.dbus.switch_client import DBusSwitch
-from openheating.dbus.switch_object import DBusSwitchObject
-from openheating.dbus.thermometer_client import DBusThermometer
-from openheating.dbus.thermometer_object import DBusThermometerObject
-
-from openheating.switch_center import SwitchCenter
-from openheating.thermometer_center import ThermometerCenter
-from openheating.testutils.switch import TestSwitch
-from openheating.testutils.thermometer import TestThermometer
-from openheating.hardware.switch_gpio import GPIOSwitch
-from openheating.hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-
 import unittest
 
-_content = '''
-DAEMON_ADDRESS = "tcp:host=1.2.3.4,port=6666"
-
-SERVICES = {
-    'some.service.centers': {
-        '/path/to/switch_center': SwitchCenter(
-            switches = {
-                "switch-test-closed": TestSwitch(initial_state=CLOSED),
-                "switch-test-open": TestSwitch(initial_state=OPEN),
-                "switch-gpio": GPIOSwitch(number=4),
-                "switch-dbus": DBusSwitch(name="a.b.c", path="/some/path")
-            }),
-        '/another/path/to/thermometer_center': ThermometerCenter(
-            cache_age = 5,
-            thermometers = {
-                "i2c-thermometer": HWMON_I2C_Thermometer(bus_number=1, address=0x49),
-                "dbus-thermometer": DBusThermometer(name="a.b.c", path="/some/path"),
-                "test-thermometer": TestThermometer(initial_temperature=4.5),
-            }),
-    },
-    
-    'some.service.thermometers': {
-        '/path/to/thermometers/i2c': HWMON_I2C_Thermometer(bus_number=1, address=0x48),
-        '/path/to/thermometers/dbus': DBusThermometer(name="a.b.c", path="/some/path"),
-        '/path/to/thermometers/test': TestThermometer(initial_temperature=42.0),
-    },
-
-    'some.service.switches': {
-        '/path/to/switches/gpio': GPIOSwitch(number=42),
-        '/path/to/switches/dbus': DBusSwitch(name="a.b.c", path="/some/path"),
-        '/path/to/switches/test': TestSwitch(initial_state=OPEN),
-    },
-}
-'''
-        
-class DBusServiceTest(unittest.TestCase):
+class DBusObjectTest(unittest.TestCase):
     def test__all(self):
         config = DBusServicesConfig(_content)
 
