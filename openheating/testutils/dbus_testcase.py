@@ -65,16 +65,19 @@ class DBusTestCase(PersistentTestCase):
     def wait_for_object(self, name, path):
         timeout = 5
         while True:
+#            print('wait_for_object begin')
             connection = dbus.bus.BusConnection(self.daemon_address())
+#            print('wait_for_object conn')
             try:
+#                print('wait_for_object vor obj')
                 the_object = connection.get_object(name, path)
+#                print('wait_for_object obj')
                 break
             except DBusException:
                 timeout -= 0.1
                 if timeout <= 0:
                     self.fail()
                 time.sleep(0.1)
-            
 
 
 _dbus_daemon_config = '''

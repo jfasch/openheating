@@ -13,6 +13,7 @@ import unittest
 import os
 import sys
 import signal
+import time
 
 class ObjectTest(DBusTestCase):
     def setUp(self):
@@ -21,17 +22,26 @@ class ObjectTest(DBusTestCase):
 
     def tearDown(self):
         if self.__pid is not None:
-            os.kill(self.__pid, signal.SIGTERM)
+            os.kill(self.__pid, signal.SIGKILL)
+            os.waitpid(self.__pid, 0)
         super().tearDown()
 
     def test__basic(self):
         self.__pid = os.fork()
+
         if self.__pid == 0: # child
+
+            # funny things happening; still don't know for sure what's
+            # going on.
+
+            # os.setpgid(0,0) # jjjj ????
+            # signal.signal(signal.SIGTERM, signal.SIG_IGN) # jjjj
+
             mainloop = DBusGMainLoop(set_as_default=True)
             connection = dbus.bus.BusConnection(self.daemon_address(), mainloop=mainloop)
-            connection.set_exit_on_disconnect(True)
-            busname = dbus.service.BusName('some.bus.name', connection)
-            echo_object = EchoObject(connection=DBusServerConnection(connection), path='/path/to/echo')
+            busname = dbus.service.BusName(name='some.bus.name', bus=connection)
+            server_conn = DBusServerConnection(connection)
+            echo_object = EchoObject(server_conn.get_connection(), '/path/to/echo')
             GLib.MainLoop().run()
             sys.exit()
         else: # parent
