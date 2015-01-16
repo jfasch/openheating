@@ -1,9 +1,24 @@
 from openheating.testutils.dbus_testcase import DBusTestCase
+from openheating.testutils.switch import TestSwitch
 from openheating.dbus.service import DBusService
-from openheating.dbus.service import TestThermometerCreator
 from openheating.dbus.rebind import DBusClientConnection
 from openheating.dbus.thermometer_client import DBusThermometer
+from openheating.dbus.switch_client import DBusSwitch
+from openheating.dbus.switch_center_client import DBusSwitchCenter
+from openheating.dbus.thermometer_center_client import DBusThermometerCenter
 
+from openheating.dbus.service import TestThermometerCreator
+from openheating.dbus.service import HWMON_I2C_ThermometerCreator
+from openheating.dbus.service import DBusThermometerCreator
+from openheating.dbus.service import TestSwitchCreator
+from openheating.dbus.service import GPIOSwitchCreator
+from openheating.dbus.service import DBusSwitchCreator
+from openheating.dbus.service import ThermometerCenterCreator
+from openheating.dbus.service import SwitchCenterCreator
+
+from openheating.dbus.service_config import DBusServicesConfig
+
+import time
 import signal
 import unittest
 
@@ -14,7 +29,6 @@ class ServiceTest(DBusTestCase):
         self.__services = []
 
     def tearDown(self):
-        print('ServiceTest.tearDown')
         super().tearDown()
         for s in self.__services:
             s.stop()
@@ -28,7 +42,7 @@ class ServiceTest(DBusTestCase):
                 '/path/to/test2': TestThermometerCreator(initial_temperature=2),
             })
 
-        self.__add_service(service)
+        self.__services.append(service)
 
         service.start()
 
@@ -42,12 +56,125 @@ class ServiceTest(DBusTestCase):
         self.assertAlmostEqual(test1_proxy.temperature(), 1)
         self.assertAlmostEqual(test2_proxy.temperature(), 2)
 
-        print('stopping')
         service.stop()
-        print('stopped')
 
-    def __add_service(self, service):
+    def test__instantiate_all_objects(self):
+        # instantiate all of the different object types in a single
+        # service, for the purpose of ensuring everything is
+        # there. this way we can make sure no symbol errors occur late
+        # at the plant.
+        service = DBusService(
+            daemon_address=self.daemon_address(),
+            name='some.dbus.service',
+            object_creators={
+                '/thermometers/test': TestThermometerCreator(initial_temperature=1),
+                '/thermometers/i2c': HWMON_I2C_ThermometerCreator(bus_number=666, address=0x49),
+                '/thermometers/dbus': DBusThermometerCreator(name='a.b.c', path='/some/thermometer'),
+                '/switches/test': TestSwitchCreator(name='testswitch', initial_state=TestSwitch.OPEN),
+                # not easily instantiated ... '/switches/gpio': GPIOSwitchCreator(gpio_number=66),
+                '/switches/dbus': DBusSwitchCreator(name='a.b.c', path='/some/switch'),
+                '/center/thermometers': ThermometerCenterCreator(
+                    cache_age=5,
+                    thermometers={
+                        'test': TestThermometerCreator(initial_temperature=42),
+                        'i2c': HWMON_I2C_ThermometerCreator(bus_number=1, address=0x49),
+                        'dbus': DBusThermometerCreator(name='a.b.c', path='/x/y/z'),
+                    }),
+                '/center/switches': SwitchCenterCreator(
+                    switches={
+                        'test': TestSwitchCreator(name='testswitch', initial_state=TestSwitch.OPEN),
+                        'dbus': DBusSwitchCreator(name='a.b.c', path='/some/where'),
+                    }),
+            })
+
         self.__services.append(service)
+
+        service.start()
+        self.wait_for_object(name='some.dbus.service', path='/thermometers/test')
+
+        # now talk to them
+        if True:
+            thermometer = DBusThermometer(connection=DBusClientConnection(address=self.daemon_address()),
+                                          name='some.dbus.service',
+                                          path='/thermometers/test')
+            self.assertAlmostEqual(thermometer.temperature(), 1)
+
+        if True:
+            switch = DBusSwitch(connection=DBusClientConnection(address=self.daemon_address()),
+                                name='some.dbus.service',
+                                path='/switches/test')
+            self.assertEqual(switch.get_state(), TestSwitch.OPEN)
+            switch.do_close()
+            self.assertEqual(switch.get_state(), TestSwitch.CLOSED)
+
+        if True:
+            thermometer_center = DBusThermometerCenter(connection=DBusClientConnection(address=self.daemon_address()),
+                                                       name='some.dbus.service',
+                                                       path='/center/thermometers')
+            self.assertAlmostEqual(thermometer_center.temperature('test'), 42)
+
+        if True:
+            switch_center = DBusSwitchCenter(connection=DBusClientConnection(address=self.daemon_address()),
+                                             name='some.dbus.service',
+                                             path='/center/switches')
+            self.assertEqual(switch_center.get_state('test'), TestSwitch.OPEN)
+            switch_center.set_state('test', TestSwitch.CLOSED)
+            switch_proxy = switch_center.get_switch('test')
+            switch_proxy.do_close()
+            self.assertEqual(switch_center.get_state('test'), TestSwitch.CLOSED)
+
+        service.stop()
+
+    def test__servicelist_from_config(self):
+        config = DBusServicesConfig(_config % self.daemon_address())
+        service_list = config.services()
+        self.__services.extend(service_list)
+        for s in service_list:
+            s.start()
+
+        self.wait_for_object(name='some.service.centers', path='/path/to/switch_center')
+        self.wait_for_object(name='some.service.centers', path='/another/path/to/thermometer_center')
+        self.wait_for_object(name='some.service.thermometers', path='/path/to/thermometers/i2c')
+        self.wait_for_object(name='some.service.thermometers', path='/path/to/thermometers/dbus')
+        self.wait_for_object(name='some.service.thermometers', path='/path/to/thermometers/test')
+        # not easily instantiated ... self.wait_for_object(name='some.service.switches', path='/path/to/switches/gpio')
+        self.wait_for_object(name='some.service.switches', path='/path/to/switches/dbus')
+        self.wait_for_object(name='some.service.switches', path='/path/to/switches/test')
+        
+_config = '''
+DAEMON_ADDRESS = "%s"
+
+SERVICES = {
+    'some.service.centers': {
+        '/path/to/switch_center': SwitchCenter(
+            switches = {
+                "switch-test-closed": TestSwitch(name='xxx', initial_state=CLOSED),
+                "switch-test-open": TestSwitch(name='yyy', initial_state=OPEN),
+                # ot easily instantiated ... "switch-gpio": GPIOSwitch(gpio_number=4),
+                "switch-dbus": DBusSwitch(name="a.b.c", path="/some/path")
+            }),
+        '/another/path/to/thermometer_center': ThermometerCenter(
+            cache_age = 5,
+            thermometers = {
+                "i2c-thermometer": HWMON_I2C_Thermometer(bus_number=1, address=0x49),
+                "dbus-thermometer": DBusThermometer(name="a.b.c", path="/some/path"),
+                "test-thermometer": TestThermometer(initial_temperature=4.5),
+            }),
+    },
+    
+    'some.service.thermometers': {
+        '/path/to/thermometers/i2c': HWMON_I2C_Thermometer(bus_number=1, address=0x48),
+        '/path/to/thermometers/dbus': DBusThermometer(name="a.b.c", path="/some/path"),
+        '/path/to/thermometers/test': TestThermometer(initial_temperature=42.0),
+    },
+
+    'some.service.switches': {
+        # not easily instantiated ... '/path/to/switches/gpio': GPIOSwitch(gpio_number=42),
+        '/path/to/switches/dbus': DBusSwitch(name="a.b.c", path="/some/path"),
+        '/path/to/switches/test': TestSwitch(name='xxx', initial_state=OPEN),
+    },
+}
+'''
 
 
 suite = unittest.TestSuite()
@@ -56,158 +183,3 @@ suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ServiceTest))
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite)
-
-# jjjj remove/rebuild this crap
-
-# from openheating.dbus.service_config import DBusServiceConfig
-# from openheating.dbus.rebind import DBusServerConnection
-# from openheating.dbus.service import DBusService
-# from openheating.dbus.switch_center_object import DBusSwitchCenterObject
-# from openheating.dbus.thermometer_center_object import DBusThermometerCenterObject
-# from openheating.dbus.switch_client import DBusSwitch
-# from openheating.dbus.switch_object import DBusSwitchObject
-# from openheating.dbus.thermometer_client import DBusThermometer
-# from openheating.dbus.thermometer_object import DBusThermometerObject
-# 
-# from openheating.switch_center import SwitchCenter
-# from openheating.thermometer_center import ThermometerCenter
-# from openheating.testutils.switch import TestSwitch
-# from openheating.testutils.thermometer import TestThermometer
-# from openheating.hardware.switch_gpio import GPIOSwitch
-# from openheating.hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-# 
-# import unittest
-# 
-# _content = '''
-# DAEMON_ADDRESS = "tcp:host=1.2.3.4,port=6666"
-# 
-# SERVICES = {
-#     'some.service.centers': {
-#         '/path/to/switch_center': SwitchCenter(
-#             switches = {
-#                 "switch-test-closed": TestSwitch(initial_state=CLOSED),
-#                 "switch-test-open": TestSwitch(initial_state=OPEN),
-#                 "switch-gpio": GPIOSwitch(number=4),
-#                 "switch-dbus": DBusSwitch(name="a.b.c", path="/some/path")
-#             }),
-#         '/another/path/to/thermometer_center': ThermometerCenter(
-#             cache_age = 5,
-#             thermometers = {
-#                 "i2c-thermometer": HWMON_I2C_Thermometer(bus_number=1, address=0x49),
-#                 "dbus-thermometer": DBusThermometer(name="a.b.c", path="/some/path"),
-#                 "test-thermometer": TestThermometer(initial_temperature=4.5),
-#             }),
-#     },
-#     
-#     'some.service.thermometers': {
-#         '/path/to/thermometers/i2c': HWMON_I2C_Thermometer(bus_number=1, address=0x48),
-#         '/path/to/thermometers/dbus': DBusThermometer(name="a.b.c", path="/some/path"),
-#         '/path/to/thermometers/test': TestThermometer(initial_temperature=42.0),
-#     },
-# 
-#     'some.service.switches': {
-#         '/path/to/switches/gpio': GPIOSwitch(number=42),
-#         '/path/to/switches/dbus': DBusSwitch(name="a.b.c", path="/some/path"),
-#         '/path/to/switches/test': TestSwitch(initial_state=OPEN),
-#     },
-# }
-# '''
-#         
-# class DBusServiceTest(unittest.TestCase):
-#     def test__all(self):
-#         config = DBusServicesConfig(_content)
-# 
-#         self.assertEqual(config.daemon_address(), "tcp:host=1.2.3.4,port=6666")
-# 
-#         services = DBusServices(creators=config.creators())
-# 
-#         # nothing yet happened. this is the state of the parent
-#         # process, in real life, before we fork.
-#         self.assertEqual(services.num_services__test(), 3)
-# 
-#         centers = services.get('some.service.centers')
-#         thermometers = services.get('some.service.thermometers')
-#         switches = services.get('some.service.switches')
-# 
-#         self.assertIsInstance(centers, DBusService)
-#         self.assertIsInstance(thermometers, DBusService)
-#         self.assertIsInstance(switches, DBusService)
-# 
-#         if True:
-#             switch_center = centers.get('/path/to/switch_center')
-#             self.assertIsInstance(switch_center, DBusObject)
-#             self.assertIsInstance(switch_center, SwitchCenterObject)
-#             self.assertIsInstance(switch_center.implementation(), SwitchCenter)
-#             self.assertEqual(switch_center.implementation().num_switches__test(), 4)
-#             self.assertIsInstance(switch_center.implementation().get_switch__test("switch-test-closed"), TestSwitch)
-#             self.assertIsInstance(switch_center.implementation().get_switch__test("switch-test-open"), TestSwitch)
-#             self.assertIsInstance(switch_center.implementation().get_switch__test("switch-gpio"), GPIOSwitch)
-#             self.assertIsInstance(switch_center.implementation().get_switch__test("switch-dbus"), DBusSwitch)
-#             self.assertTrue(switch_center.implementation().get_switch__test("switch-test-closed").is_closed())
-#             self.assertTrue(switch_center.implementation().get_switch__test("switch-test-open").is_open())
-# 
-# 
-# 
-# 
-# 
-#         thermometer_center = centers.get('/another/path/to/thermometer_center')
-# 
-#         # imagine that we fork here. in the child, a DBus connection
-#         # is established, everybody's enlightened with it, and DBus
-#         # objects are wrapped around the local objects.
-#         service.create_dbus_objects(connection=DBusServerConnection(connection=None))
-# 
-#         self.assertEqual(service.num_dbus_objects__test(), 8)
-# 
-#         switch_center = service.get_dbus_object__test("/path/to/switch_center")
-#         self.assertIsNotNone(switch_center)
-#         self.assertIsInstance(switch_center, DBusSwitchCenterObject)
-#         self.assertIsInstance(switch_center.implementation(), SwitchCenter)
-#         self.assertEqual(switch_center.implementation().num_switches__test(), 4)
-#         self.assertIsInstance(switch_center.implementation().get_switch__test("switch-test-closed"), TestSwitch)
-#         self.assertIsInstance(switch_center.implementation().get_switch__test("switch-test-open"), TestSwitch)
-#         self.assertIsInstance(switch_center.implementation().get_switch__test("switch-gpio"), GPIOSwitch)
-#         self.assertIsInstance(switch_center.implementation().get_switch__test("switch-dbus"), DBusSwitch)
-#         self.assertTrue(switch_center.implementation().get_switch__test("switch-test-closed").is_closed())
-#         self.assertTrue(switch_center.implementation().get_switch__test("switch-test-open").is_open())
-# 
-#         thermometer_center = service.get_dbus_object__test("/another/path/to/thermometer_center")
-#         self.assertIsNotNone(thermometer_center)
-#         self.assertIsInstance(thermometer_center, DBusThermometerCenterObject)
-#         self.assertIsInstance(thermometer_center.implementation(), ThermometerCenter)
-#         self.assertEqual(thermometer_center.implementation().num_thermometers__test(), 3)
-#         self.assertIsInstance(thermometer_center.implementation().get_thermometer__test("i2c-thermometer"), HWMON_I2C_Thermometer)
-#         self.assertIsInstance(thermometer_center.implementation().get_thermometer__test("dbus-thermometer"), DBusThermometer)
-#         self.assertIsInstance(thermometer_center.implementation().get_thermometer__test("test-thermometer"), TestThermometer)
-# 
-#         i2c_thermometer = service.get_dbus_object__test("/path/to/thermometers/i2c")
-#         self.assertIsNotNone(i2c_thermometer)
-#         self.assertIsInstance(i2c_thermometer, DBusThermometerObject)
-#         self.assertIsInstance(i2c_thermometer.implementation(), HWMON_I2C_Thermometer)
-# 
-#         dbus_thermometer = service.get_dbus_object__test("/path/to/thermometers/dbus")
-#         self.assertIsNotNone(dbus_thermometer)
-#         self.assertIsInstance(dbus_thermometer, DBusThermometerObject)
-#         self.assertIsInstance(dbus_thermometer.implementation(), DBusThermometer)
-# 
-#         test_thermometer = service.get_dbus_object__test("/path/to/thermometers/test")
-#         self.assertIsNotNone(test_thermometer)
-#         self.assertIsInstance(test_thermometer, DBusThermometerObject)
-#         self.assertIsInstance(test_thermometer.implementation(), TestThermometer)
-# 
-#         gpio_switch = service.get_dbus_object__test("/path/to/switches/gpio")
-#         self.assertIsNotNone(gpio_switch)
-#         self.assertIsInstance(gpio_switch, DBusSwitchObject)
-#         self.assertIsInstance(gpio_switch.implementation(), GPIOSwitch)
-# 
-#         dbus_switch = service.get_dbus_object__test("/path/to/switches/dbus")
-#         self.assertIsNotNone(dbus_switch)
-#         self.assertIsInstance(dbus_switch, DBusSwitchObject)
-#         self.assertIsInstance(dbus_switch.implementation(), DBusSwitch)
-# 
-#         test_switch = service.get_dbus_object__test("/path/to/switches/test")
-#         self.assertIsNotNone(test_switch)
-#         self.assertIsInstance(test_switch, DBusSwitchObject)
-#         self.assertIsInstance(test_switch.implementation(), TestSwitch)
-# 
-
