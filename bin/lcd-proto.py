@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
-from openheating.dbus.rebind import DBusConnectionProxy
+from openheating.dbus.rebind import DBusClientConnection
 from openheating.hardware.hd44780 import HD44780_LCD
 from openheating.error import HeatingError
 
 import time
 from datetime import datetime
 
-connection_proxy = DBusConnectionProxy('tcp:host=192.168.1.11,port=6666')
+connection = DBusClientConnection('tcp:host=192.168.1.11,port=6666')
 display = HD44780_LCD(
     rs=27,
     en=22,
@@ -20,9 +20,9 @@ display = HD44780_LCD(
     lines=4)
 
 thermo_center = DBusThermometerCenter(
-    connection_proxy=connection_proxy,
-    name='org.openheating.thermometer_center',
-    path='/thermometer_center')
+    connection=connection,
+    name='org.openheating.heizraum.center',
+    path='/thermometers')
 
 boiler_top = thermo_center.get_thermometer('boiler-top')
 boiler_middle = thermo_center.get_thermometer('boiler-middle')
