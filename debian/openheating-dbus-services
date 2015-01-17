@@ -1,20 +1,20 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          openheating-dbus-thermometer-center
-# Required-Start:    $syslog
+# Provides:          openheating-dbus-services
+# Required-Start:    openheating-sensors $syslog
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Openheating DBus Thermometer Center
+# Short-Description: Openheating DBus Services
 # Description:       blah
 ### END INIT INFO
 
 . /etc/init.d/openheating-lib.sh
 
-oh_desc="Openheating DBus Thermometer Center"
-oh_name=openheating-dbus-thermometer-center
-oh_prog=/usr/bin/openheating-dbus-thermometer-center.py
-oh_pidfile=$OH_WORKDIR/openheating-dbus-thermometer-center.pid
+oh_desc="Openheating DBus Services"
+oh_name=openheating-dbus-services
+oh_prog=/usr/bin/openheating-dbus-services.py
+oh_pidfile=$OH_WORKDIR/openheating-dbus-services.pid
 
 case "$1" in
     start)
@@ -24,7 +24,7 @@ case "$1" in
 	    --chuid=$OH_USER:$OH_GROUP \
 	    --pidfile $oh_pidfile \
 	    --startas $oh_prog -- \
-	    --config-file=$OH_CONFDIR/openheating-dbus-thermometer-center.conf \
+	    --config-file=$OH_CONFDIR/openheating-dbus-services.conf \
 	    --pid-file=$oh_pidfile \
 	    --syslog
 	;;
