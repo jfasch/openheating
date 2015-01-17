@@ -9,5 +9,5 @@ from openheating.tests.easy_suite import suite
 import unittest
 
 
-runner = unittest.TextTestRunner()
+runner = unittest.TextTestRunner(verbosity=2)
 runner.run(suite)
