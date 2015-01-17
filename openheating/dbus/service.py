@@ -26,6 +26,7 @@ import time
 import logging
 import sys
 import os
+import errno
 
 
 class DBusService:
@@ -70,6 +71,7 @@ class DBusService:
         # child: the "restarter" process. 
 
         signal.signal(signal.SIGTERM, _restarter_terminate)
+        signal.signal(signal.SIGINT, _restarter_terminate)
 
         global _restarter_running
         _restarter_running = True
@@ -86,8 +88,13 @@ class DBusService:
                     died, status = os.waitpid(service_pid, 0)
                     logging.warning('service process %d died, status %d' % (died, status))
                     time.sleep(2)
-                except InterruptedError:
+                except KeyboardInterrupt:
                     pass
+                except OSError as e:
+                    if e.errno == errno.EINTR:
+                        pass
+                    else:
+                        raise
         os._exit(0)
 
     def __service(self):
@@ -107,7 +114,10 @@ class DBusService:
             for path, creator in self.__object_creators.items():
                 objects.append(creator.create_dbus_object(connection=connection, path=path))
 
-            GLib.MainLoop().run()
+            try:
+                GLib.MainLoop().run()
+            except KeyboardInterrupt:
+                pass
             os._exit(0)
             
         except Exception as e:
