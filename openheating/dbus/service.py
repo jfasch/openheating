@@ -43,73 +43,80 @@ class DBusService:
 
     def start(self):
         self.__restarter_pid = os.fork()
-        if self.__restarter_pid != 0:
-            return
-
-        # child: the "restarter" process. 
-
-        # whatever the signal disposition is, we don't want any
-        # special handling.
-        signal.signal(signal.SIGTERM, signal.SIG_DFL)
-        signal.signal(signal.SIGQUIT, signal.SIG_DFL)
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-        # open a process group where the service processes
-        # belong. this allows us to comfortably wipe everything from
-        # the parent.
-        os.setpgid(0, 0)
-
-        while True:
-            service_pid = os.fork()
-            if service_pid != 0:
-                # parent; the "restarter". wait for child (service),
-                # and backoff before restart
-                died, status = os.wait()
-                logging.warning('service process %d died, status %d' % (died, status))
-                time.sleep(2)
-                continue
-
-            # grandchild, the service itself.
-
-            # setup dbus bahoowazoo, create objects, and run the event
-            # loop.
-            try:
-                mainloop = DBusGMainLoop(set_as_default=True)
-                dbus_connection = dbus.bus.BusConnection(self.__daemon_address, mainloop=mainloop)
-                dbus_connection.set_exit_on_disconnect(True)
-
-                bus_name = dbus.service.BusName(self.__name, dbus_connection)
-                connection = DBusServerConnection(connection=dbus_connection)
-
-                objects = []
-                for path, creator in self.__object_creators.items():
-                    objects.append(creator.create_dbus_object(connection=connection, path=path))
-    
-                GLib.MainLoop().run()
-                sys.exit(0)
-                
-            except Exception as e:
-                logging.exception(str(e))
-                sys.exit(1)
+        if self.__restarter_pid == 0:
+            self.__restarter()
+            assert False, 'should never get here'
 
     def stop(self):
         if self.__restarter_pid is not None:
             try:
-                os.killpg(self.__restarter_pid, signal.SIGTERM)
+                os.kill(self.__restarter_pid, signal.SIGTERM)
 
                 # wait until they're gone. would be better to check that
                 # the dbus service is gone though, by connecting and
                 # looking something up.
-                os.kill(self.__restarter_pid, 0)
                 signal.alarm(5)
                 os.waitpid(self.__restarter_pid, 0)
                 signal.alarm(0)
                     
             except ProcessLookupError:
                 pass
+            except Exception as e:
+                assert False
 
             self.__restarter_pid = None
 
+    def __restarter(self):
+        # child: the "restarter" process. 
+
+        signal.signal(signal.SIGTERM, _restarter_terminate)
+
+        while True:
+            global _service_pid
+            _service_pid = os.fork()
+            if _service_pid != 0:
+                # parent; the "restarter". wait for child (service),
+                # and backoff before restart
+                died, status = os.waitpid(_service_pid, 0)
+                _service_pid = None
+                logging.warning('service process %d died, status %d' % (died, status))
+                time.sleep(2)
+                continue
+
+            self.__service()
+
+    def __service(self):
+        # grandchild, the service itself.
+
+        # setup dbus bahoowazoo, create objects, and run the event
+        # loop.
+        try:
+            mainloop = DBusGMainLoop(set_as_default=True)
+            dbus_connection = dbus.bus.BusConnection(self.__daemon_address, mainloop=mainloop)
+            dbus_connection.set_exit_on_disconnect(True)
+
+            bus_name = dbus.service.BusName(self.__name, dbus_connection)
+            connection = DBusServerConnection(connection=dbus_connection)
+
+            objects = []
+            for path, creator in self.__object_creators.items():
+                objects.append(creator.create_dbus_object(connection=connection, path=path))
+
+            GLib.MainLoop().run()
+            os._exit(0)
+            
+        except Exception as e:
+            logging.exception(str(e))
+            os._exit(1)
+
+_service_pid = None
+def _restarter_terminate(signum, frame):
+    if _service_pid is not None:
+        try:
+            os.kill(_service_pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    os._exit(0)
 
 # ----------------------------------------------------------------
 class Creator(metaclass=ABCMeta):
