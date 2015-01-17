@@ -29,9 +29,9 @@ class ServiceTest(DBusTestCase):
         self.__services = []
 
     def tearDown(self):
-        super().tearDown()
         for s in self.__services:
             s.stop()
+        super().tearDown()
 
     def test__single_service(self):
         service = DBusService(
@@ -140,7 +140,8 @@ class ServiceTest(DBusTestCase):
         # not easily instantiated ... self.wait_for_object(name='some.service.switches', path='/path/to/switches/gpio')
         self.wait_for_object(name='some.service.switches', path='/path/to/switches/dbus')
         self.wait_for_object(name='some.service.switches', path='/path/to/switches/test')
-        
+
+
 _config = '''
 DAEMON_ADDRESS = "%s"
 
