@@ -71,19 +71,24 @@ class DBusService:
 
         signal.signal(signal.SIGTERM, _restarter_terminate)
 
-        while True:
-            global _service_pid
-            _service_pid = os.fork()
-            if _service_pid != 0:
+        global _restarter_running
+        _restarter_running = True
+        while _restarter_running:
+            service_pid = os.fork()
+            if service_pid == 0:
+                # child; the service
+                self.__service()
+                assert False, 'should never get here'
+            else:
                 # parent; the "restarter". wait for child (service),
                 # and backoff before restart
-                died, status = os.waitpid(_service_pid, 0)
-                _service_pid = None
-                logging.warning('service process %d died, status %d' % (died, status))
-                time.sleep(2)
-                continue
-
-            self.__service()
+                try:
+                    died, status = os.waitpid(service_pid, 0)
+                    logging.warning('service process %d died, status %d' % (died, status))
+                    time.sleep(2)
+                except InterruptedError:
+                    pass
+        os._exit(0)
 
     def __service(self):
         # grandchild, the service itself.
@@ -109,14 +114,10 @@ class DBusService:
             logging.exception(str(e))
             os._exit(1)
 
-_service_pid = None
+_restarter_running = False
 def _restarter_terminate(signum, frame):
-    if _service_pid is not None:
-        try:
-            os.kill(_service_pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-    os._exit(0)
+    global _restarter_running
+    _restarter_running = False
 
 # ----------------------------------------------------------------
 class Creator(metaclass=ABCMeta):
