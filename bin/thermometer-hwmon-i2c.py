@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from heating.thermometer_hwmon import HWMON_I2C_Thermometer
+from openheating.hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 
 import sys
 
