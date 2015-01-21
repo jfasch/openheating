@@ -32,28 +32,30 @@ boiler_vl = thermo_center.get_thermometer('boiler-vl')
 ofen_vl = thermo_center.get_thermometer('ofen-vl')
 ofen = thermo_center.get_thermometer('ofen')
 oel_puffer = thermo_center.get_thermometer('oel-puffer')
+essraum = thermo_center.get_thermometer('essraum')
 
-def get_temperature(thermometer):
+def get_temperature(thermometer, places):
     try:
-        return '%.1f' % thermometer.temperature()
+        return ('%.'+str(places)+'f') % thermometer.temperature()
     except HeatingError:
         return 'ERR!'
 
 while True:
     temps = {
         'now': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-        'boiler-top': get_temperature(boiler_top),
-        'boiler-middle': get_temperature(boiler_middle),
-        'boiler-bottom': get_temperature(boiler_bottom),
-        'hk-vl': get_temperature(hk_vl),
-        'boiler-vl': get_temperature(boiler_vl),
-        'ofen-vl': get_temperature(ofen_vl),
-        'ofen': get_temperature(ofen),
-        'oel-puffer': get_temperature(oel_puffer),
+        'essraum': get_temperature(essraum, 1),
+        'boiler-top': get_temperature(boiler_top, 0),
+        'boiler-middle': get_temperature(boiler_middle, 0),
+        'boiler-bottom': get_temperature(boiler_bottom, 0),
+        'hk-vl': get_temperature(hk_vl, 1),
+        'boiler-vl': get_temperature(boiler_vl, 1),
+        'ofen-vl': get_temperature(ofen_vl, 1),
+        'ofen': get_temperature(ofen, 1),
+        'oel-puffer': get_temperature(oel_puffer, 1),
         }
     msg = \
         ('%(now)s\n' + \
-         'B:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
+         'E:%(essraum)s,B:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
          'HK:%(hk-vl)s;WW:%(boiler-vl)s\n' + \
          'O:%(oel-puffer)s;H:%(ofen)s/%(ofen-vl)s') % temps
 
