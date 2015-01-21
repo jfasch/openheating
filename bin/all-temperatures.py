@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
-from openheating.dbus.rebind import DBusConnectionProxy
+from openheating.dbus.rebind import DBusClientConnection
 from openheating.error import HeatingError
 
 from datetime import datetime
@@ -13,8 +13,8 @@ def make_temperature(center, name):
     except HeatingError as e:
         return 'Error: '+str(e)
 
-connection_proxy = DBusConnectionProxy('tcp:host=192.168.1.11,port=6666')
-thermo_center = DBusThermometerCenter(connection_proxy=connection_proxy, name='org.openheating.thermometer_center', path='/thermometer_center')
+connection = DBusClientConnection('tcp:host=192.168.1.11,port=6666')
+thermo_center = DBusThermometerCenter(connection=connection, name='org.openheating.heizraum.center', path='/thermometers')
 
 all_names = sorted(thermo_center.all_names())
 
