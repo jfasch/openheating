@@ -22,6 +22,11 @@ Dependencies
 openheating
 ===========
 
+* Add user and group
+
+  groupadd openheating
+  useradd --home-dir /var/run/openheating --gid openheating --groups i2c,gpio --no-create-home --shell /bin/false openheating
+
 * Package installation
 
   python3 setup.py sdist --formats=bztar
@@ -43,11 +48,6 @@ openheating
 
   Copy to /etc/openheating/ from /usr/share/openheating/debian/ as
   needed, and edit.
-
-* Add user and group
-
-  groupadd openheating
-  useradd --home-dir /var/run/openheating --gid openheating --groups i2c,gpio --no-create-home --shell /bin/false openheating
 
 * Enable and start services
 
