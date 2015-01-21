@@ -90,7 +90,10 @@ class DBusObjectClient:
         except DBusException as e:
             if e.get_dbus_name() in ('org.freedesktop.DBus.Error.Disconnected',
                                      'org.freedesktop.DBus.Error.NoServer',
-                                     'org.freedesktop.DBus.Error.NoReply'):
+                                     'org.freedesktop.DBus.Error.NoReply',
+                                     # no route to host, apparently
+                                     'org.freedesktop.DBus.Error.Failed',
+                                     ):
                 self.__connection.clear_connection()
                 self.__object = None
                 raise DBusNoConnectionError(msg=str(e))
