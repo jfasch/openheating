@@ -42,7 +42,7 @@ def get_temperature(thermometer, places):
 
 while True:
     temps = {
-        'now': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+        'now': str(datetime.now().strftime('%Y-%m-%d  %H:%M:%S')),
         'essraum': get_temperature(essraum, 1),
         'boiler-top': get_temperature(boiler_top, 0),
         'boiler-middle': get_temperature(boiler_middle, 0),
@@ -55,9 +55,10 @@ while True:
         }
     msg = \
         ('%(now)s\n' + \
-         'E:%(essraum)s,B:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
-         'HK:%(hk-vl)s;WW:%(boiler-vl)s\n' + \
-         'O:%(oel-puffer)s;H:%(ofen)s/%(ofen-vl)s') % temps
+         'E:%(essraum)s    B:%(boiler-top)s/%(boiler-middle)s/%(boiler-bottom)s\n' + \
+         'O:%(oel-puffer)s   H:%(ofen)s/%(ofen-vl)s\n' + \
+         'HK:%(hk-vl)s      WW:%(boiler-vl)s'
+         ) % temps
 
     print(msg+'\n--')
 
