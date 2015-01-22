@@ -22,5 +22,5 @@ while True:
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     for name in all_names:
         print('    %s: %s' % (name, make_temperature(thermo_center, name)))
-    time.sleep(5)
+    time.sleep(15)
 
