@@ -91,8 +91,10 @@ class DBusObjectClient:
             if e.get_dbus_name() in ('org.freedesktop.DBus.Error.Disconnected',
                                      'org.freedesktop.DBus.Error.NoServer',
                                      'org.freedesktop.DBus.Error.NoReply',
-                                     # no route to host, apparently
+                                     # EHOSTUNREACH as it seems
                                      'org.freedesktop.DBus.Error.Failed',
+                                     # ENETUNREACH as it seems
+                                     'org.freedesktop.DBus.Error.NoNetwork',
                                      ):
                 self.__connection.clear_connection()
                 self.__object = None
