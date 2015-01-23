@@ -82,6 +82,7 @@ class DBusObjectClient:
         self.__object = None
 
     def dbus_call(self, funcname, *args):
+        exc = None
         try:
             if self.__object is None:
                 self.__object = self.__connection.get_connection().get_object(self.__name, self.__path)
@@ -98,9 +99,12 @@ class DBusObjectClient:
                                      ):
                 self.__connection.clear_connection()
                 self.__object = None
-                raise DBusNoConnectionError(msg=str(e))
-            if e.get_dbus_name() in ('org.freedesktop.DBus.Error.ServiceUnknown'):
+                exc = DBusNoConnectionError(msg=str(e))
+            elif e.get_dbus_name() in ('org.freedesktop.DBus.Error.ServiceUnknown'):
                 self.__object = None
-                raise DBusNoServiceError(msg=str(e))
-            raise exception_dbus_to_local(e)
-        
+                exc = DBusNoServiceError(msg=str(e))
+            else:
+                exc = exception_dbus_to_local(e)
+        if exc is not None:
+            raise exc
+
