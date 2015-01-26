@@ -5,8 +5,6 @@ from abc import ABCMeta, abstractmethod
 import time
 
 class SwitchCenterBase(metaclass=ABCMeta):
-    OPEN, CLOSED = Switch.states
-
     @abstractmethod
     def all_names(self):
         return ['blah']
@@ -20,13 +18,13 @@ class SwitchCenterBase(metaclass=ABCMeta):
         pass
 
     def do_close(self, name):
-        self.get_switch(name).set_state(self.CLOSED)
+        self.get_switch(name).do_close()
     def do_open(self, name):
-        self.get_switch(name).set_state(self.OPEN)
+        self.get_switch(name).do_open()
     def is_closed(self, name):
-        return self.get_switch(name).get_state() == self.CLOSED
+        return self.get_switch(name).is_closed()
     def is_open(self, name):
-        return self.get_switch(name).get_state() == self.OPEN
+        return self.get_switch(name).is_open()
    
     def get_switch(self, name):
         '''Returns an adapter onto self. The returned Switch delegates

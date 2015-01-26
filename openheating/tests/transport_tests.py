@@ -22,7 +22,7 @@ class TransportBasicTest(unittest.TestCase):
         source_thermometer = TestThermometer(initial_temperature=80)
         source = PassiveSource(name='my-source', thermometer=source_thermometer)
 
-        pump_switch = TestSwitch(name='pump', initial_state=TestSwitch.OPEN)
+        pump_switch = TestSwitch(name='pump', initial_state=False)
         transport = Transport(name='my-transport', source=source, sink=sink,
                               diff_hysteresis=Hysteresis(0, 5),
                               pump_switch=pump_switch)
@@ -113,13 +113,13 @@ class TransportBasicTest(unittest.TestCase):
                     hysteresis=Hysteresis(33, 47))
         brain.add(sink2)
 
-        pump1_switch = TestSwitch(name='pump1', initial_state=TestSwitch.OPEN)
+        pump1_switch = TestSwitch(name='pump1', initial_state=False)
         transport1 = Transport(name='my-transport-1', source=source, sink=sink1,
                                 diff_hysteresis=Hysteresis(0, 5),
                                 pump_switch=pump1_switch)
         brain.add(transport1)
 
-        pump2_switch = TestSwitch(name='pump2', initial_state=TestSwitch.OPEN)
+        pump2_switch = TestSwitch(name='pump2', initial_state=False)
         transport2 = Transport(name='my-transport-2', source=source, sink=sink2,
                                diff_hysteresis=Hysteresis(0, 5),
                                pump_switch=pump2_switch)

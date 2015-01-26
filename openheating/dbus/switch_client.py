@@ -9,18 +9,8 @@ class DBusSwitch(Switch, DBusObjectClient):
     '''
 
     def set_state(self, value):
-        # translate the enum to boolean, for easy dbus transport
-        if value == self.OPEN:
-            bool_value = False
-        elif value == self.CLOSED:
-            bool_value = True
-        else:
-            assert False, value
-        self.dbus_call('set_state', bool_value)
+        assert type(value) is bool
+        self.dbus_call('set_state', value)
 
     def get_state(self):
-        bool_value = self.dbus_call('get_state')
-        if bool_value:
-            return self.CLOSED
-        else:
-            return self.OPEN
+        return self.dbus_call('get_state')

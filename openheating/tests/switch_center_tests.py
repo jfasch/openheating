@@ -8,8 +8,8 @@ import unittest
 
 class SwitchCenterTest(unittest.TestCase):
     def test_lookup(self):
-        one = TestSwitch(name='one', initial_state=TestSwitch.OPEN)
-        two = TestSwitch(name='two', initial_state=TestSwitch.OPEN)
+        one = TestSwitch(name='one', initial_state=False)
+        two = TestSwitch(name='two', initial_state=False)
         center = SwitchCenter({'one': one, 'two': two})
         center.do_close('one')
         self.assertTrue(one.is_closed())
@@ -21,15 +21,15 @@ class SwitchCenterTest(unittest.TestCase):
         self.assertTrue(two.is_open())
 
     def test_all_names(self):
-        center = SwitchCenter({'one': TestSwitch(name='one', initial_state=TestSwitch.OPEN), 'two': TestSwitch(name='two', initial_state=TestSwitch.OPEN)})
+        center = SwitchCenter({'one': TestSwitch(name='one', initial_state=False), 'two': TestSwitch(name='two', initial_state=False)})
         all_names = set(center.all_names())
         self.assertEqual(len(all_names), 2)
         self.assertIn('one', all_names)
         self.assertIn('two', all_names)
 
     def test_adapter_switch(self):
-        one = TestSwitch(name='one', initial_state=TestSwitch.OPEN)
-        two = TestSwitch(name='two', initial_state=TestSwitch.OPEN)
+        one = TestSwitch(name='one', initial_state=False)
+        two = TestSwitch(name='two', initial_state=False)
         center = SwitchCenter({'one': one, 'two': two})
 
         ad_one = center.get_switch('one')

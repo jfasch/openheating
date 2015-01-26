@@ -7,7 +7,7 @@ class TestSwitch(Switch):
         self.set_state(initial_state)
 
     def set_state(self, state):
-        assert state in (self.OPEN, self.CLOSED)
+        assert type(state) is bool, type(state)
         self.__do_output(state)
         self.__state = state
     def get_state(self):
@@ -16,10 +16,8 @@ class TestSwitch(Switch):
     def __do_output(self, state):
         if self.__output is None:
             return
-        if state == self.OPEN:
-            print(self.__name+": opening", file=self.__output)
-            return
-        if state == self.CLOSED:
-            print(self.__name +": closing", file=self.__output)
-            return
-        assert False, state
+        if state:
+            msg = ": closing"
+        else:
+            msg = ": opening"
+        print(self.__name + msg, file=self.__output)

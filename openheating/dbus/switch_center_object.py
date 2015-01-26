@@ -1,7 +1,6 @@
 from .object import DBusObject
 from .types import exception_local_to_dbus, DBUS_SWITCH_CENTER_IFACE_STRING
 
-from ..switch import Switch
 from ..error import HeatingError
 
 import dbus
@@ -22,23 +21,14 @@ class DBusSwitchCenterObject(DBusObject):
     @dbus.service.method(dbus_interface=DBUS_SWITCH_CENTER_IFACE_STRING, in_signature = 'sb')
     def set_state(self, name, value):
         try:
-            if value:
-                switch_state = Switch.CLOSED
-            else:
-                switch_state = Switch.OPEN
-            self.__center.set_state(name, switch_state)
+            # have to convert from "dbus.Boolean" which slips through
+            self.__center.set_state(name, value and True or False)
         except HeatingError as e:
             raise exception_local_to_dbus(e)
 
     @dbus.service.method(dbus_interface=DBUS_SWITCH_CENTER_IFACE_STRING, in_signature='s', out_signature = 'b')
     def get_state(self, name):
         try:
-            value = self.__center.get_state(name)
-            if value == Switch.OPEN:
-                return False
-            elif value == Switch.CLOSED:
-                return True
-            else:
-                assert False, value
+            return self.__center.get_state(name)
         except HeatingError as e:
             raise exception_local_to_dbus(e)

@@ -20,7 +20,6 @@ from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from ..testutils.thermometer import TestThermometer
 from ..hardware.switch_gpio import GPIOSwitch
 from ..hardware.gpio import create as create_gpio
-from ..testutils.switch import TestSwitch
 
 from abc import ABCMeta, abstractmethod
 
@@ -62,6 +61,4 @@ _symbols = {
     'GPIOSwitch': GPIOSwitchCreator,
     'DBusSwitch': DBusSwitchCreator,
     'TestSwitch': TestSwitchCreator,
-    'OPEN': TestSwitch.OPEN,
-    'CLOSED': TestSwitch.CLOSED,
 }

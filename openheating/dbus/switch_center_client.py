@@ -12,18 +12,10 @@ class DBusSwitchCenter(SwitchCenterBase, DBusObjectClient):
         return self.dbus_call('all_names')
 
     def set_state(self, name, value):
-        # translate the enum to boolean, for easy dbus transport
-        if value == self.OPEN:
-            bool_value = False
-        elif value == self.CLOSED:
-            bool_value = True
-        else:
-            assert False, value
-        self.dbus_call('set_state', name, bool_value)
+        assert type(value) is bool, type(value)
+        self.dbus_call('set_state', name, value)
 
     def get_state(self, name):
-        bool_value = self.dbus_call('get_state', name)
-        if bool_value:
-            return self.CLOSED
-        else:
-            return self.OPEN
+        rv = self.dbus_call('get_state', name)
+        # have to convert from "dbus.Boolean" which slips through
+        return rv and True or False

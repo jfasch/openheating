@@ -1,5 +1,4 @@
 from openheating.testutils.dbus_testcase import DBusTestCase
-from openheating.testutils.switch import TestSwitch
 from openheating.dbus.service import DBusService
 from openheating.dbus.rebind import DBusClientConnection
 from openheating.dbus.thermometer_client import DBusThermometer
@@ -70,7 +69,7 @@ class ServiceTest(DBusTestCase):
                 '/thermometers/test': TestThermometerCreator(initial_temperature=1),
                 '/thermometers/i2c': HWMON_I2C_ThermometerCreator(bus_number=666, address=0x49),
                 '/thermometers/dbus': DBusThermometerCreator(name='a.b.c', path='/some/thermometer'),
-                '/switches/test': TestSwitchCreator(name='testswitch', initial_state=TestSwitch.OPEN),
+                '/switches/test': TestSwitchCreator(name='testswitch', initial_state=False),
                 # not easily instantiated ... '/switches/gpio': GPIOSwitchCreator(gpio_number=66),
                 '/switches/dbus': DBusSwitchCreator(name='a.b.c', path='/some/switch'),
                 '/center/thermometers': ThermometerCenterCreator(
@@ -82,7 +81,7 @@ class ServiceTest(DBusTestCase):
                     }),
                 '/center/switches': SwitchCenterCreator(
                     switches={
-                        'test': TestSwitchCreator(name='testswitch', initial_state=TestSwitch.OPEN),
+                        'test': TestSwitchCreator(name='testswitch', initial_state=False),
                         'dbus': DBusSwitchCreator(name='a.b.c', path='/some/where'),
                     }),
             })
@@ -103,9 +102,9 @@ class ServiceTest(DBusTestCase):
             switch = DBusSwitch(connection=DBusClientConnection(address=self.daemon_address()),
                                 name='some.dbus.service',
                                 path='/switches/test')
-            self.assertEqual(switch.get_state(), TestSwitch.OPEN)
+            self.assertEqual(switch.get_state(), False)
             switch.do_close()
-            self.assertEqual(switch.get_state(), TestSwitch.CLOSED)
+            self.assertEqual(switch.get_state(), True)
 
         if True:
             thermometer_center = DBusThermometerCenter(connection=DBusClientConnection(address=self.daemon_address()),
@@ -117,11 +116,11 @@ class ServiceTest(DBusTestCase):
             switch_center = DBusSwitchCenter(connection=DBusClientConnection(address=self.daemon_address()),
                                              name='some.dbus.service',
                                              path='/center/switches')
-            self.assertEqual(switch_center.get_state('test'), TestSwitch.OPEN)
-            switch_center.set_state('test', TestSwitch.CLOSED)
+            self.assertEqual(switch_center.get_state('test'), False)
+            switch_center.set_state('test', True)
             switch_proxy = switch_center.get_switch('test')
             switch_proxy.do_close()
-            self.assertEqual(switch_center.get_state('test'), TestSwitch.CLOSED)
+            self.assertEqual(switch_center.get_state('test'), True)
 
         service.stop()
 
@@ -149,8 +148,8 @@ SERVICES = {
     'some.service.centers': {
         '/path/to/switch_center': SwitchCenter(
             switches = {
-                "switch-test-closed": TestSwitch(name='xxx', initial_state=CLOSED),
-                "switch-test-open": TestSwitch(name='yyy', initial_state=OPEN),
+                "switch-test-closed": TestSwitch(name='xxx', initial_state=True),
+                "switch-test-open": TestSwitch(name='yyy', initial_state=False),
                 # ot easily instantiated ... "switch-gpio": GPIOSwitch(gpio_number=4),
                 "switch-dbus": DBusSwitch(name="a.b.c", path="/some/path")
             }),
@@ -172,7 +171,7 @@ SERVICES = {
     'some.service.switches': {
         # not easily instantiated ... '/path/to/switches/gpio': GPIOSwitch(gpio_number=42),
         '/path/to/switches/dbus': DBusSwitch(name="a.b.c", path="/some/path"),
-        '/path/to/switches/test': TestSwitch(name='xxx', initial_state=OPEN),
+        '/path/to/switches/test': TestSwitch(name='xxx', initial_state=False),
     },
 }
 '''

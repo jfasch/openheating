@@ -3,8 +3,6 @@
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
 from openheating.dbus.switch_center_client import DBusSwitchCenter
 from openheating.dbus.rebind import DBusConnectionProxy
-from openheating.testutils.switch import TestSwitch
-from openheating.switch import Switch
 from openheating.sink import Sink
 from openheating.passive_source import PassiveSource
 from openheating.oil_combo import OilCombo
@@ -28,9 +26,9 @@ th_boiler_top = thermo_center.get_thermometer('boiler-top')
 th_ofen = thermo_center.get_thermometer('ofen')
 th_oil =  thermo_center.get_thermometer('oel-puffer')
 
-# sw_pumpe_ww = TestSwitch(name="pumpe-ww", initial_state=Switch.OPEN, output=sys.stdout)
-# sw_oil_enable = TestSwitch(name="enable", initial_state=Switch.OPEN, output=sys.stdout)
-# sw_oil_burn = TestSwitch(name="burn", initial_state=Switch.OPEN, output=sys.stdout)
+# sw_pumpe_ww = TestSwitch(name="pumpe-ww", initial_state=False, output=sys.stdout)
+# sw_oil_enable = TestSwitch(name="enable", initial_state=False, output=sys.stdout)
+# sw_oil_burn = TestSwitch(name="burn", initial_state=False, output=sys.stdout)
 
 sw_pumpe_ww = switch_center.get_switch('pumpe-ww')
 sw_oil_enable = switch_center.get_switch('oel-enable')

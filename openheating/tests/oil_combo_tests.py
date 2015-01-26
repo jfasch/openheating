@@ -19,8 +19,8 @@ class OilComboTest(unittest.TestCase):
         self.__brain.add(self.__sink)
 
         self.__oil_thermometer = TestThermometer(initial_temperature=20)
-        self.__oil_enable_switch = TestSwitch(name='oil-enable', initial_state=TestSwitch.OPEN)
-        self.__oil_burn_switch = TestSwitch(name='oil-burn', initial_state=TestSwitch.OPEN)
+        self.__oil_enable_switch = TestSwitch(name='oil-enable', initial_state=False)
+        self.__oil_burn_switch = TestSwitch(name='oil-burn', initial_state=False)
 
         self.__oil_combo = OilCombo(name='my-oil-combo', thermometer=self.__oil_thermometer,
                                     enable_switch=self.__oil_enable_switch, burn_switch=self.__oil_burn_switch)
@@ -28,7 +28,7 @@ class OilComboTest(unittest.TestCase):
         self.__transport = Transport(name='my-transport',
                                      source=self.__oil_combo, sink=self.__sink,
                                      diff_hysteresis=Hysteresis(0, 5),
-                                     pump_switch=TestSwitch(name='pump', initial_state=TestSwitch.OPEN))
+                                     pump_switch=TestSwitch(name='pump', initial_state=False))
         self.__brain.add(self.__transport)
 
     def test__initial_state(self):

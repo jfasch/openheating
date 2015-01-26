@@ -26,13 +26,13 @@ class Transport(Thinker):
         
         if len(requesters) and not self.__sink in requesters:
             self.__debug('pump off, somebody else needs it better: ' + ','.join(r.name() for r in requesters))
-            return self.__switch_pump(Switch.OPEN)
+            return self.__switch_pump(False)
         if self.__diff_hysteresis.above(diff):
             self.__debug('pump on')
-            return self.__switch_pump(Switch.CLOSED)
+            return self.__switch_pump(True)
         if self.__diff_hysteresis.below(diff):
             self.__debug('pump off')
-            return self.__switch_pump(Switch.OPEN)
+            return self.__switch_pump(False)
 
         return 0
 
