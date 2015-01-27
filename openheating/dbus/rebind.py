@@ -12,8 +12,8 @@ is done inside, on both connections and objects.
 
 '''
 
-from .types import exception_dbus_to_local
-from ..error import HeatingError, DBusNoConnectionError, DBusNoServiceError
+from . import types
+from ..error import HeatingError
 
 from dbus.exceptions import DBusException
 import dbus.bus
@@ -74,6 +74,15 @@ class DBusObjectClient:
     the nature of the DBus protocol).
 
     '''
+
+    dbus_transient_errors = ('org.freedesktop.DBus.Error.Disconnected',
+                             'org.freedesktop.DBus.Error.NoServer',
+                             'org.freedesktop.DBus.Error.NoReply',
+                             # EHOSTUNREACH as it seems
+                             'org.freedesktop.DBus.Error.Failed',
+                             # ENETUNREACH as it seems
+                             'org.freedesktop.DBus.Error.NoNetwork',
+    )
     
     def __init__(self, connection, name, path):
         self.__connection = connection
@@ -89,22 +98,16 @@ class DBusObjectClient:
             func = self.__object.get_dbus_method(funcname)
             return func(*args)
         except DBusException as e:
-            if e.get_dbus_name() in ('org.freedesktop.DBus.Error.Disconnected',
-                                     'org.freedesktop.DBus.Error.NoServer',
-                                     'org.freedesktop.DBus.Error.NoReply',
-                                     # EHOSTUNREACH as it seems
-                                     'org.freedesktop.DBus.Error.Failed',
-                                     # ENETUNREACH as it seems
-                                     'org.freedesktop.DBus.Error.NoNetwork',
-                                     ):
+            exc_name = e.get_dbus_name()
+            exc_msg = e.get_dbus_message()
+
+            if exc_name == types.DBUS_HEATING_ERROR_NAME:
+                # HeatingError pass-through from the remote side.
+                raise HeatingError(exc_msg) from None
+            elif exc_name in self.dbus_transient_errors:
+                # a dbus error. tear down connection and object.
                 self.__connection.clear_connection()
                 self.__object = None
-                exc = DBusNoConnectionError(msg=str(e))
-            elif e.get_dbus_name() in ('org.freedesktop.DBus.Error.ServiceUnknown'):
-                self.__object = None
-                exc = DBusNoServiceError(msg=str(e))
+                raise HeatingError(msg='dbus error', nested_errors=[e])
             else:
-                exc = exception_dbus_to_local(e)
-        if exc is not None:
-            raise exc
-
+                assert False, "won't let this one pass: "+str(e)

@@ -1,5 +1,5 @@
 from ..thermometer import Thermometer
-from ..error import HeatingError, TransientThermometerError, PermanentThermometerError
+from ..error import HeatingError
 
 from dbus.exceptions import DBusException
 
@@ -11,55 +11,20 @@ DBUS_THERMOMETER_CENTER_IFACE_STRING = 'org.openheating.ThermometerCenter'
 DBUS_SWITCH_IFACE_STRING = 'org.openheating.Switch'
 DBUS_SWITCH_CENTER_IFACE_STRING = 'org.openheating.SwitchCenter'
 
-
-class _DBus_PermanentThermometerError(DBusException):
-    NAME = 'org.openheating.PermanentThermometerError'
-    def __init__(self, msg):
-        DBusException.__init__(self, msg, name=self.NAME)
-class _DBus_TransientThermometerError(DBusException):
-    NAME = 'org.openheating.TransientThermometerError'
-    def __init__(self, msg):
-        DBusException.__init__(self, msg, name=self.NAME)
-class _DBus_HeatingError(DBusException):
-    NAME = 'org.openheating.HeatingError'
-    def __init__(self, msg):
-        DBusException.__init__(self, msg, name=self.NAME)
-class _DBus_UnknownError(DBusException):
-    NAME = 'org.openheating.UnknownError'
-    def __init__(self, msg):
-        DBusException.__init__(self, msg, name=self.NAME)
-
-
+DBUS_HEATING_ERROR_NAME = 'org.openheating.HeatingError'
 
 def exception_dbus_to_local(e):
     exc_name = e.get_dbus_name()
     exc_msg = e.get_dbus_message()
-    
-    if exc_name == _DBus_PermanentThermometerError.NAME:
-        return PermanentThermometerError(exc_msg)
-    if exc_name == _DBus_TransientThermometerError.NAME:
-        return TransientThermometerError(exc_msg)
-    if exc_name == _DBus_HeatingError.NAME:
-        return HeatingError(_DBus_HeatingError.NAME+': '+exc_name+', "'+exc_msg+'"')
 
     # whenever we receive an exception other than HeatingError (for
     # example an AssertionError or even NameError), then this should
     # be detected the hard way. not very polite (we are crashed by the
     # remote side), but very helpful during debugging.
-    assert False, 'refusing to accept any foreign errors'
-
-    return HeatingError(_DBus_UnknownError.NAME+': '+exc_name+', "'+exc_msg+'"')
+    assert exc_name == 'org.openheating.HeatingError', \
+        'refusing to accept any foreign DBus errors: name=' + exc_name + ', msg=' + exc_msg
+    return HeatingError(exc_msg)
 
 def exception_local_to_dbus(e):
-    if isinstance(e, PermanentThermometerError):
-        return _DBus_PermanentThermometerError(_make_original_string(e))
-    if isinstance(e, TransientThermometerError):
-        return _DBus_TransientThermometerError(_make_original_string(e))
-    if isinstance(e, HeatingError):
-        return _DBus_HeatingError(_make_original_string(e))
-
-    assert False, 'cannot convert types other than '+str(HeatingError)+' (was: '+str(e)+')'
-
-def _make_original_string(e):
-    orstr = 'Original error:\n  ' + str(e).replace('\n', '\n  ')
-    return orstr
+    assert isinstance(e, HeatingError)
+    return DBusException(e.msg(), name=DBUS_HEATING_ERROR_NAME)

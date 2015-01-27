@@ -1,4 +1,4 @@
-from openheating.error import DBusNoConnectionError
+from openheating.error import HeatingError
 from openheating.dbus.rebind import DBusClientConnection
 from openheating.dbus.rebind import DBusObjectClient
 from openheating.testutils.dbus_testcase import DBusTestCase
@@ -34,9 +34,7 @@ class ClientTest(DBusTestCase):
 
         self.restart_daemon()
 
-        # raises DBusNoConnectionError at first call after connection
-        # loss
-        self.assertRaises(DBusNoConnectionError, client.dbus_call, 'GetId')
+        self.assertRaises(HeatingError, client.dbus_call, 'GetId')
 
         # re-establishes connection at second
         client.dbus_call('GetId')

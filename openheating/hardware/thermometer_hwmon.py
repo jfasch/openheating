@@ -1,5 +1,5 @@
 from ..thermometer import Thermometer
-from ..error import HeatingError, TransientThermometerError, PermanentThermometerError
+from ..error import HeatingError
 
 import os
 
@@ -17,12 +17,13 @@ class HWMON_Thermometer(Thermometer):
         try:
             tempfile = open(self.__temp_input, 'r')
         except FileNotFoundError as e:
-            raise PermanentThermometerError(msg=self.__temp_input+' not there', nested_errors=e)
+            # fixme: mark this as permanent
+            raise HeatingError(msg=self.__temp_input+' not there', nested_errors=e)
 
         try:
             temp = tempfile.read()
         except IOError as e:
-            raise TransientThermometerError(msg='error reading '+self.__temp_input)
+            raise HeatingError(msg='error reading '+self.__temp_input)
 
         return int(temp)/1000
 
@@ -47,14 +48,18 @@ class HWMON_I2C_Thermometer(HWMON_Thermometer):
             return
         device_dir = '/sys/bus/i2c/devices/i2c-%d/%d-%04x' % (self.__bus_number, self.__bus_number, self.__address)
         if not os.path.isdir(device_dir):
+            # fixme: mark this as permanent
             raise HeatingError('HWMON I2C Thermometer: no such device: '+device_dir)
         device_hwmon_dir = os.path.join(device_dir, 'hwmon')
         if not os.path.isdir(device_dir):
+            # fixme: mark this as permanent
             raise HeatingError('HWMON I2C Thermometer: not a hwmon device; missing '+device_hwmon_dir)
         hwmon_devices = os.listdir(device_hwmon_dir)
         if len(hwmon_devices) == 0:
+            # fixme: mark this as permanent
             raise HeatingError('HWMON I2C Thermometer: no device found in '+device_hwmon_dir)
         if len(hwmon_devices) != 1:
+            # fixme: mark this as permanent
             raise HeatingError('HWMON I2C Thermometer: not implemented: found multiple (%d) devices in %s' % \
                                        (len(hwmon_devices), device_hwmon_dir))
         number = int(hwmon_devices[0][5:])
