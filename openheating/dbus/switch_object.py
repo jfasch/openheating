@@ -3,11 +3,10 @@ from .types import exception_local_to_dbus, DBUS_SWITCH_IFACE_STRING
 
 from ..error import HeatingError
 
-import dbus
 import dbus.service
 
 
-class DBusSwitchObject(dbus.service.Object):
+class DBusSwitchObject(DBusObject):
     '''Adapt a Switch into a DBus object at object_path'''
 
     def __init__(self, connection, path, switch):
