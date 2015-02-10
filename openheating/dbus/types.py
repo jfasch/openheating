@@ -3,6 +3,9 @@ from ..error import HeatingError
 
 from dbus.exceptions import DBusException
 
+import pprint
+
+
 #DBusException.include_traceback = True
 
 DBUS_THERMOMETER_IFACE_STRING = 'org.openheating.Thermometer'
@@ -23,8 +26,21 @@ def exception_dbus_to_local(e):
     # remote side), but very helpful during debugging.
     assert exc_name == 'org.openheating.HeatingError', \
         'refusing to accept any foreign DBus errors: name=' + exc_name + ', msg=' + exc_msg
-    return HeatingError(exc_msg)
+
+    return _from_dict(eval(exc_msg))
 
 def exception_local_to_dbus(e):
     assert isinstance(e, HeatingError)
-    return DBusException(e.msg(), name=DBUS_HEATING_ERROR_NAME)
+    return DBusException(pprint.pformat(_to_dict(e)), name=DBUS_HEATING_ERROR_NAME)
+
+def _to_dict(err):
+    return {
+        'msg': err.msg(),
+        'permanent': err.permanent(),
+        'nested_errors': [_to_dict(e) for e in err.nested_errors()],
+    }
+
+def _from_dict(d):
+    return HeatingError(
+        msg=d['msg'], permanent=d['permanent'],
+        nested_errors=[_from_dict(n) for n in d['nested_errors']])

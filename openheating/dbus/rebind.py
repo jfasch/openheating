@@ -103,11 +103,11 @@ class DBusObjectClient:
 
             if exc_name == types.DBUS_HEATING_ERROR_NAME:
                 # HeatingError pass-through from the remote side.
-                raise HeatingError(exc_msg) from None
+                raise types.exception_dbus_to_local(e) from None
             elif exc_name in self.dbus_transient_errors:
                 # a dbus error. tear down connection and object.
                 self.__connection.clear_connection()
                 self.__object = None
-                raise HeatingError(msg='dbus error', nested_errors=[e])
+                raise HeatingError(permanent=False, msg='dbus error', nested_errors=[e]) from None
             else:
                 assert False, "won't let this one pass: "+str(e)
