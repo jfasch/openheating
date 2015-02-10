@@ -73,29 +73,35 @@ class DBusService:
         signal.signal(signal.SIGTERM, _restarter_terminate)
         signal.signal(signal.SIGINT, _restarter_terminate)
 
-        global _restarter_running
-        _restarter_running = True
-        while _restarter_running:
-            service_pid = os.fork()
-            if service_pid == 0:
-                # child; the service
+        global _service_pid
+
+        while True:
+            _service_pid = os.fork()
+            if _service_pid == 0:
+                # grandchild, the service. on shutdown, the restarter
+                # will simply SIGTERM it, so I have to reset signal
+                # disposition to their defaults.
+                signal.signal(signal.SIGTERM, signal.SIG_DFL)
+                signal.signal(signal.SIGINT, signal.SIG_DFL)
+                
                 self.__service()
                 assert False, 'should never get here'
             else:
                 # parent; the "restarter". wait for child (service),
                 # and backoff before restart
                 try:
-                    died, status = os.waitpid(service_pid, 0)
+                    died, status = os.waitpid(_service_pid, 0)
                     logging.warning('service process %d died, status %d' % (died, status))
+                    _service_pid = None
                     time.sleep(2)
                 except KeyboardInterrupt:
                     pass
                 except OSError as e:
                     if e.errno == errno.EINTR:
+                        # whatever that could be, we don't care.
                         pass
                     else:
                         raise
-        os._exit(0)
 
     def __service(self):
         # grandchild, the service itself.
@@ -124,10 +130,12 @@ class DBusService:
             logging.exception(str(e))
             os._exit(1)
 
-_restarter_running = False
+_service_pid = None
+
 def _restarter_terminate(signum, frame):
-    global _restarter_running
-    _restarter_running = False
+    global _service_pid
+    os.kill(_service_pid, signal.SIGTERM)
+    os._exit(0)
 
 # ----------------------------------------------------------------
 class Creator(metaclass=ABCMeta):
