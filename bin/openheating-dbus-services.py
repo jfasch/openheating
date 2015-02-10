@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import logging
 import logging.handlers
 import signal
+import os
 
 parser = ArgumentParser()
 parser.add_argument('--config-file', type=str, help='Configuration file (to be documented)', required=True)
@@ -13,7 +14,9 @@ args = parser.parse_args()
 
 if args.syslog:
     h = logging.handlers.SysLogHandler(address='/dev/log')
-    logging.getLogger().addHandler(h)
+else:
+    h = logging.StreamHandler()
+logging.getLogger().addHandler(h)
 
 def terminate(signum, frame):
     global running
@@ -28,10 +31,18 @@ try:
     config = DBusServicesConfig(open(args.config_file).read())
     services = config.services()
 
+    if args.pid_file is not None:
+        pf = open(args.pid_file, 'w')
+        pf.write(str(os.getpid())+'\n')
+        pf.close()
+
     for s in services:
         s.start()
 
-    print('pause')
+    signal.signal(signal.SIGTERM, terminate)
+    signal.signal(signal.SIGQUIT, terminate)
+    signal.signal(signal.SIGINT, terminate)
+
     while running:
         try:
             signal.pause()
@@ -43,6 +54,9 @@ try:
 
     for s in services:
         s.stop()
+
+    if args.pid_file is not None:
+        os.remove(args.pid_file)
 
 except Exception as e:
     logging.exception(str(e))
