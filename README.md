@@ -36,7 +36,7 @@ to revert that aberration.
 Wish List
 ---------
 
-While the main inpetus for this project is to bring my own system to
+While the main impetus for this project is to bring my own system to
 its intended functionality, a definitive intent is to keep things
 apart as far as possible. For example, I have a wood/oil combination
 of heat sources. Software contains separate classes for each, combined
