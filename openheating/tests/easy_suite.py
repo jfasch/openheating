@@ -7,6 +7,7 @@ from openheating.tests.switch_center_tests import suite as switch_center_suite
 from openheating.tests.config_parser_tests import suite as config_parser_suite
 
 from openheating.dbus.tests.easy_suite import suite as dbus_suite
+from openheating.hardware.tests.easy_suite import suite as hardware_suite
 
 import unittest
 
@@ -18,4 +19,6 @@ suite.addTest(oil_combo_suite)
 suite.addTest(thermometer_center_suite)
 suite.addTest(switch_center_suite)
 suite.addTest(config_parser_suite)
+
 suite.addTest(dbus_suite)
+suite.addTest(hardware_suite)

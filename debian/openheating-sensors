@@ -22,11 +22,10 @@ oh_configfile=$OH_CONFDIR/openheating-sensors.conf
 case "$1" in
     start)
 	log_daemon_msg "Starting $oh_desc" $oh_name
-	$oh_prog --config-file=$oh_configfile --action=add
+	$oh_prog --config-file=$oh_configfile --syslog
 	;;
     stop)
 	log_daemon_msg "Stopping $oh_desc" $oh_name
-	$oh_prog --config-file=$oh_configfile --action=remove
 	;;
     restart|force-reload)
 	$0 stop

@@ -1,5 +1,5 @@
 class HeatingError(Exception):
-    def __init__(self, permanent, msg, nested_errors=None):
+    def __init__(self, msg, permanent=False, nested_errors=None, token=''):
         assert type(msg) is str
         assert type(permanent) is bool
         assert nested_errors is None or type(nested_errors) is list
@@ -12,12 +12,16 @@ class HeatingError(Exception):
         else:
             self.__nested_errors = nested_errors
 
+        self.__token = token
+
     def msg(self):
         return self.args[0]
     def permanent(self):
         return self.__permanent
     def nested_errors(self):
         return self.__nested_errors
+    def token(self):
+        return self.__token
 
     @staticmethod
     def equal(lhs, rhs):

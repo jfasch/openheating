@@ -23,7 +23,8 @@ case "$1" in
 	    --background \
 	    --chuid=$OH_USER:$OH_GROUP \
 	    --pidfile $oh_pidfile \
-	    --startas $oh_prog -- \
+	    --startas $oh_prog \
+	    -- \
 	    --config-file=$OH_CONFDIR/openheating-dbus-services.conf \
 	    --pid-file=$oh_pidfile \
 	    --syslog

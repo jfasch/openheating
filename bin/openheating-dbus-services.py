@@ -9,7 +9,7 @@ import os
 parser = ArgumentParser()
 parser.add_argument('--config-file', type=str, help='Configuration file (to be documented)', required=True)
 parser.add_argument('--pid-file', type=str, help='PID file (to be documented)')
-parser.add_argument('--syslog', action='store_true', default=False, help='PID file (to be documented)')
+parser.add_argument('--syslog', action='store_true', default=False, help='Log to syslog')
 args = parser.parse_args()
 
 if args.syslog:
