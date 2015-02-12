@@ -121,6 +121,8 @@ class DBusObjectClient:
                 raise HeatingError(msg)
 
             if exc_name in ('org.freedesktop.DBus.Error.NoReply',
+                            'org.freedesktop.DBus.Error.NameHasNoOwner',
+                            'org.freedesktop.DBus.Error.ServiceUnknown',
                             ):
                 msg = 'dbus error: object problem: '+str(e)
                 logging.warning(msg)
