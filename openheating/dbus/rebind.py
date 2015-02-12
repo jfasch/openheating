@@ -19,14 +19,16 @@ from dbus.exceptions import DBusException
 import dbus.bus
 
 from abc import ABCMeta, abstractmethod
+import logging
+import os
 
 
 class DBusConnection(metaclass=ABCMeta):
     @abstractmethod
-    def get_connection(self):
+    def get_proxy(self, name, path):
         pass
     @abstractmethod
-    def clear_connection(self):
+    def connection_lost(self):
         pass
 
 class DBusClientConnection(DBusConnection):
@@ -40,12 +42,12 @@ class DBusClientConnection(DBusConnection):
         self.__address = address
         self.__connection = None
 
-    def get_connection(self):
+    def get_proxy(self, name, path):
         if self.__connection is None:
             self.__connection = dbus.bus.BusConnection(self.__address)
-        return self.__connection
+        return self.__connection.get_object(name, path)
 
-    def clear_connection(self):
+    def connection_lost(self):
         self.__connection = None
 
 class DBusServerConnection(DBusConnection):
@@ -59,11 +61,17 @@ class DBusServerConnection(DBusConnection):
     def __init__(self, connection):
         self.__connection = connection
     
-    def get_connection(self):
-        return self.__connection
+    def get_proxy(self, name, path):
+        return self.__connection.get_object(name, path)
 
-    def clear_connection(self):
-        raise HeatingError('server connection: client error: connection closed')
+    def connection_lost(self):
+        logging.error('server connection lost')
+        os._exit(1)
+
+    def get_connection(self):
+        ''' Specific to this class, used to create DBus Objects with
+        '''
+        return self.__connection
 
 class DBusObjectClient:
     '''Recovery of DBus object proxy
@@ -75,28 +83,20 @@ class DBusObjectClient:
 
     '''
 
-    dbus_transient_errors = ('org.freedesktop.DBus.Error.Disconnected',
-                             'org.freedesktop.DBus.Error.NoServer',
-                             'org.freedesktop.DBus.Error.NoReply',
-                             # EHOSTUNREACH as it seems
-                             'org.freedesktop.DBus.Error.Failed',
-                             # ENETUNREACH as it seems
-                             'org.freedesktop.DBus.Error.NoNetwork',
-    )
-    
     def __init__(self, connection, name, path):
         self.__connection = connection
         self.__name = name
         self.__path = path
-        self.__object = None
+        self.__proxy = None
 
     def dbus_call(self, funcname, *args):
         exc = None
         try:
-            if self.__object is None:
-                self.__object = self.__connection.get_connection().get_object(self.__name, self.__path)
-            func = self.__object.get_dbus_method(funcname)
+            if self.__proxy is None:
+                self.__proxy = self.__connection.get_proxy(self.__name, self.__path)
+            func = self.__proxy.get_dbus_method(funcname)
             return func(*args)
+
         except DBusException as e:
             exc_name = e.get_dbus_name()
             exc_msg = e.get_dbus_message()
@@ -104,10 +104,28 @@ class DBusObjectClient:
             if exc_name == types.DBUS_HEATING_ERROR_NAME:
                 # HeatingError pass-through from the remote side.
                 raise types.exception_dbus_to_local(e)
-            elif exc_name in self.dbus_transient_errors:
-                # a dbus error. tear down connection and object.
-                self.__connection.clear_connection()
-                self.__object = None
-                raise HeatingError(permanent=False, msg='dbus error', nested_errors=[e])
-            else:
-                assert False, "won't let this one pass: "+str(e)
+
+            if exc_name in ('org.freedesktop.DBus.Error.NoServer',
+                            'org.freedesktop.DBus.Error.Disconnected',
+                            # TCP: EHOSTUNREACH as it seems
+                            'org.freedesktop.DBus.Error.Failed',
+                            # TCP: ENETUNREACH as it seems
+                            'org.freedesktop.DBus.Error.NoNetwork',
+                            # UNIX: server socket not there
+                            'org.freedesktop.DBus.Error.FileNotFound',
+                            ):
+                msg = 'dbus error: connection problem: '+str(e)
+                logging.warning(msg)
+                self.__proxy = None
+                self.__connection.connection_lost()
+                raise HeatingError(msg)
+
+            if exc_name in ('org.freedesktop.DBus.Error.NoReply',
+                            ):
+                msg = 'dbus error: object problem: '+str(e)
+                logging.warning(msg)
+                self.__proxy = None
+                raise HeatingError(msg)
+
+            self.__connection.connection_lost()
+            assert False, "can't let this one pass: "+str(e)

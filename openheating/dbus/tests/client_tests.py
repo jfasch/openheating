@@ -10,20 +10,20 @@ import unittest
 class ClientTest(DBusTestCase):
     def test__establish_connection(self):
         connection = DBusClientConnection(address=self.daemon_address())
-        bus_object = connection.get_connection().get_object('org.freedesktop.DBus', '/')
-        bus_object.GetId()
+        proxy = connection.get_proxy('org.freedesktop.DBus', '/')
+        proxy.GetId()
 
     def test__reestablish_connection(self):
         connection = DBusClientConnection(address=self.daemon_address())
-        bus_object = connection.get_connection().get_object('org.freedesktop.DBus', '/')
-        bus_object.GetId()
+        proxy = connection.get_proxy('org.freedesktop.DBus', '/')
+        proxy.GetId()
 
         self.restart_daemon()
         
-        self.assertRaises(dbus.exceptions.DBusException, bus_object.GetId)
+        self.assertRaises(dbus.exceptions.DBusException, proxy.GetId)
 
-        connection.clear_connection()
-        bus_object = connection.get_connection().get_object('org.freedesktop.DBus', '/')
+        connection.connection_lost()
+        proxy = connection.get_proxy('org.freedesktop.DBus', '/')
 
     def test__object_client__connection_loss(self):
         client = DBusObjectClient(
