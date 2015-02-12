@@ -11,6 +11,8 @@ class OilCombo(Source, Thinker):
       during heating.
 
     * http://forum.electronicwerkstatt.de/phpBB/Bauteile/anschlussbelegung_oelbrenner-t91974f30_bs0.html
+      http://www.kolboske.de/cms/mat/hz/oel_brenner_sammelsorium.pdf
+      http://www.bosy-online.de/Brenneranschluss.htm
 
     * http://www.mikrocontroller.net/topic/37080#273786: hysteresis
       65-75deg
@@ -18,6 +20,8 @@ class OilCombo(Source, Thinker):
     Kesseldatenblatt wegen Idealtemperatur?
 
     Ruecklauf ueber Boiler zum Heizen von dem!?
+
+    "Wieland/Euro-Stecker"
 
     '''
     def __init__(self,
