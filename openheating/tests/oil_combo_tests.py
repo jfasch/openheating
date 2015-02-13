@@ -10,6 +10,7 @@ from openheating.oil_combo import OilCombo
 import unittest
 import logging
 
+
 class OilComboTest(unittest.TestCase):
     def setUp(self):
         self.__brain = Brain()
@@ -85,5 +86,5 @@ suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilComboTest))
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    runner = unittest.TextTestRunner()
+    runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
