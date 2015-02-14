@@ -56,7 +56,7 @@ class OilComboTest(unittest.TestCase):
         # sink is way below wanted, so after thinking oil must be
         # requested
         self.__brain.think()
-        self.assertIn(self.__transport, self.__oil_combo.requesters())
+        self.assertIn(self.__sink, self.__oil_combo.requesters())
 
         # sink requests -> burn-switch is closed
         self.assertTrue(self.__oil_burn_switch.is_closed())
@@ -68,14 +68,14 @@ class OilComboTest(unittest.TestCase):
         # sink is way below wanted, so after thinking oil must be
         # requested
         self.__brain.think()
-        self.assertIn(self.__transport, self.__oil_combo.requesters())
+        self.assertIn(self.__sink, self.__oil_combo.requesters())
         self.assertTrue(self.__oil_burn_switch.is_closed())
         self.assertTrue(self.__oil_enable_switch.is_closed())
 
         # sink temperature rises above wanted -> release
         self.__sink_thermometer.set_temperature(50)
         self.__brain.think()
-        self.assertNotIn(self.__transport, self.__oil_combo.requesters())
+        self.assertNotIn(self.__sink, self.__oil_combo.requesters())
         self.assertTrue(self.__oil_burn_switch.is_open())
         self.assertTrue(self.__oil_enable_switch.is_closed())
 

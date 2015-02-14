@@ -1,20 +1,20 @@
 from abc import ABCMeta, abstractmethod
 
-from .transport import Transport
+from .sink import Sink
 
 class Source(metaclass=ABCMeta):
     def __init__(self, name):
         self.__name = name
         self.__requesters = set()
 
-    def request(self, transport):
-        assert isinstance(transport, Transport)
-        if transport not in self.__requesters:
-            self.__requesters.add(transport)
+    def request(self, sink):
+        assert isinstance(sink, Sink)
+        if sink not in self.__requesters:
+            self.__requesters.add(sink)
             self.do_request()
 
-    def release(self, transport):
-        self.__requesters.discard(transport)
+    def release(self, sink):
+        self.__requesters.discard(sink)
         self.do_release()
 
     def requesters(self):

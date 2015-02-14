@@ -7,16 +7,16 @@ class Sink(Thinker):
         self.__name = name
         self.__thermometer = thermometer
         self.__hysteresis = hysteresis
-        self.__transport = None
+        self.__source = None
 
         self.__thinking = False
 
     def name(self):
         return self.__name
 
-    def set_transport(self, transport):
-        assert self.__transport is None
-        self.__transport = transport
+    def set_source(self, source):
+        assert self.__source is None
+        self.__source = source
 
     def temperature(self):
         return self.__thermometer.temperature()
@@ -32,11 +32,11 @@ class Sink(Thinker):
         temperature = self.__thermometer.temperature()
         if self.__hysteresis.below(temperature):
             self.__debug('request')
-            self.__transport.request()
+            self.__source.request(self)
             nthoughts += 1
         elif self.__hysteresis.above(temperature):
             self.__debug('release')
-            self.__transport.release()
+            self.__source.release(self)
             nthoughts += 1
         else:
             self.__debug('nop')
