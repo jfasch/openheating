@@ -1,7 +1,4 @@
-from .source import Source
-from .thinking import Thinker
-
-class OilCombo(Source, Thinker):
+class OilCombo:
     '''Burner with Riello schematics (simple thing I think), together with
     a thermometer to measure water storage temperature.
 
@@ -25,34 +22,27 @@ class OilCombo(Source, Thinker):
 
     '''
     def __init__(self,
-                 name,
-                 enable_switch,
                  burn_switch,
-                 thermometer):
-        Source.__init__(self, name=name)
-        
-        self.__enable_switch = enable_switch
+                 thermometer,
+                 max_temperature):
         self.__burn_switch = burn_switch
         self.__thermometer = thermometer
+        self.__max_temperature = max_temperature
 
     def temperature(self):
         return self.__thermometer.temperature()
 
-    def enable(self):
-        '''Close the "enable" switch'''
-        self.__enable_switch.do_close()
-    def disable(self):
-        '''Open the "enable" switch'''
-        self.__enable_switch.do_open()
+    def request(self):
+        '''Called by a dedicated source when a sink wants heat.'''
 
-    def think(self):
-        return 0
-    def sync(self):
-        pass
+        buffer_temperature = self.__thermometer.temperature()
+        if self.__max_temperature.above(buffer_temperature):
+            self.__burn_switch.do_open()
+        elif self.__max_temperature.below(buffer_temperature):
+            self.__burn_switch.do_close()
+        else:
+            # leave as-is
+            pass
 
-    def do_request(self):
-        self.__burn_switch.do_close()
-
-    def do_release(self):
+    def release(self):
         self.__burn_switch.do_open()
-        
