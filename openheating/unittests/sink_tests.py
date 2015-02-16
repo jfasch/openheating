@@ -42,10 +42,6 @@ class SinkTest(unittest.TestCase):
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SinkTest))
 
-# suite.addTest(TransportBasicTest("test__pump_on_off_simple"))
-# suite.addTest(TransportPeeksProducerTest("test__producer_not_peeked_when_consumer_satisfied"))
-
-# logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
