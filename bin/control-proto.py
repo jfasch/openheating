@@ -39,7 +39,6 @@ th_oil =  thermo_center.get_thermometer('oel-puffer')
 
 sw_pumpe_ww = switch_center.get_switch('pumpe-ww')
 sw_pumpe_hk = switch_center.get_switch('pumpe-hk')
-sw_oil_enable = switch_center.get_switch('oel-enable')
 sw_oil_burn = switch_center.get_switch('oel-burn')
 
 
@@ -55,12 +54,10 @@ sink_room = Sink(
     hysteresis=Hysteresis(low=20, high=21),
 )
 
-# source_oil = OilCombo(
-#     name='oil',
-#     enable_switch=sw_oil_enable,
-#     burn_switch=sw_oil_burn,
-#     thermometer=th_oil)
-# source_oil.enable()
+source_oil = OilCombo(
+    name='oil',
+    burn_switch=sw_oil_burn,
+    thermometer=th_oil)
 
 source_wood = PassiveSource(name='ofen', thermometer=th_ofen)
 
@@ -96,7 +93,6 @@ while True:
     print('***STATES:',
           '\n* pumpe-ww:', str(sw_pumpe_ww.get_state()),
           '\n* pumpe-hk:', str(sw_pumpe_hk.get_state()),
-          '\n* oel-enable:', str(sw_oil_enable.get_state()),
           '\n* oel-burn:', str(sw_oil_burn.get_state()),
     )
 
