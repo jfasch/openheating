@@ -9,8 +9,9 @@ class Source(metaclass=ABCMeta):
 
     def request(self, sink):
         assert isinstance(sink, Sink)
-        self.__requesters.add(sink)
-        self.do_request()
+        if sink not in self.__requesters:
+            self.__requesters.add(sink)
+            self.do_request()
 
     def release(self, sink):
         self.__requesters.discard(sink)
