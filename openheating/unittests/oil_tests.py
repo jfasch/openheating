@@ -5,7 +5,7 @@ from openheating.thinking import Brain
 from openheating.sink import Sink
 from openheating.transport import Transport
 from openheating.hysteresis import Hysteresis
-from openheating.oil_combo import OilCombo
+from openheating.oil import OilCombo
 
 import unittest
 import logging
