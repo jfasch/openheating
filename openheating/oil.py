@@ -1,5 +1,5 @@
 from .source import Source
-from .thinking import Thinker
+from .thinking import Thinker, ThinkingSwitch
 
 class OilCombo(Source, Thinker):
     '''Burner with Riello schematics (simple thing I think), together with
@@ -27,23 +27,43 @@ class OilCombo(Source, Thinker):
     def __init__(self,
                  name,
                  burn_switch,
-                 thermometer):
+                 thermometer,
+                 anti_freeze):
         Source.__init__(self, name=name)
         
         self.__burn_switch = burn_switch
         self.__thermometer = thermometer
+        self.__anti_freeze = anti_freeze
+
+        # used during a thinking round. initialized at first think(),
+        # reaped (and reset) at sync().
+        self.__think_switch = None
 
     def temperature(self):
         return self.__thermometer.temperature()
 
     def think(self):
+        # first thinking round; set up the "thinking switch" logic
+        if self.__think_switch is None:
+            self.__think_switch = ThinkingSwitch(self.__burn_switch)
+
+        temperature = self.__thermometer.temperature()
+
+        if self.num_requesters() > 0 or self.__anti_freeze.below(temperature):
+            return self.__think_switch.set(True)
+
+        if self.num_requesters() == 0 and self.__anti_freeze.above(temperature):
+            return self.__think_switch.set(False)
+
         return 0
+        
     def sync(self):
-        pass
+        self.__think_switch.sync()
+        self.__think_switch = None
 
     def do_request(self):
-        self.__burn_switch.do_close()
+        pass
 
     def do_release(self):
-        self.__burn_switch.do_open()
+        pass
         

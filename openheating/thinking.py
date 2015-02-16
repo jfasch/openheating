@@ -37,3 +37,28 @@ class Brain:
             t.sync()
             
         self.__round += 1
+
+class ThinkingSwitch:
+    '''Operates on a switch. Returns >0 everytime a "set" operation
+    modifies the current switch state, and 0 otherwise. 
+
+    This reflects "thinking" because a "thought" is made on
+    modification, and none otherwise.
+    '''
+
+    def __init__(self, switch):
+        self.__state = None
+        self.__switch = switch
+
+    def set(self, state):
+        assert type(state) is bool
+        
+        if state != self.__state:
+            self.__state = state
+            return 1
+        else:
+            return 0
+
+    def sync(self):
+        if self.__state is not None:
+            self.__switch.set_state(self.__state)
