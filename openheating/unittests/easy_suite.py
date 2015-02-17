@@ -10,7 +10,9 @@ from openheating.hardware.unittests.easy_suite import suite as hardware_suite
 
 import unittest
 
+
 suite = unittest.TestSuite()
+
 suite.addTest(sink_suite)
 suite.addTest(transport_suite)
 suite.addTest(oil_suite)
