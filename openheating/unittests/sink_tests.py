@@ -15,7 +15,11 @@ class SinkTest(unittest.TestCase):
         sink_thermometer = TestThermometer(initial_temperature=10)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
                     hysteresis=Hysteresis(23, 27))
-        source = PassiveSource(name='my-source', thermometer=None)
+        source = PassiveSource(
+            name='my-source', 
+            thermometer=None,
+            max_produced_temperature=1000, # don't care
+        )
         sink.set_source(source)
         brain.add(sink)
 

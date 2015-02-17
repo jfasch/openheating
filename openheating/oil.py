@@ -29,8 +29,9 @@ class OilCombo(Source, Thinker):
                  burn_switch,
                  thermometer,
                  heating_level,
-                 minimum_temperature_hysteresis):
-        Source.__init__(self, name=name)
+                 minimum_temperature_hysteresis,
+                 max_produced_temperature):
+        Source.__init__(self, name=name, max_produced_temperature=max_produced_temperature)
         
         self.__burn_switch = ThinkingSwitch(burn_switch)
         self.__thermometer = thermometer

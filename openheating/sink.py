@@ -32,7 +32,18 @@ class Sink(Thinker):
         temperature = self.__thermometer.temperature()
         if self.__hysteresis.below(temperature):
             self.__debug('request')
-            self.__source.request(self)
+
+            # request desired upper bound plus 3. this is pretty
+            # arbitrary. 
+
+            # for example, if we are a boiler (hot water reservoir),
+            # then our upper bound will be at about 80. requesting 83
+            # at a wood oven will fail, whereas 83 at a oil oven will
+            # succeed. and that's the plan after all.
+
+            # anyway, let's see where all this leads us.
+
+            self.__source.request(self, self.__hysteresis.high()+3)
             nthoughts += 1
         elif self.__hysteresis.above(temperature):
             self.__debug('release')

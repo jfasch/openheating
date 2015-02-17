@@ -10,6 +10,7 @@ from openheating.transport import Transport
 import unittest
 import logging
 
+
 class TransportBasicTest(unittest.TestCase):
     def test__basic(self):
         brain = Brain()
@@ -20,7 +21,11 @@ class TransportBasicTest(unittest.TestCase):
         brain.add(sink)
 
         source_thermometer = TestThermometer(initial_temperature=80)
-        source = PassiveSource(name='my-source', thermometer=source_thermometer)
+        source = PassiveSource(
+            name='my-source', 
+            thermometer=source_thermometer, 
+            max_produced_temperature=1000, # don't care
+        )
 
         pump_switch = TestSwitch(name='pump', initial_state=False)
         transport = Transport(name='my-transport', source=source, sink=sink,
@@ -96,12 +101,16 @@ class TransportBasicTest(unittest.TestCase):
         * nothing requested: heat flows into all sinks where there is
           difference. we don't want to leave heat in the source, it
           would be wasted there.
-'''
+        '''
 
         brain = Brain()
         
         source_thermometer = TestThermometer(initial_temperature=80)
-        source = PassiveSource(name='my-source', thermometer=source_thermometer)
+        source = PassiveSource(
+            name='my-source', 
+            thermometer=source_thermometer,
+            max_produced_temperature=1000, # don't care
+        )
 
         sink1_thermometer = TestThermometer(initial_temperature=20)
         sink1 = Sink(name='my-sink-1', thermometer=sink1_thermometer,

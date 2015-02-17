@@ -59,10 +59,15 @@ source_oil = OilCombo(
     burn_switch=sw_oil_burn,
     thermometer=th_oil,
     heating_level=Hysteresis(50,70),
-    minimum_temperature_hysteresis=Hysteresis(10,20)
+    minimum_temperature_hysteresis=Hysteresis(10,20),
+    max_produced_temperature=90, # let's say
 )
 
-source_wood = PassiveSource(name='ofen', thermometer=th_ofen)
+source_wood = PassiveSource(
+    name='ofen', 
+    thermometer=th_ofen,
+    max_produced_temperature=50, # let's say
+)
 
 source = source_wood
 
@@ -71,7 +76,7 @@ transport_ww = Transport(
     source=source, 
     sink=sink_ww, 
     # adapt hysteresis to something more realistic
-    diff_hysteresis=Hysteresis(low=0, high=1), 
+    diff_hysteresis=Hysteresis(low=5, high=10), 
     pump_switch=sw_pumpe_ww)
 
 transport_hk = Transport(

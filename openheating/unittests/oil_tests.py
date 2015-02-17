@@ -28,6 +28,7 @@ class OilComboTest(unittest.TestCase):
             burn_switch=self.__oil_burn_switch,
             minimum_temperature_hysteresis=Hysteresis(1,2),
             heating_level=Hysteresis(55,75),
+            max_produced_temperature=90, # let's say
         )
 
         self.__transport = Transport(name='my-transport',
@@ -93,7 +94,9 @@ class MinimumTemperatureTest(unittest.TestCase):
             thermometer=buffer_thermometer, 
             burn_switch=burn_switch,
             heating_level=Hysteresis(60,70),
-            minimum_temperature_hysteresis=Hysteresis(5,15))
+            minimum_temperature_hysteresis=Hysteresis(5,15),
+            max_produced_temperature=90, # let's say
+        )
         brain.add(oil_combo)
 
         # 20 degrees, no need to do anti-freeze
