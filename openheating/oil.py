@@ -60,10 +60,3 @@ class OilCombo(Source, Thinker):
     def sync(self):
         self.__think_switch.sync()
         self.__think_switch = None
-
-    def do_request(self):
-        pass
-
-    def do_release(self):
-        pass
-        

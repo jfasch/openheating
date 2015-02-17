@@ -13,8 +13,3 @@ class PassiveSource(Source, Thinker):
         return 0
     def sync(self):
         pass
-
-    def do_request(self):
-        pass
-    def do_release(self):
-        pass
