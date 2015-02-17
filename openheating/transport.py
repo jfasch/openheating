@@ -34,7 +34,6 @@ class Transport(Thinker):
 
     def sync(self):
         self.__pump_switch.sync()
-        self.__pump_switch.reset()
 
     def __debug(self, msg):
         logging.debug('transport %s: %s' % (self.__name, msg))

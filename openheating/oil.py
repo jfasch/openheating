@@ -51,4 +51,3 @@ class OilCombo(Source, Thinker):
         
     def sync(self):
         self.__burn_switch.sync()
-        self.__burn_switch.reset()

@@ -59,6 +59,9 @@ class ThinkingSwitch:
 
     def set(self, state):
         '''Set the switch to state (a bool value)
+
+        Does not really et the switch state, but rather defers
+        operation until sync().
         
         Returns > 0 if the switch state had to change (a
         decision/thought was made), and 0 otherwise.
@@ -76,6 +79,4 @@ class ThinkingSwitch:
     def sync(self):
         if self.__state is not None:
             self.__switch.set_state(self.__state)
-
-    def reset(self):
-        self.__state = None
+            self.__state = None
