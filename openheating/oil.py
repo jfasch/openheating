@@ -28,11 +28,13 @@ class OilCombo(Source, Thinker):
                  name,
                  burn_switch,
                  thermometer,
+                 heating_level,
                  minimum_temperature_hysteresis):
         Source.__init__(self, name=name)
         
         self.__burn_switch = ThinkingSwitch(burn_switch)
         self.__thermometer = thermometer
+        self.__heating_level = heating_level
         self.__minimum_temperature_hysteresis = minimum_temperature_hysteresis
 
     def temperature(self):
@@ -41,10 +43,12 @@ class OilCombo(Source, Thinker):
     def think(self):
         temperature = self.__thermometer.temperature()
 
-        if self.num_requesters() > 0 or self.__minimum_temperature_hysteresis.below(temperature):
+        if (self.num_requesters() > 0 and self.__heating_level.below(temperature)) \
+           or self.__minimum_temperature_hysteresis.below(temperature):
             return self.__burn_switch.set(True)
 
-        if self.num_requesters() == 0 and self.__minimum_temperature_hysteresis.above(temperature):
+        if (self.num_requesters() == 0 or self.__heating_level.above(temperature)) \
+           and self.__minimum_temperature_hysteresis.above(temperature):
             return self.__burn_switch.set(False)
 
         return 0

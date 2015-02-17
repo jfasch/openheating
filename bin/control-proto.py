@@ -57,7 +57,10 @@ sink_room = Sink(
 source_oil = OilCombo(
     name='oil',
     burn_switch=sw_oil_burn,
-    thermometer=th_oil)
+    thermometer=th_oil,
+    heating_level=Hysteresis(50,70),
+    minimum_temperature_hysteresis=Hysteresis(10,20)
+)
 
 source_wood = PassiveSource(name='ofen', thermometer=th_ofen)
 
