@@ -24,7 +24,7 @@ class OilComboTest(unittest.TestCase):
 
         self.__oil_combo = OilCombo(name='my-oil-combo', thermometer=self.__oil_thermometer,
                                     burn_switch=self.__oil_burn_switch,
-                                    anti_freeze=Hysteresis(1,2))
+                                    minimum_temperature_hysteresis=Hysteresis(1,2))
 
         self.__transport = Transport(name='my-transport',
                                      source=self.__oil_combo, sink=self.__sink,
@@ -64,7 +64,7 @@ class OilComboTest(unittest.TestCase):
         self.assertTrue(self.__oil_burn_switch.is_open())
 
 
-class AntiFreezeTest(unittest.TestCase):
+class MinimumTemperatureTest(unittest.TestCase):
     def test__basic(self):
         brain = Brain()
         buffer_thermometer = TestThermometer(initial_temperature=20)
@@ -73,7 +73,7 @@ class AntiFreezeTest(unittest.TestCase):
             name='my-oil-combo', 
             thermometer=buffer_thermometer, 
             burn_switch=burn_switch,
-            anti_freeze=Hysteresis(5,15))
+            minimum_temperature_hysteresis=Hysteresis(5,15))
         brain.add(oil_combo)
 
         # 20 degrees, no need to do anti-freeze
@@ -99,7 +99,7 @@ class AntiFreezeTest(unittest.TestCase):
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilComboTest))
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(AntiFreezeTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MinimumTemperatureTest))
 
 
 if __name__ == "__main__":

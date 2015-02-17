@@ -28,12 +28,12 @@ class OilCombo(Source, Thinker):
                  name,
                  burn_switch,
                  thermometer,
-                 anti_freeze):
+                 minimum_temperature_hysteresis):
         Source.__init__(self, name=name)
         
         self.__burn_switch = burn_switch
         self.__thermometer = thermometer
-        self.__anti_freeze = anti_freeze
+        self.__minimum_temperature_hysteresis = minimum_temperature_hysteresis
 
         # used during a thinking round. initialized at first think(),
         # reaped (and reset) at sync().
@@ -49,10 +49,10 @@ class OilCombo(Source, Thinker):
 
         temperature = self.__thermometer.temperature()
 
-        if self.num_requesters() > 0 or self.__anti_freeze.below(temperature):
+        if self.num_requesters() > 0 or self.__minimum_temperature_hysteresis.below(temperature):
             return self.__think_switch.set(True)
 
-        if self.num_requesters() == 0 and self.__anti_freeze.above(temperature):
+        if self.num_requesters() == 0 and self.__minimum_temperature_hysteresis.above(temperature):
             return self.__think_switch.set(False)
 
         return 0
