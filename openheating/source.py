@@ -4,6 +4,8 @@ from .sink import Sink
 
 class Source(metaclass=ABCMeta):
     def __init__(self, name, max_produced_temperature):
+        assert type(max_produced_temperature) in (int, float)
+
         self.__name = name
         self.__max_produced_temperature = max_produced_temperature
         self.__requesters = set()

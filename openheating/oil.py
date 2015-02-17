@@ -1,5 +1,6 @@
 from .source import Source
 from .thinking import Thinker, ThinkingSwitch
+from .hysteresis import Hysteresis
 
 class OilCombo(Source, Thinker):
     '''Burner with Riello schematics (simple thing I think), together with
@@ -31,6 +32,9 @@ class OilCombo(Source, Thinker):
                  heating_level,
                  minimum_temperature_hysteresis,
                  max_produced_temperature):
+        assert isinstance(minimum_temperature_hysteresis, Hysteresis)
+        assert type(max_produced_temperature) in (int, float)
+
         Source.__init__(self, name=name, max_produced_temperature=max_produced_temperature)
         
         self.__burn_switch = ThinkingSwitch(burn_switch)
