@@ -96,7 +96,7 @@ class TransportBasicTest(unittest.TestCase):
         * nothing requested: heat flows into all sinks where there is
           difference. we don't want to leave heat in the source, it
           would be wasted there.
-        '''
+'''
 
         brain = Brain()
         
@@ -127,9 +127,7 @@ class TransportBasicTest(unittest.TestCase):
 
         # both sinks request some heat.
         if True:
-            brain.thin
-
-        k('both sinks request')
+            brain.think('both sinks request')
             self.assertIn(sink1, source.requesters())
             self.assertIn(sink2, source.requesters())
 
@@ -145,9 +143,7 @@ class TransportBasicTest(unittest.TestCase):
         if True:
             sink1_thermometer.set_temperature(50)
             sink2_thermometer.set_temperature(50)
-            brain.thin
-
-        k('both sinks release, pumps still on')
+            brain.think('both sinks release, pumps still on')
             self.assertEqual(len(source.requesters()), 0)
             self.assertNotIn(sink1, source.requesters())
             self.assertNotIn(sink2, source.requesters())
@@ -158,9 +154,7 @@ class TransportBasicTest(unittest.TestCase):
         # only pump1 must be running, and pump2 must be off.
         if True:
             sink1_thermometer.set_temperature(0)
-            brain.thin
-
-        k('sink1 cools down')
+            brain.think('sink1 cools down')
             self.assertEqual(len(source.requesters()), 1)
             self.assertIn(sink1, source.requesters())
             self.assertTrue(pump1_switch.is_closed())
@@ -177,9 +171,7 @@ class TransportBasicTest(unittest.TestCase):
         # source cools down -> both pumps off
         if True:
             source_thermometer.set_temperature(0)
-            brain.thin
-
-        k('source cool, both pumps off')
+            brain.think('source cool, both pumps off')
             self.assertTrue(pump1_switch.is_open())
             self.assertTrue(pump2_switch.is_open())
             
