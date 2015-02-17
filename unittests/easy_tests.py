@@ -12,5 +12,5 @@ import logging
 logging.getLogger().addHandler(logging.NullHandler())
 
 
-runner = unittest.TextTestRunner(verbosity=2)
+runner = unittest.TextTestRunner(verbosity=2, descriptions=False)
 runner.run(suite)
