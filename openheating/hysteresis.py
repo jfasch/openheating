@@ -12,3 +12,5 @@ class Hysteresis:
         return value > self.__high
     def below(self, value):
         return value < self.__low
+    def between(self, value):
+        return self.__low <= value <= self.__high
