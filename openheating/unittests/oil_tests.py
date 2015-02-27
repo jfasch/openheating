@@ -16,7 +16,7 @@ class OilComboTest(unittest.TestCase):
         self.__brain = Brain()
         
         self.__sink_thermometer = TestThermometer(initial_temperature=20)
-        self.__sink = Sink(name='my-sink', thermometer=self.__sink_thermometer, hysteresis=Hysteresis(low=40, high=45))
+        self.__sink = Sink(name='my-sink', thermometer=self.__sink_thermometer, temperature_range=Hysteresis(low=40, high=45))
         self.__brain.add(self.__sink)
 
         self.__oil_thermometer = TestThermometer(initial_temperature=20)
@@ -26,8 +26,8 @@ class OilComboTest(unittest.TestCase):
             name='my-oil-combo', 
             thermometer=self.__oil_thermometer,
             burn_switch=self.__oil_burn_switch,
-            minimum_temperature_hysteresis=Hysteresis(1,2),
-            heating_level=Hysteresis(55,75),
+            minimum_temperature_range=Hysteresis(1,2),
+            heating_range=Hysteresis(55,75),
             max_produced_temperature=90, # let's say
         )
 

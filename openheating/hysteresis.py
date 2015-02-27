@@ -1,5 +1,7 @@
 class Hysteresis:
     def __init__(self, low, high):
+        assert low < high
+
         self.__low = low
         self.__high = high
 

@@ -8,46 +8,48 @@ from openheating.hysteresis import Hysteresis
 import unittest
 import logging
 
+
 class SinkTest(unittest.TestCase):
     def test__basic(self):
         brain = Brain()
 
         sink_thermometer = TestThermometer(initial_temperature=10)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
-                    hysteresis=Hysteresis(23, 27))
+                    temperature_range=Hysteresis(23, 27))
         source = PassiveSource(
             name='my-source', 
             thermometer=None,
             max_produced_temperature=1000, # don't care
         )
         sink.set_source(source)
-        brain.add(sink)
+
+        brain.add(source, sink)
 
         # initial request
         brain.think()
-        self.assertIn(sink, source.requesters())
+        self.assertTrue(source.is_requested_by(sink))
 
         # heating up, right below lower hysteresis bound. still
         # requested
         sink_thermometer.set_temperature(22.9)
         brain.think()
-        self.assertIn(sink, source.requesters())
+        self.assertTrue(source.is_requested_by(sink))
 
         # heating up further, between low and high
         sink_thermometer.set_temperature(24)
-        brain.think()
-        self.assertIn(sink, source.requesters())
+        brain.think('heating up further')
+        self.assertTrue(source.is_requested_by(sink))
 
         # heating to the point where sink is satisfied
         sink_thermometer.set_temperature(27.1)
         brain.think()
-        self.assertNotIn(sink, source.requesters())
+        self.assertFalse(source.is_requested_by(sink))
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SinkTest))
 
-
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     runner = unittest.TextTestRunner()
     runner.run(suite)
     

@@ -1,15 +1,27 @@
 from .thinking import Thinker
+from .tendency import Tendency
 
 import logging
 
+
 class Sink(Thinker):
-    def __init__(self, name, thermometer, hysteresis):
+    def __init__(self, name, thermometer, temperature_range):
         self.__name = name
         self.__thermometer = thermometer
-        self.__hysteresis = hysteresis
+        self.__temperature_range = temperature_range
         self.__source = None
+        self.__tendency = Tendency()
 
-        self.__thinking = False
+        # request desired upper bound plus 3. this is pretty
+        # arbitrary.
+
+        # for example, if we are a boiler (hot water reservoir), then
+        # our upper bound will be at about 80. requesting 83 at a wood
+        # oven will fail, whereas 83 at a oil oven will succeed. and
+        # that's the plan after all.
+
+        # anyway, let's see where all this leads us.
+        self.__requested_temperature = temperature_range.high() + 3
 
     def name(self):
         return self.__name
@@ -19,42 +31,34 @@ class Sink(Thinker):
         self.__source = source
 
     def temperature(self):
-        return self.__thermometer.temperature()
+        return self.__current_temperature
+
+    def start_thinking(self):
+        self.__current_temperature = self.__thermometer.temperature()
+        self.__tendency.add(self.__current_temperature)
+        self.__decision_made = False
+
+    def stop_thinking(self):
+        del self.__current_temperature
+        del self.__decision_made
 
     def think(self):
-        if self.__thinking:
-            # story already told
+        if self.__decision_made:
             return 0
+        self.__decision_made = True
 
-        self.__thinking = True
+        if self.__temperature_range.below(self.__current_temperature):
+            self.__debug('request(below)')
+            self.__do_request()
+            return 1
+        if self.__temperature_range.between(self.__current_temperature) and self.__tendency.rising():
+            self.__debug('request(between and rising)')
+            self.__do_request()
+            return 1
+        return 0
 
-        nthoughts = 0
-        temperature = self.__thermometer.temperature()
-        if self.__hysteresis.below(temperature):
-            self.__debug('request')
-
-            # request desired upper bound plus 3. this is pretty
-            # arbitrary. 
-
-            # for example, if we are a boiler (hot water reservoir),
-            # then our upper bound will be at about 80. requesting 83
-            # at a wood oven will fail, whereas 83 at a oil oven will
-            # succeed. and that's the plan after all.
-
-            # anyway, let's see where all this leads us.
-
-            self.__source.request(self, self.__hysteresis.high()+3)
-            nthoughts += 1
-        elif self.__hysteresis.above(temperature):
-            self.__debug('release')
-            self.__source.release(self)
-            nthoughts += 1
-        else:
-            self.__debug('nop')
-        return nthoughts
-
-    def sync(self):
-        self.__thinking = False
-
+    def __do_request(self):
+        self.__source.request(self, self.__requested_temperature)
+        
     def __debug(self, msg):
         logging.debug('sink %s: %s' % (self.__name, msg))

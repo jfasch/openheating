@@ -13,15 +13,16 @@ class Transport(Thinker):
 
         sink.set_source(source)
 
+    def start_thinking(self):
+        pass
+
     def think(self):
         source_temp = self.__source.temperature()
         sink_temp = self.__sink.temperature()
         diff = source_temp - sink_temp
 
-        requesters = self.__source.requesters()
-        
-        if len(requesters) and not self.__sink in requesters:
-            self.__debug('pump off, somebody else needs it better: ' + ','.join(r.name() for r in requesters))
+        if self.__source.num_requests() > 0 and not self.__source.is_requested_by(self.__sink):
+            self.__debug('pump off, somebody else needs it better: ' + self.__source.print_requests())
             return self.__pump_switch.set(False)
         if self.__diff_hysteresis.above(diff):
             self.__debug('pump on')
@@ -32,7 +33,7 @@ class Transport(Thinker):
 
         return 0
 
-    def sync(self):
+    def stop_thinking(self):
         self.__pump_switch.sync()
 
     def __debug(self, msg):

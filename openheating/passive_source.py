@@ -1,9 +1,10 @@
-from .source import Source
 from .thinking import Thinker
+from .source import DirectSource
 
-class PassiveSource(Source, Thinker):
+
+class PassiveSource(DirectSource):
     def __init__(self, name, max_produced_temperature, thermometer):
-        Source.__init__(self, name=name, max_produced_temperature=max_produced_temperature)
+        DirectSource.__init__(self, name, max_produced_temperature)
         self.__thermometer = thermometer
 
     def temperature(self):
@@ -11,5 +12,3 @@ class PassiveSource(Source, Thinker):
 
     def think(self):
         return 0
-    def sync(self):
-        pass

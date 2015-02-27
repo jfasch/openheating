@@ -3,11 +3,16 @@ import logging
 
 class Thinker(metaclass=ABCMeta):
     @abstractmethod
+    def start_thinking(self):
+        pass
+
+    @abstractmethod
     def think(self):
         '''Return number of thoughts'''
         return 7
+
     @abstractmethod
-    def sync(self):
+    def stop_thinking(self):
         return
 
 class Brain:
@@ -15,16 +20,20 @@ class Brain:
         self.__thinkers = set()
         self.__round = 0
 
-    def add(self, thinker):
-        assert isinstance(thinker, Thinker)
-        assert thinker not in self.__thinkers
-        self.__thinkers.add(thinker)
+    def add(self, *thinker):
+        for t in thinker:
+            assert isinstance(t, Thinker)
+            assert t not in self.__thinkers
+            self.__thinkers.add(t)
 
     def think(self, msg=''):
         if len(msg):
             logging.debug('think round #%d (%s)', self.__round, msg)
         else:
             logging.debug('think round #%d', self.__round)
+
+        for t in self.__thinkers:
+            t.start_thinking()
 
         while True:
             nthoughts = 0
@@ -34,7 +43,7 @@ class Brain:
                 break
 
         for t in self.__thinkers:
-            t.sync()
+            t.stop_thinking()
             
         self.__round += 1
 
