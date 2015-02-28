@@ -47,14 +47,14 @@ class OilComboTest(unittest.TestCase):
         # requested
         self.__brain.think('sink way below wanted')
         if True:
-            self.assertIn(self.__sink, self.__oil_combo.requesters())
+            self.assertTrue(self.__oil_combo.is_requested_by(self.__sink))
             self.assertTrue(self.__oil_burn_switch.is_closed())
 
         # sink temperature rises above wanted -> release
         self.__sink_thermometer.set_temperature(50)
         self.__brain.think('sink above wanted')
         if True:
-            self.assertNotIn(self.__sink, self.__oil_combo.requesters())
+            self.assertFalse(self.__oil_combo.is_requested_by(self.__sink))
             self.assertTrue(self.__oil_burn_switch.is_open())
 
     def test__hold_temperature_level_while_requested(self):
@@ -65,7 +65,7 @@ class OilComboTest(unittest.TestCase):
 
         self.__brain.think('initial firing')
         self.assertTrue(self.__oil_burn_switch.is_closed())
-        self.assertIn(self.__sink, self.__oil_combo.requesters())
+        self.assertTrue(self.__oil_combo.is_requested_by(self.__sink))
 
         # oil buffer temperature well under its desired range -> still
         # heating
@@ -93,8 +93,8 @@ class MinimumTemperatureTest(unittest.TestCase):
             name='my-oil-combo', 
             thermometer=buffer_thermometer, 
             burn_switch=burn_switch,
-            heating_level=Hysteresis(60,70),
-            minimum_temperature_hysteresis=Hysteresis(5,15),
+            heating_range=Hysteresis(60,70),
+            minimum_temperature_range=Hysteresis(5,15),
             max_produced_temperature=90, # let's say
         )
         brain.add(oil_combo)

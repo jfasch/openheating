@@ -23,6 +23,7 @@ class OilWoodSourceTest(unittest.TestCase):
         self.__oil_burn_switch = TestSwitch(name='switch:oil-burn', initial_state=False)
         self.__pump_switch = TestSwitch(name='switch:pump', initial_state=False)
         self.__valve_switch = TestSwitch(name='switch:valve', initial_state=False)
+        self.__brain = Brain()
 
         self.__source = OilWoodCombination(
             name='oil/wood',
@@ -30,8 +31,8 @@ class OilWoodSourceTest(unittest.TestCase):
                 name='source:oil', 
                 thermometer=self.__oil_thermometer,
                 burn_switch=self.__oil_burn_switch,
-                minimum_temperature_hysteresis=Hysteresis(1,2),
-                heating_level=Hysteresis(55,75),
+                minimum_temperature_range=Hysteresis(1,2),
+                heating_range=Hysteresis(55,75),
                 max_produced_temperature=90, # let's say
             ),
             wood=PassiveSource(
@@ -55,25 +56,29 @@ class OilWoodSourceTest(unittest.TestCase):
             diff_hysteresis=Hysteresis(2,5),
             pump_switch=self.__pump_switch)
 
+        self.__brain.add(self.__source, self.__room, self.__transport)
+
     def test__oil_requested_released(self):
         # room is low -> oil must come (combined forwards request to
         # oil)
         self.__brain.think('initially, oil is on')
-        self.assertTrue(self.__switching_valve.is_default())
+        self.assertTrue(self.__valve_switch.is_open())
         self.assertTrue(self.__oil_burn_switch.is_closed())
-        self.assertEqual(self.__source.num_requesters(), 1)
+        self.assertEqual(self.__source.num_requests(), 1)
 
         # room inside range -> oil still burning
         self.__room_thermometer.set_temperature(22)
-        self.assertTrue(self.__switching_valve.is_default())
+        self.__brain.think('room goes at 22 (inside range), oil still there')
+        self.assertTrue(self.__valve_switch.is_open())
         self.assertTrue(self.__oil_burn_switch.is_closed())
-        self.assertEqual(self.__source.num_requesters(), 1)
+        self.assertEqual(self.__source.num_requests(), 1)
 
         # room satisfied -> oil off
         self.__room_thermometer.set_temperature(24)
-        self.assertTrue(self.__switching_valve.is_default())
+        self.__brain.think('room at 24, enough, oil off')
+        self.assertTrue(self.__valve_switch.is_open())
         self.assertTrue(self.__oil_burn_switch.is_open())
-        self.assertEqual(self.__source.num_requesters(), 0)
+        self.assertEqual(self.__source.num_requests(), 0)
 
     def test__wood_requested_released(self):
         self.fail()
@@ -100,7 +105,7 @@ class OilWoodSourceTest(unittest.TestCase):
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest))
-
+#suite.addTest(OilWoodSourceTest('test__oil_requested_released'))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

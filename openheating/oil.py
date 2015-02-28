@@ -1,6 +1,9 @@
 from .source import DirectSource
 from .hysteresis import Hysteresis
 
+import logging
+
+
 class OilCombo(DirectSource):
     '''Burner with Riello schematics (simple thing I think), together with
     a thermometer to measure water storage temperature.
@@ -55,7 +58,7 @@ class OilCombo(DirectSource):
             self.__burn_switch.do_open()
         elif self.__heating_range.below(self.__temperature):
             if self.num_requests() > 0:
-                self.__debug('not hot enough, on: temperature=%f,heat/lo=%f,requests=' % \
+                self.__debug('not hot enough, on: temperature=%f,heat/lo=%f,requests=%s' % \
                              (self.__temperature, self.__minimum_temperature_range.low(), self.print_requests()))
                 self.__burn_switch.do_close()
             elif self.__minimum_temperature_range.below(self.__temperature):
