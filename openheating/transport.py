@@ -14,12 +14,16 @@ class Transport(Thinker):
         sink.set_source(source)
 
     def start_thinking(self):
-        pass
+        self.__source_temperature = self.__source.temperature()
+        self.__sink_temperature = self.__sink.temperature()
+
+    def stop_thinking(self):
+        self.__pump_switch.sync()
+        del self.__source_temperature
+        del self.__sink_temperature
 
     def think(self):
-        source_temp = self.__source.temperature()
-        sink_temp = self.__sink.temperature()
-        diff = source_temp - sink_temp
+        diff = self.__source_temperature - self.__sink_temperature
 
         if self.__source.num_requests() > 0 and not self.__source.is_requested_by(self.__sink):
             self.__debug('pump off, somebody else needs it better: ' + self.__source.print_requests())
@@ -32,9 +36,6 @@ class Transport(Thinker):
             return self.__pump_switch.set(False)
 
         return 0
-
-    def stop_thinking(self):
-        self.__pump_switch.sync()
 
     def __debug(self, msg):
         logging.debug('transport %s: %s' % (self.__name, msg))
