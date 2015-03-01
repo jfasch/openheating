@@ -23,22 +23,26 @@ class OilWoodSourceTest(unittest.TestCase):
         self.__oil_burn_switch = TestSwitch(name='switch:oil-burn', initial_state=False)
         self.__pump_switch = TestSwitch(name='switch:pump', initial_state=False)
         self.__valve_switch = TestSwitch(name='switch:valve', initial_state=False)
+
+        self.__oil = OilCombo(
+            name='source:oil', 
+            thermometer=self.__oil_thermometer,
+            burn_switch=self.__oil_burn_switch,
+            minimum_temperature_range=Hysteresis(1,2),
+            heating_range=Hysteresis(50,60),
+            max_produced_temperature=90, # let's say
+        )
+        self.__wood = PassiveSource(
+            name='source:wood',
+            thermometer=self.__wood_thermometer,
+            max_produced_temperature=50)
+
         self.__brain = Brain()
 
         self.__source = OilWoodCombination(
             name='oil/wood',
-            oil=OilCombo(
-                name='source:oil', 
-                thermometer=self.__oil_thermometer,
-                burn_switch=self.__oil_burn_switch,
-                minimum_temperature_range=Hysteresis(1,2),
-                heating_range=Hysteresis(55,75),
-                max_produced_temperature=90, # let's say
-            ),
-            wood=PassiveSource(
-                name='source:wood',
-                thermometer=self.__wood_thermometer,
-                max_produced_temperature=50),
+            oil=self.__oil,
+            wood=self.__wood,
             valve_switch=self.__valve_switch,
             wood_warm=Hysteresis(30, 32),
             wood_hot=Hysteresis(40, 42),
@@ -59,6 +63,11 @@ class OilWoodSourceTest(unittest.TestCase):
         self.__brain.add(self.__source, self.__room, self.__transport)
 
     def test__oil_requested_released(self):
+        '''the most simple case. wood remains cold, all requests are directed
+        to oil
+
+        '''
+
         # room is low -> oil must come (combined forwards request to
         # oil)
         self.__brain.think('initially, oil is on')
@@ -80,10 +89,66 @@ class OilWoodSourceTest(unittest.TestCase):
         self.assertTrue(self.__oil_burn_switch.is_open())
         self.assertEqual(self.__source.num_requests(), 0)
 
-    def test__wood_requested_released(self):
+    def test__wood_comes(self):
+        '''wood comes; passes through all stages oil, fade in, wood'''
+
+        # initially, everything's on oil
+        self.__brain.think('initial, there\'s oil')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertTrue(self.__oil_burn_switch.is_closed())
+        # one request (oil)
+        self.assertEqual(self.__source.num_requests(), 1)
+        self.assertEqual(self.__oil.num_requests(), 1)
+        self.assertEqual(self.__wood.num_requests(), 0)
+
+        # let wood come. lower bound of "wood is warm" is 30, so heat
+        # wood up to this point. no change, it's the lower
+        # end. requests still directed towards oil, valve at oil.
+        self.__wood_thermometer.set_temperature(30.1)
+        self.__brain.think('wood becomes warm, but still only at lower end')
+        # one request (oil)
+        self.assertEqual(self.__source.num_requests(), 1)
+        self.assertEqual(self.__oil.num_requests(), 1)
+        self.assertEqual(self.__wood.num_requests(), 0)
+        self.assertTrue(self.__valve_switch.is_open())
+
+        # wood's temperature rises above "warm" hysteresis (32 being
+        # its upper end). state change; requests go to wood. oil stops
+        # burning, valve still at oil (oil fades out slowly).
+        self.__wood_thermometer.set_temperature(32.1)
+        self.__brain.think('wood definitely becomes warm, threshold reached')
+        # one request (wood)
+        self.assertEqual(self.__source.num_requests(), 1)
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__valve_switch.is_open())
+
+        # wood rises at between "wood hot" hysteresis (whose lower end
+        # is 40). no change because we are only at lower end.
+        self.__wood_thermometer.set_temperature(40.1)
+        self.__brain.think('wood almost hot now, but not yet through threshold')
+        # one request (wood)
+        self.assertEqual(self.__source.num_requests(), 1)
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__valve_switch.is_open())
+        
+        # wood rises at above "wood hot" hysteresis (whose upper end
+        # is 42).
+        self.__wood_thermometer.set_temperature(42.1)
+        self.__brain.think('wood hot')
+        # one request (wood)
+        self.assertEqual(self.__source.num_requests(), 1)
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__valve_switch.is_closed())
+
+
         self.fail()
 
-    def test__wood_fades_in(self):
+    def test__wood_fades_in__oil_hot(self):
+
+
         self.fail()
 
     def test__wood_fades_out(self):
@@ -104,8 +169,8 @@ class OilWoodSourceTest(unittest.TestCase):
 
 
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest))
-#suite.addTest(OilWoodSourceTest('test__oil_requested_released'))
+#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest))
+suite.addTest(OilWoodSourceTest('test__wood_comes'))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
