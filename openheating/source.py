@@ -7,12 +7,6 @@ import logging
 
 
 class Source(metaclass=ABCMeta):
-    def __init__(self, name):
-        self.__name = name
-
-    def name(self):
-        return self.__name
-
     @abstractmethod
     def request(self, sink, temperature):
         pass
@@ -40,14 +34,17 @@ class DirectSource(Source, Thinker):
 
     '''
     def __init__(self, name, max_produced_temperature):
-        Source.__init__(self, name)
+        Thinker.__init__(self, name)
+
         self.__max_produced_temperature = max_produced_temperature
         self.__requests = TemperatureRequests()
 
-    def start_thinking(self):
+    def register_thinking(self, brain):
+        super().register_thinking(brain)
+        brain.register_thinker(self)
+
+    def init_thinking_local(self):
         self.__requests.clear()
-    def stop_thinking(self):
-        pass
 
     def request(self, sink, temperature):
         if temperature > self.__max_produced_temperature:

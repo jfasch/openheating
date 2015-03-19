@@ -48,11 +48,13 @@ class OilCombo(DirectSource):
     def temperature(self):
         return self.__thermometer.temperature()
 
-    def start_thinking(self):
-        super().start_thinking()
+    def init_thinking_local(self):
+        super().init_thinking_local()
         self.__temperature = self.__thermometer.temperature()
 
-    def stop_thinking(self):
+    def finish_thinking(self):
+        super().finish_thinking()
+
         if self.__heating_range.above(self.__temperature):
             self.__debug('hot enough, off: temperature=%f,heat/hi=%f' % (self.__temperature, self.__heating_range.high()))
             self.__burn_switch.do_open()
@@ -75,10 +77,6 @@ class OilCombo(DirectSource):
             pass
 
         del self.__temperature
-        super().stop_thinking()
-
-    def think(self):
-        return 0
 
     def __debug(self, msg):
         logging.debug(self.name()+': '+msg)

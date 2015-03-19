@@ -46,25 +46,25 @@ class ComplicatedScenarioTests(unittest.TestCase):
 
             boiler_thermometer = TestThermometer(initial_temperature=50)
             boiler = Sink(name='boiler', thermometer=boiler_thermometer,
-                          hysteresis=Hysteresis(58,62))
-            brain.add(boiler)
+                          temperature_range=Hysteresis(58,62))
+            boiler.register_thinking(brain)
 
             room_thermometer = TestThermometer(initial_temperature=25)
             room = Sink(name='room', thermometer=room_thermometer,
-                        hysteresis=Hysteresis(22, 23))
-            brain.add(room)
+                        temperature_range=Hysteresis(22, 23))
+            room.register_thinking(brain)
 
             boiler_pump_switch = TestSwitch(name='boiler-pump-switch', initial_state=False)
             boiler_transport = Transport(name='boiler-transport', source=wood, sink=boiler,
                                          diff_hysteresis=Hysteresis(0, 1),
                                          pump_switch=boiler_pump_switch)
-            brain.add(boiler_transport)
+            boiler_transport.register_thinking(brain)
 
             room_pump_switch = TestSwitch(name='room-pump-switch', initial_state=False)
             room_transport = Transport(name='room-transport', source=wood, sink=room,
                                        diff_hysteresis=Hysteresis(0, 1),
                                        pump_switch=room_pump_switch)
-            brain.add(room_transport)
+            room_transport.register_thinking(brain)
             pass
 
         brain.think()

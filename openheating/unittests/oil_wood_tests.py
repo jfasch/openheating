@@ -60,16 +60,15 @@ class OilWoodSourceTest(unittest.TestCase):
             diff_hysteresis=Hysteresis(2,5),
             pump_switch=self.__pump_switch)
 
-        self.__brain.add(self.__source, self.__room, self.__transport)
+        self.__source.register_thinking(self.__brain)
+        self.__room.register_thinking(self.__brain)
+        self.__transport.register_thinking(self.__brain)
 
     def test__oil_requested_released(self):
-        '''the most simple case. wood remains cold, all requests are directed
-        to oil
+        'the most simple case. wood remains cold, all requests to oil'
 
-        '''
-
-        # room is low -> oil must come (combined forwards request to
-        # oil)
+        # room is low -> oil must come (combined-source forwards
+        # request to oil)
         self.__brain.think('initially, oil is on')
         self.assertTrue(self.__valve_switch.is_open())
         self.assertTrue(self.__oil_burn_switch.is_closed())
@@ -143,12 +142,7 @@ class OilWoodSourceTest(unittest.TestCase):
         self.assertEqual(self.__wood.num_requests(), 1)
         self.assertTrue(self.__valve_switch.is_closed())
 
-
-        self.fail()
-
     def test__wood_fades_in__oil_hot(self):
-
-
         self.fail()
 
     def test__wood_fades_out(self):
@@ -171,6 +165,8 @@ class OilWoodSourceTest(unittest.TestCase):
 suite = unittest.TestSuite()
 #suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest))
 suite.addTest(OilWoodSourceTest('test__wood_comes'))
+
+print('jjjjjjjjjjjjjjjjjjj')
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

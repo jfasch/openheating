@@ -23,7 +23,8 @@ class SinkTest(unittest.TestCase):
         )
         sink.set_source(source)
 
-        brain.add(source, sink)
+        sink.register_thinking(brain)
+        source.register_thinking(brain)
 
         # initial request
         brain.think()

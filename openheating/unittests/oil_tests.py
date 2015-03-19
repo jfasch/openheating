@@ -17,7 +17,7 @@ class OilComboTest(unittest.TestCase):
         
         self.__sink_thermometer = TestThermometer(initial_temperature=20)
         self.__sink = Sink(name='my-sink', thermometer=self.__sink_thermometer, temperature_range=Hysteresis(low=40, high=45))
-        self.__brain.add(self.__sink)
+        self.__sink.register_thinking(self.__brain)
 
         self.__oil_thermometer = TestThermometer(initial_temperature=20)
         self.__oil_burn_switch = TestSwitch(name='oil-burn', initial_state=False)
@@ -35,8 +35,8 @@ class OilComboTest(unittest.TestCase):
                                      source=self.__oil_combo, sink=self.__sink,
                                      diff_hysteresis=Hysteresis(0, 5),
                                      pump_switch=TestSwitch(name='pump', initial_state=False))
-        self.__brain.add(self.__transport)
-        self.__brain.add(self.__oil_combo)
+        self.__transport.register_thinking(self.__brain)
+        self.__oil_combo.register_thinking(self.__brain)
 
     def test__request_release(self):
         '''Play the standard source/sink game'''
@@ -97,7 +97,7 @@ class MinimumTemperatureTest(unittest.TestCase):
             minimum_temperature_range=Hysteresis(5,15),
             max_produced_temperature=90, # let's say
         )
-        brain.add(oil_combo)
+        oil_combo.register_thinking(brain)
 
         # 20 degrees, no need to do anti-freeze
         brain.think('no need')

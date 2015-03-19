@@ -17,7 +17,7 @@ class TransportBasicTest(unittest.TestCase):
         
         sink_thermometer = TestThermometer(initial_temperature=20)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
-                    hysteresis=Hysteresis(33, 47))
+                    temperature_range=Hysteresis(33, 47))
 
         source_thermometer = TestThermometer(initial_temperature=80)
         source = PassiveSource(
@@ -30,7 +30,10 @@ class TransportBasicTest(unittest.TestCase):
         transport = Transport(name='my-transport', source=source, sink=sink,
                               diff_hysteresis=Hysteresis(0, 5),
                               pump_switch=pump_switch)
-        brain.add(sink, source, transport)
+
+        sink.register_thinking(brain)
+        source.register_thinking(brain)
+        transport.register_thinking(brain)
 
         # pump is off initially. switched on after first move, due to
         # difference of 60 degrees. sink is far below its desired
@@ -48,7 +51,6 @@ class TransportBasicTest(unittest.TestCase):
             sink_thermometer.set_temperature(50)
             brain.think('sink satisfied, diff still there')
             self.assertTrue(pump_switch.is_closed())
-            print('jjj', source.print_requests())
             self.assertFalse(source.is_requested_by(sink))
 
         # source's temperature falls to 55.1. this makes a temperature
@@ -80,14 +82,14 @@ class TransportBasicTest(unittest.TestCase):
         # hysteresis.
         if True:
             sink_thermometer.set_temperature(33.1)
-            brain.think()
+            brain.think('sink cooling, no request nonetheless')
             self.assertTrue(pump_switch.is_closed())
             self.assertFalse(source.is_requested_by(sink))
 
         # sink cools down to 32.9 -> request heating
         if True:
             sink_thermometer.set_temperature(32.9)
-            brain.think()
+            brain.think('sink cooling further, request')
             self.assertTrue(pump_switch.is_closed())
             self.assertTrue(source.is_requested_by(sink))
 
@@ -114,11 +116,11 @@ class TransportBasicTest(unittest.TestCase):
 
         sink1_thermometer = TestThermometer(initial_temperature=20)
         sink1 = Sink(name='my-sink-1', thermometer=sink1_thermometer,
-                     hysteresis=Hysteresis(33, 47))
+                     temperature_range=Hysteresis(33, 47))
 
         sink2_thermometer = TestThermometer(initial_temperature=20)
         sink2 = Sink(name='my-sink-2', thermometer=sink2_thermometer,
-                    hysteresis=Hysteresis(33, 47))
+                    temperature_range=Hysteresis(33, 47))
 
         pump1_switch = TestSwitch(name='pump1', initial_state=False)
         transport1 = Transport(name='my-transport-1', source=source, sink=sink1,
@@ -130,7 +132,11 @@ class TransportBasicTest(unittest.TestCase):
                                diff_hysteresis=Hysteresis(0, 5),
                                pump_switch=pump2_switch)
 
-        brain.add(source, sink1, transport1, sink2, transport2)
+        source.register_thinking(brain)
+        sink1.register_thinking(brain)
+        transport1.register_thinking(brain)
+        sink2.register_thinking(brain)
+        transport2.register_thinking(brain)
 
         # both sinks request some heat.
         if True:
@@ -186,8 +192,10 @@ class TransportBasicTest(unittest.TestCase):
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
 
-# suite.addTest(TransportBasicTest("test__2sinks"))
-# suite.addTest(TransportBasicTest("test__basic"))
+#print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+
+#suite.addTest(TransportBasicTest("test__2sinks"))
+#suite.addTest(TransportBasicTest("test__basic"))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

@@ -12,7 +12,8 @@ class OilWoodCombination(Source, Thinker):
     def __init__(self, name, oil, wood, valve_switch, wood_warm, wood_hot):
         assert wood_hot.low() - wood_warm.high() >= 6
 
-        self.__name = name
+        Thinker.__init__(self, name)
+
         self.__oil = oil
         self.__wood = wood
         self.__wood_warm = wood_warm
@@ -21,30 +22,30 @@ class OilWoodCombination(Source, Thinker):
         self.__wood_tendency = Tendency()
         self.__state = self.OIL
 
-    def start_thinking(self):
-        self.__oil.start_thinking()
-        self.__wood.start_thinking()
+    def register_thinking(self, brain):
+        super().register_thinking(brain)
+        brain.register_thinker(self)
+        brain.register_thinker(self.__oil)
+        brain.register_thinker(self.__wood)
 
-        self.__oil_temperature = self.__oil.temperature()
-        self.__wood_temperature = self.__wood.temperature()
-
-        self.__wood_tendency.add(self.__wood_temperature)
+    def init_thinking_global(self):
+        self.__wood_tendency.add(self.__wood.temperature())
 
         # between either of the hysteresis ranges. undecided; state
         # left as-is, but do some debug output
-        if self.__wood_warm.between(self.__wood_temperature):
+        if self.__wood_warm.between(self.__wood.temperature()):
             self.__change_state(self.__state, 'within wood-warm hysteresis range')
             return
-        elif self.__wood_hot.between(self.__wood_temperature):
+        elif self.__wood_hot.between(self.__wood.temperature()):
             self.__change_state(self.__state, 'within wood-hot hysteresis range')
             return
 
         # wood above hot -> clearly wood
-        elif self.__wood_hot.above(self.__wood_temperature):
+        elif self.__wood_hot.above(self.__wood.temperature()):
             self.__change_state(self.WOOD, 'wood is hot')
             return
         # wood below warm -> clearly oil
-        elif self.__wood_warm.below(self.__wood_temperature):
+        elif self.__wood_warm.below(self.__wood.temperature()):
             self.__change_state(self.OIL, 'wood is cold')
             return
 
@@ -59,13 +60,7 @@ class OilWoodCombination(Source, Thinker):
             # no tendency, leave state as-is
             self.__change_state(self.__state, 'fading, but no tendency')
 
-    def stop_thinking(self):
-        self.__oil.stop_thinking()
-        self.__wood.stop_thinking()
-        
-        del self.__wood_temperature
-        del self.__oil_temperature
-
+    def finish_thinking(self):
         if self.__state == self.OIL:
             self.__valve_switch.do_open()
         elif self.__state == self.OIL_FADE_OUT:
@@ -77,10 +72,6 @@ class OilWoodCombination(Source, Thinker):
         else:
             assert False
             
-    def think(self):
-        # me not thinking, me only delegating
-        return self.__oil.think() + self.__wood.think()
-
     def request(self, sink, temperature):
         if self.__state == self.OIL:
             return self.__oil.request(sink, temperature)
@@ -131,13 +122,13 @@ class OilWoodCombination(Source, Thinker):
 
     def temperature(self):
         if self.__state == self.OIL:
-            return self.__oil_temperature
+            return self.__oil.temperature()
         elif self.__state == self.OIL_FADE_OUT:
-            return self.__oil_temperature
+            return self.__oil.temperature()
         elif self.__state == self.WOOD:
-            return self.__wood_temperature
+            return self.__wood.temperature()
         elif self.__state == self.WOOD_FADE_OUT:
-            return self.__wood_temperature
+            return self.__wood.temperature()
         else:
             assert False
 
@@ -146,7 +137,7 @@ class OilWoodCombination(Source, Thinker):
         self.__state = state
 
     def __debug(self, msg):
-        logging.debug('%s: %s' % (self.__name, msg))
+        logging.debug('%s: %s' % (self.name(), msg))
 
     @staticmethod
     def __state_str(state):
