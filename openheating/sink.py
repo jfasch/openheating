@@ -49,14 +49,14 @@ class Sink(Thinker):
 
         # temperature below range, have to request
         if self.__temperature_range.below(self.__current_temperature):
-            self.__debug('%f below (%f,%f), requesting')
+            self.__debug('%f below (%f,%f), requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high()))
             self.__requesting = True
             self.__source.request(self, self.__requested_temperature)
             return 1
 
         # temperature above range, no request
         if self.__temperature_range.above(self.__current_temperature):
-            self.__debug('%f above (%f,%f), not requesting')
+            self.__debug('%f above (%f,%f), not requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high()))
             self.__requesting = False
             return 1
 
@@ -64,7 +64,7 @@ class Sink(Thinker):
         # (we are just heating up). else, we are cooling and don't
         # request.
         if self.__requesting:
-            self.__debug('%f within (%f,%f), keep requesting')
+            self.__debug('%f within (%f,%f), keep requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high()))
             self.__source.request(self, self.__requested_temperature)
             return 1
 
