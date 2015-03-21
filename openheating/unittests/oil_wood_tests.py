@@ -28,7 +28,7 @@ class OilWoodSourceTest(unittest.TestCase):
             name='source:oil', 
             thermometer=self.__oil_thermometer,
             burn_switch=self.__oil_burn_switch,
-            minimum_temperature_range=Hysteresis(1,2),
+            minimum_temperature_range=Hysteresis(5,6),
             heating_range=Hysteresis(50,60),
             max_produced_temperature=90, # let's say
         )
@@ -143,30 +143,142 @@ class OilWoodSourceTest(unittest.TestCase):
         self.assertTrue(self.__valve_switch.is_closed())
 
     def test__wood_fades_in__oil_hot(self):
-        self.fail()
+        self.__oil_thermometer.set_temperature(70)
+        self.__wood_thermometer.set_temperature(20)
+
+        self.__brain.think('wood cold, oil hot')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 1)
+        self.assertEqual(self.__wood.num_requests(), 0)
+        self.assertTrue(self.__pump_switch.is_closed())
+
+        # wood warms up. oil not requested, but wood is. valve still
+        # at oil, pump on. requests are already directed to wood,
+        # valve position already at oil.
+        self.__wood_thermometer.set_temperature(32.1) # right above "warm" hyst.
+        self.__brain.think('wood warm, oil still hot')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__pump_switch.is_closed())
+
+        # wood between "hot" hysteresis. not yet considered hot,
+        # situation as above.
+        self.__wood_thermometer.set_temperature(41) # right above "warm" hyst.
+        self.__brain.think('wood almost hot, oil still hot')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__pump_switch.is_closed())
+
+        # wood hot. requests *and* valve position go
+        # there. *regardless* of oil's temperature.
+        self.__wood_thermometer.set_temperature(45) # right above "warm" hyst.
+        self.__brain.think('wood hot, oil still hot')
+        self.assertTrue(self.__valve_switch.is_closed())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__pump_switch.is_closed())
 
     def test__wood_fades_out(self):
-        self.fail()
+        self.__oil_thermometer.set_temperature(70)
+        self.__wood_thermometer.set_temperature(50)
+
+        self.__brain.think('wood hot, oil hot')
+        self.assertTrue(self.__valve_switch.is_closed())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__pump_switch.is_closed())
+
+        # wood cools down, under "hot" hysteresis. oil is hotter than
+        # wood, so valve is switched there. requests go still to wood,
+        # as this is maybe only temporary.
+        self.__wood_thermometer.set_temperature(39)
+        self.__brain.think('wood right below hot, oil hot')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__pump_switch.is_closed())
+
+        # wood still cools down. lets say for a moment that oil is
+        # cooler than wood - in this case the valve has to wood.
+        self.__oil_thermometer.set_temperature(38)
+        self.__brain.think('wood right below hot, oil cool')
+        self.assertTrue(self.__valve_switch.is_closed())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__pump_switch.is_closed())
+
+        # (revert the above situation, it is just a test that we do in
+        # between)
+        self.__oil_thermometer.set_temperature(38)
+
+        # wood between "warm" hysteresis. situation as above.
+        self.__wood_thermometer.set_temperature(31)
+        self.__brain.think('wood almost cold, oil hot')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 1)
+        self.assertTrue(self.__pump_switch.is_closed())
+
+        # wood cold. requests go to oil.
+        self.__wood_thermometer.set_temperature(25)
+        self.__brain.think('wood almost cold, oil hot')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 1)
+        self.assertEqual(self.__wood.num_requests(), 0)
+        self.assertTrue(self.__pump_switch.is_closed())
 
     def test__wood_warm__wood_hot__overlap(self):
         # overlapping ranges of "warm" and "hot" must not be
         # possible. in fact, they should be 10 (?) apart.
-        self.fail()
+        try:
+            OilWoodCombination(
+                name='oil/wood',
+                oil=self.__oil,
+                wood=self.__wood,
+                valve_switch=self.__valve_switch,
+                wood_warm=Hysteresis(30, 32),
+                wood_hot=Hysteresis(31, 33),
+            )
+            self.fail()
+        except AssertionError:
+            pass
 
     def test__oil_minimum_temperature(self):
-        # the "minimum temperature" logic of oil is triggered because
-        # oil is-a Thinker and is registered with a Brain. I fear that
-        # we could lose this when oil is part of a composition. maybe
-        # we should introduce some interface method where a composite
-        # Thinker would register all its delegees.
-        self.fail()
+        '''the "minimum temperature" logic of oil is triggered because oil
+        is-a Thinker and is registered with a Brain. I fear that we
+        could lose this when oil is part of a composition.
+
+        '''
+
+        # all off initially, room satisfied, everything quiet.
+        self.__room_thermometer.set_temperature(25)
+        self.__oil_thermometer.set_temperature(20)
+        self.__wood_thermometer.set_temperature(20)
+        self.__brain.think('all cool, all off')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 0)
+        self.assertTrue(self.__pump_switch.is_open())
+
+        # oil cools to a point where it's really cold -> anti-freeze
+        # program, for the purpose of saving the life of the oil
+        # plant.
+        self.__oil_thermometer.set_temperature(1)
+        self.__brain.think('oil anti-freeze')
+        self.assertTrue(self.__valve_switch.is_open())
+        self.assertEqual(self.__oil.num_requests(), 0)
+        self.assertEqual(self.__wood.num_requests(), 0)
+        self.assertTrue(self.__pump_switch.is_open())
+        # here we go: oil burns
+        self.__oil_burn_switch.is_closed()
 
 
 suite = unittest.TestSuite()
-#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest))
-suite.addTest(OilWoodSourceTest('test__wood_comes'))
-
-print('jjjjjjjjjjjjjjjjjjj')
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest))
+#suite.addTest(OilWoodSourceTest('test__oil_minimum_temperature'))
+#print('jjjjjjjjjjjjjjjjjjj')
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
