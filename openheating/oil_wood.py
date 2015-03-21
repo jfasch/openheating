@@ -80,6 +80,9 @@ class OilWoodCombination(Source, Thinker):
                 self.__valve_switch.do_open()
         else:
             assert False
+
+        del self.__wood_temperature
+        del self.__oil_temperature
             
     def request(self, sink, temperature):
         if self.__state == self.OIL:
