@@ -29,23 +29,26 @@ class OilWoodCombination(Source, Thinker):
         brain.register_thinker(self.__wood)
 
     def init_thinking_global(self):
-        self.__wood_tendency.add(self.__wood.temperature())
+        self.__wood_temperature = self.__wood.temperature()
+        self.__oil_temperature = self.__oil.temperature()
+
+        self.__wood_tendency.add(self.__wood_temperature)
 
         # between either of the hysteresis ranges. undecided; state
         # left as-is, but do some debug output
-        if self.__wood_warm.between(self.__wood.temperature()):
+        if self.__wood_warm.between(self.__wood_temperature):
             self.__change_state(self.__state, 'within wood-warm hysteresis range')
             return
-        elif self.__wood_hot.between(self.__wood.temperature()):
+        elif self.__wood_hot.between(self.__wood_temperature):
             self.__change_state(self.__state, 'within wood-hot hysteresis range')
             return
 
         # wood above hot -> clearly wood
-        elif self.__wood_hot.above(self.__wood.temperature()):
+        elif self.__wood_hot.above(self.__wood_temperature):
             self.__change_state(self.WOOD, 'wood is hot')
             return
         # wood below warm -> clearly oil
-        elif self.__wood_warm.below(self.__wood.temperature()):
+        elif self.__wood_warm.below(self.__wood_temperature):
             self.__change_state(self.OIL, 'wood is cold')
             return
 
@@ -68,7 +71,13 @@ class OilWoodCombination(Source, Thinker):
         elif self.__state == self.WOOD:
             self.__valve_switch.do_close()
         elif self.__state == self.WOOD_FADE_OUT:
-            self.__valve_switch.do_close()
+            # wood fading out. in other words, does not insist in
+            # cooling anymore. I am allowed to choose whichever is
+            # hotter.
+            if self.__wood_temperature > self.__oil_temperature:
+                self.__valve_switch.do_close()
+            else:
+                self.__valve_switch.do_open()
         else:
             assert False
             
