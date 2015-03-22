@@ -7,9 +7,11 @@ from openheating.dbus.switch_center_client import DBusSwitchCenter
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
 
 from openheating.dbus.service import TestThermometerCreator
+from openheating.dbus.service import FileThermometerCreator
 from openheating.dbus.service import HWMON_I2C_ThermometerCreator
 from openheating.dbus.service import DBusThermometerCreator
 from openheating.dbus.service import TestSwitchCreator
+from openheating.dbus.service import FileSwitchCreator
 from openheating.dbus.service import GPIOSwitchCreator
 from openheating.dbus.service import DBusSwitchCreator
 from openheating.dbus.service import ThermometerCenterCreator
@@ -67,11 +69,13 @@ class ServiceTest(DBusTestCase):
             name='some.dbus.service',
             object_creators={
                 '/thermometers/test': TestThermometerCreator(initial_temperature=1),
+                '/thermometers/file': FileThermometerCreator(path='/path/to/no/thermometer'),
                 '/thermometers/i2c': HWMON_I2C_ThermometerCreator(bus_number=666, address=0x49),
                 '/thermometers/dbus': DBusThermometerCreator(name='a.b.c', path='/some/thermometer'),
                 '/switches/test': TestSwitchCreator(name='testswitch', initial_state=False),
                 # not easily instantiated ... '/switches/gpio': GPIOSwitchCreator(gpio_number=66),
                 '/switches/dbus': DBusSwitchCreator(name='a.b.c', path='/some/switch'),
+                '/switches/file': FileSwitchCreator(path='/path/to/no/switch'),
                 '/center/thermometers': ThermometerCenterCreator(
                     cache_age=5,
                     thermometers={

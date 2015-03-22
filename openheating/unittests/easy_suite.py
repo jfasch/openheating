@@ -1,3 +1,5 @@
+from openheating.unittests.file_switch_tests import suite as file_switch_suite
+from openheating.unittests.file_thermometer_tests import suite as file_thermometer_suite
 from openheating.unittests.tendency_tests import suite as tendency_suite
 from openheating.unittests.sink_tests import suite as sink_suite
 from openheating.unittests.transport_tests import suite as transport_suite
@@ -15,6 +17,8 @@ import unittest
 
 suite = unittest.TestSuite()
 
+suite.addTest(file_switch_suite)
+suite.addTest(file_thermometer_suite)
 suite.addTest(tendency_suite)
 suite.addTest(sink_suite)
 suite.addTest(transport_suite)

@@ -7,9 +7,11 @@ from .service import ThermometerCenterCreator
 from .service import HWMON_I2C_ThermometerCreator
 from .service import DBusThermometerCreator
 from .service import TestThermometerCreator
+from .service import FileThermometerCreator
 from .service import GPIOSwitchCreator
 from .service import DBusSwitchCreator
 from .service import TestSwitchCreator
+from .service import FileSwitchCreator
 
 from ..error import HeatingError
 from ..config_parser import ConfigParser
@@ -17,7 +19,6 @@ from ..switch import Switch
 from ..thermometer_center import ThermometerCenter
 from ..switch_center import SwitchCenter
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-from ..testutils.test_thermometer import TestThermometer
 from ..hardware.switch_gpio import GPIOSwitch
 from ..hardware.gpio import create as create_gpio
 
@@ -58,7 +59,9 @@ _symbols = {
     'HWMON_I2C_Thermometer': HWMON_I2C_ThermometerCreator,
     'DBusThermometer': DBusThermometerCreator,
     'TestThermometer': TestThermometerCreator,
+    'FileThermometer': FileThermometerCreator,
     'GPIOSwitch': GPIOSwitchCreator,
     'DBusSwitch': DBusSwitchCreator,
     'TestSwitch': TestSwitchCreator,
+    'FileSwitch': FileSwitchCreator,
 }

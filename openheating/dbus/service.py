@@ -12,6 +12,8 @@ from ..thermometer_center import ThermometerCenter
 
 from ..testutils.test_thermometer import TestThermometer
 from ..testutils.test_switch import TestSwitch
+from ..testutils.file_thermometer import FileThermometer
+from ..testutils.file_switch import FileSwitch
 from ..hardware.gpio import create as create_gpio
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from ..hardware.switch_gpio import GPIOSwitch
@@ -160,6 +162,12 @@ class TestThermometerCreator(ThermometerCreator):
     def create_native_object(self, connection):
         return TestThermometer(initial_temperature=self.__initial_temperature)
 
+class FileThermometerCreator(ThermometerCreator):
+    def __init__(self, path):
+        self.__path = path
+    def create_native_object(self, connection):
+        return FileThermometer(path=self.__path)
+
 class HWMON_I2C_ThermometerCreator(ThermometerCreator):
     def __init__(self, bus_number, address):
         self.__bus_number = bus_number
@@ -188,6 +196,12 @@ class TestSwitchCreator(SwitchCreator):
         self.__initial_state = initial_state
     def create_native_object(self, connection):
         return TestSwitch(name=self.__name, initial_state=self.__initial_state)
+
+class FileSwitchCreator(SwitchCreator):
+    def __init__(self, path):
+        self.__path = path
+    def create_native_object(self, connection):
+        return FileSwitch(path=self.__path)
 
 class DBusSwitchCreator(SwitchCreator):
     def __init__(self, name, path):
