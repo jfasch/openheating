@@ -22,6 +22,7 @@ echo off > $BASEDIR/switches/pumpe-hk
 echo off > $BASEDIR/switches/pumpe-ww
 echo off > $BASEDIR/switches/oel-enable
 echo off > $BASEDIR/switches/oel-burn
+echo off > $BASEDIR/switches/wood-valve
 echo 20 > $BASEDIR/thermometers/boiler-top
 echo 20 > $BASEDIR/thermometers/boiler-middle
 echo 20 > $BASEDIR/thermometers/boiler-bottom

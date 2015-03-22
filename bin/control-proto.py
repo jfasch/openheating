@@ -3,11 +3,12 @@
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
 from openheating.dbus.switch_center_client import DBusSwitchCenter
 from openheating.dbus.rebind import DBusClientConnection
-from openheating.testutils.switch import TestSwitch
+from openheating.testutils.test_switch import TestSwitch
 from openheating.sink import Sink
 from openheating.passive_source import PassiveSource
 from openheating.switch_center import SwitchCenter
 from openheating.oil import OilCombo
+from openheating.oil_wood import OilWoodCombination
 from openheating.transport import Transport
 from openheating.hysteresis import Hysteresis
 from openheating.thinking import Brain
@@ -20,11 +21,14 @@ from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG)
 
-connection = DBusClientConnection('tcp:host=192.168.1.11,port=6666')
+#dbus_address = 'tcp:host=192.168.1.11,port=6666'
+dbus_address = 'unix:path=/tmp/openheating-simulation/openheating-dbus-daemon.socket'
+
+connection = DBusClientConnection(dbus_address)
 
 thermo_center = DBusThermometerCenter(connection=connection, name='org.openheating.heizraum.center', path='/thermometers')
-
 switch_center = DBusSwitchCenter(connection=connection, name='org.openheating.heizraum.center', path='/switches')
+
 # switch_center = SwitchCenter(switches={
 #     'pumpe-ww': TestSwitch(name='pumpe-ww', initial_state=False),
 #     'pumpe-hk': TestSwitch(name='pumpe-hk', initial_state=False),
@@ -40,36 +44,45 @@ th_oil =  thermo_center.get_thermometer('oel-puffer')
 sw_pumpe_ww = switch_center.get_switch('pumpe-ww')
 sw_pumpe_hk = switch_center.get_switch('pumpe-hk')
 sw_oil_burn = switch_center.get_switch('oel-burn')
+sw_wood_valve = switch_center.get_switch('wood-valve')
 
+
+brain = Brain()
 
 sink_ww = Sink(
     name='boiler', 
     thermometer=th_boiler_top, 
-    hysteresis=Hysteresis(low=50, high=55),
+    temperature_range=Hysteresis(low=50, high=55),
 )
+sink_ww.register_thinking(brain)
 
 sink_room = Sink(
     name='room', 
     thermometer=th_essraum, 
-    hysteresis=Hysteresis(low=20, high=21),
+    temperature_range=Hysteresis(low=20, high=21),
 )
+sink_room.register_thinking(brain)
 
-source_oil = OilCombo(
-    name='oil',
-    burn_switch=sw_oil_burn,
-    thermometer=th_oil,
-    heating_level=Hysteresis(50,70),
-    minimum_temperature_hysteresis=Hysteresis(10,20),
-    max_produced_temperature=90, # let's say
+source = OilWoodCombination(
+    name='oil+wood',
+    oil=OilCombo(
+        name='oil',
+        burn_switch=sw_oil_burn,
+        thermometer=th_oil,
+        heating_range=Hysteresis(50,70),
+        minimum_temperature_range=Hysteresis(10,20),
+        max_produced_temperature=90, # let's say
+    ),
+    wood=PassiveSource(
+        name='wood', 
+        thermometer=th_ofen,
+        max_produced_temperature=50, # let's say
+    ),
+    valve_switch=sw_wood_valve,
+    wood_warm=Hysteresis(30, 32),
+    wood_hot=Hysteresis(40, 42),
 )
-
-source_wood = PassiveSource(
-    name='ofen', 
-    thermometer=th_ofen,
-    max_produced_temperature=50, # let's say
-)
-
-source = source_wood
+source.register_thinking(brain)
 
 transport_ww = Transport(
     name='ww',
@@ -78,21 +91,17 @@ transport_ww = Transport(
     # adapt hysteresis to something more realistic
     diff_hysteresis=Hysteresis(low=5, high=10), 
     pump_switch=sw_pumpe_ww)
+transport_ww.register_thinking(brain)
 
 transport_hk = Transport(
     name='hk',
     source=source, 
     sink=sink_room, 
     # adapt hysteresis to something more realistic
-    diff_hysteresis=Hysteresis(low=0, high=1), 
+    diff_hysteresis=Hysteresis(low=1, high=2), 
     pump_switch=sw_pumpe_hk)
+transport_hk.register_thinking(brain)
 
-brain = Brain()
-brain.add(sink_room)
-brain.add(sink_ww)
-brain.add(source)
-brain.add(transport_ww)
-brain.add(transport_hk)
 
 round = 0
 while True:
@@ -102,6 +111,7 @@ while True:
           '\n* pumpe-ww:', str(sw_pumpe_ww.get_state()),
           '\n* pumpe-hk:', str(sw_pumpe_hk.get_state()),
           '\n* oel-burn:', str(sw_oil_burn.get_state()),
+          '\n* wood-valve:', str(sw_wood_valve.get_state()),
     )
 
     round += 1
