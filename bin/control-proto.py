@@ -3,16 +3,8 @@
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
 from openheating.dbus.switch_center_client import DBusSwitchCenter
 from openheating.dbus.rebind import DBusClientConnection
-from openheating.testutils.test_switch import TestSwitch
-from openheating.sink import Sink
-from openheating.passive_source import PassiveSource
-from openheating.switch_center import SwitchCenter
-from openheating.oil import OilCombo
-from openheating.oil_wood import OilWoodCombination
-from openheating.transport import Transport
-from openheating.hysteresis import Hysteresis
 from openheating.thinking import Brain
-from openheating.error import HeatingError
+from openheating.jf_thinker import JFThinker
 
 import logging
 import sys
@@ -29,13 +21,6 @@ connection = DBusClientConnection(dbus_address)
 thermo_center = DBusThermometerCenter(connection=connection, name='org.openheating.heizraum.center', path='/thermometers')
 switch_center = DBusSwitchCenter(connection=connection, name='org.openheating.heizraum.center', path='/switches')
 
-# switch_center = SwitchCenter(switches={
-#     'pumpe-ww': TestSwitch(name='pumpe-ww', initial_state=False),
-#     'pumpe-hk': TestSwitch(name='pumpe-hk', initial_state=False),
-#     'oel-enable': TestSwitch(name='oel-enable', initial_state=False),
-#     'oel-burn': TestSwitch(name='oel-burn', initial_state=False),
-#     })
-
 th_essraum = thermo_center.get_thermometer('essraum')
 th_boiler_top = thermo_center.get_thermometer('boiler-top')
 th_ofen = thermo_center.get_thermometer('ofen')
@@ -49,59 +34,15 @@ sw_wood_valve = switch_center.get_switch('wood-valve')
 
 brain = Brain()
 
-sink_ww = Sink(
-    name='boiler', 
-    thermometer=th_boiler_top, 
-    temperature_range=Hysteresis(low=50, high=55),
-)
-sink_ww.register_thinking(brain)
-
-sink_room = Sink(
-    name='room', 
-    thermometer=th_essraum, 
-    temperature_range=Hysteresis(low=20, high=21),
-)
-sink_room.register_thinking(brain)
-
-source = OilWoodCombination(
-    name='oil+wood',
-    oil=OilCombo(
-        name='oil',
-        burn_switch=sw_oil_burn,
-        thermometer=th_oil,
-        heating_range=Hysteresis(50,70),
-        minimum_temperature_range=Hysteresis(10,20),
-        max_produced_temperature=90, # let's say
-    ),
-    wood=PassiveSource(
-        name='wood', 
-        thermometer=th_ofen,
-        max_produced_temperature=50, # let's say
-    ),
-    valve_switch=sw_wood_valve,
-    wood_warm=Hysteresis(30, 32),
-    wood_hot=Hysteresis(40, 42),
-)
-source.register_thinking(brain)
-
-transport_ww = Transport(
-    name='ww',
-    source=source, 
-    sink=sink_ww, 
-    # adapt hysteresis to something more realistic
-    diff_hysteresis=Hysteresis(low=5, high=10), 
-    pump_switch=sw_pumpe_ww)
-transport_ww.register_thinking(brain)
-
-transport_hk = Transport(
-    name='hk',
-    source=source, 
-    sink=sink_room, 
-    # adapt hysteresis to something more realistic
-    diff_hysteresis=Hysteresis(low=1, high=2), 
-    pump_switch=sw_pumpe_hk)
-transport_hk.register_thinking(brain)
-
+jf = JFThinker(th_essraum=th_essraum,
+               th_boiler_top=th_boiler_top,
+               th_ofen=th_ofen,
+               th_oil=th_oil,
+               sw_pumpe_ww=sw_pumpe_ww,
+               sw_pumpe_hk=sw_pumpe_hk,
+               sw_oil_burn=sw_oil_burn,
+               sw_wood_valve=sw_wood_valve)
+jf.register_thinking(brain)
 
 round = 0
 while True:
