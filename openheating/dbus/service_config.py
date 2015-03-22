@@ -17,7 +17,7 @@ from ..switch import Switch
 from ..thermometer_center import ThermometerCenter
 from ..switch_center import SwitchCenter
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-from ..testutils.thermometer import TestThermometer
+from ..testutils.test_thermometer import TestThermometer
 from ..hardware.switch_gpio import GPIOSwitch
 from ..hardware.gpio import create as create_gpio
 

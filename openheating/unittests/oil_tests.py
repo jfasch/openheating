@@ -1,5 +1,5 @@
-from openheating.testutils.thermometer import TestThermometer
-from openheating.testutils.switch import TestSwitch
+from openheating.testutils.test_thermometer import TestThermometer
+from openheating.testutils.test_switch import TestSwitch
 
 from openheating.thinking import Brain
 from openheating.sink import Sink

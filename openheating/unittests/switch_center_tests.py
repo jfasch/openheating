@@ -1,5 +1,5 @@
 from openheating.error import HeatingError
-from openheating.testutils.switch import TestSwitch
+from openheating.testutils.test_switch import TestSwitch
 
 from openheating.switch_center import SwitchCenter
 

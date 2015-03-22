@@ -1,4 +1,4 @@
-from openheating.testutils.thermometer import TestThermometer
+from openheating.testutils.test_thermometer import TestThermometer
 
 from openheating.sink import Sink
 from openheating.passive_source import PassiveSource

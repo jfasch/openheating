@@ -1,4 +1,4 @@
-from openheating.testutils.thermometer import TestThermometer
+from openheating.testutils.test_thermometer import TestThermometer
 
 from openheating.thermometer_center import ThermometerCenter
 from openheating.error import HeatingError

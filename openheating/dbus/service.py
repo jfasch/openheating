@@ -10,8 +10,8 @@ from .switch_center_object import DBusSwitchCenterObject
 from ..switch_center import SwitchCenter
 from ..thermometer_center import ThermometerCenter
 
-from ..testutils.thermometer import TestThermometer
-from ..testutils.switch import TestSwitch
+from ..testutils.test_thermometer import TestThermometer
+from ..testutils.test_switch import TestSwitch
 from ..hardware.gpio import create as create_gpio
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from ..hardware.switch_gpio import GPIOSwitch
