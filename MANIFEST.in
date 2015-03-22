@@ -1,6 +1,6 @@
 recursive-include openheating *.py
 recursive-include bin *.py
 recursive-include tests *.py
-recursive-include config *.conf
+recursive-include installations *.conf
 recursive-include doc *.txt
 recursive-include debian *
