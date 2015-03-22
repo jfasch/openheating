@@ -1,7 +1,6 @@
-from abc import ABCMeta, abstractmethod
 import logging
 
-class Thinker(metaclass=ABCMeta):
+class Thinker:
     def __init__(self, name):
         self.__name = name
 
