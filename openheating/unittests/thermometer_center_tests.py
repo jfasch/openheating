@@ -19,20 +19,6 @@ class ThermometerCenterTest(unittest.TestCase):
         self.assertIn('one', all_names)
         self.assertIn('two', all_names)
 
-    def test_cache(self):
-        th = TestThermometer(23.4)
-        th_center = ThermometerCenter({'one': th}, cache_age=0.2)
-        self.assertEqual(th.num_calls(), 0)
-        self.assertAlmostEqual(th_center.temperature('one'), 23.4)
-        self.assertEqual(th.num_calls(), 1)
-        self.assertAlmostEqual(th_center.temperature('one'), 23.4)
-        self.assertEqual(th.num_calls(), 1)
-
-        time.sleep(0.5)
-
-        self.assertAlmostEqual(th_center.temperature('one'), 23.4)
-        self.assertEqual(th.num_calls(), 2)
-
     def test_adapter_thermometer(self):
         th1 = TestThermometer(42)
         th2 = TestThermometer(666)

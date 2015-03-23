@@ -218,8 +218,7 @@ class GPIOSwitchCreator(SwitchCreator):
 
 # ----------------------------------------------------------------
 class ThermometerCenterCreator(Creator):
-    def __init__(self, cache_age, thermometers):
-        self.__cache_age = cache_age
+    def __init__(self, thermometers):
         self.__thermometer_creators = thermometers
         
         # force type safety early
@@ -235,7 +234,6 @@ class ThermometerCenterCreator(Creator):
 
     def create_native_object(self, connection):
         return ThermometerCenter(
-            cache_age=self.__cache_age,
             thermometers={name: creator.create_native_object(connection) \
                           for name, creator in self.__thermometer_creators.items()})
 

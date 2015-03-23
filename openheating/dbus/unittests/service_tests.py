@@ -77,7 +77,6 @@ class ServiceTest(DBusTestCase):
                 '/switches/dbus': DBusSwitchCreator(name='a.b.c', path='/some/switch'),
                 '/switches/file': FileSwitchCreator(path='/path/to/no/switch'),
                 '/center/thermometers': ThermometerCenterCreator(
-                    cache_age=5,
                     thermometers={
                         'test': TestThermometerCreator(initial_temperature=42),
                         'i2c': HWMON_I2C_ThermometerCreator(bus_number=1, address=0x49),
@@ -158,7 +157,6 @@ SERVICES = {
                 "switch-dbus": DBusSwitch(name="a.b.c", path="/some/path")
             }),
         '/another/path/to/thermometer_center': ThermometerCenter(
-            cache_age = 5,
             thermometers = {
                 "i2c-thermometer": HWMON_I2C_Thermometer(bus_number=1, address=0x49),
                 "dbus-thermometer": DBusThermometer(name="a.b.c", path="/some/path"),

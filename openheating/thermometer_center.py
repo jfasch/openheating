@@ -29,7 +29,7 @@ class ThermometerCenterBase(metaclass=ABCMeta):
     
 
 class ThermometerCenter(ThermometerCenterBase):
-    def __init__(self, thermometers, cache_age=None):
+    def __init__(self, thermometers):
         assert type(thermometers) is dict
         for name, thermometer in thermometers.items():
             assert type(name) is str
@@ -37,28 +37,14 @@ class ThermometerCenter(ThermometerCenterBase):
         
         self.__thermometers = thermometers
 
-        self.__cache_age = cache_age
-        if self.__cache_age is not None:
-            self.__cache = {}
-
     def all_names(self):
         return self.__thermometers.keys()
 
     def temperature(self, name):
-        if self.__cache_age is not None:
-            now = time.time()
-            entry = self.__cache.get(name)
-            if entry is not None and now - entry[1] < self.__cache_age:
-                return entry[0]
-        
         th = self.__thermometers.get(name)
         if th is None:
             raise HeatingError('no thermometer "%s"' % name)
-        temp = th.temperature()
-        if self.__cache_age is not None:
-            self.__cache[name] = (temp, now)
-        
-        return temp
+        return th.temperature()
 
     def num_thermometers__test(self):
         '''For tests only'''
