@@ -31,10 +31,6 @@ class ThermometerCenterBase(metaclass=ABCMeta):
 class ThermometerCenter(ThermometerCenterBase):
     def __init__(self, thermometers):
         assert type(thermometers) is dict
-        for name, thermometer in thermometers.items():
-            assert type(name) is str
-            assert isinstance(thermometer, Thermometer)
-        
         self.__thermometers = thermometers
 
     def all_names(self):

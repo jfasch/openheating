@@ -1,17 +1,26 @@
-from .thermometer_client import DBusThermometer
-from .switch_client import DBusSwitch
+from .switch_client import DBusSwitchClient
+from .thermometer_client import DBusThermometerClient
+from ..testutils.test_switch import TestSwitch
+from ..testutils.test_thermometer import TestThermometer
+from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
+
+
+from .mutant import MutantCreator
+
+from .thermometer_client import DBusThermometerClient
+from .switch_client import DBusSwitchClient
 
 from .service import DBusService
-from .service import SwitchCenterCreator
-from .service import ThermometerCenterCreator
-from .service import HWMON_I2C_ThermometerCreator
-from .service import DBusThermometerCreator
-from .service import TestThermometerCreator
-from .service import FileThermometerCreator
-from .service import GPIOSwitchCreator
-from .service import DBusSwitchCreator
-from .service import TestSwitchCreator
-from .service import FileSwitchCreator
+from .service import SwitchCenterObjectCreator
+from .service import ThermometerCenterObjectCreator
+from .service import HWMON_I2C_ThermometerObjectCreator
+from .service import DBusThermometerClientObjectCreator
+from .service import TestThermometerObjectCreator
+from .service import FileThermometerObjectCreator
+from .service import GPIOSwitchObjectCreator
+from .service import DBusSwitchClientObjectCreator
+from .service import TestSwitchObjectCreator
+from .service import FileSwitchObjectCreator
 
 from ..error import HeatingError
 from ..config_parser import ConfigParser
@@ -54,14 +63,20 @@ class DBusServicesConfig:
         return self.__services
 
 _symbols = {
-    'SwitchCenter': SwitchCenterCreator,
-    'ThermometerCenter': ThermometerCenterCreator,
-    'HWMON_I2C_Thermometer': HWMON_I2C_ThermometerCreator,
-    'DBusThermometer': DBusThermometerCreator,
-    'TestThermometer': TestThermometerCreator,
-    'FileThermometer': FileThermometerCreator,
-    'GPIOSwitch': GPIOSwitchCreator,
-    'DBusSwitch': DBusSwitchCreator,
-    'TestSwitch': TestSwitchCreator,
-    'FileSwitch': FileSwitchCreator,
+    'TestSwitch': MutantCreator(TestSwitch),
+    'DBusSwitchClient': MutantCreator(DBusSwitchClient),
+    'HWMON_I2C_Thermometer': MutantCreator(HWMON_I2C_Thermometer),
+    'DBusThermometerClient': MutantCreator(DBusThermometerClient),
+    'TestThermometer': MutantCreator(TestThermometer),
+
+    'SwitchCenterObject': SwitchCenterObjectCreator,
+    'ThermometerCenterObject': ThermometerCenterObjectCreator,
+    'HWMON_I2C_ThermometerObject': HWMON_I2C_ThermometerObjectCreator,
+    'DBusThermometerClientObject': DBusThermometerClientObjectCreator,
+    'TestThermometerObject': TestThermometerObjectCreator,
+    'FileThermometerObject': FileThermometerObjectCreator,
+    'GPIOSwitchObject': GPIOSwitchObjectCreator,
+    'DBusSwitchClientObject': DBusSwitchClientObjectCreator,
+    'TestSwitchObject': TestSwitchObjectCreator,
+    'FileSwitchObject': FileSwitchObjectCreator,
 }

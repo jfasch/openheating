@@ -81,10 +81,32 @@ class DBusObjectClient:
     parameters. (Keyword parameters are not supported, as this is not
     the nature of the DBus protocol).
 
+    As for the connection parameter: there are two different use cases
+    for DBusObjectClient, depending on where they live.
+
+    * In a DBus client program. There, one makes an explicit
+      connection, instantiates proxies (DBusObjectClient's), and uses
+      them. Here the connection is passed to the constructor, and the
+      object uses it.
+
+    * In a DBus service (or "dbus object", respectively). The DBus
+      service creates a connection at startup, and then passes that
+      connection to the dbus objects that it hosts. The dbus objects
+      then may create DBusObjectClient instances as they start up. In
+      order for configuration to stay transparent (at configuration
+      time we don't have a connection), we use a class (yes!)
+      variable "service_dbus_connection" for that.
+
     '''
 
-    def __init__(self, connection, name, path):
-        self.__connection = connection
+    service_dbus_connection = None
+
+    def __init__(self, name, path, connection=None):
+        if connection:
+            self.__connection = connection
+        else:
+            self.__connection = self.service_dbus_connection
+            
         self.__name = name
         self.__path = path
         self.__proxy = None

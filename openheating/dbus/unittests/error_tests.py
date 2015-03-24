@@ -1,4 +1,4 @@
-from openheating.dbus.service import Creator, DBusService
+from openheating.dbus.service import DBusObjectCreator, DBusService
 from openheating.dbus.object import DBusObject
 from openheating.dbus.rebind import DBusObjectClient, DBusClientConnection
 import openheating.dbus.types as types
@@ -74,15 +74,13 @@ class ErrorTest(DBusTestCase):
             self.assertTrue(HeatingError.equal(orig_err, err))
             
     def test__single_heating_error__idempotent(self):
-        class SingleErrorObjectCreator(Creator):
-            def create_dbus_object(self, connection, path):
+        class SingleErrorObjectCreator(DBusObjectCreator):
+            def create_object(self, connection, path):
                 class SingleErrorObject(DBusObject):
                     @dbus.service.method(dbus_interface='my.dumb.Raiser')
                     def raise_the_thing(self):
                         raise types.exception_local_to_dbus(HeatingError(permanent=False, msg='the-message'))
                 return SingleErrorObject(connection, path)
-            def create_native_object(self): 
-                assert False
 
         service = DBusService(
             daemon_address=self.daemon_address(),
@@ -107,8 +105,8 @@ class ErrorTest(DBusTestCase):
         # not get through unrecognized, but rather raise an assertion
         # at the client.
 
-        class NameErrorObjectCreator(Creator):
-            def create_dbus_object(self, connection, path):
+        class NameErrorObjectCreator(DBusObjectCreator):
+            def create_object(self, connection, path):
                 class NameErrorObject(DBusObject):
                     @dbus.service.method(dbus_interface='my.dumb.Error')
                     def do_the_error(self):
@@ -116,8 +114,6 @@ class ErrorTest(DBusTestCase):
                         # HeatingError will do)
                         x = some_unknown_name
                 return NameErrorObject(connection, path)
-            def create_native_object(self): 
-                assert False
 
         service = DBusService(
             daemon_address=self.daemon_address(),
@@ -140,15 +136,13 @@ class ErrorTest(DBusTestCase):
                                                         nested_errors=[HeatingError(msg='zzz2', permanent=False)])])
 
     def test__nested_errors(self):
-        class NestedRaiserObjectCreator(Creator):
-            def create_dbus_object(self, connection, path):
+        class NestedRaiserObjectCreator(DBusObjectCreator):
+            def create_object(self, connection, path):
                 class NestedRaiserObject(DBusObject):
                     @dbus.service.method(dbus_interface='my.dumb.Raiser.do_nested_error')
                     def do_nested_error(self):
                         raise types.exception_local_to_dbus(ErrorTest.remote_nested_error)
                 return NestedRaiserObject(connection, path)
-            def create_native_object(self): 
-                assert False
 
         service = DBusService(
             daemon_address=self.daemon_address(),

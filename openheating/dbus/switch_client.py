@@ -3,7 +3,7 @@ from .rebind import DBusObjectClient
 from ..switch import Switch
 
 
-class DBusSwitch(Switch, DBusObjectClient):
+class DBusSwitchClient(Switch, DBusObjectClient):
     '''A DBusObjectClient which is-a Switch. To be used as a local
     Switch, implemented via a remote DBUs Switch Object.
     '''

@@ -1,23 +1,28 @@
 from openheating.testutils.dbus_testcase import DBusTestCase
 from openheating.dbus.service import DBusService
 from openheating.dbus.rebind import DBusClientConnection
-from openheating.dbus.thermometer_client import DBusThermometer
-from openheating.dbus.switch_client import DBusSwitch
-from openheating.dbus.switch_center_client import DBusSwitchCenter
-from openheating.dbus.thermometer_center_client import DBusThermometerCenter
+from openheating.dbus.thermometer_client import DBusThermometerClient
+from openheating.dbus.switch_client import DBusSwitchClient
+from openheating.dbus.switch_center_client import DBusSwitchCenterClient
+from openheating.dbus.thermometer_center_client import DBusThermometerCenterClient
 
-from openheating.dbus.service import TestThermometerCreator
-from openheating.dbus.service import FileThermometerCreator
-from openheating.dbus.service import HWMON_I2C_ThermometerCreator
-from openheating.dbus.service import DBusThermometerCreator
-from openheating.dbus.service import TestSwitchCreator
-from openheating.dbus.service import FileSwitchCreator
-from openheating.dbus.service import GPIOSwitchCreator
-from openheating.dbus.service import DBusSwitchCreator
-from openheating.dbus.service import ThermometerCenterCreator
-from openheating.dbus.service import SwitchCenterCreator
+from openheating.dbus.service import TestThermometerObjectCreator
+from openheating.dbus.service import FileThermometerObjectCreator
+from openheating.dbus.service import HWMON_I2C_ThermometerObjectCreator
+from openheating.dbus.service import DBusThermometerClientObjectCreator
+from openheating.dbus.service import TestSwitchObjectCreator
+from openheating.dbus.service import FileSwitchObjectCreator
+from openheating.dbus.service import GPIOSwitchObjectCreator
+from openheating.dbus.service import DBusSwitchClientObjectCreator
+from openheating.dbus.service import ThermometerCenterObjectCreator
+from openheating.dbus.service import SwitchCenterObjectCreator
 
 from openheating.dbus.service_config import DBusServicesConfig
+from openheating.dbus.mutant import Mutant
+
+from openheating.testutils.test_thermometer import TestThermometer
+from openheating.testutils.test_switch import TestSwitch
+from openheating.hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 
 import time
 import signal
@@ -39,8 +44,8 @@ class ServiceTest(DBusTestCase):
             daemon_address=self.daemon_address(),
             name='some.dbus.service',
             object_creators={
-                '/path/to/test1': TestThermometerCreator(initial_temperature=1),
-                '/path/to/test2': TestThermometerCreator(initial_temperature=2),
+                '/path/to/test1': TestThermometerObjectCreator(initial_temperature=1),
+                '/path/to/test2': TestThermometerObjectCreator(initial_temperature=2),
             })
 
         self.__services.append(service)
@@ -51,13 +56,51 @@ class ServiceTest(DBusTestCase):
         self.wait_for_object(name='some.dbus.service', path='/path/to/test2')
 
         connection = DBusClientConnection(address=self.daemon_address())
-        test1_proxy = DBusThermometer(connection=connection, name='some.dbus.service', path='/path/to/test1')
-        test2_proxy = DBusThermometer(connection=connection, name='some.dbus.service', path='/path/to/test2')
+        test1_proxy = DBusThermometerClient(connection=connection, name='some.dbus.service', path='/path/to/test1')
+        test2_proxy = DBusThermometerClient(connection=connection, name='some.dbus.service', path='/path/to/test2')
 
         self.assertAlmostEqual(test1_proxy.temperature(), 1)
         self.assertAlmostEqual(test2_proxy.temperature(), 2)
 
         service.stop()
+
+    def test__dbus_client__in__service(self):
+        '''One service contains a DBus switch object. Another service
+        contains an object that accesses that former object. Challenge
+        is for that object to access the existing DBus connection. '''
+
+        lower_service = DBusService(
+            daemon_address=self.daemon_address(),
+            name='lower.service',
+            object_creators={
+                '/switch': TestSwitchObjectCreator(name='xxx', initial_state=False),
+            })
+        upper_service = DBusService(
+            daemon_address=self.daemon_address(),
+            name='upper.service',
+            object_creators={
+                '/switch_user_single': DBusSwitchClientObjectCreator(name='lower.service', path='/switch'),
+                '/switch_user_center': SwitchCenterObjectCreator(switches={
+                    'test': Mutant(DBusSwitchClient, name='lower.service', path='/switch'),
+                }),
+            })
+
+        self.__services.append(lower_service)
+        self.__services.append(upper_service)
+
+        lower_service.start()
+        upper_service.start()
+
+        self.wait_for_object(name='lower.service', path='/switch')
+        self.wait_for_object(name='upper.service', path='/switch_user')
+
+        connection = DBusClientConnection(address=self.daemon_address())
+
+        single_proxy = DBusSwitchClient(connection=connection, name='upper.service', path='/switch_user_single')
+        self.assertEqual(single_proxy.get_state(), False)
+
+        center_proxy = DBusSwitchCenterClient(connection=connection, name='upper.service', path='/switch_user_center')
+        self.assertEqual(center_proxy.get_state('test'), False)
 
     def test__instantiate_all_objects(self):
         # instantiate all of the different object types in a single
@@ -68,24 +111,25 @@ class ServiceTest(DBusTestCase):
             daemon_address=self.daemon_address(),
             name='some.dbus.service',
             object_creators={
-                '/thermometers/test': TestThermometerCreator(initial_temperature=1),
-                '/thermometers/file': FileThermometerCreator(path='/path/to/no/thermometer'),
-                '/thermometers/i2c': HWMON_I2C_ThermometerCreator(bus_number=666, address=0x49),
-                '/thermometers/dbus': DBusThermometerCreator(name='a.b.c', path='/some/thermometer'),
-                '/switches/test': TestSwitchCreator(name='testswitch', initial_state=False),
-                # not easily instantiated ... '/switches/gpio': GPIOSwitchCreator(gpio_number=66),
-                '/switches/dbus': DBusSwitchCreator(name='a.b.c', path='/some/switch'),
-                '/switches/file': FileSwitchCreator(path='/path/to/no/switch'),
-                '/center/thermometers': ThermometerCenterCreator(
+                '/thermometers/test': TestThermometerObjectCreator(initial_temperature=1),
+
+        '/thermometers/file': FileThermometerObjectCreator(path='/path/to/no/thermometer'),
+                '/thermometers/i2c': HWMON_I2C_ThermometerObjectCreator(bus_number=666, address=0x49),
+                '/thermometers/dbus': DBusThermometerClientObjectCreator(name='a.b.c', path='/some/thermometer'),
+                '/switches/test': TestSwitchObjectCreator(name='testswitch', initial_state=False),
+                # not easily instantiated ... '/switches/gpio': GPIOSwitchObjectCreator(gpio_number=66),
+                '/switches/dbus': DBusSwitchClientObjectCreator(name='a.b.c', path='/some/switch'),
+                '/switches/file': FileSwitchObjectCreator(path='/path/to/no/switch'),
+                '/center/thermometers': ThermometerCenterObjectCreator(
                     thermometers={
-                        'test': TestThermometerCreator(initial_temperature=42),
-                        'i2c': HWMON_I2C_ThermometerCreator(bus_number=1, address=0x49),
-                        'dbus': DBusThermometerCreator(name='a.b.c', path='/x/y/z'),
+                        'test': Mutant(TestThermometer, initial_temperature=42),
+                        'i2c': Mutant(HWMON_I2C_Thermometer, bus_number=1, address=0x49),
+                        'dbus': Mutant(DBusThermometerClient, name='a.b.c', path='/x/y/z'),
                     }),
-                '/center/switches': SwitchCenterCreator(
+                '/center/switches': SwitchCenterObjectCreator(
                     switches={
-                        'test': TestSwitchCreator(name='testswitch', initial_state=False),
-                        'dbus': DBusSwitchCreator(name='a.b.c', path='/some/where'),
+                        'test': Mutant(TestSwitch, name='testswitch', initial_state=False),
+                        'dbus': Mutant(DBusSwitchClient, name='a.b.c', path='/some/where'),
                     }),
             })
 
@@ -96,29 +140,33 @@ class ServiceTest(DBusTestCase):
 
         # now talk to them
         if True:
-            thermometer = DBusThermometer(connection=DBusClientConnection(address=self.daemon_address()),
-                                          name='some.dbus.service',
-                                          path='/thermometers/test')
+            thermometer = DBusThermometerClient(
+                connection=DBusClientConnection(address=self.daemon_address()),
+                name='some.dbus.service',
+                path='/thermometers/test')
             self.assertAlmostEqual(thermometer.temperature(), 1)
 
         if True:
-            switch = DBusSwitch(connection=DBusClientConnection(address=self.daemon_address()),
-                                name='some.dbus.service',
-                                path='/switches/test')
+            switch = DBusSwitchClient(
+                connection=DBusClientConnection(address=self.daemon_address()),
+                name='some.dbus.service',
+                path='/switches/test')
             self.assertEqual(switch.get_state(), False)
             switch.do_close()
             self.assertEqual(switch.get_state(), True)
 
         if True:
-            thermometer_center = DBusThermometerCenter(connection=DBusClientConnection(address=self.daemon_address()),
-                                                       name='some.dbus.service',
-                                                       path='/center/thermometers')
+            thermometer_center = DBusThermometerCenterClient(
+                connection=DBusClientConnection(address=self.daemon_address()),
+                name='some.dbus.service',
+                path='/center/thermometers')
             self.assertAlmostEqual(thermometer_center.temperature('test'), 42)
 
         if True:
-            switch_center = DBusSwitchCenter(connection=DBusClientConnection(address=self.daemon_address()),
-                                             name='some.dbus.service',
-                                             path='/center/switches')
+            switch_center = DBusSwitchCenterClient(
+                connection=DBusClientConnection(address=self.daemon_address()),
+                name='some.dbus.service',
+                path='/center/switches')
             self.assertEqual(switch_center.get_state('test'), False)
             switch_center.set_state('test', True)
             switch_proxy = switch_center.get_switch('test')
@@ -149,31 +197,31 @@ DAEMON_ADDRESS = "%s"
 
 SERVICES = {
     'some.service.centers': {
-        '/path/to/switch_center': SwitchCenter(
+        '/path/to/switch_center': SwitchCenterObject(
             switches = {
                 "switch-test-closed": TestSwitch(name='xxx', initial_state=True),
                 "switch-test-open": TestSwitch(name='yyy', initial_state=False),
-                # ot easily instantiated ... "switch-gpio": GPIOSwitch(gpio_number=4),
-                "switch-dbus": DBusSwitch(name="a.b.c", path="/some/path")
+                # not easily instantiated ... "switch-gpio": GPIOSwitch(gpio_number=4),
+                "switch-dbus": DBusSwitchClient(name="a.b.c", path="/some/path")
             }),
-        '/another/path/to/thermometer_center': ThermometerCenter(
+        '/another/path/to/thermometer_center': ThermometerCenterObject(
             thermometers = {
                 "i2c-thermometer": HWMON_I2C_Thermometer(bus_number=1, address=0x49),
-                "dbus-thermometer": DBusThermometer(name="a.b.c", path="/some/path"),
+                "dbus-thermometer": DBusThermometerClient(name="a.b.c", path="/some/path"),
                 "test-thermometer": TestThermometer(initial_temperature=4.5),
             }),
     },
     
     'some.service.thermometers': {
-        '/path/to/thermometers/i2c': HWMON_I2C_Thermometer(bus_number=1, address=0x48),
-        '/path/to/thermometers/dbus': DBusThermometer(name="a.b.c", path="/some/path"),
-        '/path/to/thermometers/test': TestThermometer(initial_temperature=42.0),
+        '/path/to/thermometers/i2c': HWMON_I2C_ThermometerObject(bus_number=1, address=0x48),
+        '/path/to/thermometers/dbus': DBusThermometerClientObject(name="a.b.c", path="/some/path"),
+        '/path/to/thermometers/test': TestThermometerObject(initial_temperature=42.0),
     },
 
     'some.service.switches': {
-        # not easily instantiated ... '/path/to/switches/gpio': GPIOSwitch(gpio_number=42),
-        '/path/to/switches/dbus': DBusSwitch(name="a.b.c", path="/some/path"),
-        '/path/to/switches/test': TestSwitch(name='xxx', initial_state=False),
+        # not easily instantiated ... '/path/to/switches/gpio': GPIOSwitchObject(gpio_number=42),
+        '/path/to/switches/dbus': DBusSwitchClientObject(name="a.b.c", path="/some/path"),
+        '/path/to/switches/test': TestSwitchObject(name='xxx', initial_state=False),
     },
 }
 '''

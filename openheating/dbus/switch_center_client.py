@@ -3,7 +3,7 @@ from .rebind import DBusObjectClient
 from ..switch_center import SwitchCenterBase
 
 
-class DBusSwitchCenter(SwitchCenterBase, DBusObjectClient):
+class DBusSwitchCenterClient(SwitchCenterBase, DBusObjectClient):
     '''A DBusObjectClient which is-a SwitchCenter. To be used as a
     local one.
     '''

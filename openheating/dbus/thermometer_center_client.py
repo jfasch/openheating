@@ -3,7 +3,7 @@ from .rebind import DBusObjectClient
 from ..thermometer_center import ThermometerCenterBase
 
 
-class DBusThermometerCenter(ThermometerCenterBase, DBusObjectClient):
+class DBusThermometerCenterClient(ThermometerCenterBase, DBusObjectClient):
     '''A DBusObjectClient which is-a ThermometerCenter. To be used as a
     local one.
     '''

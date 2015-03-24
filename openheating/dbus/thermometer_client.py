@@ -3,7 +3,7 @@ from .rebind import DBusObjectClient
 from ..thermometer import Thermometer
 
 
-class DBusThermometer(Thermometer, DBusObjectClient):
+class DBusThermometerClient(Thermometer, DBusObjectClient):
     '''A DBusObjectClient which is-a Thermometer. To be used as a local
     Thermometer, asking its temperature over DBus.
     '''

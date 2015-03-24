@@ -44,13 +44,6 @@ class SwitchCenterBase(metaclass=ABCMeta):
 
 class SwitchCenter(SwitchCenterBase):
     def __init__(self, switches):
-        # bail out early. users can configure it, passing "switches"
-        # as the wrong type.
-        assert type(switches) is dict
-        for name, switch in switches.items():
-            assert type(name) is str
-            assert isinstance(switch, Switch)
-
         self.__switches = switches
 
     def all_names(self):
