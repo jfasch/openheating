@@ -18,7 +18,7 @@ from openheating.dbus.service import ThermometerCenterObjectCreator
 from openheating.dbus.service import SwitchCenterObjectCreator
 
 from openheating.dbus.service_config import DBusServicesConfig
-from openheating.dbus.mutant import Mutant
+from openheating.dbus.native_creator import NativeObject
 
 from openheating.testutils.test_thermometer import TestThermometer
 from openheating.testutils.test_switch import TestSwitch
@@ -81,7 +81,7 @@ class ServiceTest(DBusTestCase):
             object_creators={
                 '/switch_user_single': DBusSwitchClientObjectCreator(name='lower.service', path='/switch'),
                 '/switch_user_center': SwitchCenterObjectCreator(switches={
-                    'test': Mutant(DBusSwitchClient, name='lower.service', path='/switch'),
+                    'test': NativeObject(DBusSwitchClient, name='lower.service', path='/switch'),
                 }),
             })
 
@@ -122,14 +122,14 @@ class ServiceTest(DBusTestCase):
                 '/switches/file': FileSwitchObjectCreator(path='/path/to/no/switch'),
                 '/center/thermometers': ThermometerCenterObjectCreator(
                     thermometers={
-                        'test': Mutant(TestThermometer, initial_temperature=42),
-                        'i2c': Mutant(HWMON_I2C_Thermometer, bus_number=1, address=0x49),
-                        'dbus': Mutant(DBusThermometerClient, name='a.b.c', path='/x/y/z'),
+                        'test': NativeObject(TestThermometer, initial_temperature=42),
+                        'i2c': NativeObject(HWMON_I2C_Thermometer, bus_number=1, address=0x49),
+                        'dbus': NativeObject(DBusThermometerClient, name='a.b.c', path='/x/y/z'),
                     }),
                 '/center/switches': SwitchCenterObjectCreator(
                     switches={
-                        'test': Mutant(TestSwitch, name='testswitch', initial_state=False),
-                        'dbus': Mutant(DBusSwitchClient, name='a.b.c', path='/some/where'),
+                        'test': NativeObject(TestSwitch, name='testswitch', initial_state=False),
+                        'dbus': NativeObject(DBusSwitchClient, name='a.b.c', path='/some/where'),
                     }),
             })
 

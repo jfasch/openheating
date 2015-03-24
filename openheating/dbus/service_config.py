@@ -6,8 +6,7 @@ from ..testutils.test_thermometer import TestThermometer
 from ..testutils.file_thermometer import FileThermometer
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 
-
-from .mutant import MutantCreator
+from .native_creator import NativeObjectCreator
 
 from .thermometer_client import DBusThermometerClient
 from .switch_client import DBusSwitchClient
@@ -65,13 +64,13 @@ class DBusServicesConfig:
         return self.__services
 
 _symbols = {
-    'TestSwitch': MutantCreator(TestSwitch),
-    'FileSwitch': MutantCreator(FileSwitch),
-    'DBusSwitchClient': MutantCreator(DBusSwitchClient),
-    'HWMON_I2C_Thermometer': MutantCreator(HWMON_I2C_Thermometer),
-    'DBusThermometerClient': MutantCreator(DBusThermometerClient),
-    'TestThermometer': MutantCreator(TestThermometer),
-    'FileThermometer': MutantCreator(FileThermometer),
+    'TestSwitch': NativeObjectCreator(TestSwitch),
+    'FileSwitch': NativeObjectCreator(FileSwitch),
+    'DBusSwitchClient': NativeObjectCreator(DBusSwitchClient),
+    'HWMON_I2C_Thermometer': NativeObjectCreator(HWMON_I2C_Thermometer),
+    'DBusThermometerClient': NativeObjectCreator(DBusThermometerClient),
+    'TestThermometer': NativeObjectCreator(TestThermometer),
+    'FileThermometer': NativeObjectCreator(FileThermometer),
 
     'SwitchCenterObject': SwitchCenterObjectCreator,
     'ThermometerCenterObject': ThermometerCenterObjectCreator,
