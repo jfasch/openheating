@@ -1,6 +1,6 @@
 class NativeObjectCreator:
     '''A parameterizable class, used in the service configuration to
-    shield the user from all taht forking and instantiating that we
+    shield the user from all that forking and instantiating that we
     do.
 
     I am quite sure that I could do this better if I only knew what

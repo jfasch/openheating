@@ -1,30 +1,12 @@
 from .object import DBusObject
+from .object_creator import DBusObjectCreator
 from .rebind import DBusServerConnection
 from .rebind import DBusObjectClient
-from .thermometer_object import DBusThermometerObject
-from .thermometer_client import DBusThermometerClient
-from .thermometer_center_object import DBusThermometerCenterObject
-from .switch_object import DBusSwitchObject
-from .switch_client import DBusSwitchClient
-from .switch_center_object import DBusSwitchCenterObject
-
-from ..switch_center import SwitchCenter
-from ..thermometer_center import ThermometerCenter
-
-from ..testutils.test_thermometer import TestThermometer
-from ..testutils.test_switch import TestSwitch
-from ..testutils.file_thermometer import FileThermometer
-from ..testutils.file_switch import FileSwitch
-
-from ..hardware.gpio import create as create_gpio
-from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-from ..hardware.switch_gpio import GPIOSwitch
 
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
-from abc import ABCMeta, abstractmethod
 import signal
 import time
 import logging
@@ -145,98 +127,3 @@ def _restarter_terminate(signum, frame):
     os.kill(_service_pid, signal.SIGTERM)
     os._exit(0)
 
-# ----------------------------------------------------------------
-class DBusObjectCreator(metaclass=ABCMeta):
-    @abstractmethod
-    def create_object(self, connection, path):
-        pass
-
-# ----------------------------------------------------------------
-class ThermometerObjectCreator(DBusObjectCreator):
-    def create_object(self, connection, path):
-        return DBusThermometerObject(
-            connection=connection,
-            path=path,
-            thermometer=self.create_native_object(connection))
-
-class TestThermometerObjectCreator(ThermometerObjectCreator):
-    def __init__(self, initial_temperature):
-        self.__initial_temperature = initial_temperature
-    def create_native_object(self, connection):
-        return TestThermometer(initial_temperature=self.__initial_temperature)
-
-class FileThermometerObjectCreator(ThermometerObjectCreator):
-    def __init__(self, path):
-        self.__path = path
-    def create_native_object(self, connection):
-        return FileThermometer(path=self.__path)
-
-class HWMON_I2C_ThermometerObjectCreator(ThermometerObjectCreator):
-    def __init__(self, bus_number, address):
-        self.__bus_number = bus_number
-        self.__address = address
-    def create_native_object(self, connection):
-        return HWMON_I2C_Thermometer(bus_number=self.__bus_number, address=self.__address)
-
-class DBusThermometerClientObjectCreator(ThermometerObjectCreator):
-    def __init__(self, name, path):
-        self.__name = name
-        self.__path = path
-    def create_native_object(self, connection):
-        return DBusThermometerClient(connection=connection, name=self.__name, path=self.__path)
-
-# ----------------------------------------------------------------
-class SwitchObjectCreator(DBusObjectCreator):
-    def create_object(self, connection, path):
-        return DBusSwitchObject(
-            connection=connection,
-            path=path,
-            switch=self.create_native_object(connection))
-
-class TestSwitchObjectCreator(SwitchObjectCreator):
-    def __init__(self, name, initial_state):
-        self.__name = name
-        self.__initial_state = initial_state
-    def create_native_object(self, connection):
-        return TestSwitch(name=self.__name, initial_state=self.__initial_state)
-
-class FileSwitchObjectCreator(SwitchObjectCreator):
-    def __init__(self, path):
-        self.__path = path
-    def create_native_object(self, connection):
-        return FileSwitch(path=self.__path)
-
-class DBusSwitchClientObjectCreator(SwitchObjectCreator):
-    def __init__(self, name, path):
-        self.__name = name
-        self.__path = path
-    def create_native_object(self, connection):
-        return DBusSwitchClient(connection=connection, name=self.__name, path=self.__path)
-
-class GPIOSwitchObjectCreator(SwitchObjectCreator):
-    def __init__(self, gpio_number):
-        self.__gpio_number = gpio_number
-    def create_native_object(self, connection):
-        return GPIOSwitch(gpio=create_gpio(self.__gpio_number))
-
-# ----------------------------------------------------------------
-class ThermometerCenterObjectCreator(DBusObjectCreator):
-    def __init__(self, thermometers):
-        self.__thermometers = thermometers
-
-    def create_object(self, connection, path):
-        return DBusThermometerCenterObject(
-            connection=connection,
-            path=path,
-            center=ThermometerCenter(self.__thermometers))
-
-# ----------------------------------------------------------------
-class SwitchCenterObjectCreator(DBusObjectCreator):
-    def __init__(self, switches):
-        self.__switches = switches
-        
-    def create_object(self, connection, path):
-        return DBusSwitchCenterObject(
-            connection=connection,
-            path=path,
-            center=SwitchCenter(self.__switches))

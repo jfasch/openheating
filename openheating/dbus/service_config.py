@@ -1,38 +1,27 @@
-from .switch_client import DBusSwitchClient
-from .thermometer_client import DBusThermometerClient
+from .native_creator import NativeObjectCreator
 from ..testutils.test_switch import TestSwitch
 from ..testutils.file_switch import FileSwitch
-from ..testutils.test_thermometer import TestThermometer
-from ..testutils.file_thermometer import FileThermometer
-from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-
-from .native_creator import NativeObjectCreator
-
-from .thermometer_client import DBusThermometerClient
+from ..hardware.switch_gpio import GPIOSwitch
 from .switch_client import DBusSwitchClient
 
-from .service import DBusService
-from .service import SwitchCenterObjectCreator
-from .service import ThermometerCenterObjectCreator
-from .service import HWMON_I2C_ThermometerObjectCreator
-from .service import DBusThermometerClientObjectCreator
-from .service import TestThermometerObjectCreator
-from .service import FileThermometerObjectCreator
-from .service import GPIOSwitchObjectCreator
-from .service import DBusSwitchClientObjectCreator
-from .service import TestSwitchObjectCreator
-from .service import FileSwitchObjectCreator
-
-from ..error import HeatingError
-from ..config_parser import ConfigParser
-from ..switch import Switch
-from ..thermometer_center import ThermometerCenter
-from ..switch_center import SwitchCenter
+from .object_creator import ThermometerObjectConstructor
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-from ..hardware.switch_gpio import GPIOSwitch
-from ..hardware.gpio import create as create_gpio
+from .thermometer_client import DBusThermometerClient
+from ..testutils.test_thermometer import TestThermometer
+from ..testutils.file_thermometer import FileThermometer
 
-from abc import ABCMeta, abstractmethod
+from .object_creator import SwitchObjectConstructor
+from ..hardware.switch_gpio import GPIOSwitch
+from .switch_client import DBusSwitchClient
+from ..testutils.test_switch import TestSwitch
+from ..testutils.file_switch import FileSwitch
+
+from .service import DBusService
+
+from .object_creator import SwitchCenterObjectCreator
+from .object_creator import ThermometerCenterObjectCreator
+
+from ..config_parser import ConfigParser
 
 
 class DBusServicesConfig:
@@ -74,12 +63,14 @@ _symbols = {
 
     'SwitchCenterObject': SwitchCenterObjectCreator,
     'ThermometerCenterObject': ThermometerCenterObjectCreator,
-    'HWMON_I2C_ThermometerObject': HWMON_I2C_ThermometerObjectCreator,
-    'DBusThermometerClientObject': DBusThermometerClientObjectCreator,
-    'TestThermometerObject': TestThermometerObjectCreator,
-    'FileThermometerObject': FileThermometerObjectCreator,
-    'GPIOSwitchObject': GPIOSwitchObjectCreator,
-    'DBusSwitchClientObject': DBusSwitchClientObjectCreator,
-    'TestSwitchObject': TestSwitchObjectCreator,
-    'FileSwitchObject': FileSwitchObjectCreator,
+
+    'HWMON_I2C_ThermometerObject': ThermometerObjectConstructor(HWMON_I2C_Thermometer),
+    'DBusThermometerClientObject': ThermometerObjectConstructor(DBusThermometerClient),
+    'TestThermometerObject': ThermometerObjectConstructor(TestThermometer),
+    'FileThermometerObject': ThermometerObjectConstructor(FileThermometer),
+
+    'GPIOSwitchObject': SwitchObjectConstructor(GPIOSwitch),
+    'DBusSwitchClientObject': SwitchObjectConstructor(DBusSwitchClient),
+    'TestSwitchObject': SwitchObjectConstructor(TestSwitch),
+    'FileSwitchObject': SwitchObjectConstructor(FileSwitch),
 }

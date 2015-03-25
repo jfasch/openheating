@@ -1,3 +1,8 @@
+* rename NativeObjectCreator to NativeObjectConstructor (and rename
+  the entire file to something better).
+
+* same with object_creator
+
 * move rebind.DBusObjectClient into separate file, client.py. we
   already have object.py which contains the other side, so this would
   only be logical.
