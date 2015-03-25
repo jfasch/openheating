@@ -123,6 +123,7 @@ _service_pid = None
 
 def _restarter_terminate(signum, frame):
     global _service_pid
-    os.kill(_service_pid, signal.SIGTERM)
+    if _service_pid is not None:
+        os.kill(_service_pid, signal.SIGTERM)
     os._exit(0)
 
