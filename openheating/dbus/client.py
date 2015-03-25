@@ -1,3 +1,4 @@
+from .connection import DBusServerConnection
 from . import types
 from ..error import HeatingError
 
@@ -16,30 +17,35 @@ class DBusObjectClient:
     the nature of the DBus protocol).
 
     As for the connection parameter: there are two different use cases
-    for DBusObjectClient, depending on where they live.
+    for DBusObjectClient, depending on where the client lives
 
     * In a DBus client program. There, one makes an explicit
       connection, instantiates proxies (DBusObjectClient's), and uses
-      them. Here the connection is passed to the constructor, and the
-      object uses it.
+      them. Here the connection is passed to the constructor,
+      explicitly, and the object uses it.
 
     * In a DBus service (or "dbus object", respectively). The DBus
-      service creates a connection at startup, and then passes that
-      connection to the dbus objects that it hosts. The dbus objects
-      then may create DBusObjectClient instances as they start up. In
-      order for configuration to stay transparent (at configuration
-      time we don't have a connection), we use a class (yes!)
-      variable "service_dbus_connection" for that.
+      service creates a connection at startup, and the connection is
+      the only connection that is used throughout the service
+      process. We use a global instance for that, nicely stowed away
+      inside class DBusServerConnection.
 
     '''
-
-    service_dbus_connection = None
 
     def __init__(self, name, path, connection=None):
         if connection:
             self.__connection = connection
         else:
-            self.__connection = self.service_dbus_connection
+            # supposedly living in a dbus service process; use the
+            # global one.
+
+            if not DBusServerConnection.instance:
+                # print this out loudly; the AssertionError appears to get
+                # lost somewhere deep inside dbus.
+                print('FATAL: DBusObjectClient: DBusServerConnection.instance is not set', file=sys.stderr)
+                assert False
+
+            self.__connection = DBusServerConnection.instance
             
         self.__name = name
         self.__path = path

@@ -39,8 +39,8 @@ class ObjectTest(DBusTestCase):
             mainloop = DBusGMainLoop(set_as_default=True)
             connection = dbus.bus.BusConnection(self.daemon_address(), mainloop=mainloop)
             busname = dbus.service.BusName(name='some.bus.name', bus=connection)
-            server_conn = DBusServerConnection(connection)
-            echo_object = EchoObject(server_conn, '/path/to/echo')
+            DBusServerConnection.instance = DBusServerConnection(connection)
+            echo_object = EchoObject('/path/to/echo')
             GLib.MainLoop().run()
             sys.exit()
         else: # parent

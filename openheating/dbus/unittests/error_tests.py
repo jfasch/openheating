@@ -76,12 +76,12 @@ class ErrorTest(DBusTestCase):
             
     def test__single_heating_error__idempotent(self):
         class SingleErrorObjectCreator(DBusObjectCreator):
-            def create_object(self, connection, path):
+            def create_object(self, path):
                 class SingleErrorObject(DBusObject):
                     @dbus.service.method(dbus_interface='my.dumb.Raiser')
                     def raise_the_thing(self):
                         raise types.exception_local_to_dbus(HeatingError(permanent=False, msg='the-message'))
-                return SingleErrorObject(connection, path)
+                return SingleErrorObject(path)
 
         service = DBusService(
             daemon_address=self.daemon_address(),
@@ -107,14 +107,14 @@ class ErrorTest(DBusTestCase):
         # at the client.
 
         class NameErrorObjectCreator(DBusObjectCreator):
-            def create_object(self, connection, path):
+            def create_object(self, path):
                 class NameErrorObject(DBusObject):
                     @dbus.service.method(dbus_interface='my.dumb.Error')
                     def do_the_error(self):
                         # this raises a NameError (anything but a
                         # HeatingError will do)
                         x = some_unknown_name
-                return NameErrorObject(connection, path)
+                return NameErrorObject(path)
 
         service = DBusService(
             daemon_address=self.daemon_address(),
@@ -138,12 +138,12 @@ class ErrorTest(DBusTestCase):
 
     def test__nested_errors(self):
         class NestedRaiserObjectCreator(DBusObjectCreator):
-            def create_object(self, connection, path):
+            def create_object(self, path):
                 class NestedRaiserObject(DBusObject):
                     @dbus.service.method(dbus_interface='my.dumb.Raiser.do_nested_error')
                     def do_nested_error(self):
                         raise types.exception_local_to_dbus(ErrorTest.remote_nested_error)
-                return NestedRaiserObject(connection, path)
+                return NestedRaiserObject(path)
 
         service = DBusService(
             daemon_address=self.daemon_address(),

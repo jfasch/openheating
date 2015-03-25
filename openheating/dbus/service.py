@@ -1,7 +1,6 @@
 from .object import DBusObject
 from .service_config_object import DBusObjectCreator
 from .connection import DBusServerConnection
-from .client import DBusObjectClient
 
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
@@ -100,15 +99,15 @@ class DBusService:
             dbus_connection.set_exit_on_disconnect(True)
 
             bus_name = dbus.service.BusName(self.__name, dbus_connection)
-            connection = DBusServerConnection(connection=dbus_connection)
 
-            # make the connection available for all DBusObjectClient
-            # instances in this service.
-            DBusObjectClient.service_dbus_connection = connection
+            # create the bus connection wrapper that we all use, and
+            # make it available for all objects and clients here in
+            # this process.
+            DBusServerConnection.instance = DBusServerConnection(connection=dbus_connection)
 
             objects = []
             for path, creator in self.__object_creators.items():
-                objects.append(creator.create_object(connection=connection, path=path))
+                objects.append(creator.create_object(path=path))
 
             try:
                 GLib.MainLoop().run()

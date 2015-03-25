@@ -39,6 +39,10 @@ class DBusServerConnection(DBusConnection):
     server process terminates once the connection goes down for some
     reason.
     '''
+
+    # when living in a service process, there ought to be only one
+    # connection.
+    instance = None
     
     def __init__(self, connection):
         self.__connection = connection

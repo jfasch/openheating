@@ -24,7 +24,7 @@ from abc import ABCMeta, abstractmethod
 # ----------------------------------------------------------------
 class DBusObjectCreator(metaclass=ABCMeta):
     @abstractmethod
-    def create_object(self, connection, path):
+    def create_object(self, path):
         pass
 
 # ----------------------------------------------------------------
@@ -39,9 +39,8 @@ class ThermometerObjectCreator(DBusObjectCreator):
         self.__class = klass
         self.__args = args
         self.__kwargs = kwargs
-    def create_object(self, connection, path):
+    def create_object(self, path):
         return DBusThermometerObject(
-            connection=connection,
             path=path,
             thermometer=self.__class(*self.__args, **self.__kwargs))
 
@@ -57,9 +56,8 @@ class SwitchObjectCreator(DBusObjectCreator):
         self.__class = klass
         self.__args = args
         self.__kwargs = kwargs
-    def create_object(self, connection, path):
+    def create_object(self, path):
         return DBusSwitchObject(
-            connection=connection,
             path=path,
             switch=self.__class(*self.__args, **self.__kwargs))
 
@@ -68,9 +66,8 @@ class ThermometerCenterObjectCreator(DBusObjectCreator):
     def __init__(self, thermometers):
         self.__thermometers = thermometers
 
-    def create_object(self, connection, path):
+    def create_object(self, path):
         return DBusThermometerCenterObject(
-            connection=connection,
             path=path,
             center=ThermometerCenter(self.__thermometers))
 
@@ -79,8 +76,7 @@ class SwitchCenterObjectCreator(DBusObjectCreator):
     def __init__(self, switches):
         self.__switches = switches
         
-    def create_object(self, connection, path):
+    def create_object(self, path):
         return DBusSwitchCenterObject(
-            connection=connection,
             path=path,
             center=SwitchCenter(self.__switches))

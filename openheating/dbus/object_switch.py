@@ -9,8 +9,8 @@ import dbus.service
 class DBusSwitchObject(DBusObject):
     '''Adapt a Switch into a DBus object at object_path'''
 
-    def __init__(self, connection, path, switch):
-        DBusObject.__init__(self, connection=connection, path=path)
+    def __init__(self, path, switch):
+        DBusObject.__init__(self, path=path)
         self.__switch = switch
 
     @dbus.service.method(dbus_interface=DBUS_SWITCH_IFACE_STRING, in_signature = 'b')
