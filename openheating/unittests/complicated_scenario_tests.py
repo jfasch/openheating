@@ -67,7 +67,7 @@ class ComplicatedScenarioTests(unittest.TestCase):
             room_transport.register_thinking(brain)
             pass
 
-        brain.think()
+        brain.think('')
 
         self.assertTrue(boiler_pump_switch.is_open())
         self.assertTrue(room_pump_switch.is_closed())

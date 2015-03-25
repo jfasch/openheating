@@ -27,13 +27,13 @@ class SinkTest(unittest.TestCase):
         source.register_thinking(brain)
 
         # initial request
-        brain.think()
+        brain.think('initial request')
         self.assertTrue(source.is_requested_by(sink))
 
         # heating up, right below lower hysteresis bound. still
         # requested
         sink_thermometer.set_temperature(22.9)
-        brain.think()
+        brain.think('heating up until below hysteresis')
         self.assertTrue(source.is_requested_by(sink))
 
         # heating up further, between low and high
@@ -43,7 +43,7 @@ class SinkTest(unittest.TestCase):
 
         # heating to the point where sink is satisfied
         sink_thermometer.set_temperature(27.1)
-        brain.think()
+        brain.think('satisfied')
         self.assertFalse(source.is_requested_by(sink))
 
 suite = unittest.TestSuite()
