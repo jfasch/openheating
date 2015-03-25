@@ -7,5 +7,5 @@
 
 * add tests for switchcenterclient, thermometercenterclient
 
-* investigate on method resolution, calling. cure the broken
-  openheating/dbus/service_config_native.py
+* investigate on method resolution, calling. intercepting method
+  calls. cure the broken openheating/dbus/service_config_native.py.
