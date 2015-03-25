@@ -1,5 +1,5 @@
 from .object import DBusObject
-from .object_creator import DBusObjectCreator
+from .service_config_object import DBusObjectCreator
 from .rebind import DBusServerConnection
 from .rebind import DBusObjectClient
 

@@ -1,16 +1,16 @@
-from .native_creator import NativeObjectCreator
+from .service_config_native import NativeObjectConstructor
 from ..testutils.test_switch import TestSwitch
 from ..testutils.file_switch import FileSwitch
 from ..hardware.switch_gpio import GPIOSwitch
 from .switch_client import DBusSwitchClient
 
-from .object_creator import ThermometerObjectConstructor
+from .service_config_object import ThermometerObjectConstructor
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from .thermometer_client import DBusThermometerClient
 from ..testutils.test_thermometer import TestThermometer
 from ..testutils.file_thermometer import FileThermometer
 
-from .object_creator import SwitchObjectConstructor
+from .service_config_object import SwitchObjectConstructor
 from ..hardware.switch_gpio import GPIOSwitch
 from .switch_client import DBusSwitchClient
 from ..testutils.test_switch import TestSwitch
@@ -18,8 +18,8 @@ from ..testutils.file_switch import FileSwitch
 
 from .service import DBusService
 
-from .object_creator import SwitchCenterObjectCreator
-from .object_creator import ThermometerCenterObjectCreator
+from .service_config_object import SwitchCenterObjectCreator
+from .service_config_object import ThermometerCenterObjectCreator
 
 from ..config_parser import ConfigParser
 
@@ -53,13 +53,13 @@ class DBusServicesConfig:
         return self.__services
 
 _symbols = {
-    'TestSwitch': NativeObjectCreator(TestSwitch),
-    'FileSwitch': NativeObjectCreator(FileSwitch),
-    'DBusSwitchClient': NativeObjectCreator(DBusSwitchClient),
-    'HWMON_I2C_Thermometer': NativeObjectCreator(HWMON_I2C_Thermometer),
-    'DBusThermometerClient': NativeObjectCreator(DBusThermometerClient),
-    'TestThermometer': NativeObjectCreator(TestThermometer),
-    'FileThermometer': NativeObjectCreator(FileThermometer),
+    'TestSwitch': NativeObjectConstructor(TestSwitch),
+    'FileSwitch': NativeObjectConstructor(FileSwitch),
+    'DBusSwitchClient': NativeObjectConstructor(DBusSwitchClient),
+    'HWMON_I2C_Thermometer': NativeObjectConstructor(HWMON_I2C_Thermometer),
+    'DBusThermometerClient': NativeObjectConstructor(DBusThermometerClient),
+    'TestThermometer': NativeObjectConstructor(TestThermometer),
+    'FileThermometer': NativeObjectConstructor(FileThermometer),
 
     'SwitchCenterObject': SwitchCenterObjectCreator,
     'ThermometerCenterObject': ThermometerCenterObjectCreator,

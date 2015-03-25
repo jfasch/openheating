@@ -1,13 +1,11 @@
-class NativeObjectCreator:
+class NativeObjectConstructor:
     '''A parameterizable class, used in the service configuration to
     shield the user from all that forking and instantiating that we
     do.
 
     I am quite sure that I could do this better if I only knew what
     meta classes are. (That's to come.)
-
     '''
-
 
     def __init__(self, klass):
         self.__class = klass
@@ -24,7 +22,6 @@ class NativeObject:
     forked the final service process, NativeObject instances are used
     as if they were real objects, and that's the time where
     instantiation takes place.
-
     '''
 
     def __init__(self, klass, **kwargs):
