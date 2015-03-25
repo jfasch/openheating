@@ -14,6 +14,8 @@ DBUS_THERMOMETER_CENTER_IFACE_STRING = 'org.openheating.ThermometerCenter'
 DBUS_SWITCH_IFACE_STRING = 'org.openheating.Switch'
 DBUS_SWITCH_CENTER_IFACE_STRING = 'org.openheating.SwitchCenter'
 
+DBUS_BRAIN_IFACE_STRING = 'org.openheating.Brain'
+
 DBUS_HEATING_ERROR_NAME = 'org.openheating.HeatingError'
 
 def exception_dbus_to_local(e):

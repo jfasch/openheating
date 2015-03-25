@@ -3,8 +3,7 @@ class NativeObjectConstructor:
     shield the user from all that forking and instantiating that we
     do.
 
-    I am quite sure that I could do this better if I only knew what
-    meta classes are. (That's to come.)
+    I suspect I have to look into how descriptors work.
     '''
 
     def __init__(self, klass):
@@ -32,13 +31,27 @@ class NativeObject:
     def __getattr__(self, a):
         if not self.__instance:
             self.__instance = self.__class(**self.__kwargs)
-        return _Caller(self.__class, self.__instance, a)
+        return _Caller(self.__instance, a)
 
 class _Caller:
-    def __init__(self, klass, obj, attr):
-        self.__class = klass
+    def __init__(self, obj, attr):
         self.__obj = obj
         self.__attr = attr
     def __call__(self, *args, **kwargs):
-        return self.__class.__dict__[self.__attr](self.__obj, *args, **kwargs)
+        # note that this is not a sign of hardcore python
+        # knowledge. need to refine this entire crap
+        # thoroughly. investigate on mro, function calls, __getattr__,
+        # etc.
+        attr = _find_attr_dfs(self.__obj.__class__, self.__attr)
+        assert attr, 'attribute '+self.__attr+' not found'
+        return attr(self.__obj, *args, **kwargs)
 
+def _find_attr_dfs(klass, name):
+    attr = klass.__dict__.get(name)
+    if attr:
+        return attr
+    for base in klass.__bases__:
+        attr = _find_attr_dfs(base, name)
+        if attr:
+            return attr
+    return None

@@ -18,6 +18,9 @@ from .object_thermometer import DBusThermometerObject
 from .object_switch_center import DBusSwitchCenterObject
 from .object_thermometer_center import DBusThermometerCenterObject
 
+from .object_jf_control import JFControlObject
+from ..jf_control import JFControl
+
 from abc import ABCMeta, abstractmethod
 
 
@@ -80,3 +83,26 @@ class SwitchCenterObjectCreator(DBusObjectCreator):
         return DBusSwitchCenterObject(
             path=path,
             center=SwitchCenter(self.__switches))
+
+# ----------------------------------------------------------------
+class SwitchCenterObjectCreator(DBusObjectCreator):
+    def __init__(self, switches):
+        self.__switches = switches
+        
+    def create_object(self, path):
+        return DBusSwitchCenterObject(
+            path=path,
+            center=SwitchCenter(self.__switches))
+    
+# ----------------------------------------------------------------
+class JFControlObjectCreator(DBusObjectCreator):
+    def __init__(self, switch_center, thermometer_center):
+        self.__switch_center = switch_center
+        self.__thermometer_center = thermometer_center
+        
+    def create_object(self, path):
+        return JFControlObject(
+            path=path,
+            jf_control=JFControl(
+                switch_center=self.__switch_center, 
+                thermometer_center=self.__thermometer_center))

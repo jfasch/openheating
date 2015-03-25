@@ -2,3 +2,10 @@
 
 * figure out how to properly (centrally) define dbus interfaces. will
   have multiple Brain implementations around someday.
+
+* JFControl: move out into installations/
+
+* add tests for switchcenterclient, thermometercenterclient
+
+* investigate on method resolution, calling. cure the broken
+  openheating/dbus/service_config_native.py

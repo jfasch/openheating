@@ -3,6 +3,8 @@ from ..testutils.test_switch import TestSwitch
 from ..testutils.file_switch import FileSwitch
 from ..hardware.switch_gpio import GPIOSwitch
 from .client_switch import DBusSwitchClient
+from .client_switch_center import DBusSwitchCenterClient
+from .client_thermometer_center import DBusThermometerCenterClient
 
 from .service_config_object import ThermometerObjectConstructor
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
@@ -20,6 +22,8 @@ from .service import DBusService
 
 from .service_config_object import SwitchCenterObjectCreator
 from .service_config_object import ThermometerCenterObjectCreator
+
+from .service_config_object import JFControlObjectCreator
 
 from ..config_parser import ConfigParser
 
@@ -61,6 +65,9 @@ _symbols = {
     'TestThermometer': NativeObjectConstructor(TestThermometer),
     'FileThermometer': NativeObjectConstructor(FileThermometer),
 
+    'DBusSwitchCenterClient': NativeObjectConstructor(DBusSwitchCenterClient),
+    'DBusThermometerCenterClient': NativeObjectConstructor(DBusThermometerCenterClient),
+
     'SwitchCenterObject': SwitchCenterObjectCreator,
     'ThermometerCenterObject': ThermometerCenterObjectCreator,
 
@@ -73,4 +80,6 @@ _symbols = {
     'DBusSwitchClientObject': SwitchObjectConstructor(DBusSwitchClient),
     'TestSwitchObject': SwitchObjectConstructor(TestSwitch),
     'FileSwitchObject': SwitchObjectConstructor(FileSwitch),
+
+    'JFControlObject': JFControlObjectCreator,
 }
