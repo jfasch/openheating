@@ -1,7 +1,7 @@
 from .object import DBusObject
 from .service_config_object import DBusObjectCreator
-from .rebind import DBusServerConnection
-from .rebind import DBusObjectClient
+from .connection import DBusServerConnection
+from .client import DBusObjectClient
 
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop

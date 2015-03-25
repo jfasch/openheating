@@ -1,4 +1,4 @@
-from .switch_object import DBusSwitchObject
+from .object_switch import DBusSwitchObject
 
 from ..testutils.test_thermometer import TestThermometer
 from ..testutils.file_thermometer import FileThermometer
@@ -10,13 +10,13 @@ from ..hardware.switch_gpio import GPIOSwitch
 from ..switch_center import SwitchCenter
 from ..thermometer_center import ThermometerCenter
 
-from .switch_client import DBusSwitchClient
-from .thermometer_client import DBusThermometerClient
+from .client_switch import DBusSwitchClient
+from .client_thermometer import DBusThermometerClient
 
-from .switch_object import DBusSwitchObject
-from .thermometer_object import DBusThermometerObject
-from .switch_center_object import DBusSwitchCenterObject
-from .thermometer_center_object import DBusThermometerCenterObject
+from .object_switch import DBusSwitchObject
+from .object_thermometer import DBusThermometerObject
+from .object_switch_center import DBusSwitchCenterObject
+from .object_thermometer_center import DBusThermometerCenterObject
 
 from abc import ABCMeta, abstractmethod
 

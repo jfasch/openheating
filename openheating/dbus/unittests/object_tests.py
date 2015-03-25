@@ -1,7 +1,6 @@
 from openheating.dbus.object import DBusObject
-from openheating.dbus.rebind import DBusObjectClient
-from openheating.dbus.rebind import DBusClientConnection
-from openheating.dbus.rebind import DBusServerConnection
+from openheating.dbus.client import DBusObjectClient
+from openheating.dbus.connection import DBusClientConnection, DBusServerConnection
 
 from openheating.testutils.dbus_testcase import DBusTestCase
 
@@ -34,8 +33,8 @@ class ObjectTest(DBusTestCase):
             # funny things happening; still don't know for sure what's
             # going on.
 
-            # os.setpgid(0,0) # jjjj ????
-            # signal.signal(signal.SIGTERM, signal.SIG_IGN) # jjjj
+            # os.setpgid(0,0)
+            # signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
             mainloop = DBusGMainLoop(set_as_default=True)
             connection = dbus.bus.BusConnection(self.daemon_address(), mainloop=mainloop)

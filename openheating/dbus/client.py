@@ -1,77 +1,11 @@
-'''"rebinding" wrappers of both DBus connections and DBus objects.
-
-DBus connections and objects tend to break on connection loss on
-either side. If a client connection to the bus breaks, all is lost. If
-an object's reference to a service/object breaks due to it's loss of
-connection to the bus, then the local object proxy is dead.
-
-openheating's use of objects is through instances of DBusObjectClient
-(one is supposed to derive from it), and the overall
-DBusConnectionProxy which is instantiated once and passed in. Recovery
-is done inside, on both connections and objects.
-
-'''
-
 from . import types
 from ..error import HeatingError
 
 from dbus.exceptions import DBusException
 import dbus.bus
 
-from abc import ABCMeta, abstractmethod
 import logging
-import os
 
-
-class DBusConnection(metaclass=ABCMeta):
-    @abstractmethod
-    def get_proxy(self, name, path):
-        pass
-    @abstractmethod
-    def connection_lost(self):
-        pass
-
-class DBusClientConnection(DBusConnection):
-    '''Implements recovery of DBus connection, by-address
-
-    A connection is (re)established on get_connection(). this is the
-    "client mode"; it works best when used with DBusObjectClient which
-    does all the rest.  '''
-
-    def __init__(self, address):
-        self.__address = address
-        self.__connection = None
-
-    def get_proxy(self, name, path):
-        if self.__connection is None:
-            self.__connection = dbus.bus.BusConnection(self.__address)
-        return self.__connection.get_object(name, path)
-
-    def connection_lost(self):
-        self.__connection = None
-
-class DBusServerConnection(DBusConnection):
-    '''Encapsulates a pre-existing DBus connection
-
-    This is the "server mode", where a connection pre-exists, and the
-    server process terminates once the connection goes down for some
-    reason. Best used together with DBusServiceCombo.
-    '''
-    
-    def __init__(self, connection):
-        self.__connection = connection
-    
-    def get_proxy(self, name, path):
-        return self.__connection.get_object(name, path)
-
-    def connection_lost(self):
-        logging.error('server connection lost')
-        os._exit(1)
-
-    def get_connection(self):
-        ''' Specific to this class, used to create DBus Objects with
-        '''
-        return self.__connection
 
 class DBusObjectClient:
     '''Recovery of DBus object proxy

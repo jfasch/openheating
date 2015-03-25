@@ -2,17 +2,17 @@ from .service_config_native import NativeObjectConstructor
 from ..testutils.test_switch import TestSwitch
 from ..testutils.file_switch import FileSwitch
 from ..hardware.switch_gpio import GPIOSwitch
-from .switch_client import DBusSwitchClient
+from .client_switch import DBusSwitchClient
 
 from .service_config_object import ThermometerObjectConstructor
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-from .thermometer_client import DBusThermometerClient
+from .client_thermometer import DBusThermometerClient
 from ..testutils.test_thermometer import TestThermometer
 from ..testutils.file_thermometer import FileThermometer
 
 from .service_config_object import SwitchObjectConstructor
 from ..hardware.switch_gpio import GPIOSwitch
-from .switch_client import DBusSwitchClient
+from .client_switch import DBusSwitchClient
 from ..testutils.test_switch import TestSwitch
 from ..testutils.file_switch import FileSwitch
 

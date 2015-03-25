@@ -2,9 +2,6 @@
   already have object.py which contains the other side, so this would
   only be logical.
 
-* config: prefix SwitchCenterObject and ThermometerCenterObject with
-  'DBus' (if only for consistency)
-
 * object.DBusObject: consider to use
   DBusObjectClient.service_dbus_connection. better yet: move the
   connection to the service where it belongs!

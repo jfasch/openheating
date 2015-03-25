@@ -1,4 +1,4 @@
-from .rebind import DBusObjectClient
+from .client import DBusObjectClient
 
 from ..thermometer import Thermometer
 

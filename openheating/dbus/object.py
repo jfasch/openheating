@@ -1,4 +1,4 @@
-from .rebind import DBusServerConnection
+from .connection import DBusServerConnection
 
 import dbus.service
 
