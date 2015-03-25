@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.dbus.thermometer_center_client import DBusThermometerCenter
-from openheating.dbus.switch_center_client import DBusSwitchCenter
-from openheating.dbus.rebind import DBusClientConnection
+from openheating.dbus.client_thermometer_center import DBusThermometerCenterClient
+from openheating.dbus.client_switch_center import DBusSwitchCenterClient
+from openheating.dbus.connection import DBusClientConnection
 from openheating.thinking import Brain
 from openheating.jf_control import JFControl
 
@@ -18,8 +18,8 @@ dbus_address = 'unix:path=/tmp/openheating-simulation/openheating-dbus-daemon.so
 
 connection = DBusClientConnection(dbus_address)
 
-switch_center = DBusSwitchCenter(connection=connection, name='org.openheating.heizraum.center', path='/switches')
-thermometer_center = DBusThermometerCenter(connection=connection, name='org.openheating.heizraum.center', path='/thermometers')
+switch_center = DBusSwitchCenterClient(connection=connection, name='org.openheating.heizraum.center', path='/switches')
+thermometer_center = DBusThermometerCenterClient(connection=connection, name='org.openheating.heizraum.center', path='/thermometers')
 
 brain = Brain()
 
