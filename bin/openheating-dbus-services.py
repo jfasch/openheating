@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
+from openheating import logger 
+
 from argparse import ArgumentParser
-import logging
-import logging.handlers
 import signal
 import os
 
@@ -13,14 +13,7 @@ parser.add_argument('--syslog', action='store_true', default=False, help='Log to
 parser.add_argument('--verbose', action='store_true', default=False, help='print debug output')
 args = parser.parse_args()
 
-if args.verbose:
-    logging.basicConfig(level=logging.DEBUG)
-
-if args.syslog:
-    h = logging.handlers.SysLogHandler(address='/dev/log')
-else:
-    h = logging.StreamHandler()
-logging.getLogger().addHandler(h)
+logger.init(name='main', syslog=args.syslog, verbose=args.verbose)
 
 def terminate(signum, frame):
     global running
@@ -63,4 +56,4 @@ try:
         os.remove(args.pid_file)
 
 except Exception as e:
-    logging.exception(str(e))
+    logger.exception(str(e))

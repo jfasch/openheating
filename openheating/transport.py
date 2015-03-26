@@ -1,7 +1,7 @@
 from .thinking import Thinker
 from .switch import Switch
+from . import logger
 
-import logging
 
 class Transport(Thinker):
     def __init__(self, name, source, sink, diff_hysteresis, pump_switch):

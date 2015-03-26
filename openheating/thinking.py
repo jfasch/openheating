@@ -1,4 +1,4 @@
-import logging
+from . import logger
 
 class Thinker:
     def __init__(self, name):
@@ -34,7 +34,7 @@ class Brain:
 
     def think(self, message):
         thinkers_str = ','.join((t.name() for t in self.__thinkers))
-        logging.debug('THINK ROUND #%d (%s), thinkers:%s' % (self.__round, message, thinkers_str))
+        logger.debug('THINK ROUND #%d (%s), thinkers:%s' % (self.__round, message, thinkers_str))
 
         for t in self.__thinkers:
             t.init_thinking_local()

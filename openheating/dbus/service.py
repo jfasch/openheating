@@ -2,13 +2,14 @@ from .object import DBusObject
 from .service_config_object import DBusObjectCreator
 from .connection import DBusServerConnection
 
+from .. import logger
+
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
 import signal
 import time
-import logging
 import sys
 import os
 import errno
@@ -76,7 +77,7 @@ class DBusService:
                 # and backoff before restart
                 try:
                     died, status = os.waitpid(_service_pid, 0)
-                    logging.warning('service process %d died, status %d' % (died, status))
+                    logger.warning('service process %d died, status %d' % (died, status))
                     _service_pid = None
                     time.sleep(2)
                 except KeyboardInterrupt:
@@ -90,6 +91,9 @@ class DBusService:
 
     def __service(self):
         # grandchild, the service itself.
+
+        # create a dedicated logger for that process
+        logger.enter_child(self.__name)
 
         # setup dbus bahoowazoo, create objects, and run the event
         # loop.
@@ -116,7 +120,7 @@ class DBusService:
             os._exit(0)
             
         except Exception as e:
-            logging.exception(str(e))
+            logger.exception(str(e))
             os._exit(1)
 
 _service_pid = None

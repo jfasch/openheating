@@ -1,11 +1,10 @@
 from .connection import DBusServerConnection
 from . import types
+from .. import logger
 from ..error import HeatingError
 
 from dbus.exceptions import DBusException
 import dbus.bus
-
-import logging
 
 
 class DBusObjectClient:
@@ -77,7 +76,7 @@ class DBusObjectClient:
                             'org.freedesktop.DBus.Error.FileNotFound',
                             ):
                 msg = 'dbus error: connection problem: '+str(e)
-                logging.warning(msg)
+                logger.warning(msg)
                 self.__proxy = None
                 self.__connection.connection_lost()
                 raise HeatingError(msg)
@@ -87,7 +86,7 @@ class DBusObjectClient:
                             'org.freedesktop.DBus.Error.ServiceUnknown',
                             ):
                 msg = 'dbus error: object problem: '+str(e)
-                logging.warning(msg)
+                logger.warning(msg)
                 self.__proxy = None
                 raise HeatingError(msg)
 

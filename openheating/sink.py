@@ -1,7 +1,6 @@
 from .thinking import Thinker
 from .tendency import Tendency
-
-import logging
+from . import logger
 
 
 class Sink(Thinker):
@@ -71,4 +70,4 @@ class Sink(Thinker):
         return 0
 
     def __debug(self, msg):
-        logging.debug('sink %s: %s' % (self.name(), msg))
+        logger.debug('sink %s: %s' % (self.name(), msg))

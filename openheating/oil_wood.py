@@ -1,8 +1,7 @@
 from .source import Source
 from .thinking import Thinker
 from .tendency import Tendency
-
-import logging
+from . import logger
 
 
 class OilWoodCombination(Source, Thinker):
@@ -149,7 +148,7 @@ class OilWoodCombination(Source, Thinker):
         self.__state = state
 
     def __debug(self, msg):
-        logging.debug('%s: %s' % (self.name(), msg))
+        logger.debug('%s: %s' % (self.name(), msg))
 
     @staticmethod
     def __state_str(state):

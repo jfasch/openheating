@@ -1,8 +1,6 @@
 from .source import DirectSource
 from .hysteresis import Hysteresis
-
-import logging
-
+from . import logger
 
 class OilCombo(DirectSource):
     '''Burner with Riello schematics (simple thing I think), together with
@@ -79,4 +77,4 @@ class OilCombo(DirectSource):
         del self.__temperature
 
     def __debug(self, msg):
-        logging.debug(self.name()+': '+msg)
+        logger.debug(self.name()+': '+msg)

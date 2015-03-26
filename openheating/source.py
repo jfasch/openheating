@@ -1,9 +1,9 @@
 from .sink import Sink
 from .thinking import Thinker
 from .request import TemperatureRequests
+from . import logger
 
 from abc import ABCMeta, abstractmethod
-import logging
 
 
 class Source(metaclass=ABCMeta):
@@ -64,4 +64,4 @@ class DirectSource(Source, Thinker):
         return self.__requests.is_member(sink)
 
     def __debug(self, msg):
-        logging.debug(self.name()+': '+msg)
+        logger.debug(self.name()+': '+msg)

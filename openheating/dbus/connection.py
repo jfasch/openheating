@@ -1,7 +1,9 @@
+from .. import logger
+
+
 import dbus.bus
 
 from abc import ABCMeta, abstractmethod
-import logging
 import os
 
 
@@ -51,7 +53,7 @@ class DBusServerConnection(DBusConnection):
         return self.__connection.get_object(name, path)
 
     def connection_lost(self):
-        logging.error('server connection lost')
+        logger.error('server connection lost')
         os._exit(1)
 
     def get_connection(self):
