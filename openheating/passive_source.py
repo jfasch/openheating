@@ -4,7 +4,6 @@ from .source import DirectSource
 
 class PassiveSource(DirectSource):
     def __init__(self, name, max_produced_temperature, thermometer):
-        assert thermometer
         DirectSource.__init__(self, name, max_produced_temperature)
         self.__thermometer = thermometer
 
