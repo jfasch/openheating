@@ -18,6 +18,7 @@ from ..hardware.switch_gpio import GPIOSwitch
 from .client_switch import DBusSwitchClient
 from ..testutils.test_switch import TestSwitch
 from ..testutils.file_switch import FileSwitch
+from ..switch_center import SwitchCenterSwitch
 
 from .service import DBusService
 
@@ -67,6 +68,7 @@ _symbols = {
     'TestThermometer': NativeObjectConstructor(TestThermometer),
     'FileThermometer': NativeObjectConstructor(FileThermometer),
     'ThermometerCenterThermometer': NativeObjectConstructor(ThermometerCenterThermometer),
+    'SwitchCenterSwitch': NativeObjectConstructor(SwitchCenterSwitch),
 
     'DBusSwitchCenterClient': NativeObjectConstructor(DBusSwitchCenterClient),
     'DBusThermometerCenterClient': NativeObjectConstructor(DBusThermometerCenterClient),

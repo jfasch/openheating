@@ -43,7 +43,7 @@ class _Caller:
         # thoroughly. investigate on mro, function calls, __getattr__,
         # etc.
         attr = _find_attr_dfs(self.__obj.__class__, self.__attr)
-        assert attr, 'attribute '+self.__attr+' not found'
+        assert attr, 'attribute '+self.__attr+' not found in '+str(self.__obj)
         return attr(self.__obj, *args, **kwargs)
 
 def _find_attr_dfs(klass, name):

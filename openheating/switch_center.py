@@ -30,17 +30,7 @@ class SwitchCenterBase(metaclass=ABCMeta):
         '''Returns an adapter onto self. The returned Switch delegates
         to self by name.
         '''
-        return self._Adapter(center=self, name=name)
-
-    class _Adapter(Switch):
-        def __init__(self, center, name):
-            self.__center = center
-            self.__name = name
-        def set_state(self, value):
-            self.__center.set_state(self.__name, value)
-        def get_state(self):
-            return self.__center.get_state(self.__name)
-
+        return SwitchCenterSwitch(center=self, name=name)
 
 class SwitchCenter(SwitchCenterBase):
     def __init__(self, switches):
@@ -68,3 +58,16 @@ class SwitchCenter(SwitchCenterBase):
     def get_switch__test(self, name):
         '''For tests only'''
         return self.__switches.get(name)
+
+class SwitchCenterSwitch(Switch):
+    '''Is-a Switch which uses a SwitchCenter and a name to get to the real
+    switch.
+    '''
+    def __init__(self, center, name):
+        self.__center = center
+        self.__name = name
+    def set_state(self, value):
+        self.__center.set_state(self.__name, value)
+    def get_state(self):
+        return self.__center.get_state(self.__name)
+
