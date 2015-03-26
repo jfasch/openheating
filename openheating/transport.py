@@ -18,7 +18,9 @@ class Transport(Thinker):
         super().register_thinking(brain)
         brain.register_thinker(self)
 
-    def finish_thinking(self):
+    def finish_thinking_global(self):
+        super().finish_thinking_global()
+
         diff = self.__source.temperature() - self.__sink.temperature()
 
         if self.__source.num_requests() > 0 and not self.__source.is_requested_by(self.__sink):
@@ -32,4 +34,4 @@ class Transport(Thinker):
             return self.__pump_switch.do_open()
 
     def __debug(self, msg):
-        logging.debug('transport %s: %s' % (self.name(), msg))
+        logger.debug('transport %s: %s' % (self.name(), msg))

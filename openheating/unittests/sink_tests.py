@@ -18,7 +18,7 @@ class SinkTest(unittest.TestCase):
                     temperature_range=Hysteresis(23, 27))
         source = PassiveSource(
             name='my-source', 
-            thermometer=None,
+            thermometer=TestThermometer(initial_temperature=0),
             max_produced_temperature=1000, # don't care
         )
         sink.set_source(source)

@@ -62,7 +62,9 @@ class OilWoodCombination(Source, Thinker):
             # no tendency, leave state as-is
             self.__change_state(self.__state, 'fading, but no tendency')
 
-    def finish_thinking(self):
+    def finish_thinking_local(self):
+        super().finish_thinking_local()
+
         if self.__state == self.OIL:
             self.__valve_switch.do_open()
         elif self.__state == self.OIL_FADE_OUT:

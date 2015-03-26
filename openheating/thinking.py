@@ -20,7 +20,10 @@ class Thinker:
         '''Return number of thoughts'''
         return 0
 
-    def finish_thinking(self):
+    def finish_thinking_global(self):
+        return
+
+    def finish_thinking_local(self):
         return
 
 class Brain:
@@ -50,6 +53,9 @@ class Brain:
                 break
 
         for t in self.__thinkers:
-            t.finish_thinking()
+            t.finish_thinking_global()
+            
+        for t in self.__thinkers:
+            t.finish_thinking_local()
             
         self.__round += 1

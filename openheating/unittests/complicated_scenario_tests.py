@@ -43,6 +43,7 @@ class ComplicatedScenarioTests(unittest.TestCase):
             brain = Brain()
             wood_thermometer = TestThermometer(initial_temperature=40)
             wood = PassiveSource(name='wood', thermometer=wood_thermometer, max_produced_temperature=40)
+            wood.register_thinking(brain)
 
             boiler_thermometer = TestThermometer(initial_temperature=50)
             boiler = Sink(name='boiler', thermometer=boiler_thermometer,

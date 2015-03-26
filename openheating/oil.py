@@ -50,8 +50,8 @@ class OilCombo(DirectSource):
         super().init_thinking_local()
         self.__temperature = self.__thermometer.temperature()
 
-    def finish_thinking(self):
-        super().finish_thinking()
+    def finish_thinking_local(self):
+        super().finish_thinking_local()
 
         if self.__heating_range.above(self.__temperature):
             self.__debug('hot enough, off: temperature=%f,heat/hi=%f' % (self.__temperature, self.__heating_range.high()))
