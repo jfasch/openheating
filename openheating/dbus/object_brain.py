@@ -4,19 +4,17 @@ from .types import exception_local_to_dbus, DBUS_BRAIN_IFACE_STRING
 from ..error import HeatingError
 from ..thinking import Brain
 
-from ..jf_control import JFControl
-
 import dbus.service
 
 
-class JFControlObject(DBusObject):
-    def __init__(self, path, jf_control):
+class DBusBrainObject(DBusObject):
+    def __init__(self, path, thinker):
         DBusObject.__init__(self, path=path)
-        self.__jf_control = jf_control
+        self.__thinker = thinker
         self.__brain = Brain()
-        self.__jf_control.register_thinking(self.__brain)
+        self.__thinker.register_thinking(self.__brain)
 
-    @dbus.service.method(dbus_interface=DBUS_BRAIN_IFACE_STRING, in_signature = 'b')
+    @dbus.service.method(dbus_interface=DBUS_BRAIN_IFACE_STRING, in_signature = 's')
     def think(self, message):
         try:
             self.__brain.think(message)

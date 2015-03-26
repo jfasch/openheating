@@ -23,7 +23,8 @@ from .service import DBusService
 from .service_config_object import SwitchCenterObjectCreator
 from .service_config_object import ThermometerCenterObjectCreator
 
-from .service_config_object import JFControlObjectCreator
+from .service_config_object import BrainObjectCreator
+from ..jf_control import JFControl
 
 from ..config_parser import ConfigParser
 
@@ -81,5 +82,7 @@ _symbols = {
     'TestSwitchObject': SwitchObjectConstructor(TestSwitch),
     'FileSwitchObject': SwitchObjectConstructor(FileSwitch),
 
-    'JFControlObject': JFControlObjectCreator,
+    'BrainObject': BrainObjectCreator,
+
+    'JFControl': NativeObjectConstructor(JFControl),
 }
