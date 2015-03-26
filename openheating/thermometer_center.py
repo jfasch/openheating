@@ -14,12 +14,6 @@ class ThermometerCenterBase(metaclass=ABCMeta):
     def temperature(self, name):
         return 42.666
 
-    def get_thermometer(self, name):
-        '''Returns an adapter onto self. The returned Thermometer, asked for its
-        temperature, asks self by name
-        '''
-        return ThermometerCenterThermometer(center=self, name=name)
-
 class ThermometerCenter(ThermometerCenterBase):
     def __init__(self, thermometers):
         assert type(thermometers) is dict

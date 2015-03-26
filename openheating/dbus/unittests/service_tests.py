@@ -168,8 +168,6 @@ class ServiceTest(DBusTestCase):
                 path='/center/switches')
             self.assertEqual(switch_center.get_state('test'), False)
             switch_center.set_state('test', True)
-            switch_proxy = switch_center.get_switch('test')
-            switch_proxy.do_close()
             self.assertEqual(switch_center.get_state('test'), True)
 
         service.stop()

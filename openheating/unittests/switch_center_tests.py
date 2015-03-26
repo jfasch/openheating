@@ -1,7 +1,7 @@
 from openheating.error import HeatingError
 from openheating.testutils.test_switch import TestSwitch
 
-from openheating.switch_center import SwitchCenter
+from openheating.switch_center import SwitchCenter, SwitchCenterSwitch
 
 import time
 import unittest
@@ -32,8 +32,8 @@ class SwitchCenterTest(unittest.TestCase):
         two = TestSwitch(name='two', initial_state=False)
         center = SwitchCenter({'one': one, 'two': two})
 
-        ad_one = center.get_switch('one')
-        ad_two = center.get_switch('two')
+        ad_one = SwitchCenterSwitch(center=center, name='one')
+        ad_two = SwitchCenterSwitch(center=center, name='two')
 
         ad_one.do_close()
         ad_two.do_close()

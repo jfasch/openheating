@@ -18,19 +18,13 @@ class SwitchCenterBase(metaclass=ABCMeta):
         pass
 
     def do_close(self, name):
-        self.get_switch(name).do_close()
+        self.set_state(name, True)
     def do_open(self, name):
-        self.get_switch(name).do_open()
+        self.set_state(name, False)
     def is_closed(self, name):
-        return self.get_switch(name).is_closed()
+        return self.get_state(name) == True
     def is_open(self, name):
-        return self.get_switch(name).is_open()
-   
-    def get_switch(self, name):
-        '''Returns an adapter onto self. The returned Switch delegates
-        to self by name.
-        '''
-        return SwitchCenterSwitch(center=self, name=name)
+        return self.get_state(name) == False
 
 class SwitchCenter(SwitchCenterBase):
     def __init__(self, switches):
