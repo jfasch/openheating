@@ -1,3 +1,6 @@
+* remove ThermometerCenterBase.get_thermometer(), in favor of
+  ThermometerCenterThermometer
+
 * split thinking.py into multiple dedicated files
 
 * figure out how to properly (centrally) define dbus interfaces. will

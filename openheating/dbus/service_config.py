@@ -11,6 +11,7 @@ from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from .client_thermometer import DBusThermometerClient
 from ..testutils.test_thermometer import TestThermometer
 from ..testutils.file_thermometer import FileThermometer
+from ..thermometer_center import ThermometerCenterThermometer
 
 from .service_config_object import SwitchObjectConstructor
 from ..hardware.switch_gpio import GPIOSwitch
@@ -65,6 +66,7 @@ _symbols = {
     'DBusThermometerClient': NativeObjectConstructor(DBusThermometerClient),
     'TestThermometer': NativeObjectConstructor(TestThermometer),
     'FileThermometer': NativeObjectConstructor(FileThermometer),
+    'ThermometerCenterThermometer': NativeObjectConstructor(ThermometerCenterThermometer),
 
     'DBusSwitchCenterClient': NativeObjectConstructor(DBusSwitchCenterClient),
     'DBusThermometerCenterClient': NativeObjectConstructor(DBusThermometerCenterClient),

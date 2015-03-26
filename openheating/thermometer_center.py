@@ -18,15 +18,7 @@ class ThermometerCenterBase(metaclass=ABCMeta):
         '''Returns an adapter onto self. The returned Thermometer, asked for its
         temperature, asks self by name
         '''
-        return self._Adapter(center=self, name=name)
-
-    class _Adapter(Thermometer):
-        def __init__(self, center, name):
-            self.__center = center
-            self.__name = name
-        def temperature(self):
-            return self.__center.temperature(self.__name)
-    
+        return ThermometerCenterThermometer(center=self, name=name)
 
 class ThermometerCenter(ThermometerCenterBase):
     def __init__(self, thermometers):
@@ -49,3 +41,13 @@ class ThermometerCenter(ThermometerCenterBase):
     def get_thermometer__test(self, name):
         '''For tests only'''
         return self.__thermometers.get(name)
+
+class ThermometerCenterThermometer(Thermometer):
+    '''Is-a Thermometer which uses a ThermometerCenter and a name to get
+    to the temperature.'''
+
+    def __init__(self, center, name):
+        self.__center = center
+        self.__name = name
+    def temperature(self):
+        return self.__center.temperature(self.__name)
