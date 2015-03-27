@@ -77,7 +77,7 @@ class DBusService:
                 # and backoff before restart
                 try:
                     died, status = os.waitpid(_service_pid, 0)
-                    logger.warning('service process %d died, status %d' % (died, status))
+                    logger.warning('service process %d (%s) died, status %d' % (died, self.__name, status))
                     _service_pid = None
                     time.sleep(2)
                 except KeyboardInterrupt:
@@ -120,7 +120,7 @@ class DBusService:
             os._exit(0)
             
         except Exception as e:
-            logger.exception(str(e))
+            logger.exception('service %s dying, error: %s' % (self.__name, str(e)))
             os._exit(1)
 
 _service_pid = None

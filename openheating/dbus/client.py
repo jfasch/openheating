@@ -75,8 +75,8 @@ class DBusObjectClient:
                             # UNIX: server socket not there
                             'org.freedesktop.DBus.Error.FileNotFound',
                             ):
-                msg = 'dbus error: connection problem: '+str(e)
-                logger.warning(msg)
+                msg = self.__compose_msg('dbus error: connection problem: '+str(e))
+                logger.exception(msg)
                 self.__proxy = None
                 self.__connection.connection_lost()
                 raise HeatingError(msg)
@@ -85,10 +85,13 @@ class DBusObjectClient:
                             'org.freedesktop.DBus.Error.NameHasNoOwner',
                             'org.freedesktop.DBus.Error.ServiceUnknown',
                             ):
-                msg = 'dbus error: object problem: '+str(e)
-                logger.warning(msg)
+                msg = self.__compose_msg('dbus error: object problem: '+str(e))
+                logger.exception(msg)
                 self.__proxy = None
                 raise HeatingError(msg)
 
             self.__connection.connection_lost()
             assert False, "can't let this one pass: "+str(e)
+
+    def __compose_msg(self, msg):
+        return 'dbus client error (name=%s, path=%s): %s' % (self.__name, self.__path, msg)
