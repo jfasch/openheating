@@ -5,46 +5,52 @@ from .oil_wood import OilWoodCombination
 from .oil import OilCombo
 from .passive_source import PassiveSource
 from .transport import Transport
+from .thermometer_center import ThermometerCenterThermometer
+from .switch_center import SwitchCenterSwitch
+
 
 class JFControl(Thinker):
     def __init__(self,
-                 th_essraum,
-                 th_boiler_top,
-                 th_ofen,
+                 switch_center,
+                 thermometer_center,
+                 
+                 th_room,
+                 th_water,
+                 th_wood,
                  th_oil,
-                 sw_pumpe_ww,
-                 sw_pumpe_hk,
-                 sw_oil_burn,
+                 sw_water,
+                 sw_room,
+                 sw_oil,
                  sw_wood_valve):
 
         self.__sink_ww = Sink(
-            name='boiler', 
-            thermometer=th_boiler_top, 
-            temperature_range=Hysteresis(low=50, high=55),
+            name = 'boiler', 
+            thermometer = ThermometerCenterThermometer(thermometer_center, th_water), 
+            temperature_range = Hysteresis(low=50, high=55),
         )
 
         self.__sink_room = Sink(
-            name='room', 
-            thermometer=th_essraum, 
-            temperature_range=Hysteresis(low=20, high=21),
+            name = 'room', 
+            thermometer = ThermometerCenterThermometer(thermometer_center, th_room),
+            temperature_range = Hysteresis(low=20, high=21),
         )
 
         self.__source = OilWoodCombination(
-            name='oil+wood',
-            oil=OilCombo(
-                name='oil',
-                burn_switch=sw_oil_burn,
-                thermometer=th_oil,
-                heating_range=Hysteresis(50,70),
-                minimum_temperature_range=Hysteresis(10,20),
-                max_produced_temperature=90, # let's say
+            name = 'oil+wood',
+            oil = OilCombo(
+                name = 'oil',
+                burn_switch = SwitchCenterSwitch(switch_center, sw_oil),
+                thermometer = ThermometerCenterThermometer(thermometer_center, th_oil),
+                heating_range = Hysteresis(50,70),
+                minimum_temperature_range = Hysteresis(10,20),
+                max_produced_temperature = 90, # let's say
             ),
             wood=PassiveSource(
                 name='wood', 
-                thermometer=th_ofen,
+                thermometer = ThermometerCenterThermometer(thermometer_center, th_wood),
                 max_produced_temperature=50, # let's say
             ),
-            valve_switch=sw_wood_valve,
+            valve_switch = SwitchCenterSwitch(switch_center, sw_wood_valve),
             wood_warm=Hysteresis(30, 32),
             wood_hot=Hysteresis(40, 42),
         )
@@ -55,7 +61,7 @@ class JFControl(Thinker):
             sink=self.__sink_ww, 
             # adapt hysteresis to something more realistic
             diff_hysteresis=Hysteresis(low=5, high=10), 
-            pump_switch=sw_pumpe_ww)
+            pump_switch=SwitchCenterSwitch(switch_center, sw_water))
 
         self.__transport_hk = Transport(
             name='hk',
@@ -63,7 +69,7 @@ class JFControl(Thinker):
             sink=self.__sink_room, 
             # adapt hysteresis to something more realistic
             diff_hysteresis=Hysteresis(low=1, high=2), 
-            pump_switch=sw_pumpe_hk)
+            pump_switch=SwitchCenterSwitch(switch_center, sw_room))
         
     def register_thinking(self, brain):
         self.__sink_ww.register_thinking(brain)
