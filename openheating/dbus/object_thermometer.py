@@ -1,8 +1,6 @@
 from .object import DBusObject
-from .types import exception_local_to_dbus, DBUS_THERMOMETER_IFACE_STRING
-
+from .types import DBUS_THERMOMETER_IFACE_STRING
 from ..thermometer import Thermometer
-from ..error import HeatingError
 
 import dbus.service
 
@@ -16,7 +14,4 @@ class DBusThermometerObject(DBusObject):
 
     @dbus.service.method(dbus_interface=DBUS_THERMOMETER_IFACE_STRING, out_signature = 'd')
     def temperature(self):
-        try:
-            return self.__thermometer.temperature()
-        except HeatingError as e:
-            raise exception_local_to_dbus(e)
+        return self.object_call(self.__thermometer.temperature)

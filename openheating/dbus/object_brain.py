@@ -1,9 +1,6 @@
 from .object import DBusObject
-from .types import exception_local_to_dbus, DBUS_BRAIN_IFACE_STRING
-
-from ..error import HeatingError
+from .types import DBUS_BRAIN_IFACE_STRING
 from ..thinking import Brain
-from .. import logger
 
 import dbus.service
 
@@ -17,11 +14,4 @@ class DBusBrainObject(DBusObject):
 
     @dbus.service.method(dbus_interface=DBUS_BRAIN_IFACE_STRING, in_signature = 's')
     def think(self, message):
-        try:
-            self.__brain.think(message)
-        except HeatingError as e:
-            logger.exception('Heating error: '+str(e))
-            raise exception_local_to_dbus(e)
-        except Exception as e:
-            logger.exception('Unknown error: '+str(e))
-            raise
+        return self.object_call(self.__brain.think, message)

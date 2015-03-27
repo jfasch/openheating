@@ -1,7 +1,5 @@
 from .object import DBusObject
-from .types import exception_local_to_dbus, DBUS_SWITCH_IFACE_STRING
-
-from ..error import HeatingError
+from .types import DBUS_SWITCH_IFACE_STRING
 
 import dbus.service
 
@@ -15,15 +13,10 @@ class DBusSwitchObject(DBusObject):
 
     @dbus.service.method(dbus_interface=DBUS_SWITCH_IFACE_STRING, in_signature = 'b')
     def set_state(self, value):
-        try:
-            # have to convert from "dbus.Boolean" which slips through
-            self.__switch.set_state(value and True or False)
-        except HeatingError as e:
-            raise exception_local_to_dbus(e)
+        # have to convert value from "dbus.Boolean" which slips
+        # through upon us
+        return self.object_call(self.__switch.set_state, value and True or False)
 
     @dbus.service.method(dbus_interface=DBUS_SWITCH_IFACE_STRING, out_signature = 'b')
     def get_state(self):
-        try:
-            return self.__switch.get_state()
-        except HeatingError as e:
-            raise exception_local_to_dbus(e)
+        return self.object_call(self.__switch.get_state)

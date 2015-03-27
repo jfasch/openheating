@@ -1,14 +1,12 @@
 from .object import DBusObject
-from .types import exception_local_to_dbus, DBUS_THERMOMETER_CENTER_IFACE_STRING
-
-from ..error import HeatingError
+from .types import DBUS_THERMOMETER_CENTER_IFACE_STRING
 
 import dbus
 import dbus.service
 
 
 class DBusThermometerCenterObject(DBusObject):
-    '''Adapt a ThermometerCenter into a DBus object at object_path'''
+    '''Adapt a ThermometerCenter into a DBus object'''
 
     def __init__(self, path, center):
         self.__center = center
@@ -16,11 +14,8 @@ class DBusThermometerCenterObject(DBusObject):
 
     @dbus.service.method(dbus_interface=DBUS_THERMOMETER_CENTER_IFACE_STRING, out_signature='as')
     def all_names(self):
-        return self.__center.all_names()
+        return self.object_call(self.__center.all_names)
 
     @dbus.service.method(dbus_interface=DBUS_THERMOMETER_CENTER_IFACE_STRING, in_signature='s', out_signature='d')
     def temperature(self, name):
-        try:
-            return self.__center.temperature(name)
-        except HeatingError as e:
-            raise exception_local_to_dbus(e)
+        return self.object_call(self.__center.temperature, name)
