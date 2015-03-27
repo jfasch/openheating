@@ -1,6 +1,3 @@
-* logger.exception() in all object_*.py classes, where exceptions are
-  converted
-
 * split thinking.py into multiple dedicated files
 
 * figure out how to properly (centrally) define dbus interfaces. will
