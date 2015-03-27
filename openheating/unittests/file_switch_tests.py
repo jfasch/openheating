@@ -1,8 +1,10 @@
 from openheating.testutils.file_switch import FileSwitch
 from openheating.testutils.persistent_test import PersistentTestCase
+from openheating.error import HeatingError
 
 import unittest
 import logging
+
 
 class FileSwitchTest(PersistentTestCase):
     def test__basic(self):
@@ -24,6 +26,23 @@ class FileSwitchTest(PersistentTestCase):
         self.assertEqual(switch.get_state(), False)
         open(switch_path, 'w').write('on')
         self.assertEqual(switch.get_state(), True)
+
+    def test__errors(self):
+        switch = FileSwitch(path='/some/nonexisting/file')
+        try:
+            switch.get_state()
+            self.fail()
+        except HeatingError as e:
+            self.assertTrue(e.permanent())
+            pass
+
+        try:
+            switch.set_state(True)
+            self.fail()
+        except HeatingError as e:
+            self.assertTrue(e.permanent())
+            pass
+
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FileSwitchTest))

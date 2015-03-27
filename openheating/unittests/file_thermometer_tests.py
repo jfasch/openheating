@@ -1,5 +1,6 @@
 from openheating.testutils.file_thermometer import FileThermometer
 from openheating.testutils.persistent_test import PersistentTestCase
+from openheating.error import HeatingError
 
 import unittest
 import logging
@@ -14,6 +15,15 @@ class FileThermometerTest(PersistentTestCase):
 
         open(thermometer_path, 'w').write('42.666\n')
         self.assertAlmostEqual(thermometer.temperature(), 42.666)
+
+    def test__errors(self):
+        thermometer = FileThermometer(path='/some/nonexisting/file')
+        try:
+            thermometer.temperature()
+            self.fail()
+        except HeatingError as e:
+            self.assertTrue(e.permanent())
+            pass
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FileThermometerTest))
