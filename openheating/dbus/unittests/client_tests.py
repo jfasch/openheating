@@ -30,14 +30,14 @@ class ClientTest(DBusTestCase):
             connection=DBusClientConnection(address=self.daemon_address()),
             name='org.freedesktop.DBus',
             path='/')
-        client.dbus_call('GetId')
+        client.client_call('GetId')
 
         self.restart_daemon()
 
-        self.assertRaises(HeatingError, client.dbus_call, 'GetId')
+        self.assertRaises(HeatingError, client.client_call, 'GetId')
 
         # re-establishes connection at second
-        client.dbus_call('GetId')
+        client.client_call('GetId')
 
 
 suite = unittest.TestSuite()

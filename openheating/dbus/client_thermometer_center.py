@@ -9,6 +9,6 @@ class DBusThermometerCenterClient(ThermometerCenterBase, DBusObjectClient):
     '''
 
     def all_names(self):
-        return self.dbus_call('all_names')
+        return self.client_call('all_names')
     def temperature(self, name):
-        return float(self.dbus_call('temperature', name))
+        return float(self.client_call('temperature', name))

@@ -10,7 +10,7 @@ class DBusSwitchClient(Switch, DBusObjectClient):
 
     def set_state(self, value):
         assert type(value) is bool
-        self.dbus_call('set_state', value)
+        self.client_call('set_state', value)
 
     def get_state(self):
-        return self.dbus_call('get_state')
+        return self.client_call('get_state')

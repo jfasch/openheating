@@ -49,7 +49,7 @@ class ObjectTest(DBusTestCase):
                 connection=DBusClientConnection(address=self.daemon_address()), 
                 name='some.bus.name',
                 path='/path/to/echo')
-            result = client.dbus_call('echo', 'hallo')
+            result = client.client_call('echo', 'hallo')
             self.assertEqual(result, 'hallo')
             
 

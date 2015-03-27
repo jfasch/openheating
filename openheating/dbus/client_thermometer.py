@@ -9,4 +9,4 @@ class DBusThermometerClient(Thermometer, DBusObjectClient):
     '''
 
     def temperature(self):
-        return float(self.dbus_call('temperature'))
+        return float(self.client_call('temperature'))

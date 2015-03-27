@@ -11,7 +11,7 @@ class DBusObjectClient:
     '''Recovery of DBus object proxy
 
     User code is supposed to derive and implement its methods using
-    base's dbus_call(), with the name of the method and positional
+    base's client_call(), with the name of the method and positional
     parameters. (Keyword parameters are not supported, as this is not
     the nature of the DBus protocol).
 
@@ -50,7 +50,7 @@ class DBusObjectClient:
         self.__path = path
         self.__proxy = None
 
-    def dbus_call(self, funcname, *args):
+    def client_call(self, funcname, *args):
         exc = None
         try:
             if self.__proxy is None:

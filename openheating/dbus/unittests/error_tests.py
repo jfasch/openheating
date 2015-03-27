@@ -94,7 +94,7 @@ class ErrorTest(DBusTestCase):
         try:
             client = DBusObjectClient(connection=DBusClientConnection(address=self.daemon_address()),
                              name='some.dbus.service', path='/error')
-            client.dbus_call('raise_the_thing')
+            client.client_call('raise_the_thing')
         except HeatingError as e:
             my_exc = e
 
@@ -126,7 +126,7 @@ class ErrorTest(DBusTestCase):
 
         client = DBusObjectClient(connection=DBusClientConnection(address=self.daemon_address()),
                                   name='some.dbus.service', path='/error')
-        self.assertRaises(AssertionError, client.dbus_call, 'do_the_error')
+        self.assertRaises(AssertionError, client.client_call, 'do_the_error')
 
 
     remote_nested_error = HeatingError(msg='xxx', permanent=True,
@@ -156,7 +156,7 @@ class ErrorTest(DBusTestCase):
         client = DBusObjectClient(connection=DBusClientConnection(address=self.daemon_address()),
                                   name='some.dbus.service', path='/raiser')
         try:
-            client.dbus_call('do_nested_error')
+            client.client_call('do_nested_error')
             self.fail()
         except HeatingError as e:
             local_error = e
