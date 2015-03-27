@@ -60,19 +60,7 @@ class DBusServicesConfig:
         return self.__services
 
 _symbols = {
-    'TestSwitch': NativeObjectConstructor(TestSwitch),
-    'FileSwitch': NativeObjectConstructor(FileSwitch),
-    'DBusSwitchClient': NativeObjectConstructor(DBusSwitchClient),
-    'HWMON_I2C_Thermometer': NativeObjectConstructor(HWMON_I2C_Thermometer),
-    'DBusThermometerClient': NativeObjectConstructor(DBusThermometerClient),
-    'TestThermometer': NativeObjectConstructor(TestThermometer),
-    'FileThermometer': NativeObjectConstructor(FileThermometer),
-    'ThermometerCenterThermometer': NativeObjectConstructor(ThermometerCenterThermometer),
-    'SwitchCenterSwitch': NativeObjectConstructor(SwitchCenterSwitch),
-
-    'DBusSwitchCenterClient': NativeObjectConstructor(DBusSwitchCenterClient),
-    'DBusThermometerCenterClient': NativeObjectConstructor(DBusThermometerCenterClient),
-
+    # DBus objects
     'SwitchCenterObject': SwitchCenterObjectCreator,
     'ThermometerCenterObject': ThermometerCenterObjectCreator,
 
@@ -87,6 +75,21 @@ _symbols = {
     'FileSwitchObject': SwitchObjectConstructor(FileSwitch),
 
     'BrainObject': BrainObjectCreator,
+
+
+    # native objects
+    'TestSwitch': NativeObjectConstructor(TestSwitch),
+    'FileSwitch': NativeObjectConstructor(FileSwitch),
+    'DBusSwitchClient': NativeObjectConstructor(DBusSwitchClient),
+    'HWMON_I2C_Thermometer': NativeObjectConstructor(HWMON_I2C_Thermometer),
+    'DBusThermometerClient': NativeObjectConstructor(DBusThermometerClient),
+    'TestThermometer': NativeObjectConstructor(TestThermometer),
+    'FileThermometer': NativeObjectConstructor(FileThermometer),
+    'ThermometerCenterThermometer': NativeObjectConstructor(ThermometerCenterThermometer),
+    'SwitchCenterSwitch': NativeObjectConstructor(SwitchCenterSwitch),
+
+    'DBusSwitchCenterClient': NativeObjectConstructor(DBusSwitchCenterClient),
+    'DBusThermometerCenterClient': NativeObjectConstructor(DBusThermometerCenterClient),
 
     'JFControl': NativeObjectConstructor(JFControl),
 }
