@@ -1,3 +1,5 @@
+* dissolve openheating.testutils
+
 * figure out how to properly (centrally) define dbus interfaces. will
   have multiple Brain implementations around someday.
 
