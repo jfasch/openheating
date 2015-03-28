@@ -1,30 +1,5 @@
 from . import logger
-
-class Thinker:
-    def __init__(self, name):
-        self.__name = name
-
-    def name(self):
-        return self.__name
-
-    def register_thinking(self, brain):
-        assert isinstance(brain, Brain)
-
-    def init_thinking_local(self):
-        pass
-
-    def init_thinking_global(self):
-        pass
-
-    def think(self):
-        '''Return number of thoughts'''
-        return 0
-
-    def finish_thinking_global(self):
-        return
-
-    def finish_thinking_local(self):
-        return
+from .thinker import Thinker
 
 class Brain:
     def __init__(self):

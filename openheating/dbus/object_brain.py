@@ -1,6 +1,6 @@
 from .object import DBusObject
 from .types import DBUS_BRAIN_IFACE_STRING
-from ..thinking import Brain
+from ..brain import Brain
 
 import dbus.service
 

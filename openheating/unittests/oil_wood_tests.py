@@ -1,7 +1,7 @@
 from openheating.testutils.thermometer import TestThermometer
 from openheating.testutils.switch import TestSwitch
 
-from openheating.thinking import Brain
+from openheating.brain import Brain
 from openheating.sink import Sink
 from openheating.transport import Transport
 from openheating.hysteresis import Hysteresis

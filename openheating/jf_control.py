@@ -1,4 +1,4 @@
-from .thinking import Thinker
+from .thinker import Thinker
 from .sink import Sink
 from .hysteresis import Hysteresis
 from .oil_wood import OilWoodCombination

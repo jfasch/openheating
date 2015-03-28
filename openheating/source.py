@@ -1,5 +1,5 @@
 from .sink import Sink
-from .thinking import Thinker
+from .thinker import Thinker
 from .request import TemperatureRequests
 from . import logger
 

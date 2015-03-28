@@ -1,4 +1,4 @@
-from .thinking import Thinker
+from .thinker import Thinker
 from .switch import Switch
 from . import logger
 

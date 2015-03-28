@@ -1,5 +1,5 @@
 from .source import Source
-from .thinking import Thinker
+from .thinker import Thinker
 from .tendency import Tendency
 from . import logger
 

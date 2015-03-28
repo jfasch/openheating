@@ -2,7 +2,7 @@ from openheating.testutils.test_thermometer import TestThermometer
 
 from openheating.sink import Sink
 from openheating.passive_source import PassiveSource
-from openheating.thinking import Brain
+from openheating.brain import Brain
 from openheating.hysteresis import Hysteresis
 
 import unittest
