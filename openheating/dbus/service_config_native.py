@@ -17,7 +17,7 @@ class NativeObject:
     parameters.
 
     NativeObject instances are created in a service's parent process
-    which nothing real is instantiated. Once the service's parent has
+    where nothing real is instantiated. Once the service's parent has
     forked the final service process, NativeObject instances are used
     as if they were real objects, and that's the time where
     instantiation takes place.
