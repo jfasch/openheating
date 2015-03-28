@@ -31,27 +31,4 @@ class NativeObject:
     def __getattr__(self, a):
         if not self.__instance:
             self.__instance = self.__class(**self.__kwargs)
-        return _Caller(self.__instance, a)
-
-class _Caller:
-    def __init__(self, obj, attr):
-        self.__obj = obj
-        self.__attr = attr
-    def __call__(self, *args, **kwargs):
-        # note that this is not a sign of hardcore python
-        # knowledge. need to refine this entire crap
-        # thoroughly. investigate on mro, function calls, __getattr__,
-        # etc.
-        attr = _find_attr_dfs(self.__obj.__class__, self.__attr)
-        assert attr, 'attribute '+self.__attr+' not found in '+str(self.__obj)
-        return attr(self.__obj, *args, **kwargs)
-
-def _find_attr_dfs(klass, name):
-    attr = klass.__dict__.get(name)
-    if attr:
-        return attr
-    for base in klass.__bases__:
-        attr = _find_attr_dfs(base, name)
-        if attr:
-            return attr
-    return None
+        return getattr(self.__instance, a)
