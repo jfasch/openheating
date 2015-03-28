@@ -11,15 +11,6 @@ import unittest
 
 
 class ErrorTest(DBusTestCase):
-    def setUp(self):
-        self.__services = []
-        super().setUp()
-
-    def tearDown(self):
-        for s in self.__services:
-            s.stop()
-        super().tearDown()
-
     def test__error_equality(self):
         self.assertTrue(HeatingError.equal(
             HeatingError(msg='xxx', permanent=False),
@@ -87,8 +78,7 @@ class ErrorTest(DBusTestCase):
             daemon_address=self.daemon_address(),
             name='some.dbus.service',
             object_creators={'/error': SingleErrorObjectCreator()})
-        self.__services.append(service)
-        service.start()
+        self.add_and_start_service(service)
         self.wait_for_object('some.dbus.service', '/error')
 
         try:
@@ -120,8 +110,7 @@ class ErrorTest(DBusTestCase):
             daemon_address=self.daemon_address(),
             name='some.dbus.service',
             object_creators={'/error': NameErrorObjectCreator()})
-        self.__services.append(service)
-        service.start()
+        self.add_and_start_service(service)
         self.wait_for_object('some.dbus.service', '/error')
 
         client = DBusObjectClient(connection=DBusClientConnection(address=self.daemon_address()),
@@ -149,8 +138,7 @@ class ErrorTest(DBusTestCase):
             daemon_address=self.daemon_address(),
             name='some.dbus.service',
             object_creators={'/raiser': NestedRaiserObjectCreator()})
-        self.__services.append(service)
-        service.start()
+        self.add_and_start_service(service)
         self.wait_for_object('some.dbus.service', '/raiser')
 
         client = DBusObjectClient(connection=DBusClientConnection(address=self.daemon_address()),

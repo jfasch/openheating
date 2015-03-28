@@ -16,6 +16,7 @@ class DBusTestCase(PersistentTestCase):
         self.__popen = None
         self.__daemon_socket = self.rootpath() + '/my-dbus.socket'
         self.__daemon_address = 'unix:path=' + self.__daemon_socket
+        self.__services = []
         self.__config_file = self.rootpath() + '/my-dbus.conf'
 
         config_content = _dbus_daemon_config % self.__daemon_address
@@ -25,8 +26,14 @@ class DBusTestCase(PersistentTestCase):
         self.start_daemon()
 
     def tearDown(self):
+        for s in self.__services:
+            s.stop()
         self.stop_daemon()
         super().tearDown()
+
+    def add_and_start_service(self, service):
+        self.__services.append(service)
+        service.start()
 
     def daemon_address(self):
         return self.__daemon_address

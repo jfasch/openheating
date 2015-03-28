@@ -47,10 +47,7 @@ class ServiceTest(DBusTestCase):
                 '/path/to/test2': ThermometerObjectCreator(TestThermometer, initial_temperature=2),
             })
 
-        self.__services.append(service)
-
-        service.start()
-
+        self.add_and_start_service(service)
         self.wait_for_object(name='some.dbus.service', path='/path/to/test1')
         self.wait_for_object(name='some.dbus.service', path='/path/to/test2')
 
@@ -84,11 +81,8 @@ class ServiceTest(DBusTestCase):
                 }),
             })
 
-        self.__services.append(lower_service)
-        self.__services.append(upper_service)
-
-        lower_service.start()
-        upper_service.start()
+        self.add_and_start_service(lower_service)
+        self.add_and_start_service(upper_service)
 
         self.wait_for_object(name='lower.service', path='/switch')
         self.wait_for_object(name='upper.service', path='/switch_user')
@@ -132,9 +126,7 @@ class ServiceTest(DBusTestCase):
                     }),
             })
 
-        self.__services.append(service)
-
-        service.start()
+        self.add_and_start_service(service)
         self.wait_for_object(name='some.dbus.service', path='/thermometers/test')
 
         # now talk to them
@@ -175,9 +167,8 @@ class ServiceTest(DBusTestCase):
     def test__servicelist_from_config(self):
         config = DBusServicesConfig(_config % self.daemon_address())
         service_list = config.services()
-        self.__services.extend(service_list)
         for s in service_list:
-            s.start()
+            self.add_and_start_service(s)
 
         self.wait_for_object(name='some.service.centers', path='/path/to/switch_center')
         self.wait_for_object(name='some.service.centers', path='/another/path/to/thermometer_center')
