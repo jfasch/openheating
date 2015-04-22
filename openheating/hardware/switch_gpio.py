@@ -1,11 +1,11 @@
-from .gpio import OUT as gpio_out
+from . import gpio
 
 from ..switch import Switch
 
 class GPIOSwitch(Switch):
-    def __init__(self, gpio):
-        self.__gpio = gpio
-        self.__gpio.set_direction(gpio_out)
+    def __init__(self, number):
+        self.__gpio = gpio.create(number)
+        self.__gpio.set_direction(gpio.OUT)
 
     def set_state(self, value):
         assert type(value) is bool
