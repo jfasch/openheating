@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.dbus.thermometer_center_client import DBusThermometerCenter
-from openheating.dbus.rebind import DBusClientConnection
+from openheating.thermometer_center import ThermometerCenterThermometer
+from openheating.dbus.client_thermometer_center import DBusThermometerCenterClient
+from openheating.dbus.connection import DBusClientConnection
 from openheating.hardware.hd44780 import HD44780_LCD
 from openheating.error import HeatingError
 
@@ -19,20 +20,20 @@ display = HD44780_LCD(
     cols=20,
     lines=4)
 
-thermo_center = DBusThermometerCenter(
+thermo_center = DBusThermometerCenterClient(
     connection=connection,
     name='org.openheating.heizraum.center',
     path='/thermometers')
 
-boiler_top = thermo_center.get_thermometer('boiler-top')
-boiler_middle = thermo_center.get_thermometer('boiler-middle')
-boiler_bottom = thermo_center.get_thermometer('boiler-bottom')
-hk_vl = thermo_center.get_thermometer('hk-vl')
-boiler_vl = thermo_center.get_thermometer('boiler-vl')
-ofen_vl = thermo_center.get_thermometer('ofen-vl')
-ofen = thermo_center.get_thermometer('ofen')
-oel_puffer = thermo_center.get_thermometer('oel-puffer')
-essraum = thermo_center.get_thermometer('essraum')
+boiler_top = ThermometerCenterThermometer(center=thermo_center, name='boiler-top')
+boiler_middle = ThermometerCenterThermometer(center=thermo_center, name='boiler-middle')
+boiler_bottom = ThermometerCenterThermometer(center=thermo_center, name='boiler-bottom')
+hk_vl = ThermometerCenterThermometer(center=thermo_center, name='hk-vl')
+boiler_vl = ThermometerCenterThermometer(center=thermo_center, name='boiler-vl')
+ofen_vl = ThermometerCenterThermometer(center=thermo_center, name='ofen-vl')
+ofen = ThermometerCenterThermometer(center=thermo_center, name='ofen')
+oel_puffer = ThermometerCenterThermometer(center=thermo_center, name='oel-puffer')
+essraum = ThermometerCenterThermometer(center=thermo_center, name='essraum')
 
 def get_temperature(thermometer, places):
     try:
