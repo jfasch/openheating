@@ -1,12 +1,21 @@
 from .thinker import Thinker
 
 from ..base import logger
-
+from ..base.error import HeatingError
 
 class Brain:
-    def __init__(self):
+    class InfiniteLoopError(HeatingError):
+        pass
+
+    def __init__(self, max_loop=100):
         self.__thinkers = set()
+
+        # we count number of think() requests (for debugging/logging
+        # only)
         self.__round = 0
+
+        # infinite loop detection
+        self.__max_loop = max_loop
 
     def register_thinker(self, thinker):
         assert isinstance(thinker, Thinker)
@@ -22,7 +31,16 @@ class Brain:
         for t in self.__thinkers:
             t.init_thinking_global()
 
+        loop = 0
+        exc = None
         while True:
+            # check if somebody misbehaves. if so, we raise only after
+            # the thinkers' finish_*() metods have been called
+            if loop == self.__max_loop:
+                exc = self.InfiniteLoopError('infinite (%d) think loop detected' % loop)
+                break
+            loop += 1
+
             nthoughts = 0
             for t in self.__thinkers:
                 nthoughts += t.think()
@@ -36,3 +54,6 @@ class Brain:
             t.finish_thinking_local()
             
         self.__round += 1
+
+        if exc is not None:
+            raise exc

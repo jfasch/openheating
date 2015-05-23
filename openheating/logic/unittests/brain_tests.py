@@ -76,6 +76,28 @@ class BrainTest(unittest.TestCase):
         self.assertEqual(thinker.num_finish_local, 1)
         self.assertEqual(thinker.num_finish_global, 1)
 
+    def test__think_indefinitely(self):
+        '''thinkers must think excessively (loop detection)'''
+
+        class MyThinker(_MyThinker):
+            # think and think and think ...
+            def do_think(self):
+                return 1
+
+        brain = Brain(max_loop=10)
+        thinker = MyThinker('my-thinker')
+        brain.register_thinker(thinker)
+
+        self.assertRaises(brain.InfiniteLoopError, brain.think, '')
+
+        self.assertEqual(thinker.num_init_local, 1)
+        self.assertEqual(thinker.num_init_global, 1)
+        self.assertEqual(thinker.num_think, 10)
+
+        # note that, although think() raises InfiniteLoopError, we
+        # insist in finish being called
+        self.assertEqual(thinker.num_finish_local, 1)
+        self.assertEqual(thinker.num_finish_global, 1)
         
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest))
