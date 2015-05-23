@@ -1,4 +1,4 @@
-from openheating.testutils.dbus_testcase import DBusTestCase
+from .dbus_testcase import DBusTestCase
 
 import unittest
 

@@ -1,8 +1,8 @@
+from .dbus_testcase import DBusTestCase
+
 from openheating.dbus.object import DBusObject
 from openheating.dbus.client import DBusObjectClient
 from openheating.dbus.connection import DBusClientConnection, DBusServerConnection
-
-from openheating.testutils.dbus_testcase import DBusTestCase
 
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop

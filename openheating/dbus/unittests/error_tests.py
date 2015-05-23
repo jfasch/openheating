@@ -1,9 +1,10 @@
+from .dbus_testcase import DBusTestCase
+
 from openheating.dbus.service import DBusObjectCreator, DBusService
 from openheating.dbus.object import DBusObject
 from openheating.dbus.client import DBusObjectClient
 from openheating.dbus.connection import DBusClientConnection
 import openheating.dbus.types as types
-from openheating.testutils.dbus_testcase import DBusTestCase
 from openheating.base.error import HeatingError
 
 import dbus

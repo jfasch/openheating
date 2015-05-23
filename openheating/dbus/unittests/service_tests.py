@@ -1,4 +1,5 @@
-from openheating.testutils.dbus_testcase import DBusTestCase
+from .dbus_testcase import DBusTestCase
+
 from openheating.dbus.service import DBusService
 from openheating.dbus.connection import DBusClientConnection
 from openheating.dbus.client_thermometer import DBusThermometerClient

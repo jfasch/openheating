@@ -1,7 +1,8 @@
+from .dbus_testcase import DBusTestCase
+
 from openheating.base.error import HeatingError
 from openheating.dbus.connection import DBusClientConnection
 from openheating.dbus.client import DBusObjectClient
-from openheating.testutils.dbus_testcase import DBusTestCase
 
 import dbus.bus
 import unittest
