@@ -1,4 +1,4 @@
-from openheating.error import HeatingError
+from openheating.base.error import HeatingError
 from openheating.hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 
 import unittest

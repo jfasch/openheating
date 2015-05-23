@@ -1,7 +1,8 @@
 from .sink import Sink
 from .thinker import Thinker
 from .request import TemperatureRequests
-from . import logger
+
+from ..base import logger
 
 from abc import ABCMeta, abstractmethod
 

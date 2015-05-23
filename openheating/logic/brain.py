@@ -1,5 +1,7 @@
-from . import logger
 from .thinker import Thinker
+
+from ..base import logger
+
 
 class Brain:
     def __init__(self):

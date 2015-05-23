@@ -1,11 +1,11 @@
 from openheating.testutils.test_thermometer import TestThermometer
 from openheating.testutils.test_switch import TestSwitch
 
-from openheating.brain import Brain
-from openheating.sink import Sink
-from openheating.transport import Transport
-from openheating.hysteresis import Hysteresis
-from openheating.oil import OilCombo
+from openheating.logic.brain import Brain
+from openheating.logic.sink import Sink
+from openheating.logic.transport import Transport
+from openheating.logic.hysteresis import Hysteresis
+from openheating.logic.oil import OilCombo
 
 import unittest
 import logging

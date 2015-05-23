@@ -1,6 +1,8 @@
 from .source import DirectSource
 from .hysteresis import Hysteresis
-from . import logger
+
+from ..base import logger
+
 
 class OilCombo(DirectSource):
     '''Burner with Riello schematics (simple thing I think), together with

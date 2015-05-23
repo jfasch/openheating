@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from openheating import version
+from openheating.base import version
 
 import distutils.core
 import os
@@ -18,6 +18,8 @@ distutils.core.setup(
 
     packages=[
         'openheating',
+        'openheating.base',
+        'openheating.logic',
         'openheating.dbus',
         'openheating.hardware',
         'openheating.testutils',

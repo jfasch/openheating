@@ -1,6 +1,6 @@
 from .thermometer_hwmon import HWMON_I2C_Thermometer
 
-from ..config_parser import ConfigParser
+from ..base.config_parser import ConfigParser
 
 
 class SensorsConfig:

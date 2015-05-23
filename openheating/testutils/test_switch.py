@@ -1,4 +1,4 @@
-from ..switch import Switch
+from ..logic.switch import Switch
 
 class TestSwitch(Switch):
     def __init__(self, name, initial_state, output=None):

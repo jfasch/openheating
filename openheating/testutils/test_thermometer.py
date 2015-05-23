@@ -1,4 +1,4 @@
-from ..thermometer import Thermometer
+from ..logic.thermometer import Thermometer
 
 class TestThermometer(Thermometer):
     def __init__(self, initial_temperature):

@@ -3,7 +3,7 @@
 import math
 import time
 
-from openheating.hd44780 import HD44780_LCD
+from openheating.hardware.hd44780 import HD44780_LCD
 
 columns = 20
 

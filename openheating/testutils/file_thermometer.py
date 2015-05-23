@@ -1,5 +1,5 @@
-from ..thermometer import Thermometer
-from ..error import HeatingError
+from ..logic.thermometer import Thermometer
+from ..base.error import HeatingError
 
 class FileThermometer(Thermometer):
     def __init__(self, path):

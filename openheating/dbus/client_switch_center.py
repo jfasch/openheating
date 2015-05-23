@@ -1,6 +1,6 @@
 from .client import DBusObjectClient
 
-from ..switch_center import SwitchCenterBase
+from ..logic.switch_center import SwitchCenterBase
 
 
 class DBusSwitchCenterClient(SwitchCenterBase, DBusObjectClient):

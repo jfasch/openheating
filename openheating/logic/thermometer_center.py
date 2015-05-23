@@ -1,8 +1,10 @@
 from .thermometer import Thermometer
-from .error import HeatingError
+
+from ..base.error import HeatingError
 
 from abc import ABCMeta, abstractmethod
 import time
+
 
 class ThermometerCenterBase(metaclass=ABCMeta):
 

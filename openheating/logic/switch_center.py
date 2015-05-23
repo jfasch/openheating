@@ -1,8 +1,9 @@
 from .switch import Switch
-from .error import HeatingError
+from ..base.error import HeatingError
 
 from abc import ABCMeta, abstractmethod
 import time
+
 
 class SwitchCenterBase(metaclass=ABCMeta):
     @abstractmethod

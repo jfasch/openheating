@@ -2,7 +2,7 @@
 
 from openheating.dbus.thermometer_center_client import DBusThermometerCenter
 from openheating.dbus.rebind import DBusClientConnection
-from openheating.error import HeatingError
+from openheating.base.error import HeatingError
 
 from datetime import datetime
 import time

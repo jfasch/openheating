@@ -1,11 +1,11 @@
 from openheating.testutils.test_switch import TestSwitch
 from openheating.testutils.test_thermometer import TestThermometer
 
-from openheating.brain import Brain
-from openheating.sink import Sink
-from openheating.passive_source import PassiveSource
-from openheating.hysteresis import Hysteresis
-from openheating.transport import Transport
+from openheating.logic.brain import Brain
+from openheating.logic.sink import Sink
+from openheating.logic.passive_source import PassiveSource
+from openheating.logic.hysteresis import Hysteresis
+from openheating.logic.transport import Transport
 
 import unittest
 import logging

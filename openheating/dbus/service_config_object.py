@@ -1,4 +1,11 @@
+from .client_switch import DBusSwitchClient
+from .client_thermometer import DBusThermometerClient
+
 from .object_switch import DBusSwitchObject
+from .object_thermometer import DBusThermometerObject
+from .object_switch_center import DBusSwitchCenterObject
+from .object_thermometer_center import DBusThermometerCenterObject
+from .object_brain import DBusBrainObject
 
 from ..testutils.test_thermometer import TestThermometer
 from ..testutils.file_thermometer import FileThermometer
@@ -7,18 +14,8 @@ from ..testutils.file_switch import FileSwitch
 from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 from ..hardware.switch_gpio import GPIOSwitch
 
-from ..switch_center import SwitchCenter
-from ..thermometer_center import ThermometerCenter
-
-from .client_switch import DBusSwitchClient
-from .client_thermometer import DBusThermometerClient
-
-from .object_switch import DBusSwitchObject
-from .object_thermometer import DBusThermometerObject
-from .object_switch_center import DBusSwitchCenterObject
-from .object_thermometer_center import DBusThermometerCenterObject
-
-from .object_brain import DBusBrainObject
+from ..logic.switch_center import SwitchCenter
+from ..logic.thermometer_center import ThermometerCenter
 
 from abc import ABCMeta, abstractmethod
 

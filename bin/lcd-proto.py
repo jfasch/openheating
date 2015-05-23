@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-from openheating.thermometer_center import ThermometerCenterThermometer
+from openheating.logic.thermometer_center import ThermometerCenterThermometer
 from openheating.dbus.client_thermometer_center import DBusThermometerCenterClient
 from openheating.dbus.connection import DBusClientConnection
 from openheating.hardware.hd44780 import HD44780_LCD
-from openheating.error import HeatingError
+from openheating.base.error import HeatingError
 
 import time
 from datetime import datetime

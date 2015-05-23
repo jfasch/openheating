@@ -1,7 +1,8 @@
 from .connection import DBusServerConnection
 from . import types
-from .. import logger
-from ..error import HeatingError
+
+from ..base import logger
+from ..base.error import HeatingError
 
 from dbus.exceptions import DBusException
 import dbus.bus

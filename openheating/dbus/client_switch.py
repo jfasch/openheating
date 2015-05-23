@@ -1,6 +1,6 @@
 from .client import DBusObjectClient
 
-from ..switch import Switch
+from ..logic.switch import Switch
 
 
 class DBusSwitchClient(Switch, DBusObjectClient):

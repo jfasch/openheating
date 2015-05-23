@@ -1,4 +1,4 @@
-from openheating.tendency import Tendency
+from openheating.logic.tendency import Tendency
 
 import unittest
 import logging

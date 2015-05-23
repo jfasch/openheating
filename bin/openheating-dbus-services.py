@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from openheating import logger 
+from openheating.base import logger 
 
 from argparse import ArgumentParser
 import signal

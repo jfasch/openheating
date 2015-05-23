@@ -1,6 +1,7 @@
 from .thinker import Thinker
 from .switch import Switch
-from . import logger
+
+from ..base import logger
 
 
 class Transport(Thinker):

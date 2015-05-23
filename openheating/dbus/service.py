@@ -2,7 +2,7 @@ from .object import DBusObject
 from .service_config_object import DBusObjectCreator
 from .connection import DBusServerConnection
 
-from .. import logger
+from ..base import logger
 
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop

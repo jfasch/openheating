@@ -1,5 +1,5 @@
-from ..switch import Switch
-from ..error import HeatingError
+from ..logic.switch import Switch
+from ..base.error import HeatingError
 
 import re
 

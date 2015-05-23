@@ -1,6 +1,6 @@
 from .client import DBusObjectClient
 
-from ..thermometer_center import ThermometerCenterBase
+from ..logic.thermometer_center import ThermometerCenterBase
 
 
 class DBusThermometerCenterClient(ThermometerCenterBase, DBusObjectClient):

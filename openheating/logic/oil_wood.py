@@ -1,7 +1,8 @@
 from .source import Source
 from .thinker import Thinker
 from .tendency import Tendency
-from . import logger
+
+from ..base import logger
 
 
 class OilWoodCombination(Source, Thinker):

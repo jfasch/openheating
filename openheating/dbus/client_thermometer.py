@@ -1,6 +1,6 @@
 from .client import DBusObjectClient
 
-from ..thermometer import Thermometer
+from ..logic.thermometer import Thermometer
 
 
 class DBusThermometerClient(Thermometer, DBusObjectClient):

@@ -1,10 +1,11 @@
 from openheating.testutils.test_thermometer import TestThermometer
 
-from openheating.thermometer_center import ThermometerCenter, ThermometerCenterThermometer
-from openheating.error import HeatingError
+from openheating.logic.thermometer_center import ThermometerCenter, ThermometerCenterThermometer
+from openheating.base.error import HeatingError
 
 import time
 import unittest
+
 
 class ThermometerCenterTest(unittest.TestCase):
     def test_lookup(self):

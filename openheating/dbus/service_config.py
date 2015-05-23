@@ -1,34 +1,30 @@
 from .service_config_native import NativeObjectConstructor
-from ..testutils.test_switch import TestSwitch
-from ..testutils.file_switch import FileSwitch
-from ..hardware.switch_gpio import GPIOSwitch
+from .service_config_object import \
+    ThermometerObjectConstructor, \
+    SwitchObjectConstructor, \
+    SwitchCenterObjectCreator, \
+    ThermometerCenterObjectCreator, \
+    BrainObjectCreator
+
 from .client_switch import DBusSwitchClient
+from .client_thermometer import DBusThermometerClient
 from .client_switch_center import DBusSwitchCenterClient
 from .client_thermometer_center import DBusThermometerCenterClient
-
-from .service_config_object import ThermometerObjectConstructor
-from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
-from .client_thermometer import DBusThermometerClient
-from ..testutils.test_thermometer import TestThermometer
-from ..testutils.file_thermometer import FileThermometer
-from ..thermometer_center import ThermometerCenterThermometer
-
-from .service_config_object import SwitchObjectConstructor
-from ..hardware.switch_gpio import GPIOSwitch
-from .client_switch import DBusSwitchClient
-from ..testutils.test_switch import TestSwitch
-from ..testutils.file_switch import FileSwitch
-from ..switch_center import SwitchCenterSwitch
-
 from .service import DBusService
 
-from .service_config_object import SwitchCenterObjectCreator
-from .service_config_object import ThermometerCenterObjectCreator
+from ..hardware.switch_gpio import GPIOSwitch
+from ..hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 
-from .service_config_object import BrainObjectCreator
-from ..jf_control import JFControl
+from ..testutils.test_switch import TestSwitch
+from ..testutils.file_switch import FileSwitch
+from ..testutils.test_thermometer import TestThermometer
+from ..testutils.file_thermometer import FileThermometer
 
-from ..config_parser import ConfigParser
+from ..logic.thermometer_center import ThermometerCenterThermometer
+from ..logic.switch_center import SwitchCenterSwitch
+from ..logic.jf_control import JFControl
+
+from ..base.config_parser import ConfigParser
 
 
 class DBusServicesConfig:

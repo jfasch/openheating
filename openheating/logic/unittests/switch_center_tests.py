@@ -1,10 +1,11 @@
-from openheating.error import HeatingError
+from openheating.base.error import HeatingError
 from openheating.testutils.test_switch import TestSwitch
 
-from openheating.switch_center import SwitchCenter, SwitchCenterSwitch
+from openheating.logic.switch_center import SwitchCenter, SwitchCenterSwitch
 
 import time
 import unittest
+
 
 class SwitchCenterTest(unittest.TestCase):
     def test_lookup(self):

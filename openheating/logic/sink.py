@@ -1,6 +1,7 @@
 from .thinker import Thinker
 from .tendency import Tendency
-from . import logger
+
+from ..base import logger
 
 
 class Sink(Thinker):

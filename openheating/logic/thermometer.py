@@ -1,4 +1,4 @@
-from .error import HeatingError
+from ..base.error import HeatingError
 
 from abc import ABCMeta, abstractmethod
 

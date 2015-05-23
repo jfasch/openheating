@@ -1,6 +1,6 @@
-from .. import logger
+from ..base import logger
 
-
+import dbus
 import dbus.bus
 
 from abc import ABCMeta, abstractmethod

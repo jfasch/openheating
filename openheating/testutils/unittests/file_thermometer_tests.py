@@ -1,6 +1,6 @@
 from openheating.testutils.file_thermometer import FileThermometer
 from openheating.testutils.persistent_test import PersistentTestCase
-from openheating.error import HeatingError
+from openheating.base.error import HeatingError
 
 import unittest
 import logging

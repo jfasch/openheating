@@ -1,6 +1,7 @@
-from openheating.config_parser import ConfigParser
+from openheating.base.config_parser import ConfigParser
 
 import unittest
+
 
 class ConfigParserTest(unittest.TestCase):
     def test__basic(self):

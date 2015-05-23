@@ -1,6 +1,6 @@
 from . import gpio
 
-from ..switch import Switch
+from ..logic.switch import Switch
 
 class GPIOSwitch(Switch):
     def __init__(self, number):

@@ -1,6 +1,7 @@
 from .object import DBusObject
 from .types import DBUS_THERMOMETER_IFACE_STRING
-from ..thermometer import Thermometer
+
+from ..logic.thermometer import Thermometer
 
 import dbus.service
 
