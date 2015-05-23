@@ -12,32 +12,32 @@ import unittest
 
 
 class ComplicatedScenarioTests(unittest.TestCase):
+    '''boiler (a hot water buffer) has 50 degrees, but wants 60. boiler
+    requests.
+
+    room has 25 which is enough. room does not request.
+
+    wood (oven) can never do what boiler requests. (wood's
+    temperatures don't heat up at 60, at least not in my house.)
+
+
+    error scenario discovered (and the reason for this test): 
+
+    * boiler requests, room not. 
+
+    * wood heats up to 40. room's transport won't switch on its
+      pump - boiler is a requester and thus it should be favored.
+
+    EFFECT: both pumps remain off: boiler has 50 and wood has
+    40. room gave up in favor of requester.
+
+    SOLUTION: do not only request blindly, but rather request a
+    _temperature_. sources can then limit the temperature that can
+    be requested, and simply deny the request.
+
+    '''
+
     def test__2sinks__one_locks_out_other__source_explodes(self):
-        '''boiler (a hot water buffer) has 50 degrees, but wants 60. boiler
-        requests.
-
-        room has 25 which is enough. room does not request.
-
-        wood (oven) can never do what boiler requests. (wood's
-        temperatures don't heat up at 60, at least not in my house.)
-
-
-        error scenario discovered (and the reason for this test): 
-
-        * boiler requests, room not. 
-
-        * wood heats up to 40. room's transport won't switch on its
-          pump - boiler is a requester and thus it should be favored.
-
-        EFFECT: both pumps remain off: boiler has 50 and wood has
-        40. room gave up in favor of requester.
-
-        SOLUTION: do not only request blindly, but rather request a
-        _temperature_. sources can then limit the temperature that can
-        be requested, and simply deny the request.
-
-        '''
-
         # setup
         if True:
             brain = Brain()
