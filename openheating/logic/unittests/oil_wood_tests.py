@@ -1,13 +1,13 @@
-from openheating.testutils.thermometer import TestThermometer
-from openheating.testutils.switch import TestSwitch
+from openheating.testutils.test_thermometer import TestThermometer
+from openheating.testutils.test_switch import TestSwitch
 
-from openheating.brain import Brain
-from openheating.sink import Sink
-from openheating.transport import Transport
-from openheating.hysteresis import Hysteresis
-from openheating.oil import OilCombo
-from openheating.passive_source import PassiveSource
-from openheating.oil_wood import OilWoodCombination
+from openheating.logic.brain import Brain
+from openheating.logic.sink import Sink
+from openheating.logic.transport import Transport
+from openheating.logic.hysteresis import Hysteresis
+from openheating.logic.oil import OilCombo
+from openheating.logic.passive_source import PassiveSource
+from openheating.logic.oil_wood import OilWoodCombination
 
 import logging
 import unittest
