@@ -21,7 +21,7 @@ class Brain:
         assert isinstance(thinker, Thinker)
         self.__thinkers.add(thinker)
 
-    def think(self, message):
+    def think(self, message=''):
         thinkers_str = ','.join((t.name() for t in self.__thinkers))
         logger.debug('THINK ROUND #%d (%s), thinkers:%s' % (self.__round, message, thinkers_str))
 
