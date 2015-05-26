@@ -10,6 +10,8 @@ from .switch_center_tests import suite as switch_center_suite
 from .oil_tests import suite as oil_suite
 from .oil_wood_tests import suite as oil_wood_suite
 
+from .jfcontrol_tests import suite as jfcontrol_suite
+
 import unittest
 
 
@@ -23,6 +25,7 @@ suite.addTest(thermometer_center_suite)
 suite.addTest(switch_center_suite)
 suite.addTest(oil_suite)
 suite.addTest(oil_wood_suite)
+suite.addTest(jfcontrol_suite)
 
 # "scenarios" (complete temperatur sequences, concrete reations
 # etc. go here)
