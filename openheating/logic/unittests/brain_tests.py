@@ -41,7 +41,7 @@ class BrainTest(unittest.TestCase):
         thinker = MyThinker('my-thinker')
         brain = Brain([thinker])
 
-        brain.think('')
+        brain.think()
 
         self.assertEqual(thinker.num_init_local, 1)
         self.assertEqual(thinker.num_init_global, 1)
@@ -66,7 +66,7 @@ class BrainTest(unittest.TestCase):
         thinker = MyThinker('my-thinker')
         brain = Brain([thinker])
 
-        brain.think('')
+        brain.think()
 
         self.assertEqual(thinker.num_init_local, 1)
         self.assertEqual(thinker.num_init_global, 1)
@@ -85,7 +85,7 @@ class BrainTest(unittest.TestCase):
         thinker = MyThinker('my-thinker')
         brain = Brain([thinker], max_loop=10)
 
-        self.assertRaises(brain.InfiniteLoop, brain.think, '')
+        self.assertRaises(brain.InfiniteLoop, brain.think)
 
         self.assertEqual(thinker.num_init_local, 1)
         self.assertEqual(thinker.num_init_global, 1)
@@ -142,12 +142,13 @@ class BrainTest(unittest.TestCase):
             def do_think(self): pass
         single = MyThinker('single')
 
-        # duplicate detection at the top level
+        # Brain ctor: duplicate detection at the top level
         self.assertRaises(Brain.DuplicateThinker, Brain, [single, single])
             
-        # duplicate detection when nested inside composites
+        # Brain ctor: duplicate detection when nested inside composites
         self.assertRaises(Brain.DuplicateThinker, Brain, [CompositeThinker('composite', [single, single])])
         self.assertRaises(Brain.DuplicateThinker, Brain, [CompositeThinker('composite', [single]), CompositeThinker('composite', [single])])
+        
 
         
 suite = unittest.TestSuite()

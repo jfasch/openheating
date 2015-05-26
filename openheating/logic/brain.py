@@ -18,13 +18,13 @@ class Brain:
         self.__max_loop = max_loop
 
         # sanity check: check for duplicates
-        unique_thinkers = set()
+        unique_names = set()
         for t in thinkers:
             expanded = t.expand()
             for e in expanded:
-                if e in unique_thinkers:
-                    raise self.DuplicateThinker('duplicate thinker: '+e.name())
-                unique_thinkers.add(e)
+                if e.name() in unique_names:
+                    raise self.DuplicateThinker('duplicate thinker: '+e.name()+'('+str(e)+')')
+                unique_names.add(e.name())
 
         self.__thinkers = thinkers
 
