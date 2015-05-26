@@ -15,8 +15,6 @@ import unittest
 
 class OilWoodSourceTest(unittest.TestCase):
     def setUp(self):
-        self.__brain = Brain()
-
         self.__oil_thermometer = TestThermometer(initial_temperature=15)
         self.__wood_thermometer = TestThermometer(initial_temperature=20)
         self.__room_thermometer = TestThermometer(initial_temperature=20)
@@ -36,8 +34,6 @@ class OilWoodSourceTest(unittest.TestCase):
             name='source:wood',
             thermometer=self.__wood_thermometer,
             max_produced_temperature=50)
-
-        self.__brain = Brain()
 
         self.__source = OilWoodCombination(
             name='oil/wood',
@@ -60,9 +56,7 @@ class OilWoodSourceTest(unittest.TestCase):
             diff_hysteresis=Hysteresis(2,5),
             pump_switch=self.__pump_switch)
 
-        self.__source.register_thinking(self.__brain)
-        self.__room.register_thinking(self.__brain)
-        self.__transport.register_thinking(self.__brain)
+        self.__brain = Brain([self.__source, self.__room, self.__transport])
 
     def test__oil_requested_released(self):
         'the most simple case. wood remains cold, all requests to oil'

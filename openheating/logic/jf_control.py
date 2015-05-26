@@ -1,4 +1,4 @@
-from .thinker import Thinker
+from .thinker import CompositeThinker
 from .sink import Sink
 from .hysteresis import Hysteresis
 from .oil_wood import OilWoodCombination
@@ -9,11 +9,11 @@ from .thermometer_center import ThermometerCenterThermometer
 from .switch_center import SwitchCenterSwitch
 
 
-class JFControl(Thinker):
+class JFControl(CompositeThinker):
     def __init__(self,
                  switch_center,
                  thermometer_center,
-                 
+
                  th_room,
                  th_water,
                  th_wood,
@@ -24,13 +24,13 @@ class JFControl(Thinker):
                  sw_wood_valve):
 
         self.__sink_ww = Sink(
-            name = 'boiler', 
-            thermometer = ThermometerCenterThermometer(thermometer_center, th_water), 
+            name = 'boiler',
+            thermometer = ThermometerCenterThermometer(thermometer_center, th_water),
             temperature_range = Hysteresis(low=50, high=55),
         )
 
         self.__sink_room = Sink(
-            name = 'room', 
+            name = 'room',
             thermometer = ThermometerCenterThermometer(thermometer_center, th_room),
             temperature_range = Hysteresis(low=20, high=21),
         )
@@ -46,7 +46,7 @@ class JFControl(Thinker):
                 max_produced_temperature = 90, # let's say
             ),
             wood=PassiveSource(
-                name='wood', 
+                name='wood',
                 thermometer = ThermometerCenterThermometer(thermometer_center, th_wood),
                 max_produced_temperature=50, # let's say
             ),
@@ -57,23 +57,24 @@ class JFControl(Thinker):
 
         self.__transport_ww = Transport(
             name='ww',
-            source=self.__source, 
-            sink=self.__sink_ww, 
+            source=self.__source,
+            sink=self.__sink_ww,
             # adapt hysteresis to something more realistic
-            diff_hysteresis=Hysteresis(low=5, high=10), 
+            diff_hysteresis=Hysteresis(low=5, high=10),
             pump_switch=SwitchCenterSwitch(switch_center, sw_water))
 
         self.__transport_hk = Transport(
             name='hk',
-            source=self.__source, 
-            sink=self.__sink_room, 
+            source=self.__source,
+            sink=self.__sink_room,
             # adapt hysteresis to something more realistic
-            diff_hysteresis=Hysteresis(low=1, high=2), 
+            diff_hysteresis=Hysteresis(low=1, high=2),
             pump_switch=SwitchCenterSwitch(switch_center, sw_room))
-        
-    def register_thinking(self, brain):
-        self.__sink_ww.register_thinking(brain)
-        self.__sink_room.register_thinking(brain)
-        self.__source.register_thinking(brain)
-        self.__transport_ww.register_thinking(brain)
-        self.__transport_hk.register_thinking(brain)
+
+        CompositeThinker.__init__(
+            self, name='JFControl',
+            thinkers=[self.__sink_ww,
+                      self.__sink_room,
+                      self.__source,
+                      self.__transport_ww,
+                      self.__transport_hk])

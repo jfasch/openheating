@@ -31,9 +31,6 @@ class Sink(Thinker):
     def temperature(self):
         return self.__current_temperature
 
-    def register_thinking(self, brain):
-        brain.register_thinker(self)
-
     def init_thinking_local(self):
         self.__current_temperature = self.__thermometer.temperature()
         self.__decision_made = False

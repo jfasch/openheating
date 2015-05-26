@@ -13,8 +13,6 @@ import logging
 
 class TransportBasicTest(unittest.TestCase):
     def test__basic(self):
-        brain = Brain()
-        
         sink_thermometer = TestThermometer(initial_temperature=20)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
                     temperature_range=Hysteresis(33, 47))
@@ -31,9 +29,7 @@ class TransportBasicTest(unittest.TestCase):
                               diff_hysteresis=Hysteresis(0, 5),
                               pump_switch=pump_switch)
 
-        sink.register_thinking(brain)
-        source.register_thinking(brain)
-        transport.register_thinking(brain)
+        brain = Brain([source, sink, transport])
 
         # pump is off initially. switched on after first move, due to
         # difference of 60 degrees. sink is far below its desired
@@ -105,8 +101,6 @@ class TransportBasicTest(unittest.TestCase):
           would be wasted there.
         '''
 
-        brain = Brain()
-        
         source_thermometer = TestThermometer(initial_temperature=80)
         source = PassiveSource(
             name='my-source', 
@@ -120,23 +114,19 @@ class TransportBasicTest(unittest.TestCase):
 
         sink2_thermometer = TestThermometer(initial_temperature=20)
         sink2 = Sink(name='my-sink-2', thermometer=sink2_thermometer,
-                    temperature_range=Hysteresis(33, 47))
+                     temperature_range=Hysteresis(33, 47))
 
         pump1_switch = TestSwitch(name='pump1', initial_state=False)
         transport1 = Transport(name='my-transport-1', source=source, sink=sink1,
-                                diff_hysteresis=Hysteresis(0, 5),
-                                pump_switch=pump1_switch)
+                               diff_hysteresis=Hysteresis(0, 5),
+                               pump_switch=pump1_switch)
 
         pump2_switch = TestSwitch(name='pump2', initial_state=False)
         transport2 = Transport(name='my-transport-2', source=source, sink=sink2,
                                diff_hysteresis=Hysteresis(0, 5),
                                pump_switch=pump2_switch)
 
-        source.register_thinking(brain)
-        sink1.register_thinking(brain)
-        transport1.register_thinking(brain)
-        sink2.register_thinking(brain)
-        transport2.register_thinking(brain)
+        brain = Brain([source, sink1, sink2, transport1, transport2])
 
         # both sinks request some heat.
         if True:

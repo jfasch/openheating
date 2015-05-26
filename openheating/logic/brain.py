@@ -1,15 +1,15 @@
-from .thinker import Thinker
+from .thinker import Thinker, CompositeThinker
 
 from ..base import logger
 from ..base.error import HeatingError
 
 class Brain:
-    class InfiniteLoopError(HeatingError):
+    class InfiniteLoop(HeatingError):
+        pass
+    class DuplicateThinker(HeatingError):
         pass
 
-    def __init__(self, max_loop=100):
-        self.__thinkers = set()
-
+    def __init__(self, thinkers, max_loop=100):
         # we count number of think() requests (for debugging/logging
         # only)
         self.__round = 0
@@ -17,9 +17,16 @@ class Brain:
         # infinite loop detection
         self.__max_loop = max_loop
 
-    def register_thinker(self, thinker):
-        assert isinstance(thinker, Thinker)
-        self.__thinkers.add(thinker)
+        # sanity check: check for duplicates
+        unique_thinkers = set()
+        for t in thinkers:
+            expanded = t.expand()
+            for e in expanded:
+                if e in unique_thinkers:
+                    raise self.DuplicateThinker('duplicate thinker: '+e.name())
+                unique_thinkers.add(e)
+
+        self.__thinkers = thinkers
 
     def think(self, message=''):
         thinkers_str = ','.join((t.name() for t in self.__thinkers))
@@ -37,7 +44,7 @@ class Brain:
             # check if somebody misbehaves. if so, we raise only after
             # the thinkers' finish_*() metods have been called
             if loop == self.__max_loop:
-                exc = self.InfiniteLoopError('infinite (%d) think loop detected' % loop)
+                exc = self.InfiniteLoop('infinite (%d) think loop detected' % loop)
                 break
             loop += 1
 

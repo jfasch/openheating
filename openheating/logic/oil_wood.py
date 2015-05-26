@@ -1,11 +1,34 @@
 from .source import Source
-from .thinker import Thinker
+from .thinker import Thinker, CompositeThinker
 from .tendency import Tendency
 
 from ..base import logger
 
 
-class OilWoodCombination(Source, Thinker):
+class OilWoodCombination(Source, CompositeThinker):
+    def __init__(self, name, oil, wood, valve_switch, wood_warm, wood_hot):
+        self.__controller = _Controller(name=name+'.controller',
+                                        oil=oil, wood=wood, valve_switch=valve_switch,
+                                        wood_warm=wood_warm, wood_hot=wood_hot)
+        CompositeThinker.__init__(self, name=name, thinkers=[self.__controller, oil, wood])
+
+    def request(self, sink, temperature):
+        return self.__controller.request(sink, temperature)
+
+    def num_requests(self):
+        return self.__controller.num_requests()
+
+    def print_requests(self):
+        return self.__controller.print_requests()
+
+    def is_requested_by(self, sink):
+        return self.__controller.is_requested_by(sink)
+
+    def temperature(self):
+        return self.__controller.temperature()
+
+
+class _Controller(Source, Thinker):
 
     OIL, OIL_FADE_OUT, WOOD, WOOD_FADE_OUT = 0, 1, 2, 3
 
@@ -21,12 +44,6 @@ class OilWoodCombination(Source, Thinker):
         self.__valve_switch = valve_switch
         self.__wood_tendency = Tendency()
         self.__state = self.OIL
-
-    def register_thinking(self, brain):
-        super().register_thinking(brain)
-        brain.register_thinker(self)
-        brain.register_thinker(self.__oil)
-        brain.register_thinker(self.__wood)
 
     def init_thinking_global(self):
         self.__wood_temperature = self.__wood.temperature()
@@ -85,7 +102,7 @@ class OilWoodCombination(Source, Thinker):
 
         del self.__wood_temperature
         del self.__oil_temperature
-            
+
     def request(self, sink, temperature):
         if self.__state == self.OIL:
             return self.__oil.request(sink, temperature)
@@ -155,14 +172,13 @@ class OilWoodCombination(Source, Thinker):
 
     @staticmethod
     def __state_str(state):
-        if state == OilWoodCombination.OIL:
+        if state == _Controller.OIL:
             return 'OIL'
-        elif state == OilWoodCombination.OIL_FADE_OUT:
+        elif state == _Controller.OIL_FADE_OUT:
             return 'OIL_FADE_OUT'
-        elif state == OilWoodCombination.WOOD:
+        elif state == _Controller.WOOD:
             return 'WOOD'
-        elif state == OilWoodCombination.WOOD_FADE_OUT:
+        elif state == _Controller.WOOD_FADE_OUT:
             return 'WOOD_FADE_OUT'
         else:
             assert False
-

@@ -92,8 +92,8 @@ class SwitchCenterObjectCreator(DBusObjectCreator):
     
 # ----------------------------------------------------------------
 class BrainObjectCreator(DBusObjectCreator):
-    def __init__(self, thinker):
-        self.__thinker = thinker
+    def __init__(self, thinkers):
+        self.__thinkers = thinkers
         
     def create_object(self, path):
-        return DBusBrainObject(path=path, thinker=self.__thinker)
+        return DBusBrainObject(path=path, thinkers=self.__thinkers)

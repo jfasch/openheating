@@ -40,33 +40,28 @@ class ComplicatedScenarioTests(unittest.TestCase):
     def test__2sinks__one_locks_out_other__source_explodes(self):
         # setup
         if True:
-            brain = Brain()
             wood_thermometer = TestThermometer(initial_temperature=40)
             wood = PassiveSource(name='wood', thermometer=wood_thermometer, max_produced_temperature=40)
-            wood.register_thinking(brain)
 
             boiler_thermometer = TestThermometer(initial_temperature=50)
             boiler = Sink(name='boiler', thermometer=boiler_thermometer,
                           temperature_range=Hysteresis(58,62))
-            boiler.register_thinking(brain)
 
             room_thermometer = TestThermometer(initial_temperature=25)
             room = Sink(name='room', thermometer=room_thermometer,
                         temperature_range=Hysteresis(22, 23))
-            room.register_thinking(brain)
 
             boiler_pump_switch = TestSwitch(name='boiler-pump-switch', initial_state=False)
             boiler_transport = Transport(name='boiler-transport', source=wood, sink=boiler,
                                          diff_hysteresis=Hysteresis(0, 1),
                                          pump_switch=boiler_pump_switch)
-            boiler_transport.register_thinking(brain)
 
             room_pump_switch = TestSwitch(name='room-pump-switch', initial_state=False)
             room_transport = Transport(name='room-transport', source=wood, sink=room,
                                        diff_hysteresis=Hysteresis(0, 1),
                                        pump_switch=room_pump_switch)
-            room_transport.register_thinking(brain)
-            pass
+
+            brain = Brain([wood, boiler, room, boiler_transport, room_transport])
 
         brain.think('')
 

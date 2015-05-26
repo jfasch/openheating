@@ -4,7 +4,7 @@ from openheating.dbus.client_thermometer_center import DBusThermometerCenterClie
 from openheating.dbus.client_switch_center import DBusSwitchCenterClient
 from openheating.dbus.connection import DBusClientConnection
 from openheating.logic.thinking import Brain
-from openheating.logicjf_control import JFControl
+from openheating.logic.jf_control import JFControl
 
 import logging
 import sys

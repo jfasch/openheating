@@ -40,10 +40,6 @@ class DirectSource(Source, Thinker):
         self.__max_produced_temperature = max_produced_temperature
         self.__requests = TemperatureRequests()
 
-    def register_thinking(self, brain):
-        super().register_thinking(brain)
-        brain.register_thinker(self)
-
     def init_thinking_local(self):
         self.__requests.clear()
 

@@ -1,5 +1,5 @@
 from openheating.logic.brain import Brain
-from openheating.logic.thinker import Thinker
+from openheating.logic.thinker import Thinker, CompositeThinker
 
 from abc import ABCMeta, abstractmethod
 import unittest
@@ -38,9 +38,8 @@ class BrainTest(unittest.TestCase):
             def do_think(self):
                 return 0
 
-        brain = Brain()
         thinker = MyThinker('my-thinker')
-        brain.register_thinker(thinker)
+        brain = Brain([thinker])
 
         brain.think('')
 
@@ -64,9 +63,8 @@ class BrainTest(unittest.TestCase):
                 self.num_think += 1
                 return ret
 
-        brain = Brain()
         thinker = MyThinker('my-thinker')
-        brain.register_thinker(thinker)
+        brain = Brain([thinker])
 
         brain.think('')
 
@@ -84,20 +82,73 @@ class BrainTest(unittest.TestCase):
             def do_think(self):
                 return 1
 
-        brain = Brain(max_loop=10)
         thinker = MyThinker('my-thinker')
-        brain.register_thinker(thinker)
+        brain = Brain([thinker], max_loop=10)
 
-        self.assertRaises(brain.InfiniteLoopError, brain.think, '')
+        self.assertRaises(brain.InfiniteLoop, brain.think, '')
 
         self.assertEqual(thinker.num_init_local, 1)
         self.assertEqual(thinker.num_init_global, 1)
         self.assertEqual(thinker.num_think, 10)
 
-        # note that, although think() raises InfiniteLoopError, we
+        # note that, although think() raises InfiniteLoop, we
         # insist in finish being called
         self.assertEqual(thinker.num_finish_local, 1)
         self.assertEqual(thinker.num_finish_global, 1)
+
+    def test__composite_thinker(self):
+        '''composite thinker'''
+
+        class Single(_MyThinker):
+            def do_think(self):
+                return 0
+
+        single = Single('single')
+        composite = CompositeThinker('comp', [single])
+        brain = Brain(thinkers=[composite])
+
+        brain.think()
+
+        self.assertEqual(single.num_init_local, 1)
+        self.assertEqual(single.num_init_global, 1)
+        self.assertEqual(single.num_think, 1)
+        self.assertEqual(single.num_finish_local, 1)
+        self.assertEqual(single.num_finish_global, 1)
+
+    def test__composite_thinker__recursive(self):
+        '''composite thinkers are expanded, recursively'''
+
+        class Single(_MyThinker):
+            def do_think(self):
+                return 0
+
+        single = Single('leaf')
+        inner = CompositeThinker('inner', [single])
+        outer = CompositeThinker('outer', [inner])
+        brain = Brain(thinkers=[outer])
+
+        brain.think()
+
+        self.assertEqual(single.num_init_local, 1)
+        self.assertEqual(single.num_init_global, 1)
+        self.assertEqual(single.num_think, 1)
+        self.assertEqual(single.num_finish_local, 1)
+        self.assertEqual(single.num_finish_global, 1)
+
+    def test__brain_duplicate_thinkers(self):
+        '''when thinkers are expanded, there must be no duplicates'''
+        
+        class MyThinker(_MyThinker):
+            def do_think(self): pass
+        single = MyThinker('single')
+
+        # duplicate detection at the top level
+        self.assertRaises(Brain.DuplicateThinker, Brain, [single, single])
+            
+        # duplicate detection when nested inside composites
+        self.assertRaises(Brain.DuplicateThinker, Brain, [CompositeThinker('composite', [single, single])])
+        self.assertRaises(Brain.DuplicateThinker, Brain, [CompositeThinker('composite', [single]), CompositeThinker('composite', [single])])
+
         
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest))

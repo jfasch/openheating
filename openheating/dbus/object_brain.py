@@ -7,11 +7,9 @@ import dbus.service
 
 
 class DBusBrainObject(DBusObject):
-    def __init__(self, path, thinker):
+    def __init__(self, path, thinkers):
         DBusObject.__init__(self, path=path)
-        self.__thinker = thinker
-        self.__brain = Brain()
-        self.__thinker.register_thinking(self.__brain)
+        self.__brain = Brain(thinkers)
 
     @dbus.service.method(dbus_interface=DBUS_BRAIN_IFACE_STRING, in_signature = 's')
     def think(self, message):

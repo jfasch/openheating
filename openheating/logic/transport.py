@@ -15,10 +15,6 @@ class Transport(Thinker):
 
         sink.set_source(source)
 
-    def register_thinking(self, brain):
-        super().register_thinking(brain)
-        brain.register_thinker(self)
-
     def finish_thinking_global(self):
         super().finish_thinking_global()
 

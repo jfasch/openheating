@@ -11,8 +11,6 @@ import logging
 
 class SinkTest(unittest.TestCase):
     def test__basic(self):
-        brain = Brain()
-
         sink_thermometer = TestThermometer(initial_temperature=10)
         sink = Sink(name='my-sink', thermometer=sink_thermometer,
                     temperature_range=Hysteresis(23, 27))
@@ -23,8 +21,8 @@ class SinkTest(unittest.TestCase):
         )
         sink.set_source(source)
 
-        sink.register_thinking(brain)
-        source.register_thinking(brain)
+        brain = Brain([source, sink])
+
 
         # initial request
         brain.think('initial request')
