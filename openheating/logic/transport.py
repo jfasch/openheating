@@ -1,12 +1,12 @@
-from .thinker import Thinker
+from .thinker import LeafThinker
 from .switch import Switch
 
 from ..base import logger
 
 
-class Transport(Thinker):
+class Transport(LeafThinker):
     def __init__(self, name, source, sink, diff_hysteresis, pump_switch):
-        Thinker.__init__(self, name)
+        LeafThinker.__init__(self, name)
 
         self.__source = source
         self.__sink = sink

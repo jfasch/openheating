@@ -1,5 +1,5 @@
 from .sink import Sink
-from .thinker import Thinker
+from .thinker import LeafThinker
 from .request import TemperatureRequests
 
 from ..base import logger
@@ -29,13 +29,13 @@ class Source(metaclass=ABCMeta):
         return 42.0
 
 
-class DirectSource(Source, Thinker):
+class DirectSource(Source, LeafThinker):
     '''One that knows a maximum available temperature, and can accept or
     deny requests based upon that.
 
     '''
     def __init__(self, name, max_produced_temperature):
-        Thinker.__init__(self, name)
+        LeafThinker.__init__(self, name)
 
         self.__max_produced_temperature = max_produced_temperature
         self.__requests = TemperatureRequests()

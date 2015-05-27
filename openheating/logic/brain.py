@@ -10,23 +10,25 @@ class Brain:
         pass
 
     def __init__(self, thinkers, max_loop=100):
+        # sanity check: check for duplicates
+        if True:
+            seen = []
+            for t in thinkers:
+                t.visit_thinker(seen)
+            unique_names = set()
+            for name, obj in seen:
+                if name in unique_names:
+                    raise self.DuplicateThinker('duplicate thinker: %s (%s)' % (name, str(obj)))
+                unique_names.add(name)
+
+        self.__thinkers = thinkers
+
         # we count number of think() requests (for debugging/logging
         # only)
         self.__round = 0
 
         # infinite loop detection
         self.__max_loop = max_loop
-
-        # sanity check: check for duplicates
-        unique_names = set()
-        for t in thinkers:
-            expanded = t.expand()
-            for e in expanded:
-                if e.name() in unique_names:
-                    raise self.DuplicateThinker('duplicate thinker: '+e.name()+'('+str(e)+')')
-                unique_names.add(e.name())
-
-        self.__thinkers = thinkers
 
     def think(self, message=''):
         thinkers_str = ','.join((t.name() for t in self.__thinkers))
@@ -38,21 +40,20 @@ class Brain:
         for t in self.__thinkers:
             t.init_thinking_global()
 
-        loop = 0
         exc = None
-        while True:
-            # check if somebody misbehaves. if so, we raise only after
-            # the thinkers' finish_*() metods have been called
-            if loop == self.__max_loop:
-                exc = self.InfiniteLoop('infinite (%d) think loop detected' % loop)
-                break
-            loop += 1
-
-            nthoughts = 0
+        for i in range(self.__max_loop):
+            thoughts = 0
             for t in self.__thinkers:
-                nthoughts += t.think()
-            if nthoughts == 0:
+                ret = t.think()
+                assert type(ret) is int, t
+                thoughts += ret
+            if thoughts == 0:
                 break
+        else:
+            # check if somebody misbehaves. if so, we raise only after
+            # the thinkers' finish_*() methods have been called
+            exc = self.InfiniteLoop('infinite think loop detected')
+
 
         for t in self.__thinkers:
             t.finish_thinking_global()

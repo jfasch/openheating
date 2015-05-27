@@ -1,5 +1,5 @@
 from .source import Source
-from .thinker import Thinker, CompositeThinker
+from .thinker import LeafThinker, CompositeThinker
 from .tendency import Tendency
 
 from ..base import logger
@@ -28,14 +28,14 @@ class OilWoodCombination(Source, CompositeThinker):
         return self.__controller.temperature()
 
 
-class _Controller(Source, Thinker):
+class _Controller(Source, LeafThinker):
 
     OIL, OIL_FADE_OUT, WOOD, WOOD_FADE_OUT = 0, 1, 2, 3
 
     def __init__(self, name, oil, wood, valve_switch, wood_warm, wood_hot):
         assert wood_hot.low() - wood_warm.high() >= 6
 
-        Thinker.__init__(self, name)
+        LeafThinker.__init__(self, name)
 
         self.__oil = oil
         self.__wood = wood

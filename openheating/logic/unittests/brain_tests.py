@@ -1,13 +1,13 @@
 from openheating.logic.brain import Brain
-from openheating.logic.thinker import Thinker, CompositeThinker
+from openheating.logic.thinker import LeafThinker, CompositeThinker
 
 from abc import ABCMeta, abstractmethod
 import unittest
 import logging
 
-class _MyThinker(Thinker, metaclass=ABCMeta):
+class _MyThinker(LeafThinker, metaclass=ABCMeta):
     def __init__(self, name):
-        Thinker.__init__(self, name)
+        LeafThinker.__init__(self, name)
         self.num_init_local = 0
         self.num_finish_local = 0
         self.num_think = 0

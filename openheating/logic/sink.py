@@ -1,12 +1,12 @@
-from .thinker import Thinker
+from .thinker import LeafThinker
 from .tendency import Tendency
 
 from ..base import logger
 
 
-class Sink(Thinker):
+class Sink(LeafThinker):
     def __init__(self, name, thermometer, temperature_range):
-        Thinker.__init__(self, name)
+        LeafThinker.__init__(self, name)
 
         self.__thermometer = thermometer
         self.__temperature_range = temperature_range

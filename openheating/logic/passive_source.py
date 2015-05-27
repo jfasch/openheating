@@ -1,4 +1,3 @@
-from .thinker import Thinker
 from .source import DirectSource
 
 
