@@ -175,7 +175,8 @@ class BrainTest(unittest.TestCase):
         result = brain.think()
 
         self.assertEqual(result, [(0, [('single', 'message')]), (1, [('single', 'message')])])
-
+        # a(ia(ss))
+        
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest))
