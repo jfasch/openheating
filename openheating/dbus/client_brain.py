@@ -5,13 +5,7 @@ from ..logic.brain import Brain
 
 class DBusBrainClient(DBusObjectClient):
     def think(self):
-        dbus_ret = self.client_call(
-            'think',
-            # we still have that string parameter for
-            # nothing. intention was to use it for debugging. remove
-            # it sometime.
-            ''
-        )
+        dbus_ret = self.client_call('think')
 
         # cannot use the return value literally. it is littered with
         # DBus data types, like this: 

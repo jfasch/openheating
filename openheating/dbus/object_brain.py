@@ -11,7 +11,6 @@ class DBusBrainObject(DBusObject):
         DBusObject.__init__(self, path=path)
         self.__brain = Brain(thinkers)
 
-    @dbus.service.method(dbus_interface=DBUS_BRAIN_IFACE_STRING, 
-                         in_signature = 's', out_signature='a(ia(ss))')
-    def think(self, message):
-        return self.object_call(self.__brain.think, message)
+    @dbus.service.method(dbus_interface=DBUS_BRAIN_IFACE_STRING, out_signature='a(ia(ss))')
+    def think(self):
+        return self.object_call(self.__brain.think)
