@@ -36,7 +36,7 @@ class BrainTest(unittest.TestCase):
 
         class MyThinker(_MyThinker):
             def do_think(self):
-                return 0
+                return []
 
         thinker = MyThinker('my-thinker')
         brain = Brain([thinker])
@@ -51,15 +51,15 @@ class BrainTest(unittest.TestCase):
 
     def test__think_repeatedly(self):
         '''thinkers think until there's nothing more to do'''
-        
+
         class MyThinker(_MyThinker):
             def do_think(self):
                 if self.num_think == 0:
                     # not yet called. force one next round
-                    ret = 1
+                    ret = [(self.name(), 'one more thought')]
                 else:
                     # already called, don't call me anymore
-                    ret = 0
+                    ret = []
                 self.num_think += 1
                 return ret
 
@@ -80,7 +80,7 @@ class BrainTest(unittest.TestCase):
         class MyThinker(_MyThinker):
             # think and think and think ...
             def do_think(self):
-                return 1
+                return [(self.name(), 'yet another thought')]
 
         thinker = MyThinker('my-thinker')
         brain = Brain([thinker], max_loop=10)
@@ -101,7 +101,7 @@ class BrainTest(unittest.TestCase):
 
         class Single(_MyThinker):
             def do_think(self):
-                return 0
+                return []
 
         single = Single('single')
         composite = CompositeThinker('comp', [single])
@@ -120,7 +120,7 @@ class BrainTest(unittest.TestCase):
 
         class Single(_MyThinker):
             def do_think(self):
-                return 0
+                return []
 
         single = Single('leaf')
         inner = CompositeThinker('inner', [single])
@@ -137,23 +137,51 @@ class BrainTest(unittest.TestCase):
 
     def test__brain_duplicate_thinkers(self):
         '''when thinkers are expanded, there must be no duplicates'''
-        
+
         class MyThinker(_MyThinker):
             def do_think(self): pass
         single = MyThinker('single')
 
         # Brain ctor: duplicate detection at the top level
         self.assertRaises(Brain.DuplicateThinker, Brain, [single, single])
-            
+
         # Brain ctor: duplicate detection when nested inside composites
         self.assertRaises(Brain.DuplicateThinker, Brain, [CompositeThinker('composite', [single, single])])
         self.assertRaises(Brain.DuplicateThinker, Brain, [CompositeThinker('composite', [single]), CompositeThinker('composite', [single])])
-        
 
+    def test__thinker_return_format(self):
+        class Single(_MyThinker):
+            def do_think(self):
+                return [(self.name(), 'some message')]
+
+        composite = CompositeThinker('composite', [Single('single1'), Single('single2')])
+        thoughts = composite.think()
         
+        self.assertEqual(thoughts, [('single1', 'some message'), ('single2', 'some message')])
+
+    def test__thinker_brain_format(self):
+        class Single(_MyThinker):
+            def __init__(self, name, message, num_loop):
+                _MyThinker.__init__(self, name)
+                self.__message = message
+                self.__num_loop = num_loop
+            def do_think(self):
+                if self.num_think < self.__num_loop:
+                    return [(self.name(), self.__message)]
+                else:
+                    return []
+
+        brain = Brain([Single('single', 'message', 3)])
+        result = brain.think()
+
+        self.assertEqual(result, [(0, [('single', 'message')]), (1, [('single', 'message')])])
+
+
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest))
 
+# print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+# suite.addTest(BrainTest('test__thinker_brain_format'))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

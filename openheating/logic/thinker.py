@@ -27,8 +27,8 @@ class Thinker(metaclass=ABCMeta):
 
     @abstractmethod
     def think(self):
-        '''Return number of thoughts'''
-        return 0
+        '''Return thoughts. [(name, thought_string), (name, thought_string), ...] '''
+        return []
 
     @abstractmethod
     def finish_thinking_global(self):
@@ -56,7 +56,7 @@ class LeafThinker(Thinker):
         pass
 
     def think(self):
-        return 0
+        return []
 
     def finish_thinking_global(self):
         return
@@ -85,10 +85,17 @@ class CompositeThinker(Thinker):
             t.init_thinking_global()
 
     def think(self):
-        num = 0
+        thoughts = []
         for t in self.__thinkers:
-            num += t.think()
-        return num
+            local_thoughts = t.think()
+            if True:
+                # paranoia
+                assert type(local_thoughts) in (list, tuple), t
+                for elem in local_thoughts:
+                    assert type(elem) in (list, tuple), t
+                    assert len(elem) == 2
+            thoughts.extend(local_thoughts)
+        return thoughts
 
     def finish_thinking_global(self):
         for t in self.__thinkers:

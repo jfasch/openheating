@@ -183,7 +183,6 @@ suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
 
 #print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
-
 #suite.addTest(TransportBasicTest("test__2sinks"))
 #suite.addTest(TransportBasicTest("test__basic"))
 

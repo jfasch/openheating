@@ -40,15 +40,22 @@ class Brain:
         for t in self.__thinkers:
             t.init_thinking_global()
 
+        annotations_per_loop = []
         exc = None
-        for i in range(self.__max_loop):
-            thoughts = 0
+        for loop in range(self.__max_loop):
+            thoughts = []
             for t in self.__thinkers:
-                ret = t.think()
-                assert type(ret) is int, t
-                thoughts += ret
-            if thoughts == 0:
+                local_thoughts = t.think()
+                if True:
+                    # paranoia
+                    assert type(local_thoughts) in (list, tuple), t
+                    for elem in local_thoughts:
+                        assert type(elem) in (list, tuple)
+                        assert len(elem) == 2
+                thoughts.extend(local_thoughts)
+            if len(thoughts) == 0:
                 break
+            annotations_per_loop.append((loop, thoughts))
         else:
             # check if somebody misbehaves. if so, we raise only after
             # the thinkers' finish_*() methods have been called
@@ -57,11 +64,13 @@ class Brain:
 
         for t in self.__thinkers:
             t.finish_thinking_global()
-            
+
         for t in self.__thinkers:
             t.finish_thinking_local()
-            
+
         self.__round += 1
 
         if exc is not None:
             raise exc
+
+        return annotations_per_loop

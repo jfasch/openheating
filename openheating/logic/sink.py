@@ -41,31 +41,34 @@ class Sink(LeafThinker):
 
     def think(self):
         if self.__decision_made:
-            return 0
+            return []
         self.__decision_made = True
 
         # temperature below range, have to request
         if self.__temperature_range.below(self.__current_temperature):
-            self.__debug('%f below (%f,%f), requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high()))
+            msg = '%f below (%f,%f), requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high())
+            self.__debug(msg)
             self.__requesting = True
             self.__source.request(self, self.__requested_temperature)
-            return 1
+            return [(self.name(), msg)]
 
         # temperature above range, no request
         if self.__temperature_range.above(self.__current_temperature):
-            self.__debug('%f above (%f,%f), not requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high()))
+            msg = '%f above (%f,%f), not requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high())
+            self.__debug(msg)
             self.__requesting = False
-            return 1
+            return [(self.name(), msg)]
 
         # temperature within range. keep requesting if we were already
         # (we are just heating up). else, we are cooling and don't
         # request.
         if self.__requesting:
-            self.__debug('%f within (%f,%f), keep requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high()))
+            msg = '%f within (%f,%f), keep requesting' % (self.__current_temperature, self.__temperature_range.low(), self.__temperature_range.high())
+            self.__debug(msg)
             self.__source.request(self, self.__requested_temperature)
-            return 1
+            return [(self.name(), msg)]
 
-        return 0
+        return []
 
     def __debug(self, msg):
         logger.debug('sink %s: %s' % (self.name(), msg))

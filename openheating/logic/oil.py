@@ -51,32 +51,44 @@ class OilCombo(DirectSource):
     def init_thinking_local(self):
         super().init_thinking_local()
         self.__temperature = self.__thermometer.temperature()
+        self.__switch_state = None
 
     def finish_thinking_local(self):
         super().finish_thinking_local()
-
-        if self.__heating_range.above(self.__temperature):
-            self.__debug('hot enough, off: temperature=%f,heat/hi=%f' % (self.__temperature, self.__heating_range.high()))
-            self.__burn_switch.do_open()
-        elif self.__heating_range.below(self.__temperature):
-            if self.num_requests() > 0:
-                self.__debug('not hot enough, on: temperature=%f,heat/lo=%f,requests=%s' % \
-                             (self.__temperature, self.__minimum_temperature_range.low(), self.print_requests()))
-                self.__burn_switch.do_close()
-            elif self.__minimum_temperature_range.below(self.__temperature):
-                self.__debug('anti frost, on: temperature=%f,min/lo=%f' % \
-                             (self.__temperature, self.__minimum_temperature_range.low()))
-                self.__burn_switch.do_close()
-            elif self.__minimum_temperature_range.above(self.__temperature):
-                self.__debug('anti frost done, off: temperature=%f,min/hi=%f' % \
-                             (self.__temperature, self.__minimum_temperature_range.high()))
-                self.__burn_switch.do_open()
-            else:
-                self.__debug('anti frost in range, leaving as-is')
-                pass
-            pass
-
+        if self.__switch_state is not None:
+            self.__burn_switch.set_state(self.__switch_state)
         del self.__temperature
+        del self.__switch_state
+
+    def think(self):
+        if self.__heating_range.above(self.__temperature):
+            msg = 'hot enough, off: temperature=%f,heat/hi=%f' % (self.__temperature, self.__heating_range.high())
+            self.__debug(msg)
+            return self.__think_set_switch_state(False, msg)
+        if self.__heating_range.below(self.__temperature):
+            if self.num_requests() > 0:
+                msg = 'not hot enough, on: temperature=%f,heat/lo=%f,requests=%s' % \
+                      (self.__temperature, self.__minimum_temperature_range.low(), self.print_requests())
+                self.__debug(msg)
+                return self.__think_set_switch_state(True, msg)
+            if self.__minimum_temperature_range.below(self.__temperature):
+                msg = 'anti frost, on: temperature=%f,min/lo=%f' % \
+                      (self.__temperature, self.__minimum_temperature_range.low())
+                self.__debug(msg)
+                return self.__think_set_switch_state(True, msg)
+            if self.__minimum_temperature_range.above(self.__temperature):
+                msg = 'anti frost done, off: temperature=%f,min/hi=%f' % \
+                      (self.__temperature, self.__minimum_temperature_range.high())
+                self.__debug(msg)
+                return self.__think_set_switch_state(False, msg)
+        return []
 
     def __debug(self, msg):
         logger.debug(self.name()+': '+msg)
+
+    def __think_set_switch_state(self, state, msg):
+        if self.__switch_state == state:
+            return []
+        else:
+            self.__switch_state = state
+            return [(self.name(), msg)]
