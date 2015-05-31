@@ -16,6 +16,23 @@ import errno
 
 
 class DBusService:
+    '''Encapsulates a "DBus service". Whichever the exact definition of a
+    service is, our service does the following:
+
+    Does not live its dbus life in the instantiating process. Rather,
+    it forks twice until dbus comes into play.
+
+    The immediate child is the "restarter" process - he simply sits
+    around and monitors the grandchild, restarting it if it
+    terminates.
+
+    The grandchild (started by the restarter) is the ultimate dbus
+    service process. When it starts up, it connects to the dbus daemon
+    with a bus name, creates dbus objects from a "creator", and
+    finally enters a main event loop.
+
+    '''
+
     def __init__(self, daemon_address, name, object_creators):
         self.__daemon_address = daemon_address
         self.__name = name
@@ -71,7 +88,9 @@ class DBusService:
                 signal.signal(signal.SIGINT, signal.SIG_DFL)
                 
                 self.__service()
-                assert False, 'should never get here'
+                assert False
+
+    , 'should never get here'
             else:
                 # parent; the "restarter". wait for child (service),
                 # and backoff before restart
@@ -130,4 +149,3 @@ def _restarter_terminate(signum, frame):
     if _service_pid is not None:
         os.kill(_service_pid, signal.SIGTERM)
     os._exit(0)
-
