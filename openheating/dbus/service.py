@@ -12,7 +12,12 @@ import time
 import sys
 import os
 import errno
+import ctypes
 
+
+# load C library
+_libc = ctypes.cdll.LoadLibrary('libc.so.6')
+_prctl = _libc.prctl
 
 class DBusService:
     '''Encapsulates a "DBus service". Whichever the exact definition of a
@@ -77,6 +82,8 @@ class DBusService:
 
         global _service_pid
 
+        _set_process_name('(restarter)')
+
         while True:
             _service_pid = os.fork()
             if _service_pid == 0:
@@ -107,6 +114,8 @@ class DBusService:
 
     def __service(self):
         # grandchild, the service itself.
+
+        _set_process_name('(service)')
 
         # create a dedicated logger for that process
         logger.enter_child(self.__name)
@@ -146,3 +155,10 @@ def _restarter_terminate(signum, frame):
     if _service_pid is not None:
         os.kill(_service_pid, signal.SIGTERM)
     os._exit(0)
+
+def _set_process_name(name):
+    the_name = bytes(name, 'ascii')
+    buff = ctypes.create_string_buffer(len(the_name)+1)
+    buff.value = the_name
+    _prctl(15, ctypes.byref(buff), 0, 0, 0)
+    
