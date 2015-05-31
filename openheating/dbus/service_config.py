@@ -22,6 +22,7 @@ from ..testutils.file_thermometer import FileThermometer
 from ..logic.thermometer_center import ThermometerCenterThermometer
 from ..logic.switch_center import SwitchCenterSwitch
 from ..logic.jf_control import JFControl
+from ..logic.lcd import LCD
 
 from ..base.config_parser import ConfigParser
 
@@ -87,4 +88,5 @@ _symbols = {
     'DBusThermometerCenterClient': NativeObjectConstructor(DBusThermometerCenterClient),
 
     'JFControl': NativeObjectConstructor(JFControl),
+    'LCD': NativeObjectConstructor(LCD),
 }
