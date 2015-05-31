@@ -6,6 +6,7 @@ from ..base import logger
 
 import dbus.service
 
+from abc import ABCMeta, abstractmethod
 import sys
 
 
@@ -30,3 +31,8 @@ class DBusObject(dbus.service.Object):
             logger.exception('%s: unknown error: %s' % (self.__path, str(e)))
             raise
         
+class DBusObjectCreator(metaclass=ABCMeta):
+    @abstractmethod
+    def create_object(self, path):
+        pass
+

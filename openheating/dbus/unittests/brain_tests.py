@@ -1,9 +1,9 @@
 from openheating.dbus.unittests.dbus_testcase import DBusTestCase
 
 from openheating.dbus.client_brain import DBusBrainClient
+from openheating.dbus.object_brain import BrainObjectCreator
 from openheating.dbus.connection import DBusClientConnection
 from openheating.dbus.service import DBusService
-from openheating.dbus.service_config_object import BrainObjectCreator
 from openheating.logic.thinker import LeafThinker
 
 import unittest

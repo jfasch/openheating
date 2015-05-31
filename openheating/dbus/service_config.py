@@ -1,10 +1,9 @@
 from .service_config_native import NativeObjectConstructor
-from .service_config_object import \
-    ThermometerObjectConstructor, \
-    SwitchObjectConstructor, \
-    SwitchCenterObjectCreator, \
-    ThermometerCenterObjectCreator, \
-    BrainObjectCreator
+from .object_thermometer import ThermometerObjectConstructor
+from .object_switch import SwitchObjectConstructor
+from .object_thermometer_center import ThermometerCenterObjectCreator
+from .object_switch_center import SwitchCenterObjectCreator
+from .object_brain import BrainObjectCreator
 
 from .client_switch import DBusSwitchClient
 from .client_thermometer import DBusThermometerClient

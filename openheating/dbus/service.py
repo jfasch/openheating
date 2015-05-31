@@ -88,9 +88,7 @@ class DBusService:
                 signal.signal(signal.SIGINT, signal.SIG_DFL)
                 
                 self.__service()
-                assert False
-
-    , 'should never get here'
+                assert False, 'should never get here'
             else:
                 # parent; the "restarter". wait for child (service),
                 # and backoff before restart

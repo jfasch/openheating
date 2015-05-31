@@ -1,4 +1,4 @@
-from .dbus_testcase import DBusTestCase
+from openheating.dbus.unittests.dbus_testcase import DBusTestCase
 
 from openheating.dbus.service import DBusService
 from openheating.dbus.connection import DBusClientConnection
@@ -7,18 +7,18 @@ from openheating.dbus.client_switch import DBusSwitchClient
 from openheating.dbus.client_switch_center import DBusSwitchCenterClient
 from openheating.dbus.client_thermometer_center import DBusThermometerCenterClient
 
-from openheating.dbus.service_config_object import ThermometerCenterObjectCreator
-from openheating.dbus.service_config_object import SwitchCenterObjectCreator
+from openheating.dbus.object_thermometer_center import ThermometerCenterObjectCreator
+from openheating.dbus.object_switch_center import SwitchCenterObjectCreator
 from openheating.dbus.service_config_native import NativeObject
 
 from openheating.dbus.service_config import DBusServicesConfig
 
-from openheating.dbus.service_config_object import ThermometerObjectCreator
+from openheating.dbus.object_thermometer import ThermometerObjectCreator
 from openheating.testutils.test_thermometer import TestThermometer
 from openheating.testutils.file_thermometer import FileThermometer
 from openheating.hardware.thermometer_hwmon import HWMON_I2C_Thermometer
 
-from openheating.dbus.service_config_object import SwitchObjectCreator
+from openheating.dbus.object_switch import SwitchObjectCreator
 from openheating.dbus.client_switch import DBusSwitchClient
 from openheating.testutils.test_switch import TestSwitch
 from openheating.testutils.file_switch import FileSwitch

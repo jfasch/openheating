@@ -1,4 +1,4 @@
-from .dbus_testcase import DBusTestCase
+from openheating.dbus.unittests.dbus_testcase import DBusTestCase
 
 from openheating.dbus.service import DBusObjectCreator, DBusService
 from openheating.dbus.object import DBusObject
