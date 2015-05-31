@@ -1,5 +1,4 @@
-from .object import DBusObject
-from .service_config_object import DBusObjectCreator
+from .object import DBusObject, DBusObjectCreator
 from .connection import DBusServerConnection
 
 from ..base import logger
