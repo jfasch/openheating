@@ -45,7 +45,6 @@ class _ObjectWithTimerCreator(DBusObjectCreator):
             def __init__(self, path, interval):
                 DBusObject.__init__(self, path)
                 self.__num_expires = 0
-                print('interval', interval)
                 self.__timer = GObject.timeout_add_seconds(interval, self.__expired)
 
             @dbus.service.method(dbus_interface='my.dumb.thing', out_signature='i')
