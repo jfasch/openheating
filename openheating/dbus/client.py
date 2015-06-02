@@ -7,6 +7,8 @@ from ..base.error import HeatingError
 from dbus.exceptions import DBusException
 import dbus.bus
 
+import sys
+
 
 class DBusObjectClient:
     '''Recovery of DBus object proxy

@@ -4,11 +4,15 @@ from .object_switch import SwitchObjectConstructor
 from .object_thermometer_center import ThermometerCenterObjectCreator
 from .object_switch_center import SwitchCenterObjectCreator
 from .object_brain import BrainObjectCreator
+from .object_looper import LooperObjectCreator
 
 from .client_switch import DBusSwitchClient
 from .client_thermometer import DBusThermometerClient
 from .client_switch_center import DBusSwitchCenterClient
 from .client_thermometer_center import DBusThermometerCenterClient
+from .client_brain import DBusBrainClient
+from .client_looper import DBusLooperClient
+
 from .service import DBusService
 
 from ..hardware.switch_gpio import GPIOSwitch
@@ -71,6 +75,7 @@ _symbols = {
     'FileSwitchObject': SwitchObjectConstructor(FileSwitch),
 
     'BrainObject': BrainObjectCreator,
+    'LooperObject': LooperObjectCreator,
 
 
     # native objects
@@ -86,6 +91,9 @@ _symbols = {
 
     'DBusSwitchCenterClient': NativeObjectConstructor(DBusSwitchCenterClient),
     'DBusThermometerCenterClient': NativeObjectConstructor(DBusThermometerCenterClient),
+
+    'DBusBrainClient': NativeObjectConstructor(DBusBrainClient),
+    'DBusLooperClient': NativeObjectConstructor(DBusLooperClient),
 
     'JFControl': NativeObjectConstructor(JFControl),
     'LCD': NativeObjectConstructor(LCD),

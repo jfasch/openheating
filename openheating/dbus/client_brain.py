@@ -1,7 +1,5 @@
 from .client import DBusObjectClient
 
-from ..logic.brain import Brain
-
 
 class DBusBrainClient(DBusObjectClient):
     def think(self):

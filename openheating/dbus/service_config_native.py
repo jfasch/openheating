@@ -2,8 +2,6 @@ class NativeObjectConstructor:
     '''A parameterizable class, used in the service configuration to
     shield the user from all that forking and instantiating that we
     do.
-
-    I suspect I have to look into how descriptors work.
     '''
 
     def __init__(self, klass):
