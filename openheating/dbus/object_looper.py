@@ -9,10 +9,10 @@ from gi.repository import GObject
 
 
 class DBusLooperObject(DBusObject):
-    def __init__(self, path, interval, brain, triggers):
+    def __init__(self, path, interval_seconds, brain, triggers):
         DBusObject.__init__(self, path=path)
         self.__looper = Looper(brain=brain, triggers=triggers)
-        self.__timer = GObject.timeout_add_seconds(interval, self.__expired)
+        self.__timer = GObject.timeout_add_seconds(interval_seconds, self.__expired)
 
     @dbus.service.method(dbus_interface=DBUS_LOOPER_IFACE_STRING, out_signature='i')
     def num_loops(self):
@@ -24,10 +24,10 @@ class DBusLooperObject(DBusObject):
 
 
 class LooperObjectCreator(DBusObjectCreator):
-    def __init__(self, interval, brain, triggers):
-        self.__interval = interval
+    def __init__(self, interval_seconds, brain, triggers):
+        self.__interval_seconds = interval_seconds
         self.__brain = brain
         self.__triggers = triggers
 
     def create_object(self, path):
-        return DBusLooperObject(path=path, interval=self.__interval, brain=self.__brain, triggers=self.__triggers)
+        return DBusLooperObject(path=path, interval_seconds=self.__interval_seconds, brain=self.__brain, triggers=self.__triggers)

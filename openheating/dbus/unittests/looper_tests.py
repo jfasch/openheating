@@ -30,7 +30,7 @@ class LooperTest(DBusTestCase):
         looper_service = DBusService(
             daemon_address=self.daemon_address(),
             name='looper.service',
-            object_creators={'/looper': LooperObjectCreator(interval=0.1, brain=NativeObject(DBusBrainClient, name='brain.service', path='/brain'), triggers=[])})
+            object_creators={'/looper': LooperObjectCreator(interval_seconds=0.1, brain=NativeObject(DBusBrainClient, name='brain.service', path='/brain'), triggers=[])})
         self.add_and_start_service(looper_service)
         self.wait_for_object('looper.service', '/looper')
 
