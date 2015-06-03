@@ -269,10 +269,7 @@ class OilWoodSourceTest(unittest.TestCase):
         self.__oil_burn_switch.is_closed()
 
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest))
-#suite.addTest(OilWoodSourceTest('test__oil_minimum_temperature'))
-#print('jjjjjjjjjjjjjjjjjjj')
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(OilWoodSourceTest)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

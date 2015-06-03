@@ -44,8 +44,7 @@ class SinkTest(unittest.TestCase):
         brain.think('satisfied')
         self.assertFalse(source.is_requested_by(sink))
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SinkTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(SinkTest)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

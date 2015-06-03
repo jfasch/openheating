@@ -18,8 +18,7 @@ SENSORS = (
 '''
 
         
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SensorsConfigTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(SensorsConfigTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

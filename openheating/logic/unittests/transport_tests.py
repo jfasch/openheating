@@ -179,12 +179,7 @@ class TransportBasicTest(unittest.TestCase):
             self.assertTrue(pump2_switch.is_open())
             
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest))
-
-#print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
-#suite.addTest(TransportBasicTest("test__2sinks"))
-#suite.addTest(TransportBasicTest("test__basic"))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(TransportBasicTest)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

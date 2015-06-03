@@ -58,10 +58,7 @@ class BrainTest(DBusTestCase):
         self.assertEqual(result, [(0, [('thinker', 'message')]), (1, [('thinker', 'message')])])
         
         
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest))
-#suite.addTest(ErrorTest('test__nested_errors'))
-#suite.addTest(ErrorTest('test__dbus_conversion'))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

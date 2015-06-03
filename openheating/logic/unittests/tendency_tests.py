@@ -32,8 +32,7 @@ class TendencyTest(unittest.TestCase):
         self.assertTrue(tendency.falling())
         
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TendencyTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(TendencyTest)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

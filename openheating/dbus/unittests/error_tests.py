@@ -152,10 +152,7 @@ class ErrorTest(DBusTestCase):
 
         self.assertTrue(HeatingError.equal(local_error, self.remote_nested_error))
         
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ErrorTest))
-#suite.addTest(ErrorTest('test__nested_errors'))
-#suite.addTest(ErrorTest('test__dbus_conversion'))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ErrorTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

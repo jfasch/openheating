@@ -44,8 +44,7 @@ class FileSwitchTest(PersistentTestCase):
             pass
 
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FileSwitchTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(FileSwitchTest)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

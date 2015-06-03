@@ -16,8 +16,7 @@ class ConfigParserTest(unittest.TestCase):
         self.assertEqual(parsed['SOME_STRING'], 'blah')
         self.assertIsInstance(parsed['SOME_OBJECT'], SomeClass)
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ConfigParserTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ConfigParserTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

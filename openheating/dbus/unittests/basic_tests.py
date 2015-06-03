@@ -34,8 +34,7 @@ class BasicTest(DBusTestCase):
         bus_object.GetId()
 
         
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BasicTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(BasicTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

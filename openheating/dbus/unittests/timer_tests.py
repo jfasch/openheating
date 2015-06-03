@@ -61,8 +61,7 @@ class _ObjectWithTimerCreator(DBusObjectCreator):
 
 
         
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TimerTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(TimerTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

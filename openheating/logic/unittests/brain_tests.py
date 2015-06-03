@@ -178,11 +178,7 @@ class BrainTest(unittest.TestCase):
         # a(ia(ss))
         
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest))
-
-# print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
-# suite.addTest(BrainTest('test__thinker_brain_format'))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(BrainTest)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

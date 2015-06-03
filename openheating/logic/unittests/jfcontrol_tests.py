@@ -147,8 +147,7 @@ class JFControlTest(unittest.TestCase):
         self.assertEqual(self.__sw_oil.get_state(), False)
         self.assertEqual(self.__sw_wood_valve.get_state(), False)
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(JFControlTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(JFControlTest)
 
 
 if __name__ == "__main__":

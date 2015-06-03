@@ -216,8 +216,7 @@ SERVICES = {
 '''
 
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ServiceTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ServiceTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

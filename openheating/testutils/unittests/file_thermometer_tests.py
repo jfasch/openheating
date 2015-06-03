@@ -25,8 +25,7 @@ class FileThermometerTest(PersistentTestCase):
             self.assertTrue(e.permanent())
             pass
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FileThermometerTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(FileThermometerTest)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

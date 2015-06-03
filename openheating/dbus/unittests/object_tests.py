@@ -59,8 +59,7 @@ class EchoObject(DBusObject):
         return string
         
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ObjectTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ObjectTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

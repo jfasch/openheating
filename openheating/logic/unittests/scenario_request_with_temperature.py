@@ -69,8 +69,7 @@ class ComplicatedScenarioTests(unittest.TestCase):
         self.assertTrue(room_pump_switch.is_closed())
 
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ComplicatedScenarioTests))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ComplicatedScenarioTests)
 
 #suite.addTest(TransportBasicTest("test__2sinks"))
 #logging.basicConfig(level=logging.DEBUG)

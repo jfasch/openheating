@@ -19,8 +19,7 @@ class SensorsTest(unittest.TestCase):
             pass
 
         
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SensorsTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(SensorsTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

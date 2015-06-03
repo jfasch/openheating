@@ -43,8 +43,7 @@ class NativeObjectTest(unittest.TestCase):
         
 
         
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(NativeObjectTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(NativeObjectTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

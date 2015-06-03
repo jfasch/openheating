@@ -42,8 +42,7 @@ class SwitchCenterTest(unittest.TestCase):
         self.assertTrue(one.is_closed())
         self.assertTrue(two.is_closed())
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SwitchCenterTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(SwitchCenterTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

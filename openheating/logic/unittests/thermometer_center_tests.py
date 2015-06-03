@@ -32,8 +32,7 @@ class ThermometerCenterTest(unittest.TestCase):
         self.assertAlmostEqual(th2_client.temperature(), 666)
         
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerCenterTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerCenterTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()

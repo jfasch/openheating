@@ -41,8 +41,7 @@ class ClientTest(DBusTestCase):
         client.client_call('GetId')
 
 
-suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ClientTest))
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(ClientTest)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
