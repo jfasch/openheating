@@ -4,11 +4,11 @@ from ..base.config_parser import ConfigParser
 
 
 class SensorsConfig:
-    def __init__(self, content):
+    def __init__(self, content, filename):
         self.__creators = []
 
         parser = ConfigParser(symbols=_symbols.copy())
-        config = parser.parse(content)
+        config = parser.parse(content, filename)
 
         self.__sensors = config.get('SENSORS')
 

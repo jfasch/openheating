@@ -26,7 +26,7 @@ services = []
 try:
     from openheating.dbus.service_config import DBusServicesConfig
 
-    config = DBusServicesConfig(open(args.config_file).read())
+    config = DBusServicesConfig(open(args.config_file).read(), args.config_file)
     services = config.services()
 
     if args.pid_file is not None:

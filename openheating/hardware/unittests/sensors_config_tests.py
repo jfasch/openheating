@@ -7,7 +7,7 @@ import unittest
 class SensorsConfigTest(unittest.TestCase):
 
     def test__sensors_from_config(self):
-        config = SensorsConfig(_config)
+        config = SensorsConfig(_config, 'no particular filename')
         self.assertEqual(len(config.sensors()), 1)
         self.assertIsInstance(config.sensors()[0], HWMON_I2C_Thermometer)
 

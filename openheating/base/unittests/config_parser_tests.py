@@ -11,7 +11,8 @@ class ConfigParserTest(unittest.TestCase):
             '\n'.join(
                 ['SOME_STRING = "blah"',
                  'SOME_OBJECT = MySomeClass()',
-             ]))
+             ]),
+            'no particular filename')
 
         self.assertEqual(parsed['SOME_STRING'], 'blah')
         self.assertIsInstance(parsed['SOME_OBJECT'], SomeClass)

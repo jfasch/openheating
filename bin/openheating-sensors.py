@@ -19,7 +19,7 @@ else:
 logging.getLogger().addHandler(h)
 
 try:
-    config = SensorsConfig(open(args.config_file).read())
+    config = SensorsConfig(open(args.config_file).read(), args.config_file)
     for s in config.sensors():
         s.temperature()
 except Exception as e:

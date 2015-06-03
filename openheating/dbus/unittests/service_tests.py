@@ -166,7 +166,7 @@ class ServiceTest(DBusTestCase):
         service.stop()
 
     def test__servicelist_from_config(self):
-        config = DBusServicesConfig(_config % self.daemon_address())
+        config = DBusServicesConfig(_config % self.daemon_address(), 'no particular filename')
         service_list = config.services()
         for s in service_list:
             self.add_and_start_service(s)

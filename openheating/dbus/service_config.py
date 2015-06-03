@@ -32,11 +32,11 @@ from ..base.config_parser import ConfigParser
 
 
 class DBusServicesConfig:
-    def __init__(self, content):
+    def __init__(self, content, filename):
         self.__services = []
 
         parser = ConfigParser(symbols=_symbols.copy())
-        config = parser.parse(content)
+        config = parser.parse(content, filename)
 
         daemon_address = config.get('DAEMON_ADDRESS')
         service_specs = config.get('SERVICES')
