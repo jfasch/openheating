@@ -1,12 +1,10 @@
 import os, shutil, unittest
 
+
 class PersistentTestCase(unittest.TestCase):
 
     sequential_number = 0
     
-    def __init__(self, methodName='runTest'):
-        unittest.TestCase.__init__(self, methodName)
-
     def rootpath(self):
         return self.__rootpath
 
