@@ -16,3 +16,6 @@ class Hysteresis:
         return value < self.__low
     def between(self, value):
         return self.__low <= value <= self.__high
+
+    def __str__(self):
+        return '(%.1f,%.1f)' % (round(self.__low, 1), round(self.__high, 1))
