@@ -51,34 +51,29 @@ class _Controller(Source, LeafThinker):
 
         self.__wood_tendency.add(self.__wood_temperature)
 
+    def think(self):
         # between either of the hysteresis ranges. undecided; state
         # left as-is, but do some debug output
         if self.__wood_warm.between(self.__wood_temperature):
-            self.__change_state(self.__state, 'within wood-warm hysteresis range')
-            return
-        elif self.__wood_hot.between(self.__wood_temperature):
-            self.__change_state(self.__state, 'within wood-hot hysteresis range')
-            return
+            return self.__change_state(self.__state, 'within wood-warm hysteresis range')
+        if self.__wood_hot.between(self.__wood_temperature):
+            return self.__change_state(self.__state, 'within wood-hot hysteresis range')
 
         # wood above hot -> clearly wood
-        elif self.__wood_hot.above(self.__wood_temperature):
-            self.__change_state(self.WOOD, 'wood is hot')
-            return
+        if self.__wood_hot.above(self.__wood_temperature):
+            return self.__change_state(self.WOOD, 'wood is hot')
         # wood below warm -> clearly oil
-        elif self.__wood_warm.below(self.__wood_temperature):
-            self.__change_state(self.OIL, 'wood is cold')
-            return
+        if self.__wood_warm.below(self.__wood_temperature):
+            return self.__change_state(self.OIL, 'wood is cold')
 
         # wood between warm and hot; let tendency rule
-        elif self.__wood_tendency.rising():
-            self.__change_state(self.OIL_FADE_OUT, 'warm/hot, rising')
-            return
-        elif self.__wood_tendency.falling():
-            self.__change_state(self.WOOD_FADE_OUT, 'warm/hot, falling')
-            return
-        else:
-            # no tendency, leave state as-is
-            self.__change_state(self.__state, 'fading, but no tendency')
+        if self.__wood_tendency.rising():
+            return self.__change_state(self.OIL_FADE_OUT, 'warm/hot, rising')
+        if self.__wood_tendency.falling():
+            return self.__change_state(self.WOOD_FADE_OUT, 'warm/hot, falling')
+
+        # no tendency, leave state as-is
+        return self.__change_state(self.__state, 'fading, but no tendency')
 
     def finish_thinking_local(self):
         super().finish_thinking_local()
@@ -164,8 +159,16 @@ class _Controller(Source, LeafThinker):
             assert False
 
     def __change_state(self, state, msg):
-        self.__debug('%s -> %s (%s)' % (self.__state_str(self.__state), self.__state_str(state), msg))
-        self.__state = state
+        '''change state. output debugging message. 
+        return [(name, thought)], so it can serve as think() return value.'''
+        
+        msg = '%s -> %s (%s)' % (self.__state_str(self.__state), self.__state_str(state), msg)
+        self.__debug(msg)
+        if self.__state == state:
+            return []
+        else:
+            self.__state = state
+            return [(self.name(), msg)]
 
     def __debug(self, msg):
         logger.debug('%s: %s' % (self.name(), msg))
