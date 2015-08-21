@@ -45,9 +45,9 @@ class DirectSource(Source, LeafThinker):
 
     def request(self, sink, temperature):
         if temperature > self.__max_produced_temperature:
-            self.__debug('deny request for %f (can only do %f)' % (temperature, self.__max_produced_temperature))
+            self.__debug('deny request for %.1f (can only do %.1f)' % (temperature, self.__max_produced_temperature))
             return False
-        self.__debug('accepting request for %f (can do %f)' % (temperature, self.__max_produced_temperature))
+        self.__debug('accepting request for %.1f (can do %.1f)' % (temperature, self.__max_produced_temperature))
         self.__requests.add(sink, temperature)
         return True
 

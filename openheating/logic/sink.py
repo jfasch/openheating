@@ -46,7 +46,7 @@ class Sink(LeafThinker):
 
         # temperature below range, have to request
         if self.__temperature_range.below(self.__current_temperature):
-            msg = '%f below %s, requesting' % (self.__current_temperature, str(self.__temperature_range))
+            msg = '%.1f below %s, requesting' % (self.__current_temperature, str(self.__temperature_range))
             self.__debug(msg)
             self.__requesting = True
             self.__source.request(self, self.__requested_temperature)
@@ -54,7 +54,7 @@ class Sink(LeafThinker):
 
         # temperature above range, no request
         if self.__temperature_range.above(self.__current_temperature):
-            msg = '%f above %s, not requesting' % (self.__current_temperature, str(self.__temperature_range))
+            msg = '%.1f above %s, not requesting' % (self.__current_temperature, str(self.__temperature_range))
             self.__debug(msg)
             self.__requesting = False
             return [(self.name(), msg)]
@@ -63,7 +63,7 @@ class Sink(LeafThinker):
         # (we are just heating up). else, we are cooling and don't
         # request.
         if self.__requesting:
-            msg = '%f within %s, keep requesting' % (self.__current_temperature, str(self.__temperature_range))
+            msg = '%.1f within %s, keep requesting' % (self.__current_temperature, str(self.__temperature_range))
             self.__debug(msg)
             self.__source.request(self, self.__requested_temperature)
             return [(self.name(), msg)]

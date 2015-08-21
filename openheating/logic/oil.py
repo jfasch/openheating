@@ -62,22 +62,22 @@ class OilCombo(DirectSource):
 
     def think(self):
         if self.__heating_range.above(self.__temperature):
-            msg = 'hot enough, off: temperature=%f,heat/hi=%f' % (self.__temperature, self.__heating_range.high())
+            msg = 'hot enough, off: temperature=%.1f,heat/hi=%.1f' % (self.__temperature, self.__heating_range.high())
             self.__debug(msg)
             return self.__think_set_switch_state(False, msg)
         if self.__heating_range.below(self.__temperature):
             if self.num_requests() > 0:
-                msg = 'not hot enough, on: temperature=%f,heat/lo=%f,requests=%s' % \
+                msg = 'not hot enough, on: temperature=%.1f,heat/lo=%.1f,requests=%s' % \
                       (self.__temperature, self.__minimum_temperature_range.low(), self.print_requests())
                 self.__debug(msg)
                 return self.__think_set_switch_state(True, msg)
             if self.__minimum_temperature_range.below(self.__temperature):
-                msg = 'anti frost, on: temperature=%f,min/lo=%f' % \
+                msg = 'anti frost, on: temperature=%.1f,min/lo=%.1f' % \
                       (self.__temperature, self.__minimum_temperature_range.low())
                 self.__debug(msg)
                 return self.__think_set_switch_state(True, msg)
             if self.__minimum_temperature_range.above(self.__temperature):
-                msg = 'anti frost done, off: temperature=%f,min/hi=%f' % \
+                msg = 'anti frost done, off: temperature=%.1f,min/hi=%.1f' % \
                       (self.__temperature, self.__minimum_temperature_range.high())
                 self.__debug(msg)
                 return self.__think_set_switch_state(False, msg)
