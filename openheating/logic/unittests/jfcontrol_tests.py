@@ -12,6 +12,8 @@ import logging
 
 class JFControlTest(unittest.TestCase):
     def setUp(self):
+        # setup temperatures so that everyone's satisfied, nothing is
+        # going on.
         self.__th_room = TestThermometer(initial_temperature=23)
         self.__th_water = TestThermometer(initial_temperature=60)
         self.__th_wood = TestThermometer(initial_temperature=23)
@@ -54,7 +56,9 @@ class JFControlTest(unittest.TestCase):
         self.assertEqual(self.__sw_oil.get_state(), False)
         self.assertEqual(self.__sw_wood_valve.get_state(), False)
 
-    def test__scenario__demo1__oilonly__stepback(self):
+    def test__scenario__demo__oilonly__stepback(self):
+        '''demo scenario: oil only; show how consumers step back in favor of each other'''
+
         # water falls to 20 which is far too cold. oil starts burning.
         self.__th_water.set_temperature(20)
         self.__brain.think()
@@ -146,6 +150,63 @@ class JFControlTest(unittest.TestCase):
         self.assertEqual(self.__sw_room.get_state(), False)
         self.assertEqual(self.__sw_oil.get_state(), False)
         self.assertEqual(self.__sw_wood_valve.get_state(), False)
+
+    def test__scenario__demo__switching_between_oil_and_wood(self):
+        '''demo scenario: wood coming while oil is warm, then hot enough and switching over. '''
+
+        # oil is at 40, initially. everyone's satisfied. water is at
+        # 60, so it cannot take 40. but room is at 23, and it will
+        # take.
+        self.__th_oil.set_temperature(40)
+        self.__brain.think()
+
+        self.assertEqual(self.__sw_water.get_state(), False)
+        self.assertEqual(self.__sw_room.get_state(), True)
+        self.assertEqual(self.__sw_oil.get_state(), False)
+        self.assertEqual(self.__sw_wood_valve.get_state(), False)
+
+        # wood heats up at 33 (this is the temperature where we know
+        # that wood is coming). oil is still at 40, and room still
+        # takes from there.
+        self.__th_wood.set_temperature(33)
+        self.__brain.think()
+
+        self.assertEqual(self.__sw_water.get_state(), False)
+        self.assertEqual(self.__sw_room.get_state(), True)
+        self.assertEqual(self.__sw_oil.get_state(), False)
+        self.assertEqual(self.__sw_wood_valve.get_state(), False)
+
+        # oil cools down to 21. all idle again, wood still only coming
+        # and not active.
+        self.__th_oil.set_temperature(21)
+        self.__brain.think()
+
+        self.assertEqual(self.__sw_water.get_state(), False)
+        self.assertEqual(self.__sw_room.get_state(), False)
+        self.assertEqual(self.__sw_oil.get_state(), False)
+        self.assertEqual(self.__sw_wood_valve.get_state(), False)
+
+        # water falls to 20. there's definitely a need. wood is not
+        # hot enough to be activated. BUT: we know wood is coming, so
+        # oil won't burn as would be the case otherwise.
+        self.__th_water.set_temperature(20)
+        self.__brain.think()
+        
+        self.assertEqual(self.__sw_water.get_state(), False)
+        self.assertEqual(self.__sw_room.get_state(), False)
+        self.assertEqual(self.__sw_oil.get_state(), False)
+        self.assertEqual(self.__sw_wood_valve.get_state(), False)
+        
+        # wood heats up to 43 which is "hot". activate wood. water
+        # will take.
+        self.__th_wood.set_temperature(43)
+        print(self.__brain.think())
+
+        self.assertEqual(self.__sw_water.get_state(), True)
+        self.assertEqual(self.__sw_room.get_state(), False)
+        self.assertEqual(self.__sw_oil.get_state(), False)
+        self.assertEqual(self.__sw_wood_valve.get_state(), True)
+
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(JFControlTest)
 
