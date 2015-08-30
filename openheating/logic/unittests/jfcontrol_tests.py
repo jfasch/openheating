@@ -8,6 +8,7 @@ from openheating.logic.thermometer_center import ThermometerCenter, ThermometerC
 
 import unittest
 import logging
+import pprint
 
 
 class JFControlTest(unittest.TestCase):
@@ -177,7 +178,7 @@ class JFControlTest(unittest.TestCase):
         self.assertEqual(self.__sw_wood_valve.get_state(), False)
 
         # oil cools down to 21. all idle again, wood still only coming
-        # and not active.
+        # and not active - hence room is off.
         self.__th_oil.set_temperature(21)
         self.__brain.think()
 
@@ -186,9 +187,10 @@ class JFControlTest(unittest.TestCase):
         self.assertEqual(self.__sw_oil.get_state(), False)
         self.assertEqual(self.__sw_wood_valve.get_state(), False)
 
-        # water falls to 20. there's definitely a need. wood is not
-        # hot enough to be activated. BUT: we know wood is coming, so
-        # oil won't burn as would be the case otherwise.
+        # water falls to 20. there's *definitely* a need (water's
+        # low-threshold is 50). wood is not hot enough to be
+        # activated. BUT: we know wood is coming, so oil *won't* burn
+        # as would be the case otherwise.
         self.__th_water.set_temperature(20)
         self.__brain.think()
         
@@ -198,9 +200,10 @@ class JFControlTest(unittest.TestCase):
         self.assertEqual(self.__sw_wood_valve.get_state(), False)
         
         # wood heats up to 43 which is "hot". activate wood. water
-        # will take.
+        # will take. room - which is satisfied - steps back in favor
+        # of water.
         self.__th_wood.set_temperature(43)
-        print(self.__brain.think())
+        pprint.pprint(self.__brain.think())
 
         self.assertEqual(self.__sw_water.get_state(), True)
         self.assertEqual(self.__sw_room.get_state(), False)

@@ -1,74 +1,86 @@
-from .thinker import LeafThinker
+from .transport import Transport
+from .thinker import Thinker
 from .tendency import Tendency
 
 from ..base import logger
 
 
-class Sink(LeafThinker):
-    def __init__(self, name, thermometer, temperature_range):
-        LeafThinker.__init__(self, name)
+class Sink(Thinker):
+    def __init__(self, name, thermometer, temperature_range, diff_hysteresis, pump_switch):
+        Thinker.__init__(self, name)
 
         self.__thermometer = thermometer
         self.__temperature_range = temperature_range
         self.__source = None
-        self.__requesting = False
 
-        # request desired upper bound plus 3. this is pretty
-        # arbitrary.
+        # parameters for our transport. that will be made once we know
+        # the source we are attached to.
+        self.__diff_hysteresis = diff_hysteresis
+        self.__pump_switch = pump_switch
 
-        # for example, if we are a boiler (hot water reservoir), then
-        # our upper bound will be at about 80. requesting 83 at a wood
-        # oven will fail, whereas 83 at a oil oven will succeed. and
-        # that's the plan after all.
+        self.__transport = None
 
-        # anyway, let's see where all this leads us.
-        self.__requested_temperature = temperature_range.high() + 3
-
-    def set_source(self, source):
-        assert self.__source is None
-        self.__source = source
-
+    # jjj get rid of this once we got rid of transport
     def temperature(self):
         return self.__current_temperature
 
-    def init_thinking_local(self):
-        self.__current_temperature = self.__thermometer.temperature()
-        self.__decision_made = False
+    # jjj remove. no sink needs to know its source.
+    def set_source(self, source):
+        assert self.__source is None
 
-    def finished_thinking(self):
-        del self.__current_temperature
-        del self.__decision_made
+        self.__source = source
+
+        # jjj create transport. we don't need the parameters anymore,
+        # so del them afterwards.
+        if True:
+            self.__transport = Transport(name=self.__source.name()+'->'+self.name(),
+                                         source=self.__source,
+                                         sink=self,
+                                         diff_hysteresis=self.__diff_hysteresis, 
+                                         pump_switch=self.__pump_switch)
+            del self.__diff_hysteresis
+            del self.__pump_switch
+
+    def init_thinking_local(self):
+        self.__transport.init_thinking_local()
+
+        # jjj this need not be a member - it's just that Transport
+        # needs it in its decisions. get rid of it once we got rid of
+        # transport.
+        self.__current_temperature = self.__thermometer.temperature()
+
+        self.__need = None
+
+        if self.__temperature_range.below(self.__current_temperature):
+            # temperature below range, definitely in need for heat
+            msg = '%.1f below %s -> need' % (self.__current_temperature, str(self.__temperature_range))
+            self.__debug(msg)
+            self.__need = True
+        elif self.__temperature_range.above(self.__current_temperature):
+            # temperature above range, but could still take.
+            msg = '%.1f above %s -> don\'t care' % (self.__current_temperature, str(self.__temperature_range))
+            self.__debug(msg)
+            self.__need = None
+        else:
+            # temperatur within range, could take heat but don't need.
+            msg = '%.1f within %s -> need' % (self.__current_temperature, str(self.__temperature_range))
+            self.__debug(msg)
+            self.__need = True
+
+    def init_thinking_global(self):
+        self.__transport.init_thinking_global()
 
     def think(self):
-        if self.__decision_made:
-            return []
-        self.__decision_made = True
+        return self.__transport.think()
 
-        # temperature below range, have to request
-        if self.__temperature_range.below(self.__current_temperature):
-            msg = '%.1f below %s, requesting' % (self.__current_temperature, str(self.__temperature_range))
-            self.__debug(msg)
-            self.__requesting = True
-            self.__source.request(self, self.__requested_temperature)
-            return [(self.name(), msg)]
+    def finish_thinking_global(self):
+        self.__transport.finish_thinking_global()
 
-        # temperature above range, no request
-        if self.__temperature_range.above(self.__current_temperature):
-            msg = '%.1f above %s, not requesting' % (self.__current_temperature, str(self.__temperature_range))
-            self.__debug(msg)
-            self.__requesting = False
-            return [(self.name(), msg)]
+    def finish_thinking_local(self):
+        self.__transport.finish_thinking_local()
 
-        # temperature within range. keep requesting if we were already
-        # (we are just heating up). else, we are cooling and don't
-        # request.
-        if self.__requesting:
-            msg = '%.1f within %s, keep requesting' % (self.__current_temperature, str(self.__temperature_range))
-            self.__debug(msg)
-            self.__source.request(self, self.__requested_temperature)
-            return [(self.name(), msg)]
-
-        return []
-
+    def test__get_need(self):
+        return self.__need
+    
     def __debug(self, msg):
         logger.debug('sink %s: %s' % (self.name(), msg))

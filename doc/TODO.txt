@@ -1,3 +1,55 @@
+* refactoring the dreaded source/sink game
+
+  * source knows all its sinks, personally. no transport in
+    between. maybe move transport into sink, that's where it
+    belongs. (they're 1:1 anyway)
+
+  * sink does not request actively. rather it is asked by source if
+    temperature is needed. this is simpler. no need for the dreaded
+    "request" bullshit. no need for "DirectSource" bullshit.
+
+  * problems
+
+    * oil needs a rewrite. anyway, pretty much everything does, so
+      this should not be an issue.
+
+    * oil-wood-combination ditto.
+
+    * step-back needs to be solved differently (more clearly I
+      hope). currently this is done by transport (well, not anymore as
+      I just removed it) which ought to be part of sink itself. two
+      major points here ...
+
+      * "offer" - decision whether to produce. source asks every sink
+        if temperature is needed. this is the analogy to the "request"
+        as it is now. somebody needs -> something is produced.
+
+        answers: 1. "yes, definitely required". 2. "no thanks"
+
+      * decision whether to take once temperature is available. if
+        somebody answered the first question (whether to produce) with
+        "yes, definitely required", then he will generally take once
+        temperature is available. this is not necessarily the case
+        however - temperature might have become available otherwise,
+        and the request might not hold true anymore.
+
+    * maximum available temperature: can be done with the "offer"
+      above, as a simple parameter. just have to add a few tests.
+
+  * dissolve transport entirely, and make it part of sink. currently
+    sink calls into transport on every Thinker action. be done with
+    that.
+
+    this means that neither source nor sink will need their
+    temperature() methods anymore. sink alone is responsible to *take*
+    the heat. (anyway, it will have to know source's temperature
+    somehow. pass a parameter when source talks to its sinks.)
+
+  * polymorphic sink. currently, a sink can take any amount of heat
+    (Sink.__need is always True or None, never False). write one that
+    denies (False), and devise (think of, at least) an ALARM scenario
+    where source has and everyone denies.
+
 * dissolve openheating.testutils
 
 * figure out how to properly (centrally) define dbus interfaces. will

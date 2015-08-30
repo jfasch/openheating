@@ -1,45 +1,4 @@
-from abc import ABCMeta, abstractmethod
-
-class Thinker(metaclass=ABCMeta):
-    @abstractmethod
-    def name(self):
-        return 'some.name'
-
-    @abstractmethod
-    def visit_thinker(self, seen):
-        '''debugging aid; augments seen with (name, object) tuples'''
-        pass
-
-    @abstractmethod
-    def init_thinking_local(self):
-        '''called before a think round. cannot count on anything else being
-        initialized, so take care that you remain standalone.
-        '''
-        pass
-
-    @abstractmethod
-    def init_thinking_global(self):
-        '''called before a think round. everybody's initialized locally
-        (init_thinking_local() has been called on each participant),
-        so it is safe to depend on others.
-        '''
-        pass
-
-    @abstractmethod
-    def think(self):
-        '''Return thoughts. [(name, thought_string), (name, thought_string), ...] '''
-        return []
-
-    @abstractmethod
-    def finish_thinking_global(self):
-        return
-
-    @abstractmethod
-    def finish_thinking_local(self):
-        return
-        
-
-class LeafThinker(Thinker):
+class Thinker:
     def __init__(self, name):
         self.__name = name
 
@@ -47,22 +6,32 @@ class LeafThinker(Thinker):
         return self.__name
 
     def visit_thinker(self, seen):
+        '''debugging aid; augments seen with (name, object) tuples'''
         seen.append((self.__name, self))
 
     def init_thinking_local(self):
+        '''called before a think round. cannot count on anything else being
+        initialized, so take care that you remain standalone.
+        '''
         pass
 
     def init_thinking_global(self):
+        '''called before a think round. everybody's initialized locally
+        (init_thinking_local() has been called on each participant),
+        so it is safe to depend on others.
+        '''
         pass
 
     def think(self):
+        '''Return thoughts. [(name, thought_string), (name, thought_string), ...] '''
         return []
 
     def finish_thinking_global(self):
-        return
+        pass
 
     def finish_thinking_local(self):
-        return
+        pass
+        
 
 class CompositeThinker(Thinker):
     def __init__(self, name, thinkers):

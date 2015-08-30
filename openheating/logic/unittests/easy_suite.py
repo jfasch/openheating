@@ -1,4 +1,5 @@
 from .brain_tests import suite as brain_suite
+from source_sink_tests import suite as source_sink_suite
 from .tendency_tests import suite as tendency_suite
 from .scenario_request_with_temperature import suite as scenario_request_with_temperature_suite
 from .sink_tests import suite as sink_suite
@@ -16,6 +17,7 @@ import unittest
 suite = unittest.TestSuite()
 
 suite.addTest(brain_suite)
+suite.addTest(source_sink_suite)
 suite.addTest(tendency_suite)
 suite.addTest(sink_suite)
 suite.addTest(transport_suite)

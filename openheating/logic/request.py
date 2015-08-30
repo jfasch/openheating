@@ -1,3 +1,6 @@
+# jjjj
+assert False
+
 class TemperatureRequests:
     def __init__(self):
         self.__requests = {}

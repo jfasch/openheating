@@ -30,9 +30,9 @@ class Brain:
         # infinite loop detection
         self.__max_loop = max_loop
 
-    def think(self, message=''):
+    def think(self, test_message=''):
         thinkers_str = ','.join((t.name() for t in self.__thinkers))
-        logger.debug('THINK ROUND #%d (%s), thinkers:%s' % (self.__round, message, thinkers_str))
+        logger.debug('THINK ROUND #%d (%s), thinkers:%s' % (self.__round, test_message, thinkers_str))
 
         for t in self.__thinkers:
             t.init_thinking_local()
