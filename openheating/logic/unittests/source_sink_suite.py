@@ -49,7 +49,6 @@ class _SourceSinkSuite(unittest.TestCase):
             self.__sink_thermometer.set_temperature(20)
             self.__brain.think()
             self.assertEqual(self.__sink_switch.get_state(), False)
-            self.assertEqual(self.__sink.test__get_need(), True)
 
         # source 60, sink 20. sink needs (>23), source has quite a lot
         # -> pump on.
@@ -58,7 +57,6 @@ class _SourceSinkSuite(unittest.TestCase):
             self.__sink_thermometer.set_temperature(20)
             self.__brain.think()
             self.assertEqual(self.__sink_switch.get_state(), True)
-            self.assertEqual(self.__sink.test__get_need(), True)
 
         # source 60, sink 23.2. sink still needs because was below
         # range in the previous step above, and is within range right
@@ -68,8 +66,7 @@ class _SourceSinkSuite(unittest.TestCase):
             self.__sink_thermometer.set_temperature(23.2)
             self.__brain.think()
             self.assertEqual(self.__sink_switch.get_state(), True)
-            self.assertEqual(self.__sink.test__get_need(), True)
-
+            
         # source 60, sink 30.1 (above range). sink does not need
         # anymore, but announces that it *could* take. sink still
         # takes (source has 60) because noone else needs.
@@ -78,19 +75,41 @@ class _SourceSinkSuite(unittest.TestCase):
             self.__sink_thermometer.set_temperature(30.1)
             self.__brain.think()
             self.assertEqual(self.__sink_switch.get_state(), True)
-            # sink does not need neither care about any need -> None
-            self.assertEqual(self.__sink.test__get_need(), None)
 
     def test__sink_falling(self):
         '''Sink above range, falls, and does not need again once it is below
         range.
 
-        When between range, it will not need because the
-        temperature is falling - which is the entire point of the
-        hysteresis thing I believe.
+        When between range, it will not need because the temperature
+        is falling - which is the entire point of the hysteresis thing
+        I believe.
 
         '''
-        self.fail()
+        self.__source_thermometer.set_temperature(20)
+
+        if True:
+            # above range
+            self.__sink_thermometer.set_temperature(31)
+            self.__brain.think()
+            self.assertEqual(self.__sink_switch.get_state(), False)
+
+        if True:
+            # between range
+            self.__sink_thermometer.set_temperature(29)
+            self.__brain.think()
+            self.assertEqual(self.__sink_switch.get_state(), False)
+
+        if True:
+            # below range, but above/equal source
+            self.__sink_thermometer.set_temperature(20)
+            self.__brain.think()
+            self.assertEqual(self.__sink_switch.get_state(), False)
+
+        if True:
+            # below range, and below source
+            self.__sink_thermometer.set_temperature(10)
+            self.__brain.think()
+            self.assertEqual(self.__sink_switch.get_state(), True)
 
     def test__diff(self):
         '''Source and sink must differ by a certain (configurable)
@@ -137,7 +156,9 @@ class _SourceSinkSuite(unittest.TestCase):
 
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(_SourceSinkSuite)
-
+# print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+# suite = unittest.TestSuite()
+# suite.addTest(_SourceSinkSuite('test__sink_falling'))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

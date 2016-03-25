@@ -6,6 +6,7 @@ from ..base import logger
 
 
 class Sink(Thinker):
+
     def __init__(self, name, thermometer, temperature_range, diff_hysteresis, pump_switch):
         Thinker.__init__(self, name)
 
@@ -49,8 +50,6 @@ class Sink(Thinker):
         # transport.
         self.__current_temperature = self.__thermometer.temperature()
 
-        self.__need = None
-
         if self.__temperature_range.below(self.__current_temperature):
             # temperature below range, definitely in need for heat
             msg = '%.1f below %s -> need' % (self.__current_temperature, str(self.__temperature_range))
@@ -62,7 +61,8 @@ class Sink(Thinker):
             self.__debug(msg)
             self.__need = None
         else:
-            # temperatur within range, could take heat but don't need.
+            # temperature within range, could take heat but don't
+            # need.
             msg = '%.1f within %s -> need' % (self.__current_temperature, str(self.__temperature_range))
             self.__debug(msg)
             self.__need = True
