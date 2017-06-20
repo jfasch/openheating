@@ -1,9 +1,4 @@
-from . import names
-
-import pydbus
-
-
-class Thermometer:
+class DBusThermometerObject:
     '''
     <node>
       <interface name='org.openheating.Thermometer'>

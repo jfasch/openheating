@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.dbus.names import THERMOMETER_IFACE
+import openheating.dbus.dbus_names as dbus_names
 from openheating.core.thermometer import Thermometer
-from openheating.dbus.thermometer import Thermometer as DBusThermometer
+from openheating.dbus.dbus_thermometer_object import DBusThermometerObject
 
 from pydbus import SessionBus
 from gi.repository import GLib
@@ -15,6 +15,6 @@ class MyThermometer(Thermometer):
 
 loop = GLib.MainLoop()    
 bus = SessionBus()
-bus.publish(THERMOMETER_IFACE, ('/a/b', DBusThermometer(MyThermometer())))
+bus.publish(dbus_names.THERMOMETER_IFACE, ('/a/b', DBusThermometerObject(MyThermometer())))
 
 loop.run()
