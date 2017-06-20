@@ -11,7 +11,7 @@ import time
 
 class MyThermometer(Thermometer):
     def get_temperature(self):
-        return 21.0, time.time()
+        return 21.0
 
 loop = GLib.MainLoop()    
 bus = SessionBus()
