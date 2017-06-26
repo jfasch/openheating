@@ -27,6 +27,7 @@ class TemperatureProfileTest(unittest.TestCase):
         self.assertEqual(timestamp.hour, 1)
         self.assertEqual(timestamp.minute, 2)
         self.assertEqual(timestamp.second, 0)
+        self.assertAlmostEqual(temperature, 10.1)
 
         sample_id, timestamp, temperature = profile.get_samples()[1]
         self.assertEqual(sample_id, 1)
@@ -36,6 +37,7 @@ class TemperatureProfileTest(unittest.TestCase):
         self.assertEqual(timestamp.hour, 1)
         self.assertEqual(timestamp.minute, 2)
         self.assertEqual(timestamp.second, 1)
+        self.assertAlmostEqual(temperature, 10.2)
 
         sample_id, timestamp, temperature = profile.get_samples()[2]
         self.assertEqual(sample_id, 2)
@@ -45,5 +47,6 @@ class TemperatureProfileTest(unittest.TestCase):
         self.assertEqual(timestamp.hour, 1)
         self.assertEqual(timestamp.minute, 2)
         self.assertEqual(timestamp.second, 2)
+        self.assertAlmostEqual(temperature, 10.3)
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(TemperatureProfileTest)
