@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-import datetime
 
 
 class Thermometer(metaclass=ABCMeta):
