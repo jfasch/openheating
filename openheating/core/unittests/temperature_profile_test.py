@@ -19,7 +19,7 @@ class TemperatureProfileTest(unittest.TestCase):
         profile.pull_sample(datetime.datetime(1966, 6, 19, 1, 2, 1))
         profile.pull_sample(datetime.datetime(1966, 6, 19, 1, 2, 2))
 
-        sample_id, timestamp, temperature = profile.get_samples()[0]
+        sample_id, timestamp, temperature = profile.get_raw_samples()[0]
         self.assertEqual(sample_id, 0)
         self.assertEqual(timestamp.year, 1966)
         self.assertEqual(timestamp.month, 6)
@@ -29,7 +29,7 @@ class TemperatureProfileTest(unittest.TestCase):
         self.assertEqual(timestamp.second, 0)
         self.assertAlmostEqual(temperature, 10.1)
 
-        sample_id, timestamp, temperature = profile.get_samples()[1]
+        sample_id, timestamp, temperature = profile.get_raw_samples()[1]
         self.assertEqual(sample_id, 1)
         self.assertEqual(timestamp.year, 1966)
         self.assertEqual(timestamp.month, 6)
@@ -39,7 +39,7 @@ class TemperatureProfileTest(unittest.TestCase):
         self.assertEqual(timestamp.second, 1)
         self.assertAlmostEqual(temperature, 10.2)
 
-        sample_id, timestamp, temperature = profile.get_samples()[2]
+        sample_id, timestamp, temperature = profile.get_raw_samples()[2]
         self.assertEqual(sample_id, 2)
         self.assertEqual(timestamp.year, 1966)
         self.assertEqual(timestamp.month, 6)

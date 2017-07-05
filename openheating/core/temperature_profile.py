@@ -14,5 +14,5 @@ class TemperatureProfile:
         sample_id = next(self.__idgen)
         self.__samples.append((sample_id, timestamp, temperature))
 
-    def get_samples(self):
+    def get_raw_samples(self):
         return self.__samples
