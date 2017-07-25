@@ -1,0 +1,2 @@
+pydbus cannot bind objects onto a custom bus (ie, not system or
+session)
