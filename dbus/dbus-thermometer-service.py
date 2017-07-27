@@ -19,7 +19,7 @@ class DBUSThermometer(dbus.service.Object):
 
 
 mainloop = DBusGMainLoop(set_as_default=True)
-connection = dbus.bus.BusConnection('unix:path=/var/run/openheating/openheating-dbus-daemon.socket', mainloop=mainloop)
+connection = dbus.bus.BusConnection('unix:path=/home/jfasch/work/openheating/dbus/run/openheating-dbus-daemon.socket', mainloop=mainloop)
 connection.set_exit_on_disconnect(True)
 bus_name = dbus.service.BusName('org.openheating.ThermometerService', connection)
 
