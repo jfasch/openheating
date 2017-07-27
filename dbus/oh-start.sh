@@ -42,10 +42,11 @@ _start_bus() {
 
     _start dbus-daemon --config-file $OH_ROOT/dbus/busconf/openheating-dbus-daemon.conf
 
-    echo $_BUSSOCKET
+    local nwaits=0
     while [ ! -S $_BUSSOCKET ]; do
+	((nwaits++))
 	sleep 0.5
-	_debug $_BUSSOCKET not '(yet)' there, waiting ...
+	[ $nwaits -ge 3 ] && _warn $_BUSSOCKET not '(yet)' there, waiting ...
     done
 }
 
