@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from openheating.core.thermometer_fixed import FixedThermometer
+from openheating.thermometer_fixed import FixedThermometer
 
 from gi.repository import GLib
 import dbus.bus
@@ -20,8 +20,8 @@ class DBUSThermometer(dbus.service.Object):
 
 mainloop = DBusGMainLoop(set_as_default=True)
 connection = dbus.bus.BusConnection('unix:path=/home/jfasch/work/openheating/dbus/run/openheating-dbus-daemon.socket', mainloop=mainloop)
-connection.set_exit_on_disconnect(True)
 bus_name = dbus.service.BusName('org.openheating.ThermometerService', connection)
+connection.set_exit_on_disconnect(True)
 
 th = DBUSThermometer(bus_name, '/a/b', FixedThermometer(1.2))
 

@@ -25,7 +25,7 @@ Calling
 -------
 
 ::
-    dbus-send --bus unix:path=/var/run/openheating/openheating-dbus-daemon.socket \
+    dbus-send --bus unix:path=$HOME/work/openheating/dbus/run/openheating-dbus-daemon.socket \
       --dest=org.openheating.ThermometerService \
       --type=method_call \
       --print-reply \

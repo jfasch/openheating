@@ -1,5 +1,5 @@
-from openheating.core.thermometer import Thermometer
-from openheating.core.temperature_profile import TemperatureProfile
+from openheating.thermometer import Thermometer
+from openheating.temperature_profile import TemperatureProfile
 
 import datetime
 import unittest
