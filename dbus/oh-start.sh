@@ -30,7 +30,7 @@ _start() {
 
 _start_bus() {
     if [ -f $_BUSPID ]; then
-	pid=$(cat $_BUSPID)
+	local pid=$(cat $_BUSPID)
 	if kill -0 $pid; then
 	    _error bus daemon still running, PID $pid
 	    return 1
