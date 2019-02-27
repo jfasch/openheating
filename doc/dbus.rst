@@ -16,6 +16,16 @@ with it.
 Commandline Stuff
 =================
 
+Introspection
+-------------
+
+Find object nanmes
+
+$ gdbus call --session \
+    --dest org.freedesktop.DBus \
+    --object-path /org/freedesktop/DBus \
+    --method org.freedesktop.DBus.ListNames
+
 Debug, Monitor
 --------------
 
