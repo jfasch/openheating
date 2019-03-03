@@ -9,13 +9,17 @@ from openheating.dbus.thermometer_service import DBusThermometerService
 import dbussy
 import ravel
 import asyncio
-import sys
+import argparse
 
 
 busname = busnames.iface_name_pfx + '.ThermometerService'
 
 async def main():
-    thermometers = read_thermometers(sys.stdin)
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--configfile', default='/etc/openheating/thermometers.conf', help='Configuration file')
+    args = parser.parse_args()
+
+    thermometers = read_thermometers(open(args.configfile))
     connection = dbus_service.create_connection(busname=busname)
 
     # register service object
