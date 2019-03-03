@@ -2,6 +2,8 @@
 
 from openheating.thermometers_ini import read as read_thermometers
 import openheating.dbus.names as busnames
+from openheating.dbus.thermometer import DBusThermometer
+from openheating.dbus.thermometer_service import DBusThermometerService
 
 import dbussy
 import ravel
@@ -11,51 +13,10 @@ import sys
 
 bus_name = busnames.iface_name_pfx + '.ThermometerService'
 
-service_iface_name = bus_name
+# ThermometerService is at /
 service_object_path = '/'
-
-thermometer_iface_name = busnames.iface_name_pfx + '.Thermometer'
+# Thermometers are in a subdirectory
 thermometer_object_path_base = '/thermometers'
-
-
-# ----------------------------------------------------------------------
-@ravel.interface(
-    ravel.INTERFACE.SERVER,
-    name = service_iface_name)
-
-class ThermometerService:
-    """Primary entry point for {busname}. Currently only provides a list
-    of thermometer names; subject to be extended.
-
-    """.format(busname=bus_name)
-
-    def __init__(self, thermometers):
-        self.thermometers = thermometers
-
-    @ravel.method(
-        name = 'all_names',
-        in_signature = '',
-        out_signature = 'as',
-    )
-    def all_names(self):
-        return [list(self.thermometers.keys())]
-
-# ----------------------------------------------------------------------
-@ravel.interface(
-    ravel.INTERFACE.SERVER,
-    name = thermometer_iface_name)
-
-class Thermometer:
-    def __init__(self, thermometer):
-        self.thermometer = thermometer
-
-    @ravel.method(
-        name = 'get_temperature',
-        in_signature = '',
-        out_signature = 'd',
-    )
-    def get_temperature(self):
-        return (self.thermometer.get_temperature(),)
 
 
 thermometers = read_thermometers(sys.stdin)
@@ -66,17 +27,20 @@ bus.attach_asyncio(loop)
 bus.request_name(
     bus_name=bus_name, 
     flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
+
+# register service object
 bus.register(
     path=service_object_path,
     fallback=True,
-    interface=ThermometerService(thermometers=thermometers)
+    interface=DBusThermometerService(thermometers=thermometers)
   )
 
+# register object for each thermometer
 for name, thermometer in thermometers.items():
     bus.register(
         path='/'.join((thermometer_object_path_base, name)),
         fallback=True,
-        interface=Thermometer(thermometer=thermometer)
+        interface=DBusThermometer(thermometer=thermometer)
     )
 
 loop.run_forever()
