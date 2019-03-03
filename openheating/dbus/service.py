@@ -5,12 +5,15 @@ import ravel
 import dbussy
 
 
-def create_connection(busname):
+def create_connection(busname, session):
     """Create DBus connection, glue it into asyncio, and request busname
     for it
 
     """
-    bus = ravel.session_bus()
+    if session:
+        bus = ravel.session_bus()
+    else:
+        bus = ravel.system_bus()
     bus.attach_asyncio()
     bus.request_name(
         bus_name=busname, 

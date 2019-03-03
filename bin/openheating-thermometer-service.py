@@ -17,10 +17,13 @@ busname = busnames.iface_name_pfx + '.ThermometerService'
 async def main():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--configfile', default='/etc/openheating/thermometers.conf', help='Configuration file')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--session', action='store_true', help='Connect to the session bus')
+    group.add_argument('--system', action='store_true', help='Connect to the system bus')
     args = parser.parse_args()
 
     thermometers = read_thermometers(open(args.configfile))
-    connection = dbus_service.create_connection(busname=busname)
+    connection = dbus_service.create_connection(busname=busname, session=args.session)
 
     # register service object
     connection.register(
