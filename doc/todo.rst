@@ -6,19 +6,21 @@ Cleanup
 Thermometers
 ============
 
-* thermometers.ini
-
-  * implement other thermometer types than "fixed"
-  * detect duplicate thermometer names
-  * error-tests
-  * define exception(s)
-
 * Thermometer service
 
   * Proper commandline parsing
 
     * configfile (thermometers.ini)
     * session/system bus
+
+* client program: read temperatures from all thermometers
+
+* thermometers.ini
+
+  * implement other thermometer types than "fixed"
+  * detect duplicate thermometer names
+  * error-tests
+  * define exception(s)
 
 D-Bus Understanding
 ===================

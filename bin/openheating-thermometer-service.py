@@ -17,10 +17,18 @@ service_object_path = '/'
 thermometer_iface_name = busnames.iface_name_pfx + '.Thermometer'
 thermometer_object_path_base = '/thermometers'
 
+
+# ----------------------------------------------------------------------
 @ravel.interface(
     ravel.INTERFACE.SERVER,
     name = service_iface_name)
+
 class ThermometerService:
+    """Primary entry point for {busname}. Currently only provides a list
+    of thermometer names; subject to be extended.
+
+    """.format(busname=bus_name)
+
     def __init__(self, thermometers):
         self.thermometers = thermometers
 
@@ -32,9 +40,11 @@ class ThermometerService:
     def all_names(self):
         return [list(self.thermometers.keys())]
 
+# ----------------------------------------------------------------------
 @ravel.interface(
     ravel.INTERFACE.SERVER,
     name = thermometer_iface_name)
+
 class Thermometer:
     def __init__(self, thermometer):
         self.thermometer = thermometer
