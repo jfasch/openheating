@@ -6,53 +6,48 @@ import openheating.dbus.service as dbus_service
 from openheating.dbus.thermometer import DBusThermometer
 from openheating.dbus.thermometer_service import DBusThermometerService
 
-import dbussy
-import ravel
-
 import asyncio
 import argparse
-import logging
-import traceback
 
 
-busname = busnames.iface_name_pfx + '.ThermometerService'
+def create_service(loop, thermometers):
+    """Create the thermometer service
 
-# def exception_handler(loop, context):
-#     exc = context.get('exception')
-#     tbe = traceback.TracebackException(exc)
-#     print(list(tbe.format()))
-#     logging.error('Error: '+str(msg))
-#     loop.stop()
+    Creates a dbus connection, and registers objects on it:
 
-async def main(loop):
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--ini', help='Thermometer configuration file')
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--session', action='store_true', help='Connect to the session bus')
-    group.add_argument('--system', action='store_true', help='Connect to the system bus')
-    args = parser.parse_args()
+    * Thermometer service object
+    * A thermometer object for each thermometer in `thermometers`
 
-    thermometers = read_config_file(args.ini)
-    connection = dbus_service.create_connection(busname=busname, session=args.session, loop=loop)
+    """
 
-    # register service object
+    connection = dbus_service.create_connection(
+        busname=busnames.thermometer_service_busname,
+        is_session=args.session, 
+        loop=loop)
+
     connection.register(
         path='/',
         fallback=True,
         interface=DBusThermometerService(thermometers=thermometers)
     )
-
-    # register object for each thermometer
     for name, thermometer in thermometers.items():
-        print(name)
         connection.register(
             path='/thermometers/'+name,
             fallback=True,
             interface=DBusThermometer(thermometer=thermometer)
         )
+    
+    return connection
 
-    await dbus_service.termination(loop)
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--ini', help='Thermometer configuration file')
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument('--session', action='store_true', help='Connect to the session bus')
+group.add_argument('--system', action='store_true', help='Connect to the system bus')
+args = parser.parse_args()
+
+thermometers = read_config_file(args.ini)
 
 loop = asyncio.get_event_loop()
-# loop.set_exception_handler(exception_handler)
-loop.run_until_complete(main(loop))
+create_service(loop=loop, thermometers=thermometers)
+loop.run_until_complete(dbus_service.graceful_termination(loop))

@@ -5,28 +5,29 @@ import ravel
 import dbussy
 
 
-def create_connection(busname, session, loop):
+def create_connection(busname, is_session, loop):
     """Create DBus connection, glue it into asyncio, and request busname
     for it
 
+    :param busname str: connection name on the bus
+    :param is_session bool: use session bus (True) or system bus (False)
+    :param loop: event loop to attach to
     """
-    if session:
-        bus = ravel.session_bus()
+
+    if is_session:
+        connection = ravel.session_bus()
     else:
-        bus = ravel.system_bus()
-    bus.attach_asyncio(loop=loop)
-    bus.request_name(
+        connection = ravel.system_bus()
+    connection.attach_asyncio(loop=loop)
+    connection.request_name(
         bus_name=busname, 
         flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
-    return bus
+    return connection
 
-async def termination(loop):
-    """Await graceful termination
-
-    Register signal handlers for SIGINT and SIGTERM, await arrival of
-    those.
-
+async def graceful_termination(loop):
+    """Run the loop, handling graceful termination by SIGINT and SIGTERM.
     """
+
     future_termination = loop.create_future()
 
     def callback():
@@ -34,4 +35,10 @@ async def termination(loop):
     loop.add_signal_handler(signal.SIGINT, callback)
     loop.add_signal_handler(signal.SIGTERM, callback)
 
-    return await future_termination
+    try:
+        await future_termination
+    finally:
+        loop.remove_signal_handler(signal.SIGINT)
+        loop.remove_signal_handler(signal.SIGTERM)
+
+    
