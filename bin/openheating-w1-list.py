@@ -23,6 +23,7 @@ for th in available_thermometers():
     if ini:
         for ini_th in ini.values():
             if ini_th.type == th.type and ini_th.id == th.id:
+                print(' '*4, 'Name:', ini_th.name)
                 print(' '*4, 'Description:', ini_th.description)
                 break
         else:
