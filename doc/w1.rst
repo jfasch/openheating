@@ -1,0 +1,11 @@
+RJ11 Plugs, Pins
+================
+
+Look at plug from front, pins on top. Pins are numbered from left to
+right.
+
+1 ... red, 5V
+2 ... black, GND
+3 ... yellow, DATA
+4 ... white, GND
+

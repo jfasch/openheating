@@ -6,6 +6,7 @@ class Thermometer(metaclass=ABCMeta):
         self.name = name
         self.description = description
 
+    @abstractmethod
     def get_temperature(self):
         assert False, 'abstract'
         return 23.4

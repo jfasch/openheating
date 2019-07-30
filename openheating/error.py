@@ -40,3 +40,11 @@ class HeatingError(Exception):
             if not HeatingError.equal(lhs.nested_errors()[i], rhs.nested_errors()[i]):
                 return False
         return True
+
+class BadDBusPathComponent(HeatingError):
+    """Used where e.g. a thermometer configuration gives the thermometer
+    a name that is unusable in a DBus object path"""
+    def __init__(self, name):
+        super().__init__(msg='{} is not a valid DBus object path component'.format(name), 
+                         permanent=True)
+

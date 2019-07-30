@@ -1,13 +1,9 @@
 from openheating.thermometer_fixed import FixedThermometer
 from openheating.w1 import W1Thermometer
-from openheating.error import HeatingError
+from openheating.error import BadDBusPathComponent
 
 from configparser import ConfigParser
 
-
-class BadThermometerName(HeatingError):
-    def __init__(self, msg):
-        super().__init__(msg=msg, permanent=True)
 
 def read_string(s):
     config = ConfigParser()
@@ -31,7 +27,7 @@ def _parse(config):
         # them to, for example, not contain '-'. for the meantime,
         # str.isidentifier() looks like an easy thing to do.
         if not name.isidentifier():
-            raise BadThermometerName('{} is not a valid DBus object path component'.format(name))
+            raise BadDBusPathComponent(name=name)
 
         type_ = config.get(name, 'Type')
         description = config.get(name, 'Description')
@@ -52,4 +48,3 @@ def _parse(config):
             assert False
 
     return thermometers
-

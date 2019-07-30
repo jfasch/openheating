@@ -1,6 +1,7 @@
-from openheating.thermometers_ini import read_string, BadThermometerName
+from openheating.thermometers_ini import read_string
 from openheating.thermometer_fixed import FixedThermometer
 from openheating.w1 import W1Thermometer
+from openheating.error import BadDBusPathComponent
 
 import unittest
 
@@ -63,7 +64,7 @@ class ThermometerIniTest(unittest.TestCase):
         self.assertEqual(wood.description, 'Wood Oven')
 
     def test_bad_thermometer_name(self):
-        self.assertRaises(BadThermometerName, read_string,
+        self.assertRaises(BadDBusPathComponent, read_string,
             """
             [bad-name]
             Type = w1
