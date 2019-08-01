@@ -40,7 +40,7 @@ def _parse(config, dummy):
                 state=state)
         elif type_ == 'gpio':
             chiplabel = config.get(name, 'ChipLabel')
-            offset = config.get(name, 'Offset')
+            offset = config.getint(name, 'Offset')
             direction = config.get(name, 'Direction')
 
             if chiplabel is None:

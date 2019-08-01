@@ -1,5 +1,7 @@
 from . import names
 
+from ..thermometer import Thermometer
+
 import ravel
 
 
@@ -10,6 +12,7 @@ iface_name = names.iface_name_pfx + '.Thermometer'
     name = iface_name)
 class DBusThermometer:
     def __init__(self, thermometer):
+        assert isinstance(thermometer, Thermometer)
         self.thermometer = thermometer
 
     @ravel.method(

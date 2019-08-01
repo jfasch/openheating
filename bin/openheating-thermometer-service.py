@@ -46,7 +46,7 @@ group.add_argument('--session', action='store_true', help='Connect to the sessio
 group.add_argument('--system', action='store_true', help='Connect to the system bus')
 args = parser.parse_args()
 
-thermometers = read_config_file(args.ini)
+thermometers = read_config_file(args.configfile)
 
 loop = asyncio.get_event_loop()
 create_service(loop=loop, thermometers=thermometers)

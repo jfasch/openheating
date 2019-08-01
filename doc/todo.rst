@@ -1,3 +1,12 @@
+Stack (Hanging)
+===============
+
+* switch service
+* client
+
+  * unify argparse composition
+  * properly choose session/system bus; unify
+
 Thermometers
 ============
 
