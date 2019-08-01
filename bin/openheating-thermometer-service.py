@@ -39,8 +39,8 @@ def create_service(loop, thermometers):
     
     return connection
 
-parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--ini', help='Thermometer configuration file')
+parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
+parser.add_argument('--configfile', help='Thermometer configuration file')
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--session', action='store_true', help='Connect to the session bus')
 group.add_argument('--system', action='store_true', help='Connect to the system bus')
