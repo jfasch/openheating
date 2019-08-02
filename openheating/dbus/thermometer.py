@@ -21,4 +21,4 @@ class DBusThermometer:
         try:
             return (self.thermometer.get_temperature(),)
         except HeatingError as e:
-            raise ravel.ErrorReturn(name=names.DATA.ERROR, message='some message here')
+            raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))
