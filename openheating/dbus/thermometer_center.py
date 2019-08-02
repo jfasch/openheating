@@ -6,8 +6,8 @@ import ravel
 
 @ravel.interface(
     ravel.INTERFACE.SERVER,
-    name = names.IFACE.THERMOMETER_SERVICE)
-class DBusThermometerService:
+    name = names.IFACE.THERMOMETER_CENTER)
+class DBusThermometerCenter:
     def __init__(self, thermometers):
         self.thermometers = thermometers
 

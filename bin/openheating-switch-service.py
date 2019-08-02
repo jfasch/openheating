@@ -5,7 +5,7 @@ from openheating.dbus import cmdline
 from openheating.dbus import names
 from openheating.dbus.connection import Connection as DBusConnection
 from openheating.dbus.switch import DBusSwitch
-from openheating.dbus.switch_service import DBusSwitchService
+from openheating.dbus.switch_center import DBusSwitchCenter
 
 import asyncio
 import argparse
@@ -23,7 +23,7 @@ connection = DBusConnection(
     busname=names.BUS.SWITCH_SERVICE)
 connection.register_object(
     path='/', 
-    object=DBusSwitchService(switches=switches))
+    object=DBusSwitchCenter(switches=switches))
 for name, switch in switches.items():
     connection.register_object(
         path='/switches/'+name,

@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.dbus import cmdline
+from openheating.dbus import names
 from openheating.dbus.connection import Connection as DBusConnection
 
 
@@ -28,22 +29,24 @@ args = top_parser.parse_args()
 connection = DBusConnection(is_session=cmdline.is_session(args))
 
 if args.subcommand_name == 'list':
-    thermometer_service = connection.get_peer(
-        busname='org.openheating.ThermometerService', 
+    thermometer_center = connection.get_peer(
+        busname=names.BUS.THERMOMETER_SERVICE,
         path='/', 
-        iface='org.openheating.ThermometerService')
-    for name in thermometer_service.all_names()[0]:
+        iface=names.IFACE.THERMOMETER_CENTER)
+    for name in thermometer_center.all_names()[0]:
         thermometer = connection.get_peer(
-            busname='org.openheating.ThermometerService', 
+            busname=names.BUS.THERMOMETER_SERVICE,
             path='/thermometers/'+name, 
-            iface='org.openheating.Thermometer')
+            iface=names.IFACE.THERMOMETER)
         print(name, thermometer.get_temperature()[0])
+
 elif args.subcommand_name == 'get':
     thermometer = connection.get_peer(
-        busname='org.openheating.ThermometerService', 
+        busname=names.BUS.THERMOMETER_SERVICE,
         path='/thermometers/'+args.name, 
-        iface='org.openheating.Thermometer')
+        iface=names.IFACE.THERMOMETER)
     print(thermometer.get_temperature()[0])
+
 else:
     top_parser.print_help()
     sys.exit(1)

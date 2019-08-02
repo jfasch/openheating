@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.dbus import cmdline
+from openheating.dbus import names
 from openheating.dbus.connection import Connection as DBusConnection
 
 import argparse
@@ -31,22 +32,24 @@ args = top_parser.parse_args()
 connection = DBusConnection(is_session=cmdline.is_session(args))
 
 if args.subcommand_name == 'list':
-    switch_service = connection.get_peer(
-        busname='org.openheating.SwitchService', 
+    switch_center = connection.get_peer(
+        busname=names.BUS.SWITCH_SERVICE, 
         path='/', 
-        iface='org.openheating.SwitchService')
-    for name in switch_service.all_names()[0]:
+        iface=names.IFACE.SWITCH_CENTER)
+    for name in switch_center.all_names()[0]:
         switch = connection.get_peer(
-            busname='org.openheating.SwitchService', 
+            busname=names.BUS.SWITCH_SERVICE, 
             path='/switches/'+name, 
-            iface='org.openheating.Switch')
+            iface=names.IFACE.SWITCH)
         print(name, switch.get_state()[0])
+
 elif args.subcommand_name == 'get':
     switch = connection.get_peer(
-        busname='org.openheating.SwitchService', 
+        busname=names.BUS.SWITCH_SERVICE, 
         path='/switches/'+args.name, 
-        iface='org.openheating.Switch')
+        iface=names.IFACE.SWITCH)
     print(switch.get_state()[0])
+
 elif args.subcommand_name == 'set':
     if args.value == 'true':
         value = True
@@ -56,10 +59,11 @@ elif args.subcommand_name == 'set':
         assert False
 
     switch = connection.get_peer(
-        busname='org.openheating.SwitchService', 
+        busname=names.BUS.SWITCH_SERVICE, 
         path='/switches/'+args.name, 
-        iface='org.openheating.Switch')
+        iface=names.IFACE.SWITCH)
     switch.set_state(value)
+
 else:
     top_parser.print_help()
     sys.exit(1)
