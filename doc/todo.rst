@@ -1,16 +1,17 @@
 Stack (Hanging)
 ===============
 
-* unify argparse composition
-* properly choose session/system bus; unify
+* DBus exceptions
+  
+  * simplify HeatingError to a minimum
+    * create proxy classes (modify clients)
+  * rename server-side objects to *_object
+  * properly translate HeatingError (using .msg())
 
-  * openheating.dbus.connection: add name=None parameter, and remove
-    request_name()
-  * openheating.dbus.connection: fallback=False
+Todo
+====
 
-Thermometers
-============
-
+* Exceptions in asyncio
 * thermometers.ini
 
   * implement other thermometer types than "fixed"
@@ -18,10 +19,9 @@ Thermometers
   * error-tests
   * define exception(s)
 
-D-Bus
-=====
+* D-Bus
 
-* find out what dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE is
-* Where do D-Bus activation (.service) files go?
-* How to generate the D-Bus config file from a template? (Paths like
-  unix address and <servicedir> need to be substituted.)
+  * find out what dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE is
+  * Where do D-Bus activation (.service) files go?
+  * How to generate the D-Bus config file from a template? (Paths like
+    unix address and <servicedir> need to be substituted.)

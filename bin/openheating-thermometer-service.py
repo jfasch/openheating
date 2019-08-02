@@ -2,7 +2,7 @@
 
 from openheating.thermometers_ini import read_file as read_config_file
 from openheating.dbus import cmdline
-import openheating.dbus.names as busnames
+from openheating.dbus import names
 from openheating.dbus.connection import Connection as DBusConnection
 from openheating.dbus.thermometer import DBusThermometer
 from openheating.dbus.thermometer_service import DBusThermometerService
@@ -20,7 +20,7 @@ thermometers = read_config_file(args.configfile)
 
 connection = DBusConnection(
     is_session=cmdline.is_session(args),
-    busname=busnames.thermometer_service_busname)
+    busname=names.BUS.THERMOMETER_SERVICE)
 connection.register_object(
     path='/', 
     object=DBusThermometerService(thermometers=thermometers))

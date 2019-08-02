@@ -3,11 +3,9 @@ from . import names
 import ravel
 
 
-iface_name = names.iface_name_pfx + '.SwitchService'
-
 @ravel.interface(
     ravel.INTERFACE.SERVER,
-    name = iface_name)
+    name = names.IFACE.SWITCH_SERVICE)
 class DBusSwitchService:
     def __init__(self, switches):
         self.switches = switches

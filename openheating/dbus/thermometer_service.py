@@ -1,13 +1,12 @@
 from . import names
+from ..error import HeatingError
 
 import ravel
 
 
-iface_name = names.iface_name_pfx + '.ThermometerService'
-
 @ravel.interface(
     ravel.INTERFACE.SERVER,
-    name = iface_name)
+    name = names.IFACE.THERMOMETER_SERVICE)
 class DBusThermometerService:
     def __init__(self, thermometers):
         self.thermometers = thermometers
@@ -15,8 +14,9 @@ class DBusThermometerService:
     @ravel.method(
         name = 'all_names',
         in_signature = '',
-        out_signature = 'as',
-    )
+        out_signature = 'as')
     def all_names(self):
-        return [list(self.thermometers.keys())]
-
+        try:
+            return [list(self.thermometers.keys())]
+        except HeatingError as e:
+            raise ravel.ErrorReturn(name=names.DATA.ERROR, msg='some message here')
