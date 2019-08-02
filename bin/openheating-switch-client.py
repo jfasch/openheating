@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+from openheating.dbus import cmdline
+from openheating.dbus.connection import Connection as DBusConnection
+
 import argparse
 import sys
 import ravel
@@ -7,12 +10,8 @@ import ravel
 
 top_parser = argparse.ArgumentParser(
     description='OpenHeating: client for DBus switch service')
-
 top_parser.add_argument('--configfile', help='Switch configuration file')
-
-bus_group = top_parser.add_mutually_exclusive_group(required=True)
-bus_group.add_argument('--session', action='store_true', help='Connect to the session bus')
-bus_group.add_argument('--system', action='store_true', help='Connect to the system bus')
+cmdline.add_dbus_options(top_parser)
 
 subparsers = top_parser.add_subparsers(dest='subcommand_name')
 
@@ -29,21 +28,25 @@ set_parser.add_argument('value', help='true|false')
 args = top_parser.parse_args()
 
 
-bus = ravel.session_bus()
-service = bus['org.openheating.SwitchService']
-sw_service_object = service['/']
-sw_service_iface = sw_service_object.get_interface('org.openheating.SwitchService')
-
+connection = DBusConnection(is_session=cmdline.is_session(args))
 
 if args.subcommand_name == 'list':
-    for name in sw_service_iface.all_names()[0]:
-        sw_object = service['/switches/'+name]
-        sw_iface = sw_object.get_interface('org.openheating.Switch')
-        print(name, sw_iface.get_state()[0])
+    switch_service = connection.get_peer(
+        busname='org.openheating.SwitchService', 
+        path='/', 
+        iface='org.openheating.SwitchService')
+    for name in switch_service.all_names()[0]:
+        switch = connection.get_peer(
+            busname='org.openheating.SwitchService', 
+            path='/switches/'+name, 
+            iface='org.openheating.Switch')
+        print(name, switch.get_state()[0])
 elif args.subcommand_name == 'get':
-    sw_object = service['/switches/'+args.name]
-    sw_iface = sw_object.get_interface('org.openheating.Switch')
-    print(sw_iface.get_state()[0])
+    switch = connection.get_peer(
+        busname='org.openheating.SwitchService', 
+        path='/switches/'+args.name, 
+        iface='org.openheating.Switch')
+    print(switch.get_state()[0])
 elif args.subcommand_name == 'set':
     if args.value == 'true':
         value = True
@@ -52,9 +55,11 @@ elif args.subcommand_name == 'set':
     else:
         assert False
 
-    sw_object = service['/switches/'+args.name]
-    sw_iface = sw_object.get_interface('org.openheating.Switch')
-    sw_iface.set_state(value)
+    switch = connection.get_peer(
+        busname='org.openheating.SwitchService', 
+        path='/switches/'+args.name, 
+        iface='org.openheating.Switch')
+    switch.set_state(value)
 else:
     top_parser.print_help()
     sys.exit(1)

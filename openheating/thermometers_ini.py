@@ -1,4 +1,4 @@
-from openheating.thermometer_fixed import FixedThermometer
+from openheating.thermometer import FixedThermometer, ErrorThermometer
 from openheating.w1 import W1Thermometer
 from openheating.error import BadDBusPathComponent
 
@@ -38,6 +38,10 @@ def _parse(config):
                 name=name, 
                 description=description, 
                 temperature=value)
+        elif type_ == 'error':
+            thermometers[name] = ErrorThermometer(
+                name=name, 
+                description=description)
         elif type_ == 'w1':
             path = config.get(name, 'Path')
             thermometers[name] = W1Thermometer(

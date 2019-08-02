@@ -1,11 +1,12 @@
 Stack (Hanging)
 ===============
 
-* switch service
-* client
+* unify argparse composition
+* properly choose session/system bus; unify
 
-  * unify argparse composition
-  * properly choose session/system bus; unify
+  * openheating.dbus.connection: add name=None parameter, and remove
+    request_name()
+  * openheating.dbus.connection: fallback=False
 
 Thermometers
 ============
