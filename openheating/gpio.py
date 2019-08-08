@@ -1,8 +1,9 @@
-from switch import Switch
+from .switch import Switch
 
 import gpiod
 
-
+# one uses a chip to retrieve a gpio handle. the chip must remain open
+# to keep the handle valid, which is why this dictionary is there.
 _open_chips = {}
 
 DIRECTION_IN = 0
@@ -34,6 +35,13 @@ class DummyGPIOSwitch(Switch):
         return self.state
 
 def create_switch(name, description, chiplabel, offset, direction, dummy=False):
+    if direction == DIRECTION_IN:
+        gpiod_direction = gpiod.LINE_REQ_DIR_IN
+    elif direction == DIRECTION_OUT:
+        gpiod_direction = gpiod.LINE_REQ_DIR_OUT
+    else: 
+        assert False
+
     if dummy:
         return DummyGPIOSwitch(name, description, direction)
 
@@ -41,4 +49,8 @@ def create_switch(name, description, chiplabel, offset, direction, dummy=False):
     if chip is None:
         chip = gpiod.Chip(chiplabel, gpiod.Chip.OPEN_BY_LABEL)
         _open_chips[chiplabel] = chip
-    return GPIOSwitch(name=name, description=description, line=chip.get_line(offset))
+
+    line = chip.get_line(offset)
+    line.request(consumer='openheating:'+name, type=gpiod_direction)
+
+    return GPIOSwitch(name=name, description=description, line=line)

@@ -1,5 +1,14 @@
-bus_name_pfx = 'org.openheating'
-iface_name_pfx = 'org.openheating'
+DOMAIN = 'org.openheating'
 
-# service names
-thermometer_service_busname = iface_name_pfx + '.ThermometerService'
+class BUS:
+    THERMOMETER_SERVICE = DOMAIN + '.ThermometerService'
+    SWITCH_SERVICE = DOMAIN + '.SwitchService'
+
+class IFACE:
+    THERMOMETER = DOMAIN + '.Thermometer'
+    SWITCH = DOMAIN + '.Switch'
+    THERMOMETER_CENTER = DOMAIN + '.ThermometerCenter'
+    SWITCH_CENTER = DOMAIN + '.SwitchCenter'
+
+class DATA:
+    ERROR = DOMAIN + '.HeatingError'
