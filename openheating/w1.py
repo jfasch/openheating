@@ -24,7 +24,7 @@ def available_thermometers():
 class W1Thermometer(Thermometer):
     class BadPath(HeatingError):
         def __init__(self, msg):
-            super().__init__(msg, permanent=True)
+            super().__init__(msg)
 
     def __init__(self, name, description, path):
         hit = _re_devdir.search(os.path.basename(path))
