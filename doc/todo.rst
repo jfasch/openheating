@@ -4,6 +4,16 @@ Stack (Hanging)
 Todo
 ====
 
+* Thermometer refactoring
+
+  * provide *abstract* access methods for
+    openheating.Thermometer.{name,description}, and move those into
+    subclasses
+  * subclass a dbus proxy from openheating.Thermometer, caching the
+    above attributes after first retrieval.
+  * make this a pattern, eliminating the obscure ncessity to [0] index
+    each dbus return
+
 * DBus exceptions
   
   * simplify HeatingError to a minimum

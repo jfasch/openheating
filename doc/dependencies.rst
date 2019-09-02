@@ -9,7 +9,12 @@ top of `asyncio
 
 ::
 
-   $ pip3 install --system dbussy
+   # pip3 install --system dbussy
+
+aiohttp
+=======
+
+   # pip3 install --system aiohttp
 
 GPIO: libgpiod
 ==============

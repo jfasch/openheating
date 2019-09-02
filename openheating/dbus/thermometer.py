@@ -14,6 +14,20 @@ class DBusThermometer:
         self.thermometer = thermometer
 
     @ravel.method(
+        name = 'get_name',
+        in_signature = '',
+        out_signature = 's')
+    def get_name(self):
+        return (self.thermometer.name,)
+
+    @ravel.method(
+        name = 'get_description',
+        in_signature = '',
+        out_signature = 's')
+    def get_description(self):
+        return (self.thermometer.description,)
+
+    @ravel.method(
         name = 'get_temperature',
         in_signature = '',
         out_signature = 'd')
