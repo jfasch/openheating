@@ -26,12 +26,14 @@ class install_data_like_ac_subst(install_data):
 
     def initialize_options(self):
         self.bindir = None
+        self.libdir = None
         self.builddir = None
         super().initialize_options()
 
     def finalize_options(self):
         super().finalize_options()
         self.set_undefined_options('install', ('install_scripts', 'bindir'))
+        self.set_undefined_options('install', ('install_lib', 'libdir'))
         self.set_undefined_options('build', ('build_base', 'builddir'))
         self.builddir = os.path.join(self.builddir, 'data_like_ac_subst')
         
@@ -57,7 +59,11 @@ class install_data_like_ac_subst(install_data):
 
         with open(filename) as f:
             template = string.Template(f.read())
-            content = template.substitute({'bindir': self.bindir})
+
+        content = template.substitute({
+            'bindir': self.bindir,
+            'libdir': self.libdir,
+        })
 
         rel_dirname, src_filename = os.path.split(filename)
         build_dirname = os.path.join(self.builddir, rel_dirname)
@@ -86,12 +92,27 @@ setup(
     ],
 
     data_files=[
-        ('share/systemd', ['systemd/xxx.service.ac_subst']),
+        ('share/systemd',
+         [
+             # system dbus policies
+             'systemd/org.openheating.conf',
+
+             # service files
+             'systemd/openheating-thermometer-service.service.ac_subst',
+         ]
+        ),
+
+        ('share/installations/faschingbauer',
+         [
+             'installations/faschingbauer/thermometers.ini',
+         ]
+        ),
     ],
     scripts=[
         'bin/openheating-switch-client.py',
         'bin/openheating-switch-service.py',
         'bin/openheating-thermometer-client.py',
+
         'bin/openheating-thermometer-service.py',
         'bin/openheating-w1-list.py',
     ],

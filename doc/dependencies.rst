@@ -9,7 +9,7 @@ top of `asyncio
 
 ::
 
-   $ pip3 install --user dbussy
+   $ pip3 install --system dbussy
 
 GPIO: libgpiod
 ==============
@@ -18,7 +18,7 @@ GPIO: libgpiod
 GPIO interface.
 
 The "integer based" sysfs interface has been deprecated a while ago
-(Linux 4.8). It would be suffucient for our purposes - plain set/get
+(Linux 4.8). It would be sufficient for our purposes - plain set/get
 -, but it is on the way out.
 
 `libgpiod

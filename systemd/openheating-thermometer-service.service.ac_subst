@@ -1,0 +1,12 @@
+[[Unit]
+Description=Openheating Thermometer Service
+
+[Service]
+User=openheating
+Environment=PYTHONPATH=${libdir}
+ExecStart=${bindir}/openheating-thermometer-service.py --system --configfile=/etc/openheating/thermometers.ini
+Type=dbus
+BusName=org.openheating.ThermometerService
+
+[Install]
+WantedBy=multi-user.target

@@ -18,7 +18,7 @@ cmdline.add_dbus_options(top_parser)
 subparsers = top_parser.add_subparsers(dest='subcommand_name')
 
 list_parser = subparsers.add_parser('list')
-list_parser.add_argument('--print-temperature', action='store_true', help='print temperatures')
+list_parser.add_argument('--read-temperature', action='store_true', help='read temperatures')
 
 get_parser = subparsers.add_parser('get', help='get <name>')
 get_parser.add_argument('name', help='thermometer name')
@@ -34,11 +34,14 @@ if args.subcommand_name == 'list':
         path='/', 
         iface=names.IFACE.THERMOMETER_CENTER)
     for name in thermometer_center.all_names()[0]:
-        thermometer = connection.get_peer(
-            busname=names.BUS.THERMOMETER_SERVICE,
-            path='/thermometers/'+name, 
-            iface=names.IFACE.THERMOMETER)
-        print(name, thermometer.get_temperature()[0])
+        if args.read_temperature:
+            thermometer = connection.get_peer(
+                busname=names.BUS.THERMOMETER_SERVICE,
+                path='/thermometers/'+name, 
+                iface=names.IFACE.THERMOMETER)
+            print(name, thermometer.get_temperature()[0])
+        else:
+            print(name)
 
 elif args.subcommand_name == 'get':
     thermometer = connection.get_peer(

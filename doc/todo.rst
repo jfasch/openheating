@@ -1,15 +1,15 @@
 Stack (Hanging)
 ===============
 
+Todo
+====
+
 * DBus exceptions
   
   * simplify HeatingError to a minimum
     * create proxy classes (modify clients)
   * rename server-side objects to *_object
   * properly translate HeatingError (using .msg())
-
-Todo
-====
 
 * Exceptions in asyncio
 * thermometers.ini
