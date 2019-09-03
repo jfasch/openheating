@@ -4,8 +4,8 @@ from openheating.thermometers_ini import read_file as read_config_file
 from openheating.dbus import cmdline
 from openheating.dbus import names
 from openheating.dbus.connection import Connection as DBusConnection
-from openheating.dbus.thermometer import DBusThermometer
-from openheating.dbus.thermometer_center import DBusThermometerCenter
+from openheating.dbus.thermometer import DBusThermometer_Server
+from openheating.dbus.thermometer_center import DBusThermometerCenter_Server
 
 import asyncio
 import argparse
@@ -23,11 +23,11 @@ connection = DBusConnection(
     busname=names.BUS.THERMOMETER_SERVICE)
 connection.register_object(
     path='/', 
-    object=DBusThermometerCenter(thermometers=thermometers))
+    object=DBusThermometerCenter_Server(thermometers=thermometers))
 for name, thermometer in thermometers.items():
     connection.register_object(
         path='/thermometers/'+name,
-        object=DBusThermometer(thermometer=thermometer))
+        object=DBusThermometer_Server(thermometer=thermometer))
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(connection.run(loop))

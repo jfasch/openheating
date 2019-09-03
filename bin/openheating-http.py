@@ -3,6 +3,7 @@
 from openheating.dbus import cmdline
 from openheating.dbus import names
 from openheating.dbus.connection import Connection as DBusConnection
+from openheating.dbus.thermometer_center import DBusThermometerCenter_Client
 
 from aiohttp import web
 from systemd.daemon import notify as sd_notify
@@ -12,15 +13,13 @@ import argparse
 
 class ThermometerCenter:
     def __init__(self, connection):
-        self.connection = connection
-        self.thermometer_center = connection.get_peer(
-            busname=names.BUS.THERMOMETER_SERVICE,
-            path='/', 
-            iface=names.IFACE.THERMOMETER_CENTER)
+        self.thermometer_center = DBusThermometerCenter_Client(connection)
+        # we build our thermometer clients on-demand
+        self.thermometers = {}
 
     async def list_simple(self, request):
         text = '<ul>'
-        for name in self.thermometer_center.all_names()[0]:
+        for name in self.thermometer_center.all_names():
             text += '<li>{name}</li>'.format(name=name)
         text += '</ul>'
         return web.Response(content_type='text/html', text=text)
@@ -33,15 +32,15 @@ class ThermometerCenter:
         text += '<th>Name</th>'
         text += '<th>Temperature</th>'
         text += '</tr>'
-        for name in self.thermometer_center.all_names()[0]:
-            th = self.connection.get_peer(
-                busname=names.BUS.THERMOMETER_SERVICE,
-                path='/thermometers/'+name,
-                iface=names.IFACE.THERMOMETER)
+        for name in self.thermometer_center.all_names():
+            th = self._get_thermometer(name)
             text += '<tr><td>{description}</td><td>{name}</td><td>{temp}</td></tr>'.format(
-                description=th.get_description()[0], name=th.get_name()[0], temp=th.get_temperature()[0])
+                description=th.get_description(), name=th.get_name(), temp=th.get_temperature())
         text += '</table>'
         return web.Response(content_type='text/html', text=text)
+
+    def _get_thermometer(self, name):
+        return self.thermometers.setdefault(name, self.thermometer_center.get_thermometer(name))
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')

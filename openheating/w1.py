@@ -31,11 +31,19 @@ class W1Thermometer(Thermometer):
         if hit is None:
             raise self.BadPath('{} does not look like a w1 device'.format(path))
 
-        super().__init__(name=name, description=description)
+        super().__init__()
 
+        self.name = name
+        self.description = description
         self.path = path
         self.type = hit.group(1)
         self.id = hit.group(2)
+
+    def get_name(self):
+        return self.name
+
+    def get_description(self):
+        return self.description
 
     def get_temperature(self):
         with open(os.path.join(self.path, 'w1_slave')) as w1_slave:

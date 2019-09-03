@@ -5,10 +5,31 @@ from ..error import HeatingError
 import ravel
 
 
+class DBusThermometer_Client(Thermometer):
+    def __init__(self, proxy):
+        self.proxy = proxy
+
+        self.name = None
+        self.description = None
+
+    def get_name(self):
+        if self.name is None:
+            self.name = self.proxy.get_name()[0]
+        return self.name
+
+    def get_description(self):
+        if self.description is None:
+            self.description = self.proxy.get_description()[0]
+        return self.description
+
+    def get_temperature(self):
+        return self.proxy.get_temperature()[0]
+
+
 @ravel.interface(
     ravel.INTERFACE.SERVER,
     name = names.IFACE.THERMOMETER)
-class DBusThermometer:
+class DBusThermometer_Server:
     def __init__(self, thermometer):
         assert isinstance(thermometer, Thermometer)
         self.thermometer = thermometer
@@ -18,7 +39,7 @@ class DBusThermometer:
         in_signature = '',
         out_signature = 's')
     def get_name(self):
-        return (self.thermometer.name,)
+        return (self.thermometer.get_name(),)
 
     @ravel.method(
         name = 'get_description',
