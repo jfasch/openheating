@@ -99,6 +99,7 @@ setup(
 
              # service files
              'systemd/openheating-thermometer-service.service.ac_subst',
+             'systemd/openheating-http.service.ac_subst',
          ]
         ),
 
@@ -109,10 +110,10 @@ setup(
         ),
     ],
     scripts=[
+        'bin/openheating-http.py',
         'bin/openheating-switch-client.py',
         'bin/openheating-switch-service.py',
         'bin/openheating-thermometer-client.py',
-
         'bin/openheating-thermometer-service.py',
         'bin/openheating-w1-list.py',
     ],

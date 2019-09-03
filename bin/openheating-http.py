@@ -5,6 +5,7 @@ from openheating.dbus import names
 from openheating.dbus.connection import Connection as DBusConnection
 
 from aiohttp import web
+from systemd.daemon import notify as sd_notify
 
 import argparse
 
@@ -44,8 +45,9 @@ class ThermometerCenter:
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
-parser.add_argument('--configfile', help='Thermometer configuration file')
 cmdline.add_dbus_options(parser)
+parser.add_argument('--no-notify', action='store_true', 
+                    help='Do not notify systemd of readiness (for example when started by hand during development)')
 args = parser.parse_args()
 
 connection = DBusConnection(is_session=cmdline.is_session(args))
@@ -56,4 +58,8 @@ app.add_routes([
     web.get('/thermometer_center/list_simple', thermometer_center.list_simple),
     web.get('/thermometer_center/list_full', thermometer_center.list_full),
 ])
+
+# notify systemd about readiness
+sd_notify("READY=1")
+
 web.run_app(app)

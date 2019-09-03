@@ -1,4 +1,4 @@
-[[Unit]
+[Unit]
 Description=Openheating Thermometer Service
 
 [Service]

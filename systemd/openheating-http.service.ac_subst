@@ -1,0 +1,13 @@
+[Unit]
+Description=Openheating HTTP Interface
+BindsTo=openheating-thermometer-service.service
+After=openheating-thermometer-service.service
+
+[Service]
+User=openheating
+Environment=PYTHONPATH=${libdir}
+ExecStart=${bindir}/openheating-http.py --system
+Type=notify
+
+[Install]
+WantedBy=multi-user.target

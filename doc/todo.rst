@@ -1,8 +1,14 @@
 Stack (Hanging)
 ===============
 
+* openheating-http systemd unit, notify
+
 Todo
 ====
+
+* /etc/systemd/system seems like the wrong place to put unit files
+
+* move from aiohttp to flask, jinja2 is directly usable there
 
 * Thermometer refactoring
 

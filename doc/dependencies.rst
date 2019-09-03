@@ -11,8 +11,21 @@ top of `asyncio
 
    # pip3 install --system dbussy
 
+systemd
+=======
+
+(At least) openheating-http.py uses it to notify systemd that it is
+has finished startup and is running. (The service is Type=notify, and
+not Type=dbus as most others.)
+
+::
+
+   # apt install python3-systemd
+
 aiohttp
 =======
+
+::
 
    # pip3 install --system aiohttp
 
