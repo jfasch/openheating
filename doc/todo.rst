@@ -1,20 +1,9 @@
 Stack (Hanging)
 ===============
 
-* Thermometer refactoring
-
-  * provide *abstract* access methods for
-    openheating.Thermometer.{name,description}, and move those into
-    subclasses
-  * subclass a dbus proxy from openheating.Thermometer, caching the
-    above attributes after first retrieval.
-  * make this a pattern, eliminating the obscure ncessity to [0] index
-    each dbus return
-
 Todo
 ====
 
-* openheating.dbus: rename DBusThermometer* to Thermometer*
 * openheating-http: sd_notify() goes unchecked; fix that
 * /etc/systemd/system seems like the wrong place to put unit files
 * move from aiohttp to flask, jinja2 is directly usable there

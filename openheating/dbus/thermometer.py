@@ -5,7 +5,7 @@ from ..error import HeatingError
 import ravel
 
 
-class DBusThermometer_Client(Thermometer):
+class Thermometer_Client(Thermometer):
     def __init__(self, proxy):
         self.proxy = proxy
 
@@ -29,7 +29,7 @@ class DBusThermometer_Client(Thermometer):
 @ravel.interface(
     ravel.INTERFACE.SERVER,
     name = names.IFACE.THERMOMETER)
-class DBusThermometer_Server:
+class Thermometer_Server:
     def __init__(self, thermometer):
         assert isinstance(thermometer, Thermometer)
         self.thermometer = thermometer

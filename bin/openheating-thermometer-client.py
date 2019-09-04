@@ -2,8 +2,8 @@
 
 from openheating.dbus import cmdline
 from openheating.dbus import names
-from openheating.dbus.connection import Connection as DBusConnection
-from openheating.dbus.thermometer_center import DBusThermometerCenter_Client
+from openheating.dbus.connection import Connection
+from openheating.dbus.thermometer_center import ThermometerCenter_Client
 
 
 import argparse
@@ -27,8 +27,8 @@ get_parser.add_argument('name', help='thermometer name')
 args = top_parser.parse_args()
 
 
-connection = DBusConnection(is_session=cmdline.is_session(args))
-thermometer_center = DBusThermometerCenter_Client(connection)
+connection = Connection(is_session=cmdline.is_session(args))
+thermometer_center = ThermometerCenter_Client(connection)
 
 if args.subcommand_name == 'list':
     for name in thermometer_center.all_names():

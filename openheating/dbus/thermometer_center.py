@@ -1,11 +1,11 @@
 from . import names
-from .thermometer import DBusThermometer_Client
+from .thermometer import Thermometer_Client
 from ..error import HeatingError
 
 import ravel
 
 
-class DBusThermometerCenter_Client:
+class ThermometerCenter_Client:
     def __init__(self, connection):
         self.proxy = connection.get_peer(
             busname=names.BUS.THERMOMETER_SERVICE,
@@ -21,13 +21,13 @@ class DBusThermometerCenter_Client:
             busname=names.BUS.THERMOMETER_SERVICE,
             path='/thermometers/'+name, 
             iface=names.IFACE.THERMOMETER)
-        return DBusThermometer_Client(proxy=thermometer_proxy)
+        return Thermometer_Client(proxy=thermometer_proxy)
 
 
 @ravel.interface(
     ravel.INTERFACE.SERVER,
     name = names.IFACE.THERMOMETER_CENTER)
-class DBusThermometerCenter_Server:
+class ThermometerCenter_Server:
     def __init__(self, thermometers):
         self.thermometers = thermometers
 

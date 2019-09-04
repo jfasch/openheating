@@ -2,8 +2,8 @@
 
 from openheating.dbus import cmdline
 from openheating.dbus import names
-from openheating.dbus.connection import Connection as DBusConnection
-from openheating.dbus.thermometer_center import DBusThermometerCenter_Client
+from openheating.dbus.connection import Connection
+from openheating.dbus.thermometer_center import ThermometerCenter_Client
 
 from aiohttp import web
 from systemd.daemon import notify as sd_notify
@@ -13,7 +13,7 @@ import argparse
 
 class ThermometerCenter:
     def __init__(self, connection):
-        self.thermometer_center = DBusThermometerCenter_Client(connection)
+        self.thermometer_center = ThermometerCenter_Client(connection)
         # we build our thermometer clients on-demand
         self.thermometers = {}
 
@@ -49,7 +49,7 @@ parser.add_argument('--no-notify', action='store_true',
                     help='Do not notify systemd of readiness (for example when started by hand during development)')
 args = parser.parse_args()
 
-connection = DBusConnection(is_session=cmdline.is_session(args))
+connection = Connection(is_session=cmdline.is_session(args))
 thermometer_center = ThermometerCenter(connection=connection)
 
 app = web.Application()
