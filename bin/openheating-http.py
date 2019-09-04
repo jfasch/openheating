@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from openheating.error import HeatingError
 from openheating.dbus import cmdline
 from openheating.dbus import names
 from openheating.dbus.connection import Connection
@@ -46,7 +47,7 @@ class ThermometerCenter:
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 cmdline.add_dbus_options(parser)
 parser.add_argument('--no-notify', action='store_true', 
-                    help='Do not notify systemd of readiness (for example when started by hand during development)')
+                    help='Do not notify systemd about readiness (for example when started by hand during development)')
 args = parser.parse_args()
 
 connection = Connection(is_session=cmdline.is_session(args))
@@ -59,6 +60,8 @@ app.add_routes([
 ])
 
 # notify systemd about readiness
-sd_notify("READY=1")
+if not args.no_notify:
+    if not sd_notify("READY=1"):
+        raise HeatingError('failed to notify systemd about readiness')
 
 web.run_app(app)
