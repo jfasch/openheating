@@ -12,3 +12,40 @@ Links
 -----
 
 * https://www.maximintegrated.com/en/app-notes/index.mvp/id/148
+
+w1-gpio
+=======
+
+https://www.maximintegrated.com/en/app-notes/index.mvp/id/148 defines
+radius and weight, to give a definition as to how onewire networks
+should be laid out. My network initially consisted of only one line,
+exhibiting a heavy star topology. By branching off too early (ca. 1m
+away the master) into another three long lines, I introduced severe
+instabilities. Better to dedicate separate lines to faraway sensors
+families (like oil-heater, warm-water-store, and room).
+
+Raspberry Devicetree Overlay Situation
+--------------------------------------
+
+Read on before doing this ::
+
+   # rpi-update
+
+I do not know if this is necessary; I unfortunately did it before
+trying if the lines below worked out of the box. Apparently this
+installs a not-yet-upstream set of overlay, of which the w1-gpio
+overlay know how to create multiple w1 lines.
+
+Could well be that the following Raspbian version (the one that is
+current as of this writing) supports it out of the box ... ::
+
+  $ cat /etc/debian_version 
+  9.9
+  $ uname -a
+  Linux heizung 4.19.57-v7+ #1244 SMP Thu Jul 4 18:45:25 BST 2019 armv7l GNU/Linux
+
+Anyway. In `/boot/config.txt`, you write ::
+
+   dtoverlay=w1-gpio,gpiopin=24
+   dtoverlay=w1-gpio,gpiopin=25
+   ...
