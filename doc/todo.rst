@@ -1,6 +1,12 @@
 Stack (Hanging)
 ===============
 
+* read thermometers periodically, in background
+
+  * rename Connection.get_peer() to Connection.get_client_proxy()
+  * eliminate loop parameter from Connection ctor. determine it in
+    run().
+
 Todo
 ====
 

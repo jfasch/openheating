@@ -1,3 +1,5 @@
+from .object import ServerObject
+
 import dbussy
 import ravel
 
@@ -8,31 +10,41 @@ import asyncio
 class Connection:
     def __init__(self, is_session, busname=None):
         if is_session:
-            self.connection = ravel.session_bus()
+            self.__connection = ravel.session_bus()
         else:
-            self.connection = ravel.system_bus()
+            self.__connection = ravel.system_bus()
 
         if busname is not None:
-            self.connection.request_name(
+            self.__connection.request_name(
                 bus_name=busname, 
                 flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
 
-    def register_object(self, path, object):
-        self.connection.register(
-            path=path,
-            fallback=False,
-            interface=object)
-
     def get_peer(self, busname, path, iface):
-        service = self.connection[busname]
+        service = self.__connection[busname]
         obj = service[path]
         return obj.get_interface(iface)
 
-    async def run(self, loop):
-        """Run the loop, handling graceful termination by SIGINT and SIGTERM.
+    async def run(self, objects):
+        """Start the objects, register them at their paths, run the loop,
+        handle graceful termination by SIGINT and SIGTERM (thereby
+        shutting the objects down).
+
         """
 
-        self.connection.attach_asyncio(loop=loop)
+        loop = asyncio.get_event_loop()
+
+        for obj in objects.values():
+            if isinstance(obj, ServerObject):
+                obj.startup(loop=loop)
+
+        for path, obj in objects.items():
+            self.__connection.register(
+                path=path,
+                fallback=False,
+                interface=obj)
+
+
+        self.__connection.attach_asyncio(loop=loop)
         future_termination = loop.create_future()
 
         def callback():
@@ -46,4 +58,6 @@ class Connection:
             loop.remove_signal_handler(signal.SIGINT)
             loop.remove_signal_handler(signal.SIGTERM)
 
-    
+        for obj in objects.values():
+            if isinstance(obj, ServerObject):
+                obj.shutdown()

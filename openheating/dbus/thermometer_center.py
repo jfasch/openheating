@@ -29,7 +29,7 @@ class ThermometerCenter_Client:
     name = names.IFACE.THERMOMETER_CENTER)
 class ThermometerCenter_Server:
     def __init__(self, thermometers):
-        self.thermometers = thermometers
+        self.__thermometers = thermometers
 
     @ravel.method(
         name = 'all_names',
@@ -37,6 +37,6 @@ class ThermometerCenter_Server:
         out_signature = 'as')
     def all_names(self):
         try:
-            return [list(self.thermometers.keys())]
+            return [list(self.__thermometers.keys())]
         except HeatingError as e:
             raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))

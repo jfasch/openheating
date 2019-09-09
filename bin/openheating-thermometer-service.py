@@ -18,16 +18,17 @@ args = parser.parse_args()
 
 thermometers = read_config_file(args.configfile)
 
+loop = asyncio.get_event_loop()
+
 connection = Connection(
     is_session=cmdline.is_session(args),
     busname=names.BUS.THERMOMETER_SERVICE)
-connection.register_object(
-    path='/', 
-    object=ThermometerCenter_Server(thermometers=thermometers))
-for name, thermometer in thermometers.items():
-    connection.register_object(
-        path='/thermometers/'+name,
-        object=Thermometer_Server(thermometer=thermometer))
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(connection.run(loop))
+objects = {
+    '/': ThermometerCenter_Server(thermometers=thermometers),
+}
+for name, thermometer in thermometers.items():
+    objects['/thermometers/'+name] = Thermometer_Server(interval=3, thermometer=thermometer)
+
+loop.run_until_complete(connection.run(objects=objects))
+loop.close()
