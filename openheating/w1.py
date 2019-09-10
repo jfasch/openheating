@@ -27,17 +27,12 @@ class W1Thermometer(Thermometer):
             super().__init__(msg)
 
     def __init__(self, name, description, path):
-        hit = _re_devdir.search(os.path.basename(path))
-        if hit is None:
-            raise self.BadPath('{} does not look like a w1 device'.format(path))
-
         super().__init__()
 
         self.name = name
         self.description = description
         self.path = path
-        self.type = hit.group(1)
-        self.id = hit.group(2)
+        self.type, self.id = self.__type_id_from_path(path)
 
     def get_name(self):
         return self.name
@@ -62,3 +57,17 @@ class W1Thermometer(Thermometer):
         
         assert temperature is not None
         return temperature
+
+    @classmethod
+    def id_from_path(cls, path):
+        type, id = cls.__type_id_from_path(path)
+        return id
+
+    @classmethod
+    def __type_id_from_path(cls, path):
+        hit = _re_devdir.search(os.path.basename(path))
+        if hit is None:
+            raise cls.BadPath('{} does not look like a w1 device'.format(path))
+        return hit.group(1), hit.group(2)
+        
+        
