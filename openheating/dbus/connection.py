@@ -19,7 +19,7 @@ class Connection:
                 bus_name=busname, 
                 flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
 
-    def get_peer(self, busname, path, iface):
+    def get_client_proxy(self, busname, path, iface):
         service = self.__connection[busname]
         obj = service[path]
         return obj.get_interface(iface)

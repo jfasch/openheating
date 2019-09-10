@@ -1,16 +1,13 @@
 Stack (Hanging)
 ===============
 
-* read thermometers periodically, in background
+* logging
 
-  * rename Connection.get_peer() to Connection.get_client_proxy()
-  * eliminate loop parameter from Connection ctor. determine it in
-    run().
+  * dbus.Thermometer.{startup,shutdown} (debug)
 
 Todo
 ====
 
-* openheating-http: sd_notify() goes unchecked; fix that
 * /etc/systemd/system seems like the wrong place to put unit files
 * move from aiohttp to flask, jinja2 is directly usable there
 * DBus exceptions

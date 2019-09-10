@@ -37,7 +37,6 @@ class Thermometer_Server(ServerObject):
     def __init__(self, interval, thermometer):
         assert isinstance(thermometer, Thermometer)
 
-        self.__loop = None
         self.__update_interval = interval
         self.__thermometer = thermometer
         self.__current_temperature = self.__thermometer.get_temperature()
@@ -78,9 +77,8 @@ class Thermometer_Server(ServerObject):
             raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))
 
     def startup(self, loop):
-        self.__loop = loop
         self.__executor = ThreadPoolExecutor(max_workers=1)
-        self.__update_task = self.__loop.create_task(self.__periodic_update())
+        self.__update_task = loop.create_task(self.__periodic_update())
 
     def shutdown(self):
         self.__update_task.cancel()
@@ -88,10 +86,10 @@ class Thermometer_Server(ServerObject):
 
         self.__update_task = None
         self.__executor = None
-        self.__loop = None
 
     async def __periodic_update(self):
+        loop = asyncio.get_event_loop()
         while True:
             await asyncio.sleep(self.__update_interval)
-            self.__current_temperature = await self.__loop.run_in_executor(
+            self.__current_temperature = await loop.run_in_executor(
                 self.__executor, self.__thermometer.get_temperature)

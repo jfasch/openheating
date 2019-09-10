@@ -7,7 +7,7 @@ import ravel
 
 class ThermometerCenter_Client:
     def __init__(self, connection):
-        self.proxy = connection.get_peer(
+        self.proxy = connection.get_client_proxy(
             busname=names.BUS.THERMOMETER_SERVICE,
             path='/', 
             iface=names.IFACE.THERMOMETER_CENTER)
@@ -17,7 +17,7 @@ class ThermometerCenter_Client:
         return self.proxy.all_names()[0]
 
     def get_thermometer(self, name):
-        thermometer_proxy = self.connection.get_peer(
+        thermometer_proxy = self.connection.get_client_proxy(
             busname=names.BUS.THERMOMETER_SERVICE,
             path='/thermometers/'+name, 
             iface=names.IFACE.THERMOMETER)
