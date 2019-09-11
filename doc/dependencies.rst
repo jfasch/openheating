@@ -22,12 +22,12 @@ not Type=dbus as most others.)
 
    # apt install python3-systemd
 
-aiohttp
-=======
+Flask
+=====
 
 ::
 
-   # pip3 install --system aiohttp
+   # pip3 install --system flask
 
 GPIO: libgpiod
 ==============

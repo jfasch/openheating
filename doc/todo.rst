@@ -1,15 +1,19 @@
 Stack (Hanging)
 ===============
 
-* logging
+* Flask
 
-  * dbus.Thermometer.{startup,shutdown} (debug)
+  * add setup.py
 
 Todo
 ====
 
+
+* logging
+
+  * dbus.Thermometer.{startup,shutdown} (debug)
+
 * /etc/systemd/system seems like the wrong place to put unit files
-* move from aiohttp to flask, jinja2 is directly usable there
 * DBus exceptions
   
   * simplify HeatingError to a minimum

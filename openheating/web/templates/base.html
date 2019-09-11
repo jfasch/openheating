@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en>
+<head>
+  <meta charset="utf-8"/>
+  <title>Home</title>
+
+  <body>
+
+    <div id="menu">
+      <h1>Menu</h1>
+      <ul>
+      {% for link, name in menu %}
+      <li><a href={{link}}>{{name}}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
+
+    <div id="main">
+      {% block main %}{% endblock %}
+    </div>
+
+    <div id="footer">
+      <p>Logged in from {{remote_addr}}</p>
+      {% block footer %}{% endblock %}
+    </div>
+
+  </body>
+
+</html>
