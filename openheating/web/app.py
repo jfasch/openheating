@@ -2,6 +2,8 @@ from openheating.dbus.thermometer_center import ThermometerCenter_Client
 
 import flask
 
+import sys
+
 
 class App:
     def __init__(self, 
@@ -20,30 +22,26 @@ class App:
         for name in self.__thermometer_center_client.all_names():
             self.__thermometers[name] = self.__thermometer_center_client.get_thermometer(name)
 
-        self.__menu = [
-            ('/thermometers', 'Thermometers'),
-            ('/dummy', 'Dummy'),
-        ]
-
     def run(self, *args, **kwargs):
         self.__app.run(*args, **kwargs)
 
-    def __common_args(self):
-        return {
-            'menu': self.__menu,
-            'remote_addr': flask.request.remote_addr,
-        }
+    def __render_template(self, template, **kwargs):
+        menu =  [
+            (flask.url_for('__view_home'), 'Home'),
+            (flask.url_for('__view_thermometers'), 'Thermometers'),
+        ]
+        return flask.render_template(
+            template,
+            menu = menu,
+            **kwargs)
 
     def __view_home(self):
-        return flask.render_template(
-            'home.html', 
-            **self.__common_args(),
+        return self.__render_template(
+            'home.html',
         )
         
     def __view_thermometers(self):
-        return flask.render_template(
-            'thermometers.html',
+        return self.__render_template(
+            'thermometers.html', 
             thermometers = self.__thermometers.values(),
-            **self.__common_args(),
         )
-

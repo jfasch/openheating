@@ -24,7 +24,6 @@ Todo
 * Exceptions in asyncio
 * thermometers.ini
 
-  * implement other thermometer types than "fixed"
   * detect duplicate thermometer names
   * error-tests
   * define exception(s)

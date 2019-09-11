@@ -20,7 +20,7 @@
     </div>
 
     <div id="footer">
-      <p>Logged in from {{remote_addr}}</p>
+      <p>Logged in from {{request.remote_addr}}</p>
       {% block footer %}{% endblock %}
     </div>
 
