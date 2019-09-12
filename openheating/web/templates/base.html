@@ -3,27 +3,28 @@
 <head>
   <meta charset="utf-8"/>
   <title>Home</title>
+</head>
 
-  <body>
+<body>
 
-    <div id="menu">
-      <h1>Menu</h1>
-      <ul>
+  <div id="menu">
+    <h1>Menu</h1>
+    <ul>
       {% for link, name in menu %}
       <li><a href={{link}}>{{name}}</a></li>
       {% endfor %}
-      </ul>
-    </div>
+    </ul>
+  </div>
 
-    <div id="main">
-      {% block main %}{% endblock %}
-    </div>
+  <div id="main">
+    {% block main %}{% endblock %}
+  </div>
 
-    <div id="footer">
-      <p>Logged in from {{request.remote_addr}}</p>
-      {% block footer %}{% endblock %}
-    </div>
+  <div id="footer">
+    <p>Logged in from {{request.remote_addr}}</p>
+    {% block footer %}{% endblock %}
+  </div>
 
-  </body>
+</body>
 
 </html>
