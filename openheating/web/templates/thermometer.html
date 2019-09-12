@@ -6,6 +6,56 @@
 
 <p>Current temperature: {{thermometer.get_temperature()}} </p>
 
+<script src="/static/Chart.js"></script>
+
+<p><canvas id="temperature_chart" width="600" height="100"></canvas></p>
+
+<script>
+var ctx = document.getElementById('temperature_chart').getContext('2d');;
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [
+	    {% for timestamp, _ in samples %}
+	    '{{ timestamp }}',
+	    {% endfor %}
+	    '(bullshit)','(bullshit)',
+	],
+        datasets: [{
+	    label: '{{thermometer.get_name()}}',
+            data: [
+		{% for _, temperature in samples %}
+		{{ temperature }},
+		{% endfor %}
+		// bullshit
+		0,100,
+	    ],
+        }],
+	options: {
+            scales: {
+		yAxes: [{
+		    display: true,
+                    ticks: {
+			// although documented, this does not
+			// work. I'd like to have constant-height
+			// y-axes (0-100 degrees makes sense in a
+			// heating system), but we have no such luck.
+
+			// workaround: at the end of a sample series,
+			// insert artificial boundaries
+			// accordingly. (see above, labeled
+			// "bullshit".)
+			beginAtZero: true,
+			min: 0,
+			max: 100
+                    }
+		}]
+            }
+	},
+    },
+});
+</script>
+
 <table>
 
   <tr>

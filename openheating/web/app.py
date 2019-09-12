@@ -9,11 +9,13 @@ import datetime
 class App:
     def __init__(self, 
                  flask_template_folder,
+                 flask_static_folder,
                  dbus_connection):
 
         self.__app = flask.Flask(
             import_name = 'openheating',
             template_folder = flask_template_folder,
+            static_folder = flask_static_folder,
         )
         self.__app.add_url_rule('/', view_func=self.__view_home)
         self.__app.add_url_rule('/thermometers', view_func=self.__view_thermometers)

@@ -15,10 +15,12 @@ cmdline.add_dbus_options(parser)
 parser.add_argument('--no-notify', action='store_true', 
                     help='Do not notify systemd about readiness (for example when started by hand during development)')
 parser.add_argument('--templates', default='./templates', help='Jinja2 templates/ directory (default: ./templates)')
+parser.add_argument('--static', default='./static', help='static/ directory (default: ./static)')
 args = parser.parse_args()
 
 app = App(
     flask_template_folder = args.templates,
+    flask_static_folder = args.static,
     dbus_connection = Connection(is_session=cmdline.is_session(args)),
 )
 

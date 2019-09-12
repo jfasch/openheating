@@ -31,7 +31,7 @@ objects = {
 }
 for name, thermometer in thermometers.items():
     history = ThermometerHistory(maxvalues=100)
-    objects['/thermometers/'+name] = Thermometer_Server(interval=3, thermometer=thermometer, history=history)
+    objects['/thermometers/'+name] = Thermometer_Server(interval=10, thermometer=thermometer, history=history)
     objects['/history/'+name] = ThermometerHistory_Server(history=history)
 
 loop.run_until_complete(connection.run(objects=objects))
