@@ -1,5 +1,6 @@
 from . import names
 from .thermometer import Thermometer_Client
+from .thermometer_history import ThermometerHistory_Client
 from ..error import HeatingError
 
 import ravel
@@ -17,11 +18,18 @@ class ThermometerCenter_Client:
         return self.proxy.all_names()[0]
 
     def get_thermometer(self, name):
-        thermometer_proxy = self.connection.get_client_proxy(
+        proxy = self.connection.get_client_proxy(
             busname=names.BUS.THERMOMETER_SERVICE,
             path='/thermometers/'+name, 
             iface=names.IFACE.THERMOMETER)
-        return Thermometer_Client(proxy=thermometer_proxy)
+        return Thermometer_Client(proxy=proxy)
+
+    def get_history(self, name):
+        proxy = self.connection.get_client_proxy(
+            busname=names.BUS.THERMOMETER_SERVICE,
+            path='/history/'+name, 
+            iface=names.IFACE.THERMOMETER_HISTORY)
+        return ThermometerHistory_Client(proxy=proxy)
 
 
 @ravel.interface(

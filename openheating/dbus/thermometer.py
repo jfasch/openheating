@@ -3,10 +3,11 @@ from .object import ServerObject
 from ..thermometer import Thermometer
 from ..error import HeatingError
 
+import ravel
+
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
-
-import ravel
+import time
 
 
 class Thermometer_Client(Thermometer):
@@ -34,11 +35,12 @@ class Thermometer_Client(Thermometer):
     ravel.INTERFACE.SERVER,
     name = names.IFACE.THERMOMETER)
 class Thermometer_Server(ServerObject):
-    def __init__(self, interval, thermometer):
+    def __init__(self, interval, thermometer, history):
         assert isinstance(thermometer, Thermometer)
 
         self.__update_interval = interval
         self.__thermometer = thermometer
+        self.__history = history
         self.__current_temperature = self.__thermometer.get_temperature()
 
         # schedule periodic temperature updates in a background
@@ -69,7 +71,8 @@ class Thermometer_Server(ServerObject):
     @ravel.method(
         name = 'get_temperature',
         in_signature = '',
-        out_signature = 'd')
+        out_signature = 'd', # double
+    )
     def get_temperature(self):
         try:
             return (self.__current_temperature,)
@@ -93,3 +96,5 @@ class Thermometer_Server(ServerObject):
             await asyncio.sleep(self.__update_interval)
             self.__current_temperature = await loop.run_in_executor(
                 self.__executor, self.__thermometer.get_temperature)
+            self.__history.new_sample(timestamp=int(time.time()), temperature=self.__current_temperature)
+

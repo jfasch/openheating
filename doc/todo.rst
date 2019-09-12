@@ -1,6 +1,15 @@
 Stack (Hanging)
 ===============
 
+* history.span()
+
+  * show in web
+
+* Temperature history
+
+  * offer history objects in dbus thermometer service
+  * add samples in background threads
+
 * Flask
 
   * add setup.py

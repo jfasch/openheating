@@ -1,5 +1,5 @@
 from openheating.thermometers_ini import read_string
-from openheating.thermometer_fixed import FixedThermometer
+from openheating.thermometer import FixedThermometer
 from openheating.w1 import W1Thermometer
 from openheating.error import BadDBusPathComponent
 

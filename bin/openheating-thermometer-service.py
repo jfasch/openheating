@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 
 from openheating.thermometers_ini import read_file as read_config_file
+from openheating.thermometer_history import ThermometerHistory
 from openheating.dbus import cmdline
 from openheating.dbus import names
 from openheating.dbus.connection import Connection
 from openheating.dbus.thermometer import Thermometer_Server
 from openheating.dbus.thermometer_center import ThermometerCenter_Server
+from openheating.dbus.thermometer_history import ThermometerHistory_Server
 
 import asyncio
 import argparse
@@ -28,7 +30,9 @@ objects = {
     '/': ThermometerCenter_Server(thermometers=thermometers),
 }
 for name, thermometer in thermometers.items():
-    objects['/thermometers/'+name] = Thermometer_Server(interval=3, thermometer=thermometer)
+    history = ThermometerHistory(maxvalues=100)
+    objects['/thermometers/'+name] = Thermometer_Server(interval=3, thermometer=thermometer, history=history)
+    objects['/history/'+name] = ThermometerHistory_Server(history=history)
 
 loop.run_until_complete(connection.run(objects=objects))
 loop.close()

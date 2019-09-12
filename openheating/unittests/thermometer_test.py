@@ -8,6 +8,8 @@ class ThermometerTest(unittest.TestCase):
         class SequenceThermometer(Thermometer):
             def __init__(self, sequence):
                 self.__sequence = sequence
+            def get_name(self): return 'name'
+            def get_description(self): return 'description'
             def get_temperature(self):
                 rv = self.__sequence[0]
                 del self.__sequence[0]
