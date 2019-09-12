@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h2>Thermometer {{thermometer.get_name()}}</h2>
+
+<p>Current temperature: {{thermometer.get_temperature()}} </p>
+
+<table>
+
+  <tr>
+    <th>Timestamp</th>
+    <th>Temperature</th>
+
+  {% for timestamp, temperature in samples %}
+  <tr>
+    <td>{{timestamp}}</td>
+    <td>{{temperature}}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% endblock %}

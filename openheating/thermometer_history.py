@@ -28,6 +28,9 @@ class ThermometerHistory:
         if len(self.__samples) > self.__maxvalues:
             del self.__samples[-1]
 
+    def all(self):
+        return self.__samples
+
     def cutout(self, youngest, oldest):
         ret = []
         for timestamp, temperature in self.__samples:

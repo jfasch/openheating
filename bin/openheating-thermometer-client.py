@@ -47,7 +47,7 @@ elif args.subcommand_name == 'current':
     print(thermometer.get_temperature())
 elif args.subcommand_name == 'history':
     history = thermometer_center.get_history(args.name)
-    for timestamp, temperature in history.cutout(youngest=int(time.time()), oldest=0):
+    for timestamp, temperature in history.all():
         dtstr = str(datetime.datetime.fromtimestamp(timestamp))
         print('{0:<25}{1:<10}'.format(dtstr, temperature))
 else:

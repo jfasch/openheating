@@ -13,7 +13,7 @@
 
   {% for th in thermometers %}
   <tr>
-    <td>{{th.get_name()}}</td>
+    <td><a href="{{thermometer_urls[th.get_name()]}}">{{th.get_name()}}</a></td>
     <td>{{th.get_description()}}</td>
     <td>{{th.get_temperature()}}</td>
   </tr>

@@ -39,6 +39,24 @@ class ThermometerHistoryTest(unittest.TestCase):
         history.new_sample(2, 22)
         self.assertRaises(ThermometerHistory.TimeAscendingError, history.new_sample, 1, 21)
 
+    def test__all(self):
+        history = ThermometerHistory(maxvalues=100)
+        history.new_sample(1, 1)
+        history.new_sample(2, 2)
+        history.new_sample(3, 3)
+        history.new_sample(4, 4)
+        history.new_sample(5, 5)
+        history.new_sample(6, 6)
+
+        samples = history.all()
+        self.assertEqual(len(samples), 6)
+        self.assertEqual(cutout[0], (6,6))
+        self.assertEqual(cutout[1], (5,5))
+        self.assertEqual(cutout[2], (4,4))
+        self.assertEqual(cutout[3], (3,3))
+        self.assertEqual(cutout[4], (2,2))
+        self.assertEqual(cutout[5], (1,1))
+
     def test__cutout(self):
         history = ThermometerHistory(maxvalues=100)
         history.new_sample(1, 1)
