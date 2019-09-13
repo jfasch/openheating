@@ -1,14 +1,10 @@
 Stack (Hanging)
 ===============
 
-* history.span()
-
-  * show in web
-
 * Temperature history
 
-  * offer history objects in dbus thermometer service
-  * add samples in background threads
+  * "reduced" history, covering a day or so; mainly for display. as
+    opposed to the short-term history where we base decisions on.
 
 * Flask
 
@@ -17,6 +13,21 @@ Stack (Hanging)
 Todo
 ====
 
+* Use Flask.route() decorator on thread-specific app object which we
+  keep in a wellknown place, say openheating.web.the_app.py.
+
+  * Use url_for() as proposed. I don't know if current route
+    establishment to App.__view_*() methods is expected. Factor
+    __view's out into separate modules which then import
+    openheating.web.the_app and use the Flask object from
+    there. Better yet, do some __init__ trickery in openheating.web
+    itself.
+
+  * Thread specific (there is a threading decorator for it)
+
+* Move dbus.ServerObject logic into dbus.lifecycle. Class decorator
+  lifecycle.managed() or so, which simply ducktypes into obj.startup()
+  and obj.shutdown() is class has the attribute. or so.
 
 * logging
 
