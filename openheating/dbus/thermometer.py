@@ -35,13 +35,14 @@ class Thermometer_Client(Thermometer):
     ravel.INTERFACE.SERVER,
     name = names.IFACE.THERMOMETER)
 class Thermometer_Server(ServerObject):
-    def __init__(self, interval, thermometer, history):
+    def __init__(self, interval, thermometer, histories):
         assert isinstance(thermometer, Thermometer)
 
         self.__update_interval = interval
         self.__thermometer = thermometer
-        self.__history = history
-        self.__current_temperature = self.__thermometer.get_temperature()
+        self.__histories = histories
+
+        self.__new_temperature(self.__thermometer.get_temperature())
 
         # schedule periodic temperature updates in a background
         # thread.
@@ -94,7 +95,12 @@ class Thermometer_Server(ServerObject):
         loop = asyncio.get_event_loop()
         while True:
             await asyncio.sleep(self.__update_interval)
-            self.__current_temperature = await loop.run_in_executor(
+            new_temperature = await loop.run_in_executor(
                 self.__executor, self.__thermometer.get_temperature)
-            self.__history.new_sample(timestamp=int(time.time()), temperature=self.__current_temperature)
+            self.__new_temperature(new_temperature)
 
+    def __new_temperature(self, temperature):
+        self.__current_temperature = temperature
+        now = time.time()
+        for history in self.__histories:
+            history.new_sample(timestamp=now, temperature=self.__current_temperature)

@@ -58,12 +58,20 @@ class App:
         thermometer = self.__thermometers[name]
         history = self.__thermometer_histories[name]
         
-        samples = []
-        for timestamp, temperature in history.all():
-            samples.append((str(datetime.datetime.fromtimestamp(timestamp)), temperature))
+        decision_samples = []
+        for timestamp, temperature in history.decision_history():
+            decision_samples.append((str(datetime.datetime.fromtimestamp(timestamp)), temperature))
+        hour_samples = []
+        for timestamp, temperature in history.hour_history():
+            hour_samples.append((str(datetime.datetime.fromtimestamp(timestamp)), temperature))
+        day_samples = []
+        for timestamp, temperature in history.day_history():
+            day_samples.append((str(datetime.datetime.fromtimestamp(timestamp)), temperature))
 
         return self.__render_template(
             'thermometer.html',
             thermometer = thermometer,
-            samples = samples,
+            decision_samples = decision_samples,
+            hour_samples = hour_samples,
+            day_samples = day_samples,
         )

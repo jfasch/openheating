@@ -28,6 +28,10 @@ current_parser.add_argument('name', help='thermometer name')
 
 history_parser = subparsers.add_parser('history', help='history <name>')
 history_parser.add_argument('name', help='thermometer name')
+group = history_parser.add_mutually_exclusive_group(required=True)
+group.add_argument('--decision', action='store_true', help='History that heating decision are based upon')
+group.add_argument('--hour', action='store_true', help='History an hour in the past')
+group.add_argument('--day', action='store_true', help='History a day in the past')
 
 args = top_parser.parse_args()
 
@@ -47,7 +51,15 @@ elif args.subcommand_name == 'current':
     print(thermometer.get_temperature())
 elif args.subcommand_name == 'history':
     history = thermometer_center.get_history(args.name)
-    for timestamp, temperature in history.all():
+    if args.decision:
+        samples = history.decision_history()
+    elif args.hour:
+        samples = history.hour_history()
+    elif args.day:
+        samples = history.day_history()
+    else: assert False, 'argparse must have caught this'
+        
+    for timestamp, temperature in samples:
         dtstr = str(datetime.datetime.fromtimestamp(timestamp))
         print('{0:<25}{1:<10}'.format(dtstr, temperature))
 else:

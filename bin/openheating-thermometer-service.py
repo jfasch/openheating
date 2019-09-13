@@ -9,6 +9,7 @@ from openheating.dbus.thermometer import Thermometer_Server
 from openheating.dbus.thermometer_center import ThermometerCenter_Server
 from openheating.dbus.thermometer_history import ThermometerHistory_Server
 
+import datetime
 import asyncio
 import argparse
 
@@ -30,9 +31,20 @@ objects = {
     '/': ThermometerCenter_Server(thermometers=thermometers),
 }
 for name, thermometer in thermometers.items():
-    history = ThermometerHistory(maxvalues=100)
-    objects['/thermometers/'+name] = Thermometer_Server(interval=10, thermometer=thermometer, history=history)
-    objects['/history/'+name] = ThermometerHistory_Server(history=history)
+    decision_history = ThermometerHistory(interval=1, duration=datetime.timedelta(minutes=30))
+    hour_history = ThermometerHistory(interval=20, duration=datetime.timedelta(hours=1))
+    day_history = ThermometerHistory(interval=60, duration=datetime.timedelta(hours=1))
+
+    objects['/thermometers/'+name] = Thermometer_Server(
+        interval=5, 
+        thermometer=thermometer,
+        histories = (decision_history, hour_history, day_history),
+    )
+    objects['/history/'+name] = ThermometerHistory_Server(
+        decision_history=decision_history,
+        hour_history=hour_history,
+        day_history=day_history,
+    )
 
 loop.run_until_complete(connection.run(objects=objects))
 loop.close()

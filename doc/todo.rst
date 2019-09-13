@@ -1,11 +1,6 @@
 Stack (Hanging)
 ===============
 
-* Temperature history
-
-  * "reduced" history, covering a day or so; mainly for display. as
-    opposed to the short-term history where we base decisions on.
-
 * Flask
 
   * add setup.py
@@ -13,8 +8,8 @@ Stack (Hanging)
 Todo
 ====
 
-* Use Flask.route() decorator on thread-specific app object which we
-  keep in a wellknown place, say openheating.web.the_app.py.
+* Use Flask.route() decorator on global app object which we keep in a
+  wellknown place, say openheating.web.the_app.py.
 
   * Use url_for() as proposed. I don't know if current route
     establishment to App.__view_*() methods is expected. Factor
@@ -23,11 +18,14 @@ Todo
     there. Better yet, do some __init__ trickery in openheating.web
     itself.
 
-  * Thread specific (there is a threading decorator for it)
-
 * Move dbus.ServerObject logic into dbus.lifecycle. Class decorator
   lifecycle.managed() or so, which simply ducktypes into obj.startup()
   and obj.shutdown() is class has the attribute. or so.
+
+* Move thermometers_ini into config.thermometers_ini
+
+* Update graphs: Json interface for history, plus calling JS in
+  thermometer.html.
 
 * logging
 

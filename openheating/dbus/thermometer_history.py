@@ -7,32 +7,45 @@ class ThermometerHistory_Client:
     def __init__(self, proxy):
         self.__proxy = proxy
 
-    def all(self):
-        return self.__proxy.all()[0]
+    def decision_history(self):
+        return self.__proxy.decision_history()[0]
 
-    def cutout(self, youngest, oldest):
-        return self.__proxy.cutout(youngest, oldest)[0]
+    def hour_history(self):
+        return self.__proxy.hour_history()[0]
+
+    def day_history(self):
+        return self.__proxy.day_history()[0]
 
 @ravel.interface(
     ravel.INTERFACE.SERVER,
     name = names.IFACE.THERMOMETER_HISTORY)
 class ThermometerHistory_Server:
-    def __init__(self, history):
-        self.__history = history
+    def __init__(self, decision_history, hour_history, day_history):
+        self.__decision_history = decision_history
+        self.__hour_history = hour_history
+        self.__day_history = day_history
 
     @ravel.method(
-        name = 'all',
+        name = 'decision_history',
         in_signature = '',
         out_signature = 'a(td)', # array of (uint64:timestamp,double:temperature) samples
     )
-    def all(self):
-        return (self.__history.all(),)
+    def decision_history(self):
+        return (list(self.__decision_history),)
 
     @ravel.method(
-        name = 'cutout',
-        in_signature = 'tt', # uint64:youngest,uint64:oldest
+        name = 'hour_history',
+        in_signature = '',
         out_signature = 'a(td)', # array of (uint64:timestamp,double:temperature) samples
     )
-    def cutout(self, youngest, oldest):
-        return (self.__history.cutout(youngest=youngest, oldest=oldest),)
+    def hour_history(self):
+        return (list(self.__hour_history),)
+
+    @ravel.method(
+        name = 'day_history',
+        in_signature = '',
+        out_signature = 'a(td)', # array of (uint64:timestamp,double:temperature) samples
+    )
+    def day_history(self):
+        return (list(self.__day_history),)
 

@@ -1,0 +1,68 @@
+{% macro temperature_histogram(samples, element_name) -%}
+
+<script>
+var ctx = document.getElementById('{{element_name}}').getContext('2d');;
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [
+	    {% for timestamp, _ in samples %}
+	    '{{ timestamp }}',
+	    {% endfor %}
+	    '(bullshit)','(bullshit)',
+	],
+        datasets: [{
+            data: [
+		{% for _, temperature in samples %}
+		{{ temperature }},
+		{% endfor %}
+		// bullshit
+		0,100,
+	    ],
+        }],
+	options: {
+            scales: {
+		yAxes: [{
+		    display: true,
+                    ticks: {
+			// although documented, this does not
+			// work. I'd like to have constant-height
+			// y-axes (0-100 degrees makes sense in a
+			// heating system), but we have no such luck.
+
+			// workaround: at the end of a sample series,
+			// insert artificial boundaries
+			// accordingly. (see above, labeled
+			// "bullshit".)
+			beginAtZero: true,
+			min: 0,
+			max: 100
+                    }
+		}]
+            }
+	},
+    },
+});
+</script>
+
+{%- endmacro %}
+
+
+{% macro temperature_table(samples) -%}
+
+<table>
+
+  <tr>
+    <th>Timestamp</th>
+    <th>Temperature</th>
+
+  {% for timestamp, temperature in samples %}
+  <tr>
+    <td>{{timestamp}}</td>
+    <td>{{temperature}}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{%- endmacro %}

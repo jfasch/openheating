@@ -1,95 +1,81 @@
 from openheating.thermometer_history import ThermometerHistory
 
+import datetime
 import unittest
 
 
 class ThermometerHistoryTest(unittest.TestCase):
-    def test__basic(self):
-        history = ThermometerHistory(maxvalues=2)
-        history.new_sample(1, 21)
-        history.new_sample(2, 22)
+    def test__duration_sec(self):
+        history = ThermometerHistory(interval=1, duration=5) # seconds
+        history.new_sample(0,0)
+        history.new_sample(1,1)
+        history.new_sample(2,2)
+        
+        # interval is 1, so it must have recorded every sample
+        self.assertEqual(len(history), 3)
+        self.assertEqual(history[0], (2,2))
+        self.assertEqual(history[1], (1,1))
+        self.assertEqual(history[2], (0,0))
 
+        # duration is 5, so we can insett another 2
+        history.new_sample(3,3)
+        history.new_sample(4,4)
+        self.assertEqual(len(history), 5)
+
+        # ... until the oldest start falling off at the tail
+        history.new_sample(5,5)
+        self.assertEqual(len(history), 6)
+        self.assertEqual(history[0], (5,5))
+        self.assertEqual(history[1], (4,4))
+        self.assertEqual(history[2], (3,3))
+        self.assertEqual(history[3], (2,2))
+        self.assertEqual(history[4], (1,1))
+        self.assertEqual(history[5], (0,0))
+
+    def test__interval(self):
+        history = ThermometerHistory(interval=2, duration=100)
+        history.new_sample(1,1)
+        history.new_sample(2,2)
+        history.new_sample(3,3)
         self.assertEqual(len(history), 2)
+        self.assertEqual(history[0], (3,3))
+        self.assertEqual(history[1], (1,1))
 
-        ts, temp = history[0]
-        self.assertEqual(ts, 2)
-        self.assertEqual(temp, 22)
-
-        ts, temp = history[1]
-        self.assertEqual(ts, 1)
-        self.assertEqual(temp, 21)
-
-        # add one more sample; the oldest is removed and the indexes
-        # advance
-
-        history.new_sample(3, 23)
-
-        self.assertEqual(len(history), 2)
-
-        ts, temp = history[0]
-        self.assertEqual(ts, 3)
-        self.assertEqual(temp, 23)
-
-        ts, temp = history[1]
-        self.assertEqual(ts, 2)
-        self.assertEqual(temp, 22)
-
+        history.new_sample(4,4)
+        history.new_sample(5,5)
+        self.assertEqual(len(history), 3)
+        self.assertEqual(history[0], (5,5))
+        self.assertEqual(history[1], (3,3))
+        self.assertEqual(history[2], (1,1))
+        
     def test__verify_ascending_time(self):
-        history = ThermometerHistory(maxvalues=2)
+        history = ThermometerHistory(interval=1, duration=4)
         history.new_sample(2, 22)
         self.assertRaises(ThermometerHistory.TimeAscendingError, history.new_sample, 1, 21)
 
-    def test__all(self):
-        history = ThermometerHistory(maxvalues=100)
+    def test__iter(self):
+        history = ThermometerHistory(interval=1, duration=5)
         history.new_sample(1, 1)
         history.new_sample(2, 2)
         history.new_sample(3, 3)
-        history.new_sample(4, 4)
-        history.new_sample(5, 5)
-        history.new_sample(6, 6)
+        samples = [ (ts, temp) for ts, temp in history ]
+        self.assertEqual(samples, [(3, 3), (2, 2), (1, 1)])
 
-        samples = history.all()
-        self.assertEqual(len(samples), 6)
-        self.assertEqual(cutout[0], (6,6))
-        self.assertEqual(cutout[1], (5,5))
-        self.assertEqual(cutout[2], (4,4))
-        self.assertEqual(cutout[3], (3,3))
-        self.assertEqual(cutout[4], (2,2))
-        self.assertEqual(cutout[5], (1,1))
+    def test_datetime(self):
+        history = ThermometerHistory(
+            interval=datetime.timedelta(minutes=15), 
+            duration=datetime.timedelta(days=1))
+        history.new_sample(datetime.datetime(year=2019, month=9, day=13, hour=1), 0)
+        history.new_sample(datetime.datetime(year=2019, month=9, day=13, hour=1, minute=10), 0)
+        history.new_sample(datetime.datetime(year=2019, month=9, day=13, hour=2), 0)
 
-    def test__cutout(self):
-        history = ThermometerHistory(maxvalues=100)
-        history.new_sample(1, 1)
-        history.new_sample(2, 2)
-        history.new_sample(3, 3)
-        history.new_sample(4, 4)
-        history.new_sample(5, 5)
-        history.new_sample(6, 6)
+        self.assertEqual(len(history), 2)
+        self.assertEqual(history[0], (datetime.datetime(year=2019, month=9, day=13, hour=2).timestamp(), 0))
+        self.assertEqual(history[1], (datetime.datetime(year=2019, month=9, day=13, hour=1).timestamp(), 0))
 
-        cutout = history.cutout(youngest=6, oldest=2)
-        self.assertEqual(len(cutout), 5)
-        self.assertEqual(cutout[0], (6,6))
-        self.assertEqual(cutout[1], (5,5))
-        self.assertEqual(cutout[2], (4,4))
-        self.assertEqual(cutout[3], (3,3))
-        self.assertEqual(cutout[4], (2,2))
+    def test__cap_fractional_timestamps(self):
+        history = ThermometerHistory(interval=1, duration=10)
+        history.new_sample(1.2, 1)
+        self.assertEqual(history[0], (1,1))
 
-        cutout = history.cutout(youngest=100, oldest=2)
-        self.assertEqual(len(cutout), 5)
-        self.assertEqual(cutout[0], (6,6))
-        self.assertEqual(cutout[1], (5,5))
-        self.assertEqual(cutout[2], (4,4))
-        self.assertEqual(cutout[3], (3,3))
-        self.assertEqual(cutout[4], (2,2))
-
-        cutout = history.cutout(youngest=6, oldest=0)
-        self.assertEqual(len(cutout), 6)
-        self.assertEqual(cutout[0], (6,6))
-        self.assertEqual(cutout[1], (5,5))
-        self.assertEqual(cutout[2], (4,4))
-        self.assertEqual(cutout[3], (3,3))
-        self.assertEqual(cutout[4], (2,2))
-
-        self.assertEqual(cutout[5], (1,1))
-        
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerHistoryTest)
