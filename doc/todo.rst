@@ -1,13 +1,6 @@
 Stack (Hanging)
 ===============
 
-* Flask
-
-  * add setup.py
-
-Todo
-====
-
 * Use Flask.route() decorator on global app object which we keep in a
   wellknown place, say openheating.web.the_app.py.
 
@@ -17,6 +10,13 @@ Todo
     openheating.web.the_app and use the Flask object from
     there. Better yet, do some __init__ trickery in openheating.web
     itself.
+
+Todo
+====
+
+* Flask/HTTP
+
+  * add web/ to setup.py
 
 * Move dbus.ServerObject logic into dbus.lifecycle. Class decorator
   lifecycle.managed() or so, which simply ducktypes into obj.startup()

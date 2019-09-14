@@ -10,26 +10,26 @@
 
 <script src="/static/Chart.js"></script>
 
-<h3>Day</h3>
+<h3>Day ({{day_samples|length}} samples)</h3>
 <canvas id="day_chart" width="600" height="100"></canvas></p>
 {{temperature_histogram(samples=day_samples, element_name='day_chart')}}
 
-<h3>Hour</h3>
+<h3>Hour ({{hour_samples|length}} samples)</h3>
 <canvas id="hour_chart" width="600" height="100"></canvas></p>
 {{temperature_histogram(samples=hour_samples, element_name='hour_chart')}}
 
-<h3>Short Term</h3>
+<h3>Short Term ({{decision_samples|length}} samples)</h3>
 <canvas id="decision_chart" width="600" height="100"></canvas></p>
 {{temperature_histogram(samples=decision_samples, element_name='decision_chart')}}
 
 
-<h3>Day</h3>
+<h3>Day ({{day_samples|length}} samples)</h3>
 {{temperature_table(samples=day_samples)}}
 
-<h3>Hour</h3>
+<h3>Hour ({{hour_samples|length}} samples)</h3>
 {{temperature_table(samples=hour_samples)}}
 
-<h3>Short Term</h3>
+<h3>Short Term ({{decision_samples|length}} samples)</h3>
 {{temperature_table(samples=decision_samples)}}
 
 {% endblock %}

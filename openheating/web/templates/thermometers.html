@@ -11,11 +11,11 @@
     <th>Description</th>
     <th>Temperature</th>
 
-  {% for th in thermometers %}
+  {% for name, thermometer in app.thermometers.items() %}
   <tr>
-    <td><a href="{{thermometer_urls[th.get_name()]}}">{{th.get_name()}}</a></td>
-    <td>{{th.get_description()}}</td>
-    <td>{{th.get_temperature()}}</td>
+    <td><a href="{{url_for('thermometer', name=name)}}">{{name}}</a></td>
+    <td>{{thermometer.get_description()}}</td>
+    <td>{{thermometer.get_temperature()}}</td>
   </tr>
   {% endfor %}
 
