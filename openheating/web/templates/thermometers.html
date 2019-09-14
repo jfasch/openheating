@@ -2,6 +2,8 @@
 
 {% block main %}
 
+{% from 'history_macros.html' import temperature_histogram, temperature_table %}
+
 <h2>Thermometers</h2>
 
 <table>
@@ -10,15 +12,23 @@
     <th>Name</th>
     <th>Description</th>
     <th>Temperature</th>
+    <th>Chart</th>
 
   {% for name, thermometer in app.thermometers.items() %}
   <tr>
     <td><a href="{{url_for('thermometer', name=name)}}">{{name}}</a></td>
     <td>{{thermometer.get_description()}}</td>
     <td>{{thermometer.get_temperature()}}</td>
+    <td>
+      <canvas id="day_chart_{{name}}" width="400" height="100"></canvas>
+    </td>
   </tr>
   {% endfor %}
 
 </table>
+
+{% for name in app.thermometers.keys() %}
+{{temperature_histogram(samples=samples_per_thermometer[name], element_name="day_chart_"+name)}}
+{% endfor %}
 
 {% endblock %}

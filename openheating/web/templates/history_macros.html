@@ -1,7 +1,9 @@
 {% macro temperature_histogram(samples, element_name) -%}
 
+<script src="/static/Chart.js"></script>
+
 <script>
-var ctx = document.getElementById('{{element_name}}').getContext('2d');;
+var ctx = document.getElementById('{{element_name}}').getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -21,7 +23,7 @@ var myChart = new Chart(ctx, {
 	    ],
         }],
 	options: {
-            scales: {
+	    scales: {
 		yAxes: [{
 		    display: true,
                     ticks: {
@@ -39,7 +41,11 @@ var myChart = new Chart(ctx, {
 			max: 100
                     }
 		}]
-            }
+            },
+	    legend: {
+		// this also doesn't work @#$%^&*
+		display: false
+	    },
 	},
     },
 });
