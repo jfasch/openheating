@@ -8,6 +8,22 @@ Look at plug from front, pins on top. Pins from left to right ...
 * yellow, DATA
 * white, GND
 
+Parasitic vs. Powered
+---------------------
+
+I had problems repeatedly on one line; devices disappeared and were
+replaced by ones that were named 00-0c4000000000.
+
+00 is the family (for example, 28 (decimal) would be the expected
+Maxim DS28E04-100) which is completely bogus. 0c4000000000 is the
+serial number, which his also too even to be correct.
+
+It looks like the sensors become unstable under certain
+circumstances. I can imagine that permanent power (as opposed to
+parasitic power) make the instability, if it happens, permanent as
+well. At least, unplugging the power supply cured the symptom
+*immediately*.
+
 Links
 -----
 
