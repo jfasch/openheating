@@ -49,7 +49,7 @@ class ThermometerHistory:
                 return
 
             oldest, _ = self.__samples[-1]
-            if oldest - timestamp > self.__duration:
+            if timestamp - oldest > self.__duration:
                 del self.__samples[-1]
 
         self.__samples.insert(0, (timestamp, temperature))
