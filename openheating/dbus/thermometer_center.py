@@ -1,6 +1,7 @@
 from . import names
+from . import ifaces
 from .thermometer import Thermometer_Client
-from .thermometer_history import ThermometerHistory_Client
+from .temperature_history import TemperatureHistory_Client
 from ..error import HeatingError
 
 import ravel
@@ -28,21 +29,16 @@ class ThermometerCenter_Client:
         proxy = self.connection.get_client_proxy(
             busname=names.BUS.THERMOMETER_SERVICE,
             path='/history/'+name, 
-            iface=names.IFACE.THERMOMETER_HISTORY)
-        return ThermometerHistory_Client(proxy=proxy)
+            iface=names.IFACE.TEMPERATURE_HISTORY)
+        return TemperatureHistory_Client(proxy=proxy)
 
 
-@ravel.interface(
-    ravel.INTERFACE.SERVER,
-    name = names.IFACE.THERMOMETER_CENTER)
+@ifaces.THERMOMETER_CENTER.iface
 class ThermometerCenter_Server:
     def __init__(self, thermometers):
         self.__thermometers = thermometers
 
-    @ravel.method(
-        name = 'all_names',
-        in_signature = '',
-        out_signature = 'as')
+    @ifaces.THERMOMETER_CENTER.all_names
     def all_names(self):
         try:
             return [list(self.__thermometers.keys())]

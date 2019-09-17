@@ -6,7 +6,7 @@ class BUS:
 
 class IFACE:
     THERMOMETER = DOMAIN + '.Thermometer'
-    THERMOMETER_HISTORY = DOMAIN + '.ThermometerHistory'
+    TEMPERATURE_HISTORY = DOMAIN + '.TemperatureHistory'
     SWITCH = DOMAIN + '.Switch'
     THERMOMETER_CENTER = DOMAIN + '.ThermometerCenter'
     SWITCH_CENTER = DOMAIN + '.SwitchCenter'

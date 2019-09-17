@@ -1,4 +1,5 @@
 from . import names
+from . import ifaces
 from .object import ServerObject
 from ..thermometer import Thermometer
 from ..error import HeatingError
@@ -31,9 +32,7 @@ class Thermometer_Client(Thermometer):
         return self.proxy.get_temperature()[0]
 
 
-@ravel.interface(
-    ravel.INTERFACE.SERVER,
-    name = names.IFACE.THERMOMETER)
+@ifaces.THERMOMETER.iface
 class Thermometer_Server(ServerObject):
     def __init__(self, update_interval, thermometer, histories):
         assert isinstance(thermometer, Thermometer)
@@ -55,25 +54,15 @@ class Thermometer_Server(ServerObject):
         self.__executor = None
         self.__update_task = None
 
-    @ravel.method(
-        name = 'get_name',
-        in_signature = '',
-        out_signature = 's')
+    @ifaces.THERMOMETER.get_name
     def get_name(self):
         return (self.__thermometer.get_name(),)
 
-    @ravel.method(
-        name = 'get_description',
-        in_signature = '',
-        out_signature = 's')
+    @ifaces.THERMOMETER.get_description
     def get_description(self):
         return (self.__thermometer.description,)
 
-    @ravel.method(
-        name = 'get_temperature',
-        in_signature = '',
-        out_signature = 'd', # double
-    )
+    @ifaces.THERMOMETER.get_temperature
     def get_temperature(self):
         try:
             return (self.__current_temperature,)

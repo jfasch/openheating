@@ -7,7 +7,7 @@ from openheating.dbus import names
 from openheating.dbus.connection import Connection
 from openheating.dbus.thermometer import Thermometer_Server
 from openheating.dbus.thermometer_center import ThermometerCenter_Server
-from openheating.dbus.thermometer_history import ThermometerHistory_Server
+from openheating.dbus.temperature_history import TemperatureHistory_Server
 
 import datetime
 import asyncio
@@ -40,7 +40,7 @@ for name, thermometer in thermometers.items():
         thermometer=thermometer,
         histories = (decision_history, hour_history, day_history),
     )
-    objects['/history/'+name] = ThermometerHistory_Server(
+    objects['/history/'+name] = TemperatureHistory_Server(
         decision_history=decision_history,
         hour_history=hour_history,
         day_history=day_history,
