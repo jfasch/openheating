@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.thermometers_ini import read_file as read_config_file
-from openheating.thermometer_history import ThermometerHistory
+from openheating.history import History
 from openheating.dbus import cmdline
 from openheating.dbus import names
 from openheating.dbus.connection import Connection
@@ -31,12 +31,12 @@ objects = {
     '/': ThermometerCenter_Server(thermometers=thermometers),
 }
 for name, thermometer in thermometers.items():
-    decision_history = ThermometerHistory(interval=1, duration=datetime.timedelta(minutes=30))
-    hour_history = ThermometerHistory(interval=20, duration=datetime.timedelta(hours=1))
-    day_history = ThermometerHistory(interval=60, duration=datetime.timedelta(hours=1))
+    decision_history = History(granularity=1, duration=datetime.timedelta(minutes=30))
+    hour_history = History(granularity=20, duration=datetime.timedelta(hours=1))
+    day_history = History(granularity=60, duration=datetime.timedelta(hours=1))
 
     objects['/thermometers/'+name] = Thermometer_Server(
-        interval=5, 
+        update_interval=5, 
         thermometer=thermometer,
         histories = (decision_history, hour_history, day_history),
     )

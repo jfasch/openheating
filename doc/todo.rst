@@ -1,10 +1,17 @@
 Stack (Hanging)
 ===============
 
-* rename temperature_history -> history
+* history refactoring
 
-* one history per thermometer, where excerpts are taken out
-  dynamically
+  * one history per thermometer, where excerpts are taken out
+    dynamically
+
+  * dbus: no separate /history/<name> objects. thermometer dbus
+    objects provide "History" interfaces, in addition to "Thermometer"
+
+    * ThermometerHistory_Server -> Temperature*
+    * ThermometerHistory_Client -> Temperature*
+    * names.IFACE.THERMOMETER_HISTORY -> *TEMPERATURE*
 
 Todo
 ====

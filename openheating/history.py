@@ -3,18 +3,18 @@ from .error import HeatingError
 import datetime
 
 
-class ThermometerHistory:
+class History:
     class TimeAscendingError(HeatingError):
         def __init__(self, new, previous):
             super().__init__(
                 msg='New timestamp {new} is before previous timestamp {previous}'
                 .format(new=new, previous=previous))
 
-    def __init__(self, interval, duration):
+    def __init__(self, granularity, duration):
         try:
-            self.__interval = interval.total_seconds()
+            self.__granularity = granularity.total_seconds()
         except AttributeError: # assume number
-            self.__interval = interval
+            self.__granularity = granularity
 
         try:
             self.__duration = duration.total_seconds()
@@ -32,7 +32,7 @@ class ThermometerHistory:
     def __getitem__(self, index):
         return self.__samples[index]
 
-    def new_sample(self, timestamp, temperature):
+    def new_sample(self, timestamp, value):
         try:
             timestamp = timestamp.timestamp()
         except AttributeError:
@@ -45,11 +45,11 @@ class ThermometerHistory:
             previous, _ = self.__samples[0]
             if timestamp < previous:
                 raise self.TimeAscendingError(new=timestamp, previous=previous)
-            if timestamp - previous < self.__interval:
+            if timestamp - previous < self.__granularity:
                 return
 
             oldest, _ = self.__samples[-1]
             if timestamp - oldest > self.__duration:
                 del self.__samples[-1]
 
-        self.__samples.insert(0, (timestamp, temperature))
+        self.__samples.insert(0, (timestamp, value))

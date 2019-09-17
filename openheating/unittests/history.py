@@ -1,4 +1,4 @@
-from openheating.thermometer_history import ThermometerHistory
+from openheating.history import History
 
 import datetime
 import unittest
@@ -7,14 +7,14 @@ import os
 import os.path
 
 
-class ThermometerHistoryTest(unittest.TestCase):
+class HistoryTest(unittest.TestCase):
     def test__duration_sec(self):
-        history = ThermometerHistory(interval=1, duration=5) # seconds
+        history = History(granularity=1, duration=5) # seconds
         history.new_sample(0,0)
         history.new_sample(1,1)
         history.new_sample(2,2)
         
-        # interval is 1, so it must have recorded every sample
+        # granularity is 1, so it must have recorded every sample
         self.assertEqual(len(history), 3)
         self.assertEqual(history[0], (2,2))
         self.assertEqual(history[1], (1,1))
@@ -47,8 +47,8 @@ class ThermometerHistoryTest(unittest.TestCase):
         self.assertEqual(history[4], (2,2))
         self.assertEqual(history[5], (1,1))
 
-    def test__interval(self):
-        history = ThermometerHistory(interval=2, duration=100)
+    def test__granularity(self):
+        history = History(granularity=2, duration=100)
         history.new_sample(1,1)
         history.new_sample(2,2)
         history.new_sample(3,3)
@@ -64,12 +64,12 @@ class ThermometerHistoryTest(unittest.TestCase):
         self.assertEqual(history[2], (1,1))
         
     def test__verify_ascending_time(self):
-        history = ThermometerHistory(interval=1, duration=4)
+        history = History(granularity=1, duration=4)
         history.new_sample(2, 22)
-        self.assertRaises(ThermometerHistory.TimeAscendingError, history.new_sample, 1, 21)
+        self.assertRaises(History.TimeAscendingError, history.new_sample, 1, 21)
 
     def test__iter(self):
-        history = ThermometerHistory(interval=1, duration=5)
+        history = History(granularity=1, duration=5)
         history.new_sample(1, 1)
         history.new_sample(2, 2)
         history.new_sample(3, 3)
@@ -77,8 +77,8 @@ class ThermometerHistoryTest(unittest.TestCase):
         self.assertEqual(samples, [(3, 3), (2, 2), (1, 1)])
 
     def test__datetime(self):
-        history = ThermometerHistory(
-            interval=datetime.timedelta(minutes=15), 
+        history = History(
+            granularity=datetime.timedelta(minutes=15), 
             duration=datetime.timedelta(days=1))
         history.new_sample(datetime.datetime(year=2019, month=9, day=13, hour=1), 0)
         history.new_sample(datetime.datetime(year=2019, month=9, day=13, hour=1, minute=10), 0)
@@ -89,8 +89,8 @@ class ThermometerHistoryTest(unittest.TestCase):
         self.assertEqual(history[1], (datetime.datetime(year=2019, month=9, day=13, hour=1).timestamp(), 0))
 
     def test__mixed_datetime(self):
-        history = ThermometerHistory(
-            interval=1, 
+        history = History(
+            granularity=1, 
             duration=datetime.timedelta(hours=1))
         history.new_sample(0, 0)
         history.new_sample(30*60, 0)
@@ -103,11 +103,11 @@ class ThermometerHistoryTest(unittest.TestCase):
         self.assertEqual(history[2], (30*60, 0))
 
     def test__cap_fractional_timestamps(self):
-        history = ThermometerHistory(interval=1, duration=10)
+        history = History(granularity=1, duration=10)
         history.new_sample(1.2, 1)
         self.assertEqual(history[0], (1,1))
 
-suite = unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerHistoryTest)
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(HistoryTest)
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2, descriptions=False)

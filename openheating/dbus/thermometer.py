@@ -35,10 +35,10 @@ class Thermometer_Client(Thermometer):
     ravel.INTERFACE.SERVER,
     name = names.IFACE.THERMOMETER)
 class Thermometer_Server(ServerObject):
-    def __init__(self, interval, thermometer, histories):
+    def __init__(self, update_interval, thermometer, histories):
         assert isinstance(thermometer, Thermometer)
 
-        self.__update_interval = interval
+        self.__update_interval = update_interval
         self.__thermometer = thermometer
         self.__histories = histories
 
@@ -103,4 +103,4 @@ class Thermometer_Server(ServerObject):
         self.__current_temperature = temperature
         now = time.time()
         for history in self.__histories:
-            history.new_sample(timestamp=now, temperature=self.__current_temperature)
+            history.new_sample(timestamp=now, value=self.__current_temperature)
