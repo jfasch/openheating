@@ -19,8 +19,10 @@
     <td><a href="{{url_for('thermometer', name=name)}}">{{name}}</a></td>
     <td>{{thermometer.get_description()}}</td>
     <td>{{thermometer.get_temperature()}}</td>
-    <td>
-      <canvas id="day_chart_{{name}}" width="400" height="100"></canvas>
+    <td width="900px">
+      <!--<div id="day_chart_{{name}}" width="400" height="100"></div>-->
+      <!--<div id="day_chart_{{name}}" style="width: 400px; height: 400px;"></div>-->
+      <div id="day_chart_{{name}}"></div>
     </td>
   </tr>
   {% endfor %}

@@ -1,5 +1,31 @@
 {% macro temperature_histogram(samples, element_name) -%}
 
+<script src="/static/plotly-1.49.4.js"></script>
+
+<script>
+
+  var hist = {
+      x: [
+	  {% for timestamp, _ in samples %}
+	  "{{timestamp}}",
+	  {% endfor %}
+      ],
+      y: [
+	  {% for _, temperature in samples %}
+	  "{{temperature}}",
+	  {% endfor %}
+      ],
+      type: "scatter",
+  }
+  layout = {
+      yaxis: {range: [0, 100]}
+  }
+
+  Plotly.newPlot("{{element_name}}", [hist], layout)
+
+</script>
+
+<!--
 <script src="/static/Chart.js"></script>
 
 <script>
@@ -50,6 +76,7 @@ var myChart = new Chart(ctx, {
     },
 });
 </script>
+-->
 
 {%- endmacro %}
 

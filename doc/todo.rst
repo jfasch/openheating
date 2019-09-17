@@ -1,18 +1,42 @@
 Stack (Hanging)
 ===============
 
-* Use Flask.route() decorator on global app object which we keep in a
-  wellknown place, say openheating.web.the_app.py.
+* rename temperature_history -> history
 
-  * Use url_for() as proposed. I don't know if current route
-    establishment to App.__view_*() methods is expected. Factor
-    __view's out into separate modules which then import
-    openheating.web.the_app and use the Flask object from
-    there. Better yet, do some __init__ trickery in openheating.web
-    itself.
+* one history per thermometer, where excerpts are taken out
+  dynamically
 
 Todo
 ====
+
+* web: "test" url parameter -> fill histograms with random crap
+
+* history
+
+  * generalize into history.py, used by thermometer_history.
+
+* plotly, graph pages
+
+  * tooltips as links to thermometer pages for example
+  * main area has one sub-template that divides main area in two,
+    adding a div for "the graph", and a couple of alike possibities
+    for further subclassing.
+  * hierarchical naming through the area hierarchies created. for
+    example <div id="path.to.element"></div>, and easier-to-check
+    (make functions for them) references in css and graph placement.
+
+* error managers
+
+  * signal a HeatingError by subtype, pickle. oder gleich json, bissl
+    unittesterei.
+  * hook manager for specific errors in. w1 crap for example, need
+    better reports, logging.
+  * debug facilities for all
+
+    * web/*, auch templates/
+    * dbus/*
+    * setup, on build/installation errors like ac_subst. logging
+      there.
 
 * Flask/HTTP
 

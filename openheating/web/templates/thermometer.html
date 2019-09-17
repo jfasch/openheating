@@ -9,15 +9,15 @@
 <p>Current temperature: {{thermometer.get_temperature()}} </p>
 
 <h3>Day ({{day_samples|length}} samples)</h3>
-<canvas id="day_chart" width="600" height="100"></canvas>
+<div id="day_chart" width="600" height="100"></div>
 {{temperature_histogram(samples=day_samples, element_name='day_chart')}}
 
 <h3>Hour ({{hour_samples|length}} samples)</h3>
-<canvas id="hour_chart" width="600" height="100"></canvas>
+<div id="hour_chart" width="600" height="100"></div>
 {{temperature_histogram(samples=hour_samples, element_name='hour_chart')}}
 
 <h3>Short Term ({{decision_samples|length}} samples)</h3>
-<canvas id="decision_chart" width="600" height="100"></canvas>
+<div id="decision_chart" width="600" height="100"></div>
 {{temperature_histogram(samples=decision_samples, element_name='decision_chart')}}
 
 
