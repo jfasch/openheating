@@ -1,6 +1,18 @@
 from .error import HeatingError
 
 import datetime
+import time
+from bisect import bisect_left
+from collections import deque
+
+
+def _delta2unix(delta):
+    try:
+        num = delta.total_seconds()
+    except AttributeError: # assume number
+        num = delta
+    # cap fractional timestamps to entire seconds
+    return int(num)
 
 
 class History:
@@ -10,18 +22,19 @@ class History:
                 msg='New timestamp {new} is before previous timestamp {previous}'
                 .format(new=new, previous=previous))
 
-    def __init__(self, granularity, duration):
-        try:
-            self.__granularity = granularity.total_seconds()
-        except AttributeError: # assume number
-            self.__granularity = granularity
+    def __init__(self, duration=None, samples=None, unchecked_samples=None):
+        assert not (unchecked_samples and samples)
 
-        try:
-            self.__duration = duration.total_seconds()
-        except AttributeError: # assume number
-            self.__duration = duration
+        self.__duration = duration
 
-        self.__samples = []
+        if unchecked_samples:
+            self.__samples = deque(unchecked_samples)
+            return
+
+        self.__samples = deque()
+        if samples:
+            for ts, v in samples:
+                self.add(ts,v)
 
     def __len__(self):
         return len(self.__samples)
@@ -32,24 +45,43 @@ class History:
     def __getitem__(self, index):
         return self.__samples[index]
 
-    def new_sample(self, timestamp, value):
-        try:
-            timestamp = timestamp.timestamp()
-        except AttributeError:
-            pass
-
-        # cap fractional timestamps to entire seconds
-        timestamp = int(timestamp)
-
+    def add(self, timestamp, value):
+        timestamp = int(timestamp) # cap fractional timestamps
         if len(self.__samples):
-            previous, _ = self.__samples[0]
+            previous = self.__samples[-1][0]
             if timestamp < previous:
                 raise self.TimeAscendingError(new=timestamp, previous=previous)
-            if timestamp - previous < self.__granularity:
-                return
 
-            oldest, _ = self.__samples[-1]
-            if timestamp - oldest > self.__duration:
-                del self.__samples[-1]
+            if self.__duration is not None:
+                oldest = self.__samples[0][0]
+                if timestamp - oldest > self.__duration:
+                    del self.__samples[0]
 
-        self.__samples.insert(0, (timestamp, value))
+        self.__samples.append((timestamp, value))
+
+    def distill(self, granularity, duration):
+        granularity = _delta2unix(granularity)
+        duration = _delta2unix(duration)
+
+        if len(self.__samples) == 0:
+            return History()
+
+        youngest_ts = self.__samples[-1][0]
+        boundary_ts = youngest_ts - duration
+        if boundary_ts < 0:
+            boundary_ts = 0
+
+        # search boundary index
+        boundary_idx = 0
+        while self.__samples[boundary_idx][0] < boundary_ts:
+            boundary_idx += 1
+
+        distilled = []
+        last_ts = boundary_ts
+        cur_idx = boundary_idx
+        while cur_idx < len(self.__samples):
+            if self.__samples[cur_idx][0] - last_ts >= granularity:
+                distilled.append(self.__samples[cur_idx])
+            cur_idx += 1
+
+        return History(unchecked_samples=distilled)
