@@ -31,20 +31,14 @@ objects = {
     '/': ThermometerCenter_Server(thermometers=thermometers),
 }
 for name, thermometer in thermometers.items():
-    decision_history = History(granularity=1, duration=datetime.timedelta(minutes=30))
-    hour_history = History(granularity=20, duration=datetime.timedelta(hours=1))
-    day_history = History(granularity=60, duration=datetime.timedelta(hours=1))
+    history = History(duration=datetime.timedelta(days=1))
 
     objects['/thermometers/'+name] = Thermometer_Server(
         update_interval=5, 
         thermometer=thermometer,
-        histories = (decision_history, hour_history, day_history),
-    )
+        history = history)
     objects['/history/'+name] = TemperatureHistory_Server(
-        decision_history=decision_history,
-        hour_history=hour_history,
-        day_history=day_history,
-    )
+        history = history)
 
 loop.run_until_complete(connection.run(objects=objects))
 loop.close()

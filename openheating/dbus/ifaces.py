@@ -28,19 +28,9 @@ class TEMPERATURE_HISTORY:
     iface = ravel.interface(
         ravel.INTERFACE.SERVER,
         name = names.IFACE.TEMPERATURE_HISTORY)
-    decision_history = ravel.method(
-        name = 'decision_history',
-        in_signature = '',
-        out_signature = 'a(td)', # array of (uint64:timestamp,double:temperature) samples
-    )
-    hour_history = ravel.method(
-        name = 'hour_history',
-        in_signature = '',
-        out_signature = 'a(td)', # array of (uint64:timestamp,double:temperature) samples
-    )
-    day_history = ravel.method(
-        name = 'day_history',
-        in_signature = '',
+    distill = ravel.method(
+        name = 'distill',
+        in_signature = 'tt',
         out_signature = 'a(td)', # array of (uint64:timestamp,double:temperature) samples
     )
 

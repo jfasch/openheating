@@ -75,6 +75,11 @@ class HistoryTest(unittest.TestCase):
             self.assertLessEqual(ts - prev, 5)
             prev = ts
 
+    def test__duration_in_datetime(self):
+        history = History(duration=datetime.timedelta(seconds=30))
+        history.add(1,0)
+        history.add(2,0)
+
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(HistoryTest)
 

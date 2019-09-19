@@ -26,6 +26,8 @@ class History:
         assert not (unchecked_samples and samples)
 
         self.__duration = duration
+        if self.__duration is not None:
+            self.__duration = _delta2unix(self.__duration)
 
         if unchecked_samples:
             self.__samples = deque(unchecked_samples)

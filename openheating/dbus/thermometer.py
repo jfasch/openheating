@@ -34,12 +34,12 @@ class Thermometer_Client(Thermometer):
 
 @ifaces.THERMOMETER.iface
 class Thermometer_Server(ServerObject):
-    def __init__(self, update_interval, thermometer, histories):
+    def __init__(self, update_interval, thermometer, history):
         assert isinstance(thermometer, Thermometer)
 
         self.__update_interval = update_interval
         self.__thermometer = thermometer
-        self.__histories = histories
+        self.__history = history
 
         self.__new_temperature(self.__thermometer.get_temperature())
 
@@ -91,5 +91,4 @@ class Thermometer_Server(ServerObject):
     def __new_temperature(self, temperature):
         self.__current_temperature = temperature
         now = time.time()
-        for history in self.__histories:
-            history.new_sample(timestamp=now, value=self.__current_temperature)
+        self.__history.add(timestamp=now, value=temperature)
