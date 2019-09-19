@@ -1,18 +1,10 @@
 from .error import HeatingError
+from . import timeutil
 
 import datetime
 import time
 from bisect import bisect_left
 from collections import deque
-
-
-def _delta2unix(delta):
-    try:
-        num = delta.total_seconds()
-    except AttributeError: # assume number
-        num = delta
-    # cap fractional timestamps to entire seconds
-    return int(num)
 
 
 class History:
@@ -27,7 +19,7 @@ class History:
 
         self.__duration = duration
         if self.__duration is not None:
-            self.__duration = _delta2unix(self.__duration)
+            self.__duration = timeutil.delta2unix(self.__duration)
 
         if unchecked_samples:
             self.__samples = deque(unchecked_samples)
@@ -62,8 +54,8 @@ class History:
         self.__samples.append((timestamp, value))
 
     def distill(self, granularity, duration):
-        granularity = _delta2unix(granularity)
-        duration = _delta2unix(duration)
+        granularity = timeutil.delta2unix(granularity)
+        duration = timeutil.delta2unix(duration)
 
         if len(self.__samples) == 0:
             return History()

@@ -1,13 +1,17 @@
 from . import names
 from . import ifaces
 
+from .. import timeutil
+
 
 class TemperatureHistory_Client:
     def __init__(self, proxy):
         self.__proxy = proxy
 
     def distill(self, granularity, duration):
-        return self.__proxy.distill(granularity, duration)[0]
+        return self.__proxy.distill(
+            timeutil.delta2unix(granularity), 
+            timeutil.delta2unix(duration))[0]
 
 
 @ifaces.TEMPERATURE_HISTORY.iface

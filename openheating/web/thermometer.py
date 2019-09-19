@@ -12,7 +12,13 @@ def thermometer(name):
     return app.render_template(
         'thermometer.html',
         thermometer = thermometer,
-        decision_samples = make_histogram_input__full_label(history.decision_history()),
-        hour_samples = make_histogram_input__full_label(history.hour_history()),
-        day_samples = make_histogram_input__full_label(history.day_history()),
+        decision_samples = make_histogram_input__full_label(history.distill(
+            granularity=1,
+            duration=30)),
+        hour_samples = make_histogram_input__full_label(history.distill(
+            granularity=datetime.timedelta(minutes=1),
+            duration=datetime.timedelta(hours=1))),
+        day_samples = make_histogram_input__full_label(history.distill(
+            granularity=datetime.timedelta(minutes=10),
+            duration=datetime.timedelta(days=1)))
     )
