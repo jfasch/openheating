@@ -12,6 +12,8 @@ import time
 import logging
 
 
+logger = logging.getLogger('dbus-thermometer')
+
 class Thermometer_Client(Thermometer):
     def __init__(self, proxy):
         self.proxy = proxy
@@ -89,10 +91,10 @@ class Thermometer_Server(ServerObject):
                 new_temperature = await loop.run_in_executor(
                     self.__executor, self.__thermometer.get_temperature)
             except HeatingError:
-                logging.exception('{}: cannot get temperature'.format(self.__thermometer.get_name()))
+                logger.exception('{}: cannot get temperature'.format(self.__thermometer.get_name()))
             else:
                 self.__new_temperature(new_temperature)
-                logging.info('{}: updated temperature'.format(self.__thermometer.get_name()))
+                logger.info('{}: updated temperature ({}C)'.format(self.__thermometer.get_name(), self.__current_temperature))
 
     def __new_temperature(self, temperature):
         self.__current_temperature = temperature

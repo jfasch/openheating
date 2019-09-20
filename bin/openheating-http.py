@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from openheating import logutil
 from openheating.dbus import cmdline
 from openheating.dbus.connection import Connection
 
@@ -13,12 +14,14 @@ import argparse
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 cmdline.add_dbus_options(parser)
+logutil.add_log_options(parser)
 parser.add_argument('--no-notify', action='store_true', 
                     help='Do not notify systemd about readiness (for example when started by hand during development)')
 parser.add_argument('--templates', default='./templates', help='Jinja2 templates/ directory (default: ./templates)')
 parser.add_argument('--static', default='./static', help='static/ directory (default: ./static)')
 args = parser.parse_args()
 
+logutil.configure_from_argparse(args)
 instance.app = DefaultApp(
     flask_args = {
         'template_folder': args.templates,

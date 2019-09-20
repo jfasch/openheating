@@ -7,6 +7,8 @@ import os.path
 import logging
 
 
+logger = logging.getLogger('w1')
+
 _w1dir = '/sys/bus/w1/devices'
 _re_devdir = re.compile(r'^(\d+)-([0-9a-z]+)$')
 _re_crc = re.compile(r'^.*: crc=\S+\s+(\S*)$')
@@ -47,7 +49,7 @@ class W1Thermometer(Thermometer):
             with open(filename) as w1_slave:
                 lines = w1_slave.readlines()
         except IOError:
-            logging.exception('{}: reading file {}'.format(self.name, filename))
+            logger.exception('{}: reading file {}'.format(self.name, filename))
             raise HeatingError('{}: cannot read file {}'.format(self.name, filename))
 
         temperature = None

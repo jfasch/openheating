@@ -2,6 +2,7 @@
 
 from openheating.thermometers_ini import read_file as read_config_file
 from openheating.history import History
+from openheating import logutil
 from openheating.dbus import cmdline
 from openheating.dbus import names
 from openheating.dbus.connection import Connection
@@ -18,14 +19,12 @@ import logging
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 parser.add_argument('--configfile', help='Thermometer configuration file')
 cmdline.add_dbus_options(parser)
+logutil.add_log_options(parser)
 args = parser.parse_args()
 
-logging.basicConfig(level=logging.DEBUG)
-
+logutil.configure_from_argparse(args)
 thermometers = read_config_file(args.configfile)
-
 loop = asyncio.get_event_loop()
-
 connection = Connection(
     is_session=cmdline.is_session(args),
     busname=names.BUS.THERMOMETER_SERVICE)

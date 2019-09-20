@@ -8,13 +8,12 @@ import asyncio
 import logging
 
 
+logger = logging.getLogger('dbus-connection')
+
 class Connection:
     def __init__(self, is_session, busname=None):
-        if is_session:
-            self.__connection = ravel.session_bus()
-        else:
-            self.__connection = ravel.system_bus()
-
+        logger.info('connecting to {} bus'.format(is_session and 'session' or 'system'))
+        self.__connection = is_session and ravel.session_bus() or ravel.system_bus()
         if busname is not None:
             self.__connection.request_name(
                 bus_name=busname, 
@@ -36,11 +35,11 @@ class Connection:
 
         for path, obj in objects.items():
             if isinstance(obj, ServerObject):
-                logging.debug('starting object on {}'.format(path))
+                logger.debug('starting object on {}'.format(path))
                 obj.startup(loop=loop)
 
         for path, obj in objects.items():
-            logging.debug('registering object on {}'.format(path))
+            logger.debug('registering object on {}'.format(path))
             self.__connection.register(
                 path=path,
                 fallback=False,
@@ -56,7 +55,7 @@ class Connection:
         loop.add_signal_handler(signal.SIGTERM, callback)
 
         try:
-            logging.info('running ...')
+            logger.info('running ...')
             await future_termination
         finally:
             loop.remove_signal_handler(signal.SIGINT)
@@ -64,5 +63,5 @@ class Connection:
 
         for path, obj in objects.items():
             if isinstance(obj, ServerObject):
-                logging.debug('shutting down object on {}'.format(path))
+                logger.debug('shutting down object on {}'.format(path))
                 obj.shutdown()
