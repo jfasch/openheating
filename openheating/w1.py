@@ -4,6 +4,7 @@ from .error import HeatingError
 import re
 import os
 import os.path
+import logging
 
 
 _w1dir = '/sys/bus/w1/devices'
@@ -41,8 +42,13 @@ class W1Thermometer(Thermometer):
         return self.description
 
     def get_temperature(self):
-        with open(os.path.join(self.path, 'w1_slave')) as w1_slave:
-            lines = w1_slave.readlines()
+        filename = os.path.join(self.path, 'w1_slave')
+        try:
+            with open(filename) as w1_slave:
+                lines = w1_slave.readlines()
+        except IOError:
+            logging.exception('{}: reading file {}'.format(self.name, filename))
+            raise HeatingError('{}: cannot read file {}'.format(self.name, filename))
 
         temperature = None
         for line in lines:

@@ -5,6 +5,7 @@ import ravel
 
 import signal
 import asyncio
+import logging
 
 
 class Connection:
@@ -33,11 +34,13 @@ class Connection:
 
         loop = asyncio.get_event_loop()
 
-        for obj in objects.values():
+        for path, obj in objects.items():
             if isinstance(obj, ServerObject):
+                logging.debug('starting object on {}'.format(path))
                 obj.startup(loop=loop)
 
         for path, obj in objects.items():
+            logging.debug('registering object on {}'.format(path))
             self.__connection.register(
                 path=path,
                 fallback=False,
@@ -53,11 +56,13 @@ class Connection:
         loop.add_signal_handler(signal.SIGTERM, callback)
 
         try:
+            logging.info('running ...')
             await future_termination
         finally:
             loop.remove_signal_handler(signal.SIGINT)
             loop.remove_signal_handler(signal.SIGTERM)
 
-        for obj in objects.values():
+        for path, obj in objects.items():
             if isinstance(obj, ServerObject):
+                logging.debug('shutting down object on {}'.format(path))
                 obj.shutdown()

@@ -12,12 +12,15 @@ from openheating.dbus.temperature_history import TemperatureHistory_Server
 import datetime
 import asyncio
 import argparse
+import logging
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 parser.add_argument('--configfile', help='Thermometer configuration file')
 cmdline.add_dbus_options(parser)
 args = parser.parse_args()
+
+logging.basicConfig(level=logging.DEBUG)
 
 thermometers = read_config_file(args.configfile)
 

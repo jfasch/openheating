@@ -9,6 +9,7 @@ import ravel
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import time
+import logging
 
 
 class Thermometer_Client(Thermometer):
@@ -84,9 +85,14 @@ class Thermometer_Server(ServerObject):
         loop = asyncio.get_event_loop()
         while True:
             await asyncio.sleep(self.__update_interval)
-            new_temperature = await loop.run_in_executor(
-                self.__executor, self.__thermometer.get_temperature)
-            self.__new_temperature(new_temperature)
+            try:
+                new_temperature = await loop.run_in_executor(
+                    self.__executor, self.__thermometer.get_temperature)
+            except HeatingError:
+                logging.exception('{}: cannot get temperature'.format(self.__thermometer.get_name()))
+            else:
+                self.__new_temperature(new_temperature)
+                logging.info('{}: updated temperature'.format(self.__thermometer.get_name()))
 
     def __new_temperature(self, temperature):
         self.__current_temperature = temperature
