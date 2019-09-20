@@ -61,7 +61,7 @@ class HistoryTest(unittest.TestCase):
         history.add(1.2, 1)
         self.assertEqual(history[0], (1,1))
 
-    def test__distill(self):
+    def test__distill_basic(self):
         minute = History(unchecked_samples=((ts,0) for ts in range(60)))
         half_minute = minute.distill(granularity=5, duration=30)
 
@@ -74,6 +74,14 @@ class HistoryTest(unittest.TestCase):
             if prev is None: continue
             self.assertLessEqual(ts - prev, 5)
             prev = ts
+
+    def test__distill_full(self):
+        history = History(samples=((ts,42) for ts in range(0, 60*60*24, 5)))
+        distilled = history.distill(
+            granularity=datetime.timedelta(minutes=10),
+            duration=datetime.timedelta(days=1))
+        self.assertLessEqual(distilled.youngest()[0]-distilled.oldest()[0], datetime.timedelta(days=1).total_seconds())
+        self.assertLessEqual(len(distilled), 60*60*24 / (6*24))
 
     def test__duration_in_datetime(self):
         history = History(duration=datetime.timedelta(seconds=30))

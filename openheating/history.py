@@ -39,6 +39,12 @@ class History:
     def __getitem__(self, index):
         return self.__samples[index]
 
+    def youngest(self):
+        return self.__samples[-1]
+
+    def oldest(self):
+        return self.__samples[0]
+
     def add(self, timestamp, value):
         timestamp = int(timestamp) # cap fractional timestamps
         if len(self.__samples):
@@ -71,10 +77,11 @@ class History:
             boundary_idx += 1
 
         distilled = []
-        last_ts = boundary_ts
+        last_ts = None
         cur_idx = boundary_idx
         while cur_idx < len(self.__samples):
-            if self.__samples[cur_idx][0] - last_ts >= granularity:
+            if last_ts is None or self.__samples[cur_idx][0] - last_ts >= granularity:
+                last_ts = self.__samples[cur_idx][0]
                 distilled.append(self.__samples[cur_idx])
             cur_idx += 1
 
