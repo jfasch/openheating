@@ -2,7 +2,7 @@
 
 {% block main %}
 
-{% from 'history_macros.html' import temperature_histogram, temperature_table %}
+{% from 'history_macros.html' import temperature_histogram_single, temperature_table %}
 
 <h2>Thermometer {{thermometer.get_name()}}</h2>
 
@@ -10,15 +10,15 @@
 
 <h3>Day ({{day_samples|length}} samples)</h3>
 <div id="day_chart" width="600" height="100"></div>
-{{temperature_histogram(samples=day_samples, element_name='day_chart')}}
+{{temperature_histogram_single(samples=day_samples, element_name='day_chart')}}
 
 <h3>Hour ({{hour_samples|length}} samples)</h3>
 <div id="hour_chart" width="600" height="100"></div>
-{{temperature_histogram(samples=hour_samples, element_name='hour_chart')}}
+{{temperature_histogram_single(samples=hour_samples, element_name='hour_chart')}}
 
 <h3>Short Term ({{decision_samples|length}} samples)</h3>
 <div id="decision_chart" width="600" height="100"></div>
-{{temperature_histogram(samples=decision_samples, element_name='decision_chart')}}
+{{temperature_histogram_single(samples=decision_samples, element_name='decision_chart')}}
 
 
 <h3>Day ({{day_samples|length}} samples)</h3>

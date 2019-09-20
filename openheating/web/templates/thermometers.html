@@ -2,9 +2,12 @@
 
 {% block main %}
 
-{% from 'history_macros.html' import temperature_histogram, temperature_table %}
+{% from 'history_macros.html' import use_plotly %}
+{{use_plotly()}}
 
 <h2>Thermometers</h2>
+
+<div id="__thermometers_chart"></div>
 
 <table>
 
@@ -12,25 +15,44 @@
     <th>Name</th>
     <th>Description</th>
     <th>Temperature</th>
-    <th>Chart</th>
+  <tr>
 
   {% for name, thermometer in app.thermometers.items() %}
   <tr>
     <td><a href="{{url_for('thermometer', name=name)}}">{{name}}</a></td>
     <td>{{thermometer.get_description()}}</td>
     <td>{{thermometer.get_temperature()}}</td>
-    <td width="900px">
-      <!--<div id="day_chart_{{name}}" width="400" height="100"></div>-->
-      <!--<div id="day_chart_{{name}}" style="width: 400px; height: 400px;"></div>-->
-      <div id="day_chart_{{name}}"></div>
-    </td>
   </tr>
   {% endfor %}
-
+  
 </table>
 
-{% for name in app.thermometers.keys() %}
-{{temperature_histogram(samples=samples_per_thermometer[name], element_name="day_chart_"+name)}}
-{% endfor %}
+<script>
+
+  var layout = {
+      yaxis: {range: [0, 150]}
+  }
+  var data = []
+  
+  {% for name, samples in samples_per_thermometer.items() %}
+  data.push({
+      name: "{{name}}",
+      x: [
+	  {% for timestamp, _ in samples %}
+	  "{{timestamp}}",
+	  {% endfor %}
+      ],
+      y: [
+	  {% for _, temperature in samples %}
+	  "{{temperature}}",
+	  {% endfor %}
+      ],
+      type: "scatter",
+  })
+  {% endfor %}
+
+  Plotly.newPlot("__thermometers_chart", data, layout)
+
+</script>
 
 {% endblock %}
