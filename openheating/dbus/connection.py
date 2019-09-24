@@ -25,9 +25,9 @@ class Connection:
         return obj.get_interface(iface)
 
     async def run(self, objects):
-        """Start the objects, register them at their paths, run the loop,
-        handle graceful termination by SIGINT and SIGTERM (thereby
-        shutting the objects down).
+        """Start the objects, register them at their paths, add connection to
+        the loop. Sit waiting for graceful termination by SIGINT and
+        SIGTERM. After that, shutdown the objects.
 
         """
 

@@ -38,16 +38,26 @@ class FixedThermometer(Thermometer):
 
 
 class ErrorThermometer(Thermometer):
-    def __init__(self, name, description):
+    def __init__(self, name, description, n_ok_before_error):
         super().__init__()
         self.name = name
         self.description = description
+        self.n_ok_before_error = n_ok_before_error
 
     def get_name(self):
+        if self.n_ok_before_error > 0:
+            self.n_ok_before_error -= 1
+            return self.name
         raise HeatingError('bullshit name')
 
     def get_description(self):
+        if self.n_ok_before_error > 0:
+            self.n_ok_before_error -= 1
+            return self.description
         raise HeatingError('bullshit description')
 
     def get_temperature(self):
+        if self.n_ok_before_error > 0:
+            self.n_ok_before_error -= 1
+            return 42
         raise HeatingError('bullshit temperature')

@@ -42,5 +42,5 @@ for name, thermometer in thermometers.items():
     objects['/history/'+name] = TemperatureHistory_Server(
         history = history)
 
-loop.run_until_complete(connection.run(objects=objects))
+loop.run_until_complete(logutil.handle_task_exceptions(connection.run(objects=objects)))
 loop.close()

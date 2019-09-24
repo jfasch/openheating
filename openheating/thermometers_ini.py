@@ -39,9 +39,11 @@ def _parse(config):
                 description=description, 
                 temperature=value)
         elif type_ == 'error':
+            n_ok_before_error = config.getint(name, 'NOkBeforeError')
             thermometers[name] = ErrorThermometer(
                 name=name, 
-                description=description)
+                description=description,
+                n_ok_before_error = n_ok_before_error)
         elif type_ == 'w1':
             path = config.get(name, 'Path')
             thermometers[name] = W1Thermometer(

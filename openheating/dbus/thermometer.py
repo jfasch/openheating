@@ -3,6 +3,7 @@ from . import ifaces
 from .object import ServerObject
 from ..thermometer import Thermometer
 from ..error import HeatingError
+from .. import logutil
 
 import ravel
 
@@ -42,9 +43,8 @@ class Thermometer_Server(ServerObject):
 
         self.__update_interval = update_interval
         self.__thermometer = thermometer
+        self.__current_temperature = self.__thermometer.get_temperature()
         self.__history = history
-
-        self.__new_temperature(self.__thermometer.get_temperature())
 
         # schedule periodic temperature updates in a background
         # thread.
@@ -67,14 +67,13 @@ class Thermometer_Server(ServerObject):
 
     @ifaces.THERMOMETER.get_temperature
     def get_temperature(self):
-        try:
-            return (self.__current_temperature,)
-        except HeatingError as e:
-            raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))
+        if self.__current_temperature is None:
+            raise ravel.ErrorReturn(name=names.EXCEPTION.HEATINGERROR, message='no current value')
+        return (self.__current_temperature,)
 
     def startup(self, loop):
         self.__executor = ThreadPoolExecutor(max_workers=1)
-        self.__update_task = loop.create_task(self.__periodic_update())
+        self.__update_task = loop.create_task(logutil.handle_task_exceptions(self.__periodic_update()))
 
     def shutdown(self):
         self.__update_task.cancel()
@@ -84,14 +83,24 @@ class Thermometer_Server(ServerObject):
         self.__executor = None
 
     async def __periodic_update(self):
+        print(1)
         loop = asyncio.get_event_loop()
+        print(2)
         while True:
+            print(3)
             await asyncio.sleep(self.__update_interval)
+            print(4)
             try:
                 new_temperature = await loop.run_in_executor(
                     self.__executor, self.__thermometer.get_temperature)
+                print(5)
             except HeatingError:
-                logger.exception('{}: cannot get temperature'.format(self.__thermometer.get_name()))
+                print(6)
+                try:
+                    logger.exception('{}: cannot get temperature'.format(self.__thermometer.get_name()))
+                except Exception as e:
+                    print(e)
+                    raise
             else:
                 self.__new_temperature(new_temperature)
                 logger.info('{}: updated temperature ({}C)'.format(self.__thermometer.get_name(), self.__current_temperature))

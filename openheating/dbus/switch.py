@@ -20,7 +20,7 @@ class DBusSwitch:
         try:
             return (self.switch.get_state(),)
         except HeatingError as e:
-            raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))
+            raise ravel.ErrorReturn(name=names.EXCEPTION.HEATINGERROR, message=str(e))
 
     @ravel.method(
         name = 'set_state',
@@ -30,4 +30,4 @@ class DBusSwitch:
         try:
             self.switch.set_state(value)
         except HeatingError as e:
-            raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))
+            raise ravel.ErrorReturn(name=names.EXCEPTION.HEATINGERROR, message=str(e))

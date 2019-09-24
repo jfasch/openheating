@@ -40,7 +40,4 @@ class ThermometerCenter_Server:
 
     @ifaces.THERMOMETER_CENTER.all_names
     def all_names(self):
-        try:
-            return [list(self.__thermometers.keys())]
-        except HeatingError as e:
-            raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))
+        return [list(self.__thermometers.keys())]

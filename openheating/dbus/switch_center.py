@@ -15,7 +15,6 @@ class DBusSwitchCenter:
         in_signature = '',
         out_signature = 'as')
     def all_names(self):
-        try:
-            return (list(self.switches.keys()),)
+        return (list(self.switches.keys()),)
         except HeatingError as e:
             raise ravel.ErrorReturn(name=names.DATA.ERROR, message=str(e))

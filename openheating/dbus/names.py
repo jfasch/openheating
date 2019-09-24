@@ -11,5 +11,5 @@ class IFACE:
     THERMOMETER_CENTER = DOMAIN + '.ThermometerCenter'
     SWITCH_CENTER = DOMAIN + '.SwitchCenter'
 
-class DATA:
-    ERROR = DOMAIN + '.HeatingError'
+class EXCEPTION:
+    HEATINGERROR = DOMAIN + '.HeatingError'
