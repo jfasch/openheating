@@ -23,7 +23,7 @@ def add_log_options(parser):
     parser.add_argument('--log-level', 
                         help='Log level (one of {})'.format(levels),
                         type=_str2level,
-                        default=logging.NOTSET)
+                        default=logging.WARNING)
 
 def configure_from_argparse(args):
     logging.basicConfig(level=args.log_level)

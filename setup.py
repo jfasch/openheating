@@ -28,6 +28,7 @@ class install_data_like_ac_subst(install_data):
         self.bindir = None
         self.libdir = None
         self.builddir = None
+        self.sharedir = None
         super().initialize_options()
 
     def finalize_options(self):
@@ -35,7 +36,9 @@ class install_data_like_ac_subst(install_data):
         self.set_undefined_options('install', ('install_scripts', 'bindir'))
         self.set_undefined_options('install', ('install_lib', 'libdir'))
         self.set_undefined_options('build', ('build_base', 'builddir'))
+        self.set_undefined_options('install', ('install_data', 'sharedir'))
         self.builddir = os.path.join(self.builddir, 'data_like_ac_subst')
+        self.sharedir = os.path.join(self.sharedir, 'share')
         
     def run(self):
         data_files = []
@@ -63,6 +66,7 @@ class install_data_like_ac_subst(install_data):
         content = template.substitute({
             'bindir': self.bindir,
             'libdir': self.libdir,
+            'sharedir': self.sharedir,
         })
 
         rel_dirname, src_filename = os.path.split(filename)
@@ -89,6 +93,7 @@ setup(
     packages=[
         'openheating',
         'openheating.dbus',
+        'openheating.web',
     ],
 
     data_files=[
@@ -108,6 +113,23 @@ setup(
              'installations/faschingbauer/thermometers.ini',
          ]
         ),
+
+        ('share/web/static',
+         [
+             'openheating/web/static/plotly-1.49.4.js',
+         ],
+        ),
+
+        ('share/web/templates',
+         [
+             'openheating/web/templates/base.html',
+             'openheating/web/templates/history_macros.html',
+             'openheating/web/templates/home.html',
+             'openheating/web/templates/thermometer.html',
+             'openheating/web/templates/thermometers.html',
+         ],
+        ),
+
     ],
     scripts=[
         'bin/openheating-http.py',

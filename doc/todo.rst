@@ -1,26 +1,8 @@
 Stack (Hanging)
 ===============
 
-* dbus: no separate /history/<name> objects. thermometer dbus objects
-  provide "History" interfaces, in addition to "Thermometer"
-
-  * ThermometerHistory_Server -> Temperature*
-  * ThermometerHistory_Client -> Temperature*
-  * names.IFACE.THERMOMETER_HISTORY -> *TEMPERATURE*
-
-* history refactoring
-
-  * one history per thermometer, where excerpts are taken out
-    dynamically
-
 Todo
 ====
-
-* web: "test" url parameter -> fill histograms with random crap
-
-* history
-
-  * generalize into history.py, used by thermometer_history.
 
 * plotly, graph pages
 
@@ -45,10 +27,6 @@ Todo
     * setup, on build/installation errors like ac_subst. logging
       there.
 
-* Flask/HTTP
-
-  * add web/ to setup.py
-
 * Move dbus.ServerObject logic into dbus.lifecycle. Class decorator
   lifecycle.managed() or so, which simply ducktypes into obj.startup()
   and obj.shutdown() is class has the attribute. or so.
@@ -62,7 +40,6 @@ Todo
 
   * dbus.Thermometer.{startup,shutdown} (debug)
 
-* /etc/systemd/system seems like the wrong place to put unit files
 * DBus exceptions
   
   * simplify HeatingError to a minimum

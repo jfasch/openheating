@@ -83,23 +83,16 @@ class Thermometer_Server(ServerObject):
         self.__executor = None
 
     async def __periodic_update(self):
-        print(1)
         loop = asyncio.get_event_loop()
-        print(2)
         while True:
-            print(3)
             await asyncio.sleep(self.__update_interval)
-            print(4)
             try:
                 new_temperature = await loop.run_in_executor(
                     self.__executor, self.__thermometer.get_temperature)
-                print(5)
             except HeatingError:
-                print(6)
                 try:
                     logger.exception('{}: cannot get temperature'.format(self.__thermometer.get_name()))
                 except Exception as e:
-                    print(e)
                     raise
             else:
                 self.__new_temperature(new_temperature)

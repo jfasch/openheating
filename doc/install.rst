@@ -6,7 +6,7 @@ Install all software that is needed; see dependencies.rst
 Installation
 ============
 
-$ python setup.py install --prefix=/some/prefix
+$ python3 setup.py install --prefix=/some/prefix
 
 Create `openheating` user, ::
 
