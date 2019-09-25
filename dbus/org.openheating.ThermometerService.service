@@ -1,0 +1,5 @@
+[D-BUS Service]
+Name=org.openheating.ThermometerService
+Exec=/bin/false
+User=openheating
+SystemdService=openheating-thermometer-service.service

@@ -99,12 +99,19 @@ setup(
     data_files=[
         ('share/systemd',
          [
-             # system dbus policies
-             'systemd/org.openheating.conf',
-
              # service files
              'systemd/openheating-thermometer-service.service.ac_subst',
              'systemd/openheating-http.service.ac_subst',
+         ]
+        ),
+
+        ('share/dbus',
+         [
+             # system dbus policies
+             'dbus/org.openheating.conf',
+
+             # service files
+             'dbus/org.openheating.ThermometerService.service',
          ]
         ),
 
