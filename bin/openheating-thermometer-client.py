@@ -2,10 +2,7 @@
 
 from openheating.dbus import cmdline
 from openheating.dbus import names
-from openheating.dbus.connection import Connection
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
-
-import ravel
 
 import argparse
 import sys
@@ -34,8 +31,8 @@ history_parser.add_argument('--duration', type=int)
 args = top_parser.parse_args()
 
 
-connection = Connection(is_session=cmdline.is_session(args))
-thermometer_center = ThermometerCenter_Client(connection)
+bus = cmdline.bus(args)
+thermometer_center = ThermometerCenter_Client(bus)
 
 if args.subcommand_name == 'list':
     for name in thermometer_center.all_names():

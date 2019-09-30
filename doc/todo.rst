@@ -1,6 +1,18 @@
 Stack (Hanging)
 ===============
 
+* convert to pydbus
+
+  * thermometer update thread, locking, and all that
+  * graceful termination
+  * exceptions (dbus.thermometer.Thermometer_Server.get_temperature)
+  * remove leftovers
+
+    * connection.py
+
+  * collapse history and thermometer into thermometer object which
+    provides both interfaces
+
 Todo
 ====
 

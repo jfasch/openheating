@@ -1,16 +1,13 @@
 from . import names
-from . import ifaces
-from .object import ServerObject
 from ..thermometer import Thermometer
 from ..error import HeatingError
 from .. import logutil
 
-import ravel
+from gi.repository import GLib
 
-from concurrent.futures import ThreadPoolExecutor
-import asyncio
 import time
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 
 logger = logging.getLogger('dbus-thermometer')
@@ -24,81 +21,72 @@ class Thermometer_Client(Thermometer):
 
     def get_name(self):
         if self.name is None:
-            self.name = self.proxy.get_name()[0]
+            self.name = self.proxy.get_name()
         return self.name
 
     def get_description(self):
         if self.description is None:
-            self.description = self.proxy.get_description()[0]
+            self.description = self.proxy.get_description()
         return self.description
 
     def get_temperature(self):
-        return self.proxy.get_temperature()[0]
+        return self.proxy.get_temperature()
 
 
-@ifaces.THERMOMETER.iface
-class Thermometer_Server(ServerObject):
+class Thermometer_Server:
+    dbus = """
+    <node>
+      <interface name='{thermometer_iface}'>
+        <method name='get_name'>
+          <arg type='s' name='response' direction='out'/>
+        </method>
+        <method name='get_description'>
+          <arg type='s' name='response' direction='out'/>
+        </method>
+        <method name='get_temperature'>
+          <arg type='d' name='response' direction='out'/>
+        </method>
+      </interface>
+    </node>
+    """.format(thermometer_iface=names.IFACE.THERMOMETER)
+
     def __init__(self, update_interval, thermometer, history):
         assert isinstance(thermometer, Thermometer)
 
-        self.__update_interval = update_interval
         self.__thermometer = thermometer
-        self.__current_temperature = self.__thermometer.get_temperature()
         self.__history = history
 
-        # schedule periodic temperature updates in a background
-        # thread.
+        # initialize current temperature value before starting to
+        # periodically update it. this is crucial because once the
+        # main event loop is started and dbus calls come we want to
+        # have a value available.
 
-        # reason: w1_slave's filenum cannot be used asynchronously. at
-        # the time the fd's read callback is triggered, and you
-        # os.read() from it, that read will start bitbanging and the
-        # call will take approximately a second just as if we had
-        # called it synchronously.
-        self.__executor = None
-        self.__update_task = None
+        self.__current_temperature = self.__thermometer.get_temperature()
 
-    @ifaces.THERMOMETER.get_name
+        # schedule periodic temperature updates in a *background
+        # thread*. this is because w1 bitbanging blocks for almost a
+        # second per temperature read.
+
+        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__thermometer.name, update_interval))
+        self.__background_thread = ThreadPoolExecutor(max_workers=1)
+        GLib.timeout_add_seconds(update_interval, self.__schedule_update)
+
     def get_name(self):
-        return (self.__thermometer.get_name(),)
+        return self.__thermometer.get_name()
 
-    @ifaces.THERMOMETER.get_description
     def get_description(self):
-        return (self.__thermometer.description,)
+        return self.__thermometer.get_description()
 
-    @ifaces.THERMOMETER.get_temperature
     def get_temperature(self):
-        if self.__current_temperature is None:
-            raise ravel.ErrorReturn(name=names.EXCEPTION.HEATINGERROR, message='no current value')
-        return (self.__current_temperature,)
+        return self.__current_temperature
 
-    def startup(self, loop):
-        self.__executor = ThreadPoolExecutor(max_workers=1)
-        self.__update_task = loop.create_task(logutil.handle_task_exceptions(self.__periodic_update()))
+    def __schedule_update(self):
+        # submit work to the background thread, *not* waiting for the
+        # returned future object (alas, we don't want to block)
+        self.__background_thread.submit(self.__update)
+        return True # re-arm timer
 
-    def shutdown(self):
-        self.__update_task.cancel()
-        self.__executor.shutdown()
-
-        self.__update_task = None
-        self.__executor = None
-
-    async def __periodic_update(self):
-        loop = asyncio.get_event_loop()
-        while True:
-            await asyncio.sleep(self.__update_interval)
-            try:
-                new_temperature = await loop.run_in_executor(
-                    self.__executor, self.__thermometer.get_temperature)
-            except HeatingError:
-                try:
-                    logger.exception('{}: cannot get temperature'.format(self.__thermometer.get_name()))
-                except Exception as e:
-                    raise
-            else:
-                self.__new_temperature(new_temperature)
-                logger.info('{}: updated temperature ({}C)'.format(self.__thermometer.get_name(), self.__current_temperature))
-
-    def __new_temperature(self, temperature):
-        self.__current_temperature = temperature
-        now = time.time()
-        self.__history.add(timestamp=now, value=temperature)
+    def __update(self):
+        current_temperature = self.__thermometer.get_temperature()
+        self.__current_temperature = current_temperature
+        self.__history.add(time.time(), current_temperature)

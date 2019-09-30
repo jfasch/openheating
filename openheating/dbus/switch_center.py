@@ -1,3 +1,5 @@
+assert False, 'switches not yet in use; unmaintained'
+
 from . import names
 
 import ravel

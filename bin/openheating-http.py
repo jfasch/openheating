@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from openheating import logutil
+from openheating.error import HeatingError
 from openheating.dbus import cmdline
-from openheating.dbus.connection import Connection
 
 from openheating.web.default_app import DefaultApp
 from openheating.web import instance
@@ -27,7 +27,7 @@ instance.app = DefaultApp(
         'template_folder': args.templates,
         'static_folder': args.static,
     },
-    dbus_connection = Connection(is_session=cmdline.is_session(args)),
+    dbus_connection = cmdline.bus(args),
 )
 
 instance.app.setup()
