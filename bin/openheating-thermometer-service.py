@@ -14,6 +14,7 @@ from gi.repository import GLib
 import datetime
 import argparse
 import logging
+import signal
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
@@ -41,6 +42,12 @@ for name, thermometer in thermometers.items():
                         history=history)))
     objects.append(('/history/'+name,
                     TemperatureHistory_Server(history=history)))
+
+def quit(signal, frame):
+    loop.quit()
+signal.signal(signal.SIGINT, quit)
+signal.signal(signal.SIGTERM, quit)
+signal.signal(signal.SIGQUIT, quit)
 
 bus.publish(names.BUS.THERMOMETER_SERVICE, *objects)
 loop.run()
