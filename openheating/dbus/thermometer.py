@@ -4,6 +4,7 @@ from ..error import HeatingError
 from .. import logutil
 
 from gi.repository import GLib
+from pydbus.generic import signal
 
 import time
 import logging
@@ -53,13 +54,15 @@ class Thermometer_Server:
     def __init__(self, update_interval, thermometer, history):
         assert isinstance(thermometer, Thermometer)
 
+        # trusting the GIL, we don't lock these against the update
+        # background thread (though we probably should anyway).
         self.__thermometer = thermometer
         self.__history = history
 
         # initialize current temperature value before starting to
-        # periodically update it. this is crucial because once the
-        # main event loop is started and dbus calls come we want to
-        # have a value available.
+        # periodically update it. we do this because once the main
+        # event loop is started and dbus calls come in we want to have
+        # a value available.
 
         self.__current_temperature = self.__thermometer.get_temperature()
 
@@ -67,7 +70,7 @@ class Thermometer_Server:
         # thread*. this is because w1 bitbanging blocks for almost a
         # second per temperature read.
 
-        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__thermometer.name, update_interval))
+        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__thermometer.get_name(), update_interval))
         self.__background_thread = ThreadPoolExecutor(max_workers=1)
         GLib.timeout_add_seconds(update_interval, self.__schedule_update)
 
@@ -87,6 +90,22 @@ class Thermometer_Server:
         return True # re-arm timer
 
     def __update(self):
+        # in the background thread now, take as long as we want (about
+        # a second) to read the temperature from the sensor. when
+        # done, push what we have into the GLib main loop and do
+        # further processing there (adding the value to the history,
+        # emitting errors onto the bus, ...)
+
+        # (see https://wiki.gnome.org/Projects/PyGObject/Threading for
+        # what GLib.idle_add() does)
+        
         current_temperature = self.__thermometer.get_temperature()
+        GLib.idle_add(self.__receive_update, current_temperature)
+        
+        logger.debug('{} (update-thread): sensor has {} degrees; pushing into main loop'.format(
+            self.__thermometer.get_name(), current_temperature))
+
+    def __receive_update(self, current_temperature):
+        logger.debug('{}: receiving {} degrees from update-thread'.format(self.__thermometer.get_name(), current_temperature))
         self.__current_temperature = current_temperature
         self.__history.add(time.time(), current_temperature)
