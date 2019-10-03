@@ -5,6 +5,7 @@ from openheating.history import History
 from openheating import logutil
 from openheating.dbus import cmdline
 from openheating.dbus import names
+from openheating.dbus import dbusutil
 from openheating.dbus.thermometer import Thermometer_Server
 from openheating.dbus.thermometer_center import ThermometerCenter_Server
 from openheating.dbus.temperature_history import TemperatureHistory_Server
@@ -14,7 +15,6 @@ from gi.repository import GLib
 import datetime
 import argparse
 import logging
-import signal
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
@@ -42,11 +42,7 @@ for name, thermometer in thermometers.items():
     objects.append(('/history/'+name,
                     TemperatureHistory_Server(history=history)))
 
-def quit(signal, frame):
-    loop.quit()
-signal.signal(signal.SIGINT, quit)
-signal.signal(signal.SIGTERM, quit)
-signal.signal(signal.SIGQUIT, quit)
+dbusutil.graceful_termination(loop)
 
 bus.publish(names.BUS.THERMOMETER_SERVICE, *objects)
 loop.run()
