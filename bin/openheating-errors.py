@@ -31,5 +31,4 @@ bus.subscribe(
 
 dbusutil.graceful_termination(loop)
 
-bus.publish(names.DOMAIN)
 loop.run()
