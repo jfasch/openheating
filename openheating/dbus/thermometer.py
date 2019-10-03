@@ -1,4 +1,5 @@
 from . import names
+from . import error_emitter
 from ..thermometer import Thermometer
 from ..error import HeatingError
 from .. import logutil
@@ -37,7 +38,8 @@ class Thermometer_Client(Thermometer):
 class Thermometer_Server:
     dbus = """
     <node>
-      <interface name='{thermometer_iface}'>
+
+      <interface name='{thermometer_iface_name}'>
         <method name='get_name'>
           <arg type='s' name='response' direction='out'/>
         </method>
@@ -48,8 +50,16 @@ class Thermometer_Server:
           <arg type='d' name='response' direction='out'/>
         </method>
       </interface>
+
+      {error_emitter_iface}
+
     </node>
-    """.format(thermometer_iface=names.IFACE.THERMOMETER)
+    """.format(
+        thermometer_iface_name=names.IFACE.THERMOMETER,
+        error_emitter_iface=error_emitter.iface)
+
+    # errors are emitted via here
+    error = signal()
 
     def __init__(self, update_interval, thermometer, history):
         assert isinstance(thermometer, Thermometer)
@@ -57,20 +67,18 @@ class Thermometer_Server:
         # trusting the GIL, we don't lock these against the update
         # background thread (though we probably should anyway).
         self.__thermometer = thermometer
+        # get name from thermometer once and forever, to prevent
+        # errors during runtime.
+        self.__name = self.__thermometer.get_name()
         self.__history = history
 
-        # initialize current temperature value before starting to
-        # periodically update it. we do this because once the main
-        # event loop is started and dbus calls come in we want to have
-        # a value available.
-
-        self.__current_temperature = self.__thermometer.get_temperature()
+        self.__current_temperature = None
 
         # schedule periodic temperature updates in a *background
         # thread*. this is because w1 bitbanging blocks for almost a
         # second per temperature read.
 
-        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__thermometer.get_name(), update_interval))
+        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, update_interval))
         self.__background_thread = ThreadPoolExecutor(max_workers=1)
         GLib.timeout_add_seconds(update_interval, self.__schedule_update)
 
@@ -81,11 +89,14 @@ class Thermometer_Server:
         return self.__thermometer.get_description()
 
     def get_temperature(self):
+        if self.__current_temperature is None:
+            self.__current_temperature = self.__thermometer.get_temperature()
         return self.__current_temperature
 
     def __schedule_update(self):
         # submit work to the background thread, *not* waiting for the
         # returned future object (alas, we don't want to block)
+        logger.debug('{}: scheduling update'.format(self.__name))
         self.__background_thread.submit(self.__update)
         return True # re-arm timer
 
@@ -98,14 +109,22 @@ class Thermometer_Server:
 
         # (see https://wiki.gnome.org/Projects/PyGObject/Threading for
         # what GLib.idle_add() does)
-        
-        current_temperature = self.__thermometer.get_temperature()
-        GLib.idle_add(self.__receive_update, current_temperature)
-        
+
+        try:
+            current_temperature = self.__thermometer.get_temperature()
+            GLib.idle_add(self.__receive_update, current_temperature)
+        except Exception as e:
+            logger.exception('{} (update-thread): thermometer error'.format(self.__name))
+            GLib.idle_add(self.__receive_error, e)
+
         logger.debug('{} (update-thread): sensor has {} degrees; pushing into main loop'.format(
-            self.__thermometer.get_name(), current_temperature))
+            self.__name, current_temperature))
 
     def __receive_update(self, current_temperature):
-        logger.debug('{}: receiving {} degrees from update-thread'.format(self.__thermometer.get_name(), current_temperature))
+        logger.debug('{}: receiving temperature ({} degrees) from update-thread'.format(self.__name, current_temperature))
         self.__current_temperature = current_temperature
         self.__history.add(time.time(), current_temperature)
+
+    def __receive_error(self, e):
+        logger.debug('{}: receiving error {} from update-thread'.format(self.__name, e))
+        self.error(str(e))

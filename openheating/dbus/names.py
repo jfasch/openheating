@@ -2,6 +2,7 @@ DOMAIN = 'org.openheating'
 
 class BUS:
     THERMOMETER_SERVICE = DOMAIN + '.ThermometerService'
+    ERROR_SERVICE = DOMAIN + '.ErrorService'
     SWITCH_SERVICE = DOMAIN + '.SwitchService'
 
 class IFACE:

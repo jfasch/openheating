@@ -1,21 +1,24 @@
 Stack (Hanging)
 ===============
 
-* convert to pydbus
 
-  * thermometer update thread, locking, and all that
-  * graceful termination
-  * exceptions (dbus.thermometer.Thermometer_Server.get_temperature)
-  * remove leftovers
+* openheating-errors.py
 
-    * connection.py
-
-  * collapse history and thermometer into thermometer object which
-    provides both interfaces
+  * rename openheating-thermometer-service.py to
+    openheating-thermometers.py. change bus names accordingly.
+  * unify bus publishing
+  * unify graceful termination
+  * thermometer update thread sees thermometer errors but cannot emit
+    a signal. this has to be done by the main thread. how to
+    communicate that to the main thread? see
+    https://wiki.gnome.org/Projects/PyGObject/Threading
 
 Todo
 ====
 
+* exceptions (dbus.thermometer.Thermometer_Server.get_temperature)
+* collapse history and thermometer into thermometer object which
+  provides both interfaces
 * plotly, graph pages
 
   * tooltips as links to thermometer pages for example
@@ -48,10 +51,6 @@ Todo
 * Update graphs: Json interface for history, plus calling JS in
   thermometer.html.
 
-* logging
-
-  * dbus.Thermometer.{startup,shutdown} (debug)
-
 * DBus exceptions
   
   * simplify HeatingError to a minimum
@@ -59,7 +58,6 @@ Todo
   * rename server-side objects to *_object
   * properly translate HeatingError (using .msg())
 
-* Exceptions in asyncio
 * thermometers.ini
 
   * detect duplicate thermometer names
@@ -68,7 +66,6 @@ Todo
 
 * D-Bus
 
-  * find out what dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE is
   * Where do D-Bus activation (.service) files go?
     https://stackoverflow.com/questions/31702465/how-to-define-a-d-bus-activated-systemd-service
   * How to generate the D-Bus config file from a template? (Paths like

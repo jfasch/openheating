@@ -26,7 +26,6 @@ args = parser.parse_args()
 logutil.configure_from_argparse(args)
 thermometers = read_config_file(args.configfile)
 loop = GLib.MainLoop()
-
 bus = cmdline.bus(args)
 
 objects = [
