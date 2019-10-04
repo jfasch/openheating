@@ -1,17 +1,7 @@
 Stack (Hanging)
 ===============
 
-
-* openheating-errors.py
-
-  * rename openheating-thermometer-service.py to
-    openheating-thermometers.py. change bus names accordingly.
-  * unify bus publishing
-  * unify graceful termination
-  * thermometer update thread sees thermometer errors but cannot emit
-    a signal. this has to be done by the main thread. how to
-    communicate that to the main thread? see
-    https://wiki.gnome.org/Projects/PyGObject/Threading
+* unify bus publishing
 
 Todo
 ====
