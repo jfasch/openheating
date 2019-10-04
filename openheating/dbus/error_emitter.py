@@ -1,6 +1,6 @@
-from . import names
+from . import dbusutil
 
-iface_name = names.DOMAIN + '.ErrorEmitter'
+iface_name = dbusutil.DOMAIN + '.ErrorEmitter'
 
 iface = """
 <interface name='{}'>

@@ -4,6 +4,22 @@ import signal
 from pydbus import SystemBus, SessionBus
 
 
+# centrally defined names, to ease modifications
+DOMAIN = 'org.openheating'
+class BUS:
+    THERMOMETERS = DOMAIN + '.Thermometers'
+    ERRORS = DOMAIN + '.Errors'
+    SWITCHES = DOMAIN + '.Switches'
+class IFACE:
+    THERMOMETER = DOMAIN + '.Thermometer'
+    TEMPERATURE_HISTORY = DOMAIN + '.TemperatureHistory'
+    SWITCH = DOMAIN + '.Switch'
+    THERMOMETER_CENTER = DOMAIN + '.ThermometerCenter'
+    SWITCH_CENTER = DOMAIN + '.SwitchCenter'
+class EXCEPTION:
+    HEATINGERROR = DOMAIN + '.HeatingError'
+
+
 def argparse_add_bus(parser):
     '''add --session|--system options to commandline parsing'''
 

@@ -2,7 +2,6 @@
 
 from openheating import logutil
 from openheating.dbus import error_emitter
-from openheating.dbus import names
 from openheating.dbus import dbusutil
 
 from gi.repository import GLib

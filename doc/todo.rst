@@ -1,11 +1,18 @@
 Stack (Hanging)
 ===============
 
-* unify bus publishing
+* consolidation
+
+  * error_emitter into dbusutil
+  * iface xml composition out of fragments. we want to have more
+    components that provide multiple interfaces. take care about that
+    weird signal definition, where a class member has to be defined in
+    accordance with the xml.
 
 Todo
 ====
 
+* unify bus publishing
 * exceptions (dbus.thermometer.Thermometer_Server.get_temperature)
 * collapse history and thermometer into thermometer object which
   provides both interfaces

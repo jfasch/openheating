@@ -1,4 +1,4 @@
-from . import names
+from . import dbusutil
 
 from .. import timeutil
 
@@ -24,7 +24,7 @@ class TemperatureHistory_Server:
         </method>
       </interface>
     </node>
-    """.format(thermometer_history_iface=names.IFACE.TEMPERATURE_HISTORY)
+    """.format(thermometer_history_iface=dbusutil.IFACE.TEMPERATURE_HISTORY)
 
     def __init__(self, history):
         self.__history = history

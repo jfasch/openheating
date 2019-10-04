@@ -1,4 +1,4 @@
-from . import names
+from . import dbusutil
 from . import error_emitter
 from ..thermometer import Thermometer
 from ..error import HeatingError
@@ -55,7 +55,7 @@ class Thermometer_Server:
 
     </node>
     """.format(
-        thermometer_iface_name=names.IFACE.THERMOMETER,
+        thermometer_iface_name=dbusutil.IFACE.THERMOMETER,
         error_emitter_iface=error_emitter.iface)
 
     # errors are emitted via here
