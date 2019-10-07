@@ -1,28 +1,21 @@
 Stack (Hanging)
 ===============
 
-* errors
+* consolidation
 
-  * emit signal on thermometer error. define signal payload; the
-    signature will be the same overall.
-
-    * find out how to use gdbus to see signals, and write up in 
-    * gosh it is really hard to find out what a signal is. trying to
-      emit one requires me to pass arguments that I dont understand;
-      same with listening. what is "path", why do I have to pass it,
-      etc. funnily the emacs documentation gives the most part of the
-      information; the language bindings suck, as does the dbus
-      specification. https://www.gnu.org/software/emacs/manual/html_node/dbus/Signals.html
-
-  * DBus service openheating-errors, storing those, and handing them
-    out on request.
-
-    * figure out how to pass signal listeners to Connection.run(),
-      along with the objects that are reachable.
+  * error_emitter into dbusutil
+  * iface xml composition out of fragments. we want to have more
+    components that provide multiple interfaces. take care about that
+    weird signal definition, where a class member has to be defined in
+    accordance with the xml.
 
 Todo
 ====
 
+* unify bus publishing
+* exceptions (dbus.thermometer.Thermometer_Server.get_temperature)
+* collapse history and thermometer into thermometer object which
+  provides both interfaces
 * plotly, graph pages
 
   * tooltips as links to thermometer pages for example
@@ -55,10 +48,6 @@ Todo
 * Update graphs: Json interface for history, plus calling JS in
   thermometer.html.
 
-* logging
-
-  * dbus.Thermometer.{startup,shutdown} (debug)
-
 * DBus exceptions
   
   * simplify HeatingError to a minimum
@@ -66,7 +55,6 @@ Todo
   * rename server-side objects to *_object
   * properly translate HeatingError (using .msg())
 
-* Exceptions in asyncio
 * thermometers.ini
 
   * detect duplicate thermometer names
@@ -75,6 +63,11 @@ Todo
 
 * D-Bus
 
+<<<<<<< HEAD
   * find out what dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE is
+=======
+  * Where do D-Bus activation (.service) files go?
+    https://stackoverflow.com/questions/31702465/how-to-define-a-d-bus-activated-systemd-service
+>>>>>>> d8661d0971cffc435129f0cf6b3b7c874924f635
   * How to generate the D-Bus config file from a template? (Paths like
     unix address and <servicedir> need to be substituted.)

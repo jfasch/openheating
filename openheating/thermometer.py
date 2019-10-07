@@ -45,16 +45,10 @@ class ErrorThermometer(Thermometer):
         self.n_ok_before_error = n_ok_before_error
 
     def get_name(self):
-        if self.n_ok_before_error > 0:
-            self.n_ok_before_error -= 1
-            return self.name
-        raise HeatingError('bullshit name')
+        return self.name
 
     def get_description(self):
-        if self.n_ok_before_error > 0:
-            self.n_ok_before_error -= 1
-            return self.description
-        raise HeatingError('bullshit description')
+        return self.description
 
     def get_temperature(self):
         if self.n_ok_before_error > 0:

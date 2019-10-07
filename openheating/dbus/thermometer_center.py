@@ -1,43 +1,51 @@
-from . import names
-from . import ifaces
+from . import dbusutil
 from .thermometer import Thermometer_Client
 from .temperature_history import TemperatureHistory_Client
 from ..error import HeatingError
 
-import ravel
-
 
 class ThermometerCenter_Client:
-    def __init__(self, connection):
-        self.proxy = connection.get_client_proxy(
-            busname=names.BUS.THERMOMETER_SERVICE,
-            path='/', 
-            iface=names.IFACE.THERMOMETER_CENTER)
-        self.connection = connection
+    def __init__(self, bus):
+        self.__bus = bus
+        self.__iface = self.__get_object_iface(
+            busname=dbusutil.BUS.THERMOMETERS,
+            path='/',
+            iface=dbusutil.IFACE.THERMOMETER_CENTER)
 
     def all_names(self):
-        return self.proxy.all_names()[0]
+        return self.__iface.all_names()
 
     def get_thermometer(self, name):
-        proxy = self.connection.get_client_proxy(
-            busname=names.BUS.THERMOMETER_SERVICE,
-            path='/thermometers/'+name, 
-            iface=names.IFACE.THERMOMETER)
-        return Thermometer_Client(proxy=proxy)
+        return Thermometer_Client(
+            proxy=self.__get_object_iface(
+                busname=dbusutil.BUS.THERMOMETERS,
+                path='/thermometers/'+name, 
+                iface=dbusutil.IFACE.THERMOMETER))
 
     def get_history(self, name):
-        proxy = self.connection.get_client_proxy(
-            busname=names.BUS.THERMOMETER_SERVICE,
-            path='/history/'+name, 
-            iface=names.IFACE.TEMPERATURE_HISTORY)
-        return TemperatureHistory_Client(proxy=proxy)
+        return TemperatureHistory_Client(
+            proxy=self.__get_object_iface(
+                busname=dbusutil.BUS.THERMOMETERS,
+                path='/history/'+name, 
+                iface=dbusutil.IFACE.TEMPERATURE_HISTORY))
 
+    def __get_object_iface(self, busname, path, iface):
+        return self.__bus.get(busname, path)[iface]
+    
 
-@ifaces.THERMOMETER_CENTER.iface
 class ThermometerCenter_Server:
+    dbus = """
+    <node>
+      <interface name='{thermometer_center_iface}'>
+        <method name='all_names'>
+          <arg type='as' name='response' direction='out'/>
+        </method>
+      </interface>
+    </node>
+    """.format(thermometer_center_iface=dbusutil.IFACE.THERMOMETER_CENTER)
+
     def __init__(self, thermometers):
         self.__thermometers = thermometers
 
-    @ifaces.THERMOMETER_CENTER.all_names
     def all_names(self):
-        return [list(self.__thermometers.keys())]
+        return self.__thermometers.keys()

@@ -1,7 +1,7 @@
 [Unit]
 Description=Openheating HTTP Interface
-BindsTo=openheating-thermometer-service.service
-After=openheating-thermometer-service.service
+BindsTo=openheating-thermometers.service
+After=openheating-thermometers.service
 
 [Service]
 User=openheating

@@ -1,11 +1,7 @@
 #!/usr/bin/python3
 
-from openheating.dbus import cmdline
-from openheating.dbus import names
-from openheating.dbus.connection import Connection
+from openheating.dbus import dbusutil
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
-
-import ravel
 
 import argparse
 import sys
@@ -16,7 +12,7 @@ import datetime
 top_parser = argparse.ArgumentParser(
     description='OpenHeating: client for DBus thermometer service')
 top_parser.add_argument('--configfile', help='Thermometer configuration file')
-cmdline.add_dbus_options(top_parser)
+dbusutil.argparse_add_bus(top_parser)
 
 subparsers = top_parser.add_subparsers(dest='subcommand_name')
 
@@ -34,8 +30,8 @@ history_parser.add_argument('--duration', type=int)
 args = top_parser.parse_args()
 
 
-connection = Connection(is_session=cmdline.is_session(args))
-thermometer_center = ThermometerCenter_Client(connection)
+bus = dbusutil.bus_from_argparse(args)
+thermometer_center = ThermometerCenter_Client(bus)
 
 if args.subcommand_name == 'list':
     for name in thermometer_center.all_names():
