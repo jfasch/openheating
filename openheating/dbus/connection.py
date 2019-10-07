@@ -13,14 +13,14 @@ logger = logging.getLogger('dbus-connection')
 class Connection:
     def __init__(self, is_session, busname=None):
         logger.info('connecting to {} bus'.format(is_session and 'session' or 'system'))
-        self.__connection = is_session and ravel.session_bus() or ravel.system_bus()
+        self.connection = is_session and ravel.session_bus() or ravel.system_bus()
         if busname is not None:
-            self.__connection.request_name(
+            self.connection.request_name(
                 bus_name=busname, 
                 flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
 
     def get_client_proxy(self, busname, path, iface):
-        service = self.__connection[busname]
+        service = self.connection[busname]
         obj = service[path]
         return obj.get_interface(iface)
 
@@ -40,13 +40,13 @@ class Connection:
 
         for path, obj in objects.items():
             logger.debug('registering object on {}'.format(path))
-            self.__connection.register(
+            self.connection.register(
                 path=path,
                 fallback=False,
                 interface=obj)
 
 
-        self.__connection.attach_asyncio(loop=loop)
+        self.connection.attach_asyncio(loop=loop)
         future_termination = loop.create_future()
 
         def callback():

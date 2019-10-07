@@ -1,7 +1,24 @@
 Stack (Hanging)
 ===============
 
-* socket activation for http service
+* errors
+
+  * emit signal on thermometer error. define signal payload; the
+    signature will be the same overall.
+
+    * find out how to use gdbus to see signals, and write up in 
+    * gosh it is really hard to find out what a signal is. trying to
+      emit one requires me to pass arguments that I dont understand;
+      same with listening. what is "path", why do I have to pass it,
+      etc. funnily the emacs documentation gives the most part of the
+      information; the language bindings suck, as does the dbus
+      specification. https://www.gnu.org/software/emacs/manual/html_node/dbus/Signals.html
+
+  * DBus service openheating-errors, storing those, and handing them
+    out on request.
+
+    * figure out how to pass signal listeners to Connection.run(),
+      along with the objects that are reachable.
 
 Todo
 ====

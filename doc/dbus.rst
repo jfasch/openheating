@@ -30,7 +30,7 @@ Thermometer Service
 Introspection
 -------------
 
-**Find object names**
+List bus names (services)
 
 ::
 
@@ -38,3 +38,16 @@ Introspection
       --dest org.freedesktop.DBus \
       --object-path /org/freedesktop/DBus \
       --method org.freedesktop.DBus.ListNames
+
+Prettyprint object names provided by a service
+
+::
+
+   $ busctl --system tree org.openheating.ThermometerService
+
+Debug, Monitor
+--------------
+
+::
+
+   dbus-monitor --session 

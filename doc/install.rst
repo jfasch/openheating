@@ -32,3 +32,7 @@ Configure system DBus to allow us in, ::
    # cp /some/prefix/share/systemd/org.openheating.conf /etc/dbus-1/system.d/
    # systemctl reload dbus
 
+Start necessary services, ::
+
+   # systemctl enable openheating-http.service
+   # systemctl start openheating-http.service
