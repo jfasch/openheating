@@ -37,8 +37,6 @@ for name, thermometer in thermometers.items():
                         update_interval=5, 
                         thermometer=thermometer,
                         history=history)))
-    objects.append(('/history/'+name,
-                    TemperatureHistory_Server(history=history)))
 
 dbusutil.graceful_termination(loop)
 

@@ -26,7 +26,7 @@ class ThermometerCenter_Client:
         return TemperatureHistory_Client(
             proxy=self.__get_object_iface(
                 busname=dbusutil.THERMOMETERS_BUSNAME,
-                path='/history/'+name, 
+                path='/thermometers/'+name, 
                 iface=dbusutil.TEMPERATUREHISTORY_IFACENAME))
 
     def __get_object_iface(self, busname, path, iface):

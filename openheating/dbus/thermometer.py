@@ -33,6 +33,15 @@ class Thermometer_Client(Thermometer):
     def get_temperature(self):
         return self.proxy.get_temperature()
 
+class TemperatureHistory_Client:
+    def __init__(self, proxy):
+        self.__proxy = proxy
+
+    def distill(self, granularity, duration):
+        return self.__proxy.distill(
+            timeutil.delta2unix(granularity), 
+            timeutil.delta2unix(duration))
+
 
 class Thermometer_Server:
     # errors are emitted via here
@@ -69,6 +78,9 @@ class Thermometer_Server:
         if self.__current_temperature is None:
             self.__current_temperature = self.__thermometer.get_temperature()
         return self.__current_temperature
+
+    def distill(self, granularity, duration):
+        return self.__history.distill(granularity=granularity, duration=duration)
 
     def __schedule_update(self):
         # submit work to the background thread, *not* waiting for the
@@ -107,5 +119,6 @@ class Thermometer_Server:
         self.error(str(e))
 
 dbusutil.NodeDefinition(interfaces=(dbusutil.THERMOMETER_IFACEXML,
+                                    dbusutil.TEMPERATUREHISTORY_IFACEXML,
                                     dbusutil.ERROREMITTER_IFACEXML))\
 .apply_to(Thermometer_Server)
