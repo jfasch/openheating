@@ -21,5 +21,4 @@ class TemperatureHistory_Server:
         distilled = self.__history.distill(granularity=granularity, duration=duration)
         return distilled
 
-dbusutil.NodeDefinition(interfaces=(dbusutil.TEMPERATUREHISTORY_IFACEXML,))\
-.apply_to(TemperatureHistory_Server)
+dbusutil.define_node(klass=TemperatureHistory_Server, interfaces=(dbusutil.TEMPERATUREHISTORY_IFACEXML,))

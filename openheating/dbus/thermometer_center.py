@@ -40,5 +40,4 @@ class ThermometerCenter_Server:
     def all_names(self):
         return self.__thermometers.keys()
 
-dbusutil.NodeDefinition(interfaces=(dbusutil.THERMOMETERCENTER_IFACEXML,))\
-.apply_to(ThermometerCenter_Server)
+dbusutil.define_node(klass=ThermometerCenter_Server, interfaces=(dbusutil.THERMOMETERCENTER_IFACEXML,))

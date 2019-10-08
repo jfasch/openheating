@@ -118,7 +118,8 @@ class Thermometer_Server:
         logger.debug('{}: receiving error {} from update-thread'.format(self.__name, e))
         self.error(str(e))
 
-dbusutil.NodeDefinition(interfaces=(dbusutil.THERMOMETER_IFACEXML,
-                                    dbusutil.TEMPERATUREHISTORY_IFACEXML,
-                                    dbusutil.ERROREMITTER_IFACEXML))\
-.apply_to(Thermometer_Server)
+dbusutil.define_node(
+    klass=Thermometer_Server,
+    interfaces=(dbusutil.THERMOMETER_IFACEXML,
+                dbusutil.TEMPERATUREHISTORY_IFACEXML,
+                dbusutil.ERROREMITTER_IFACEXML))

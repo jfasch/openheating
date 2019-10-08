@@ -84,6 +84,8 @@ THERMOMETERCENTER_IFACEXML = '''
 
 HEATINGERROR_NAME = DOMAIN + '.HeatingError'
 
+def define_node(klass, interfaces):
+    NodeDefinition(interfaces).apply_to(klass)
 
 class NodeDefinition:
     '''DBus objects generally provide more than one interface, and one
