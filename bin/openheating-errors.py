@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from openheating import logutil
-from openheating.dbus import error_emitter
 from openheating.dbus import dbusutil
 
 from gi.repository import GLib
@@ -24,7 +23,7 @@ def handle_error(*args):
     print(args)
 
 bus.subscribe(
-    iface=error_emitter.iface_name,
+    iface=dbusutil.ERROREMITTER_IFACENAME,
     signal='error',
     signal_fired=handle_error)
 

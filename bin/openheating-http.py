@@ -2,7 +2,7 @@
 
 from openheating import logutil
 from openheating.error import HeatingError
-from openheating.dbus import cmdline
+from openheating.dbus import dbusutil
 
 from openheating.web.default_app import DefaultApp
 from openheating.web import instance
@@ -13,7 +13,7 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
-cmdline.add_dbus_options(parser)
+dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 parser.add_argument('--no-notify', action='store_true', 
                     help='Do not notify systemd about readiness (for example when started by hand during development)')
@@ -27,7 +27,7 @@ instance.app = DefaultApp(
         'template_folder': args.templates,
         'static_folder': args.static,
     },
-    dbus_connection = cmdline.bus(args),
+    dbus_connection = dbusutil.bus_from_argparse(args),
 )
 
 instance.app.setup()

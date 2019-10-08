@@ -8,9 +8,9 @@ class ThermometerCenter_Client:
     def __init__(self, bus):
         self.__bus = bus
         self.__iface = self.__get_object_iface(
-            busname=dbusutil.BUS.THERMOMETERS,
+            busname=dbusutil.THERMOMETERS_BUSNAME,
             path='/',
-            iface=dbusutil.IFACE.THERMOMETER_CENTER)
+            iface=dbusutil.THERMOMETERCENTER_IFACENAME)
 
     def all_names(self):
         return self.__iface.all_names()
@@ -18,34 +18,27 @@ class ThermometerCenter_Client:
     def get_thermometer(self, name):
         return Thermometer_Client(
             proxy=self.__get_object_iface(
-                busname=dbusutil.BUS.THERMOMETERS,
+                busname=dbusutil.THERMOMETERS_BUSNAME,
                 path='/thermometers/'+name, 
-                iface=dbusutil.IFACE.THERMOMETER))
+                iface=dbusutil.THERMOMETER_IFACENAME))
 
     def get_history(self, name):
         return TemperatureHistory_Client(
             proxy=self.__get_object_iface(
-                busname=dbusutil.BUS.THERMOMETERS,
+                busname=dbusutil.THERMOMETERS_BUSNAME,
                 path='/history/'+name, 
-                iface=dbusutil.IFACE.TEMPERATURE_HISTORY))
+                iface=dbusutil.TEMPERATUREHISTORY_IFACENAME))
 
     def __get_object_iface(self, busname, path, iface):
         return self.__bus.get(busname, path)[iface]
     
 
 class ThermometerCenter_Server:
-    dbus = """
-    <node>
-      <interface name='{thermometer_center_iface}'>
-        <method name='all_names'>
-          <arg type='as' name='response' direction='out'/>
-        </method>
-      </interface>
-    </node>
-    """.format(thermometer_center_iface=dbusutil.IFACE.THERMOMETER_CENTER)
-
     def __init__(self, thermometers):
         self.__thermometers = thermometers
 
     def all_names(self):
         return self.__thermometers.keys()
+
+dbusutil.NodeDefinition(interfaces=(dbusutil.THERMOMETERCENTER_IFACEXML,))\
+.apply_to(ThermometerCenter_Server)

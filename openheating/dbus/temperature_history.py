@@ -14,21 +14,12 @@ class TemperatureHistory_Client:
 
 
 class TemperatureHistory_Server:
-    dbus = """
-    <node>
-      <interface name='{thermometer_history_iface}'>
-        <method name='distill'>
-          <arg type='t' name='granularity' direction='in'/>
-          <arg type='t' name='duration' direction='in'/>
-          <arg type='a(td)' name='response' direction='out'/>
-        </method>
-      </interface>
-    </node>
-    """.format(thermometer_history_iface=dbusutil.IFACE.TEMPERATURE_HISTORY)
-
     def __init__(self, history):
         self.__history = history
 
     def distill(self, granularity, duration):
         distilled = self.__history.distill(granularity=granularity, duration=duration)
         return distilled
+
+dbusutil.NodeDefinition(interfaces=(dbusutil.TEMPERATUREHISTORY_IFACEXML,))\
+.apply_to(TemperatureHistory_Server)

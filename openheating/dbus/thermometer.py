@@ -1,5 +1,4 @@
 from . import dbusutil
-from . import error_emitter
 from ..thermometer import Thermometer
 from ..error import HeatingError
 from .. import logutil
@@ -36,28 +35,6 @@ class Thermometer_Client(Thermometer):
 
 
 class Thermometer_Server:
-    dbus = """
-    <node>
-
-      <interface name='{thermometer_iface_name}'>
-        <method name='get_name'>
-          <arg type='s' name='response' direction='out'/>
-        </method>
-        <method name='get_description'>
-          <arg type='s' name='response' direction='out'/>
-        </method>
-        <method name='get_temperature'>
-          <arg type='d' name='response' direction='out'/>
-        </method>
-      </interface>
-
-      {error_emitter_iface}
-
-    </node>
-    """.format(
-        thermometer_iface_name=dbusutil.IFACE.THERMOMETER,
-        error_emitter_iface=error_emitter.iface)
-
     # errors are emitted via here
     error = signal()
 
@@ -128,3 +105,7 @@ class Thermometer_Server:
     def __receive_error(self, e):
         logger.debug('{}: receiving error {} from update-thread'.format(self.__name, e))
         self.error(str(e))
+
+dbusutil.NodeDefinition(interfaces=(dbusutil.THERMOMETER_IFACEXML,
+                                    dbusutil.ERROREMITTER_IFACEXML))\
+.apply_to(Thermometer_Server)

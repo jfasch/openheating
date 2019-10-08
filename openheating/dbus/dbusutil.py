@@ -4,22 +4,6 @@ import signal
 from pydbus import SystemBus, SessionBus
 
 
-# centrally defined names, to ease modifications
-DOMAIN = 'org.openheating'
-class BUS:
-    THERMOMETERS = DOMAIN + '.Thermometers'
-    ERRORS = DOMAIN + '.Errors'
-    SWITCHES = DOMAIN + '.Switches'
-class IFACE:
-    THERMOMETER = DOMAIN + '.Thermometer'
-    TEMPERATURE_HISTORY = DOMAIN + '.TemperatureHistory'
-    SWITCH = DOMAIN + '.Switch'
-    THERMOMETER_CENTER = DOMAIN + '.ThermometerCenter'
-    SWITCH_CENTER = DOMAIN + '.SwitchCenter'
-class EXCEPTION:
-    HEATINGERROR = DOMAIN + '.HeatingError'
-
-
 def argparse_add_bus(parser):
     '''add --session|--system options to commandline parsing'''
 
@@ -42,3 +26,85 @@ def graceful_termination(loop):
     signal.signal(signal.SIGINT, quit)
     signal.signal(signal.SIGTERM, quit)
     signal.signal(signal.SIGQUIT, quit)
+
+
+
+# centrally defined names, to ease modifications
+DOMAIN = 'org.openheating'
+
+# bus names
+THERMOMETERS_BUSNAME = DOMAIN + '.Thermometers'
+ERRORS_BUSNAME = DOMAIN + '.Errors'
+
+# interface names and XML fragments
+THERMOMETER_IFACENAME = DOMAIN + '.Thermometer'
+THERMOMETER_IFACEXML = '''
+<interface name='{name}'>
+  <method name='get_name'>
+    <arg type='s' name='response' direction='out'/>
+  </method>
+  <method name='get_description'>
+    <arg type='s' name='response' direction='out'/>
+  </method>
+  <method name='get_temperature'>
+    <arg type='d' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=THERMOMETER_IFACENAME)
+
+ERROREMITTER_IFACENAME = DOMAIN + '.ErrorEmitter'
+ERROREMITTER_IFACEXML = '''
+<interface name='{name}'>
+  <signal name="error">
+    <arg type="s" name="what" direction="out"/>
+  </signal>
+</interface>
+'''.format(name=ERROREMITTER_IFACENAME)
+
+TEMPERATUREHISTORY_IFACENAME = DOMAIN + '.TemperatureHistory'
+TEMPERATUREHISTORY_IFACEXML = '''
+<interface name='{name}'>
+  <method name='distill'>
+    <arg type='t' name='granularity' direction='in'/>
+    <arg type='t' name='duration' direction='in'/>
+    <arg type='a(td)' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=TEMPERATUREHISTORY_IFACENAME)
+
+THERMOMETERCENTER_IFACENAME = DOMAIN + '.ThermometerCenter'
+THERMOMETERCENTER_IFACEXML = '''
+<interface name='{name}'>
+  <method name='all_names'>
+    <arg type='as' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=THERMOMETERCENTER_IFACENAME)
+
+
+HEATINGERROR_NAME = DOMAIN + '.HeatingError'
+
+
+class NodeDefinition:
+    '''DBus objects generally provide more than one interface, and one
+    interface is generally provided by more than one object.
+
+    This class combines multiple interfaces (their XML fragments) into
+    one <node> definition which is then applied to a class - adding
+    the "dbus" attribute that pydbus requires a class to have.
+
+    '''
+
+    def __init__(self, interfaces):
+        self.__interfaces = interfaces
+
+    def to_xml(self):
+        ret = '<node>\n'
+        for i in self.__interfaces:
+            ret += i
+            ret += '\n'
+        ret += '</node>\n'
+        return ret
+
+    def apply_to(self, klass):
+        klass.dbus = self.to_xml()
