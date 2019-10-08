@@ -1,3 +1,5 @@
+assert False
+
 from . import dbusutil
 
 from .. import timeutil

@@ -1,6 +1,5 @@
 from . import dbusutil
-from .thermometer import Thermometer_Client
-from .temperature_history import TemperatureHistory_Client
+from .thermometer import Thermometer_Client, TemperatureHistory_Client
 from ..error import HeatingError
 
 

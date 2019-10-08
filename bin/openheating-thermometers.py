@@ -6,7 +6,6 @@ from openheating import logutil
 from openheating.dbus import dbusutil
 from openheating.dbus.thermometer import Thermometer_Server
 from openheating.dbus.thermometer_center import ThermometerCenter_Server
-from openheating.dbus.temperature_history import TemperatureHistory_Server
 
 from gi.repository import GLib
 

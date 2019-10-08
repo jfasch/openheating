@@ -1,6 +1,7 @@
 from . import dbusutil
 from ..thermometer import Thermometer
 from ..error import HeatingError
+from .. import timeutil
 from .. import logutil
 
 from gi.repository import GLib
