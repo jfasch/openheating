@@ -43,10 +43,9 @@ class ThermometerServiceTest(unittest.TestCase):
             completed_process = subprocess.run(
                 ['gdbus', 'call', '--session', '--dest', 'org.freedesktop.DBus',
                  '--object-path', '/org/freedesktop/DBus', '--method', 'org.freedesktop.DBus.ListNames'],
-                stdout=subprocess.PIPE
+                stdout=subprocess.PIPE,
+                check=True,
             )
-            if completed_process.returncode != 0:
-                self.fail()
             names = eval(completed_process.stdout)
             
             if dbusutil.THERMOMETERS_BUSNAME in names:
@@ -63,6 +62,21 @@ class ThermometerServiceTest(unittest.TestCase):
         self.assertEqual(thermometer_client.get_name(), 'TestThermometer')
         self.assertEqual(thermometer_client.get_description(), 'Test Thermometer')
         self.assertAlmostEqual(thermometer_client.get_temperature(), 42)
+
+    def test__thermometer_client_prog__current(self):
+        completed_process = subprocess.run(
+            [testutils.find_executable('openheating-thermometer-client.py'), '--session', 'current', 'TestThermometer'],
+            stdout=subprocess.PIPE, check=True, universal_newlines=True)
+        temperature = eval(completed_process.stdout)
+        self.assertAlmostEqual(temperature, 42)
+
+    def test__thermometer_client_prog__list(self):
+        completed_process = subprocess.run(
+            [testutils.find_executable('openheating-thermometer-client.py'), '--session', 'list'], 
+            stdout=subprocess.PIPE, check=True, universal_newlines=True)
+        thermometers = [name for name in completed_process.stdout.split('\n') if name != '']
+        self.assertEqual(len(thermometers), 1)
+        self.assertIn('TestThermometer', thermometers)
 
 if __name__ == '__main__':
     unittest.main()
