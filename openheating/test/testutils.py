@@ -1,7 +1,12 @@
-from .error import HeatingError
+from ..error import HeatingError
 
 import os
+import unittest
 
+
+def run(suite):
+    runner = unittest.TextTestRunner(verbosity=2, descriptions=False)
+    runner.run(suite)
 
 def find_project_root():
     '''Given that os.getcwd() reports a directory inside the source tree,

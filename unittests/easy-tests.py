@@ -4,8 +4,8 @@ import sys
 import os.path
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))
 
-from openheating.unittests.easy_suite import suite as oh_suite
-from openheating.dbus.unittests.easy_suite import suite as oh_dbus_suite
+from oh_tests.base.easy_suite import suite as oh_suite
+from oh_tests.dbus.easy_suite import suite as oh_dbus_suite
 
 import unittest
 import logging

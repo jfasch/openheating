@@ -1,15 +1,11 @@
 .. contents:: Table of Contents
 
-DBus: DBussy
+DBus: pydbus
 ============
-
-`DBussy <https://github.com/ldo/dbussy>`_ is a python DBus binding on
-top of `asyncio
-<https://docs.python.org/3/library/asyncio.html#module-asyncio>`_.
 
 ::
 
-   # pip3 install --system dbussy
+   # pip3 install --system pydbus
 
 systemd
 =======
