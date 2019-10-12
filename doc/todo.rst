@@ -1,7 +1,9 @@
 Stack (Hanging)
 ===============
 
-* iface xml composition out of fragments: history into thermometer
+* testing infrastructure
+
+  * wait for busnames to {dis,}appear
 
 Todo
 ====

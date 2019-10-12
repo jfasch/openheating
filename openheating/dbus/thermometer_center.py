@@ -14,6 +14,7 @@ class ThermometerCenter_Client:
     def all_names(self):
         return self.__iface.all_names()
 
+
     def get_thermometer(self, name):
         return Thermometer_Client(
             proxy=self.__get_object_iface(
