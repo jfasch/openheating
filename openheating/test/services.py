@@ -6,21 +6,18 @@ import tempfile
 import subprocess
 
 
-class ThermometerService:
-    def __init__(self, ini):
-        self.__ini = tempfile.NamedTemporaryFile(mode='w')
-        self.__ini.write('\n'.join(ini))
-        self.__ini.flush()
-
-        self.__process = subprocess.Popen([
-            testutils.find_executable('openheating-thermometers.py'),
-            '--session',
-            '--configfile', self.__ini.name,
-        ])
+class _Service:
+    def __init__(self, busname, exe, args=None, popenargs=None):
+        self.__busname = busname
+        argv = [testutils.find_executable(exe), '--session']
+        if args is not None:
+            argv += args
+        kwargs = popenargs and popenargs or {}
+        self.__process = subprocess.Popen(argv, **kwargs)
 
         # wait until busname appears
-        completed_process = subprocess.run(
-            ['gdbus', 'wait', '--session', dbusutil.THERMOMETERS_BUSNAME, '--timeout', '10'],
+        subprocess.run(
+            ['gdbus', 'wait', '--session', busname, '--timeout', '10'],
             check=True,
         )
 
@@ -34,8 +31,6 @@ class ThermometerService:
         if self.__process.returncode != 0:
             raise HeatingError('service exited with status {}'.format(self.__process.returncode))
 
-        self.__ini.close()
-
         # wait for busname to disappear
         for _ in range(10):
             completed_process = subprocess.run(
@@ -46,11 +41,34 @@ class ThermometerService:
             )
             names = eval(completed_process.stdout)
             
-            if dbusutil.THERMOMETERS_BUSNAME in names:
+            if self.__busname in names:
                 time.sleep(0.5)
                 continue
             else:
                 break
         else:
-            self.fail('{} still on the bus'.format(dbusutil.THERMOMETERS_BUSNAME))
+            self.fail('{} still on the bus'.format(self.__busname))
+
+class ThermometerService(_Service):
+    def __init__(self, ini):
+        self.__ini = tempfile.NamedTemporaryFile(mode='w')
+        self.__ini.write('\n'.join(ini))
+        self.__ini.flush()
+
+        super().__init__(exe='openheating-thermometers.py', busname=dbusutil.THERMOMETERS_BUSNAME,
+                         args=['--configfile', self.__ini.name])
+
+    def stop(self):
+        super().stop()
+        self.__ini.close()
+
+class ExceptionTesterService(_Service):
+    def __init__(self):
+        super().__init__(
+            exe='openheating-exception-tester.py',
+            busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
+            # pydbus server logs any exceptions to default logger, on
+            # stderr
+            popenargs={'stderr': subprocess.DEVNULL})
+
         

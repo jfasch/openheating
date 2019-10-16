@@ -1,3 +1,5 @@
+from openheating.error import HeatingError
+
 from openheating.test import testutils
 from openheating.test import services
 
@@ -56,8 +58,14 @@ class ThermometerServiceError(unittest.TestCase):
         self.__service.stop()
 
     def test__sensor_error_at_startup(self):
-        self.fail('how to report success? do nothing?')
+        # do nothing. this is only there to test if startup succeeds
+        # when a sensor returns an error initially.
         pass
+
+    def test__client_error(self):
+        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        thermometer_client = center_client.get_thermometer('ErrorThermometer')
+        self.assertRaises(HeatingError, thermometer_client.get_temperature)
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerServiceOK))

@@ -35,6 +35,7 @@ DOMAIN = 'org.openheating'
 # bus names
 THERMOMETERS_BUSNAME = DOMAIN + '.Thermometers'
 ERRORS_BUSNAME = DOMAIN + '.Errors'
+EXCEPTIONTESTER_BUSNAME = DOMAIN + '.ExceptionTester'
 
 # interface names and XML fragments
 THERMOMETER_IFACENAME = DOMAIN + '.Thermometer'
@@ -80,6 +81,15 @@ THERMOMETERCENTER_IFACEXML = '''
   </method>
 </interface>
 '''.format(name=THERMOMETERCENTER_IFACENAME)
+
+EXCEPTIONTESTER_IFACENAME = DOMAIN + '.ExceptionTester'
+EXCEPTIONTESTER_IFACEXML = '''
+<interface name='{name}'>
+  <method name='raise_base_HeatingError'>
+    <arg type='s' name='msg' direction='in'/>
+  </method>
+</interface>
+'''.format(name=EXCEPTIONTESTER_IFACENAME)
 
 
 HEATINGERROR_NAME = DOMAIN + '.HeatingError'

@@ -3,7 +3,12 @@ Stack (Hanging)
 
 * testing infrastructure
 
-  * wait for busnames to {dis,}appear
+  * For reasons I don't understand, the ExceptionTester object cannot
+    be registered using bus.publish(). Explicit bus.request_name() and
+    bus.register_object() do the job. Provide dbusutil.publish() that
+    does it.
+
+* exception conversion dbus/local
 
 Todo
 ====
