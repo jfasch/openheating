@@ -54,7 +54,9 @@ class ThermometerServiceError(unittest.TestCase):
             'Type = error',
             'Description = Error Thermometer',
             'NOkBeforeError = 0'])
-        self.__service.start()
+
+        print('jjjjjjjjjj nasty shutdown error lurking somewhere; I believe should shutdown properly')
+        self.__service.start(suppress_stderr=False)
 
     def tearDown(self):
         self.__service.stop()

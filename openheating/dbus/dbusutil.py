@@ -29,6 +29,10 @@ def graceful_termination(loop):
     signal.signal(signal.SIGTERM, quit)
     signal.signal(signal.SIGQUIT, quit)
 
+def publish(bus, busname, objects):
+    bus.request_name(busname)
+    for path, object in objects:
+        bus.register_object(path, object, None)
 
 
 # centrally defined names, to ease modifications

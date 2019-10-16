@@ -1,7 +1,22 @@
 Stack (Hanging)
 ===============
 
-* exception conversion dbus/local
+* unify bus publishing
+
+  * For reasons I don't understand, the ExceptionTester object cannot
+    be registered using bus.publish(). Explicit bus.request_name() and
+    bus.register_object() do the job. Provide dbusutil.publish() that
+    does it.
+  * dbusutil.run() doing all at once: graceful termination,
+    publishing, run loop
+  * while at it: should shutdown all our server objects;
+    dbusutil.run() could be a good place to.
+
+* dbus: add check if busname is already had, and fail accordingly (we
+  do not start a temporary bus in the fixture, but attach to the
+  session bus - which cries for such situations)
+
+  (RuntimeError is raised in such a case btw)
 
 Todo
 ====
@@ -13,12 +28,6 @@ Todo
   * Even more so, we could additionall wrap every such method in its
     @unify_error decorator *automatically*. Cool!
 
-* unittests
-
-  * dbus: add check if busname is already had, and fail accordingly
-    (we do not start a temporary bus in the fixture, but attach to the
-    session bus - which cries for such situations)
-
 * split dbusutil into consts.py containing the IDL stuff, for
   example. cmdline.py for blah. node.py for
   NodeDefinition. exception.py for all the exception conversion.
@@ -29,13 +38,6 @@ Todo
 
     Write a big fat docstring which says how HeatingError instances
     make it across the bus.
-
-* unify bus publishing
-
-  * For reasons I don't understand, the ExceptionTester object cannot
-    be registered using bus.publish(). Explicit bus.request_name() and
-    bus.register_object() do the job. Provide dbusutil.publish() that
-    does it.
 
 * plotly, graph pages
 

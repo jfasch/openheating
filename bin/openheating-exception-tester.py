@@ -19,7 +19,9 @@ loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 dbusutil.graceful_termination(loop)
-
-bus.request_name(dbusutil.EXCEPTIONTESTER_BUSNAME)
-bus.register_object('/', ExceptionTester_Server(), None)
+dbusutil.publish(
+    bus=bus, 
+    busname=dbusutil.EXCEPTIONTESTER_BUSNAME, 
+    objects=[('/', ExceptionTester_Server())],
+)
 loop.run()

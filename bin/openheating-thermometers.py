@@ -38,6 +38,8 @@ for name, thermometer in thermometers.items():
                         history=history)))
 
 dbusutil.graceful_termination(loop)
-
-bus.publish(dbusutil.THERMOMETERS_BUSNAME, *objects)
+dbusutil.publish(
+    bus=bus,
+    busname=dbusutil.THERMOMETERS_BUSNAME,
+    objects=objects)
 loop.run()

@@ -5,6 +5,7 @@ from openheating.dbus import dbusutil
 
 import tempfile
 import subprocess
+import sys
 
 
 class _Service:
@@ -36,7 +37,12 @@ class _Service:
         # our services mess with signals a bit (graceful eventloop
         # termination), so apply a timeout in case anything goes
         # wrong.
-        self.__process.wait(timeout=5) 
+        try:
+            self.__process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            print(' '.join(self.__argv), 'refuses to terminate, killing', file=sys.stderr)
+            self.__process.kill()
+            self.__process.wait()
 
         if self.__process.returncode != 0:
             raise HeatingError('service exited with status {}'.format(self.__process.returncode))
