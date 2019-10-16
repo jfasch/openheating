@@ -8,21 +8,30 @@ import subprocess
 
 
 class _Service:
-    def __init__(self, busname, exe, args=None, popenargs=None):
+    def __init__(self, busname, exe, args=None):
         self.__busname = busname
-        argv = [testutils.find_executable(exe), '--session']
+        self.__argv = [testutils.find_executable(exe), '--session']
         if args is not None:
-            argv += args
-        kwargs = popenargs and popenargs or {}
-        self.__process = subprocess.Popen(argv, **kwargs)
+            self.__argv += args
+        self.__process = None
+
+    def start(self, suppress_stderr=True):
+        if suppress_stderr:
+            kwargs = {'stderr': subprocess.DEVNULL}
+        else:
+            kwargs = {}
+
+        self.__process = subprocess.Popen(self.__argv, **kwargs)
 
         # wait until busname appears
         subprocess.run(
-            ['gdbus', 'wait', '--session', busname, '--timeout', '10'],
+            ['gdbus', 'wait', '--session', self.__busname, '--timeout', '10'],
             check=True,
         )
 
     def stop(self):
+        assert self.__process is not None
+
         self.__process.terminate()
         # our services mess with signals a bit (graceful eventloop
         # termination), so apply a timeout in case anything goes
@@ -68,9 +77,6 @@ class ExceptionTesterService(_Service):
         super().__init__(
             exe='openheating-exception-tester.py',
             busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
-            # pydbus server logs any exceptions to default logger, on
-            # stderr
-            popenargs={'stderr': subprocess.DEVNULL},
         )
 
         

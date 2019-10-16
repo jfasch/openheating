@@ -16,6 +16,7 @@ import json
 class ExceptionTest(unittest.TestCase):
     def setUp(self):
         self.__service = services.ExceptionTesterService()
+        self.__service.start()
 
     def tearDown(self):
         self.__service.stop()

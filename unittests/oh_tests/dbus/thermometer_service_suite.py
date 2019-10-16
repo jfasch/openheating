@@ -19,6 +19,7 @@ class ThermometerServiceOK(unittest.TestCase):
             'Type = fixed',
             'Description = Test Thermometer',
             'Value = 42'])
+        self.__service.start()
 
     def tearDown(self):
         self.__service.stop()
@@ -53,6 +54,7 @@ class ThermometerServiceError(unittest.TestCase):
             'Type = error',
             'Description = Error Thermometer',
             'NOkBeforeError = 0'])
+        self.__service.start()
 
     def tearDown(self):
         self.__service.stop()

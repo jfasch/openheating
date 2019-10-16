@@ -15,8 +15,6 @@ Todo
 
 * unittests
 
-  * dbus.services: add explicit start method,
-    start(suppress_stderr=False)
   * dbus: add check if busname is already had, and fail accordingly
     (we do not start a temporary bus in the fixture, but attach to the
     session bus - which cries for such situations)
