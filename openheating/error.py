@@ -1,6 +1,19 @@
 class HeatingError(Exception):
-    def __init__(self, msg):
-        super().__init__(msg)
+    def __init__(self, msg=None, details=None):
+        if details is None:
+            assert msg is not None
+            self.__details = {
+                'type': 'HeatingError',
+                'message': msg,
+            }
+        else:
+            self.__details = details
+
+        super().__init__(self.__details['message'])
+
+    @property
+    def details(self):
+        return self.__details
 
 class BadDBusPathComponent(HeatingError):
     """Used where e.g. a thermometer configuration gives the thermometer

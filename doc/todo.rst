@@ -1,20 +1,44 @@
 Stack (Hanging)
 ===============
 
-* testing infrastructure
+* exception conversion dbus/local
+
+Todo
+====
+
+* NodeDefinition: parse XML, and check for presence of methods and
+  signals. This way errors appear at class composition time, rather
+  than late during bus publishing.
+
+  * Even more so, we could additionall wrap every such method in its
+    @unify_error decorator *automatically*. Cool!
+
+* unittests
+
+  * dbus.services: add explicit start method,
+    start(suppress_stderr=False)
+  * dbus: add check if busname is already had, and fail accordingly
+    (we do not start a temporary bus in the fixture, but attach to the
+    session bus - which cries for such situations)
+
+* split dbusutil into consts.py containing the IDL stuff, for
+  example. cmdline.py for blah. node.py for
+  NodeDefinition. exception.py for all the exception conversion.
+
+  * done with the exception conversion stuff, pull pydbus error
+    mapping into that same location (possibly only *using* it from
+    dbus.__init__).
+
+    Write a big fat docstring which says how HeatingError instances
+    make it across the bus.
+
+* unify bus publishing
 
   * For reasons I don't understand, the ExceptionTester object cannot
     be registered using bus.publish(). Explicit bus.request_name() and
     bus.register_object() do the job. Provide dbusutil.publish() that
     does it.
 
-* exception conversion dbus/local
-
-Todo
-====
-
-* unify bus publishing
-* exceptions (dbus.thermometer.Thermometer_Server.get_temperature)
 * plotly, graph pages
 
   * tooltips as links to thermometer pages for example

@@ -10,6 +10,7 @@ import pydbus
 
 import unittest
 import subprocess
+import json
 
 
 class ExceptionTest(unittest.TestCase):
@@ -19,9 +20,25 @@ class ExceptionTest(unittest.TestCase):
     def tearDown(self):
         self.__service.stop()
         
-    def test__HeatingError_python_client(self):
+    def test__HeatingError(self):
         client = ExceptionTester_Client(pydbus.SessionBus())
-        self.assertRaises(HeatingError, client.raise_base_HeatingError, 'message')
+        self.assertRaises(HeatingError, client.raise_default_HeatingError, 'message')
+
+    def test__HeatingError_default_json_payload(self):
+        client = ExceptionTester_Client(pydbus.SessionBus())
+        try:
+            client.raise_default_HeatingError('the message')
+        except HeatingError as e:
+            self.assertEqual(e.details['type'], 'HeatingError')
+            self.assertEqual(e.details['message'], 'the message')
+
+    def test__derived_default_HeatingError(self):
+        client = ExceptionTester_Client(pydbus.SessionBus())
+        try:
+            client.raise_derived_default_HeatingError('the message')
+        except HeatingError as e:
+            self.assertEqual(e.details['type'], 'HeatingError')
+            self.assertEqual(e.details['message'], 'the message')
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ExceptionTest))

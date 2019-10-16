@@ -69,17 +69,21 @@ class Thermometer_Server:
         self.__background_thread = ThreadPoolExecutor(max_workers=1)
         GLib.timeout_add_seconds(update_interval, self.__schedule_update)
 
+    @dbusutil.unify_error
     def get_name(self):
         return self.__thermometer.get_name()
 
+    @dbusutil.unify_error
     def get_description(self):
         return self.__thermometer.get_description()
 
+    @dbusutil.unify_error
     def get_temperature(self):
         if self.__current_temperature is None:
             self.__current_temperature = self.__thermometer.get_temperature()
         return self.__current_temperature
 
+    @dbusutil.unify_error
     def distill(self, granularity, duration):
         return self.__history.distill(granularity=granularity, duration=duration)
 

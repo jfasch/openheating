@@ -1,5 +1,6 @@
 from . import testutils
 
+from openheating.error import HeatingError
 from openheating.dbus import dbusutil
 
 import tempfile
@@ -69,6 +70,7 @@ class ExceptionTesterService(_Service):
             busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
             # pydbus server logs any exceptions to default logger, on
             # stderr
-            popenargs={'stderr': subprocess.DEVNULL})
+            popenargs={'stderr': subprocess.DEVNULL},
+        )
 
         
