@@ -12,6 +12,22 @@ Stack (Hanging)
     (RuntimeError is raised in such a case btw)
   * remove dbusutil.publish()
   * lifecycle thermometer service: thread shutdown
+  * signal is lost in graceful termination: when the signal is
+    delivered before the loop has been started (loop.run() is called),
+    loop.quit() (called from within the siganl handler) has no
+    effect. the desired shutdown does not happen because loop.run()
+    has missed it.
+
+    * read up on signal delivery in python. write comprehension test,
+      in new testsuite for graceful
+      termination. 
+
+      https://docs.python.org/3/library/signal.html#execution-of-python-signal-handlers
+    * knowing that signal delivery is sufficiently synchronous
+      (hopefully; at least it works from a foreign thread): in the
+      signal handler, add a timer to the loop, which call loop.quit()
+      (read up on loop.quit). write a test to ensure that this works.
+    * pull all this in class graceful_termination.
 
 Todo
 ====
