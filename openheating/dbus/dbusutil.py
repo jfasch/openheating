@@ -4,6 +4,7 @@ from pydbus import SystemBus, SessionBus
 
 import json
 import signal
+import logging
 
 
 def argparse_add_bus(parser):
@@ -19,11 +20,15 @@ def bus_from_argparse(args):
 
     return args.session and SessionBus() or SystemBus()
 
+
+lifecycle_logger = logging.getLogger('lifecycle')
+
 def graceful_termination(loop):
     '''install the appropriate signal handler, and take care to terminate
     the eventloop gracefully'''
 
     def quit(signal, frame):
+        lifecycle_logger.info('signal {} received, terminating gracefully'.format(signal))
         loop.quit()
     signal.signal(signal.SIGINT, quit)
     signal.signal(signal.SIGTERM, quit)
@@ -34,6 +39,37 @@ def publish(bus, busname, objects):
     for path, object in objects:
         bus.register_object(path, object, None)
 
+class lifecycle:
+    def __init__(self, startup=None, shutdown=None):
+        self.__startup = startup
+        self.__shutdown = shutdown
+
+    def __call__(self, cls):
+        startup = shutdown = None
+        if self.__startup is not None:
+            cls._oh_lifecycle_startup = getattr(cls, self.__startup)
+        if self.__shutdown is not None:
+            cls._oh_lifecycle_shutdown = getattr(cls, self.__shutdown)
+        return cls
+
+def run_server(loop, bus, busname, objects):
+    graceful_termination(loop)
+
+    lifecycle_logger.info('starting objects')
+    for _, o in objects:
+        startup = getattr(o, '_oh_lifecycle_startup', None)
+        if startup is not None:
+            startup()
+
+    publish(bus=bus, busname=busname, objects=objects)
+    loop.run()
+
+    lifecycle_logger.info('stopping objects')
+    for _, o in objects:
+        shutdown = getattr(o, '_oh_lifecycle_shutdown', None)
+        if shutdown is not None:
+            shutdown()
+
 
 # centrally defined names, to ease modifications
 DOMAIN = 'org.openheating'
@@ -42,6 +78,7 @@ DOMAIN = 'org.openheating'
 THERMOMETERS_BUSNAME = DOMAIN + '.Thermometers'
 ERRORS_BUSNAME = DOMAIN + '.Errors'
 EXCEPTIONTESTER_BUSNAME = DOMAIN + '.ExceptionTester'
+LIFECYCLETESTER_BUSNAME = DOMAIN + '.LifecycleTester'
 
 # interface names and XML fragments
 THERMOMETER_IFACENAME = DOMAIN + '.Thermometer'

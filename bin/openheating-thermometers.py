@@ -37,9 +37,9 @@ for name, thermometer in thermometers.items():
                         thermometer=thermometer,
                         history=history)))
 
-dbusutil.graceful_termination(loop)
-dbusutil.publish(
+dbusutil.run_server(
+    loop=loop,
     bus=bus,
     busname=dbusutil.THERMOMETERS_BUSNAME,
-    objects=objects)
-loop.run()
+    objects=objects,
+)

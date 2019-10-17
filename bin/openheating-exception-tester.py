@@ -18,10 +18,9 @@ logutil.configure_from_argparse(args)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
-dbusutil.graceful_termination(loop)
-dbusutil.publish(
-    bus=bus, 
-    busname=dbusutil.EXCEPTIONTESTER_BUSNAME, 
+dbusutil.run_server(
+    loop=loop,
+    bus=bus,
+    busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
     objects=[('/', ExceptionTester_Server())],
 )
-loop.run()

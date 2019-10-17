@@ -85,4 +85,12 @@ class ExceptionTesterService(_Service):
             busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
         )
 
+class LifecycleTesterService(_Service):
+    def __init__(self, stampdir):
+        super().__init__(
+            exe='openheating-lifecycle-tester.py',
+            busname=dbusutil.LIFECYCLETESTER_BUSNAME,
+            args=['--stamp-directory', stampdir],
+        )
+
         
