@@ -3,7 +3,6 @@ Stack (Hanging)
 
 * unify bus publishing
 
-  * dbusutil.run_server(): remove loop parameter
   * dbusutil.run_server(): watch signals (calling callable)
   * dbus: add check if busname is already had, and fail accordingly
     (we do not start a temporary bus in the fixture, but attach to the
@@ -16,7 +15,7 @@ Stack (Hanging)
     mess there.
   * test service wrappers: remove suppress_stderr. instead, capture
     stderr and output that on test failure.
-  * dbusutil.jjj_lifecycle
+  * collapse lifecycle and graceful termination suites
 
 Todo
 ====

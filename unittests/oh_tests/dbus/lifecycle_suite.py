@@ -18,7 +18,7 @@ class LifecycleTest(unittest.TestCase):
         self.__directory.cleanup()
         
     def test__basic(self):
-        self.__service.start()
+        self.__service.start(suppress_stderr=False)
         self.__service.stop()
         self.assertTrue(os.path.isfile(self.__directory.name+'/started'))
         self.assertTrue(os.path.isfile(self.__directory.name+'/stopped'))

@@ -2,6 +2,7 @@
 
 from openheating import logutil
 from openheating.dbus import dbusutil
+from openheating.dbus.util import lifecycle
 
 from gi.repository import GLib
 
@@ -18,7 +19,7 @@ logutil.configure_from_argparse(args)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
-@dbusutil.lifecycle(startup='announce_started', shutdown='announce_stopped')
+@lifecycle.managed(startup='announce_started', shutdown='announce_stopped')
 class TheObjectWhichIsLifecycled:
     dbus = '<node></node>'
 
@@ -31,7 +32,7 @@ class TheObjectWhichIsLifecycled:
         with open(self.__stampdir + '/stopped', 'w'):
             pass
 
-dbusutil.run_server(
+lifecycle.run_server(
     loop=loop,
     bus=bus,
     busname=dbusutil.LIFECYCLETESTER_BUSNAME,

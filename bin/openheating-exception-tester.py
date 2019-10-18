@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.dbus import dbusutil
+from openheating.dbus.util import lifecycle
 from openheating.dbus.exception_tester import ExceptionTester_Server
 from openheating import logutil
 
@@ -18,7 +19,7 @@ logutil.configure_from_argparse(args)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
-dbusutil.run_server(
+lifecycle.run_server(
     loop=loop,
     bus=bus,
     busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
