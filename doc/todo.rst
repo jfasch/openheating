@@ -1,10 +1,6 @@
 Stack (Hanging)
 ===============
 
-* unify bus publishing
-
-  * dbusutil.run_server(): watch signals (calling callable)
-
 Todo
 ====
 
@@ -53,21 +49,10 @@ Todo
     * setup, on build/installation errors like ac_subst. logging
       there.
 
-* Move dbus.ServerObject logic into dbus.lifecycle. Class decorator
-  lifecycle.managed() or so, which simply ducktypes into obj.startup()
-  and obj.shutdown() is class has the attribute. or so.
-
 * Move thermometers_ini into config.thermometers_ini
 
 * Update graphs: Json interface for history, plus calling JS in
   thermometer.html.
-
-* DBus exceptions
-  
-  * simplify HeatingError to a minimum
-    * create proxy classes (modify clients)
-  * rename server-side objects to *_object
-  * properly translate HeatingError (using .msg())
 
 * thermometers.ini
 
@@ -75,13 +60,3 @@ Todo
   * error-tests
   * define exception(s)
 
-* D-Bus
-
-<<<<<<< HEAD
-  * find out what dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE is
-=======
-  * Where do D-Bus activation (.service) files go?
-    https://stackoverflow.com/questions/31702465/how-to-define-a-d-bus-activated-systemd-service
->>>>>>> d8661d0971cffc435129f0cf6b3b7c874924f635
-  * How to generate the D-Bus config file from a template? (Paths like
-    unix address and <servicedir> need to be substituted.)
