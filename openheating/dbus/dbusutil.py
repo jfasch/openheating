@@ -37,7 +37,7 @@ DOMAIN = 'org.openheating'
 THERMOMETERS_BUSNAME = DOMAIN + '.Thermometers'
 ERRORS_BUSNAME = DOMAIN + '.Errors'
 EXCEPTIONTESTER_BUSNAME = DOMAIN + '.ExceptionTester'
-LIFECYCLETESTER_BUSNAME = DOMAIN + '.LifecycleTester'
+MANAGEDOBJECTTESTER_BUSNAME = DOMAIN + '.ManagedObjectTester'
 
 # interface names and XML fragments
 THERMOMETER_IFACENAME = DOMAIN + '.Thermometer'

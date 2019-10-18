@@ -15,7 +15,6 @@ Stack (Hanging)
     mess there.
   * test service wrappers: remove suppress_stderr. instead, capture
     stderr and output that on test failure.
-  * collapse lifecycle and graceful termination suites
 
 Todo
 ====

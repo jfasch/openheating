@@ -9,7 +9,7 @@ from gi.repository import GLib
 import argparse
 
 
-parser = argparse.ArgumentParser(description='OpenHeating: DBus object lifecycle testing service (used during unittests)')
+parser = argparse.ArgumentParser(description='OpenHeating: DBus managed object testing service (used during unittests)')
 parser.add_argument('--stamp-directory')
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
@@ -20,7 +20,7 @@ loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 @lifecycle.managed(startup='announce_started', shutdown='announce_stopped')
-class TheObjectWhichIsLifecycled:
+class TheObjectWhichIsManaged:
     dbus = '<node></node>'
 
     def __init__(self, stampdir):
@@ -35,6 +35,6 @@ class TheObjectWhichIsLifecycled:
 lifecycle.run_server(
     loop=loop,
     bus=bus,
-    busname=dbusutil.LIFECYCLETESTER_BUSNAME,
-    objects=[('/', TheObjectWhichIsLifecycled(stampdir=args.stamp_directory))],
+    busname=dbusutil.MANAGEDOBJECTTESTER_BUSNAME,
+    objects=[('/', TheObjectWhichIsManaged(stampdir=args.stamp_directory))],
 )
