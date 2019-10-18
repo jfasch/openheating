@@ -10,6 +10,23 @@ import subprocess
 import sys
 
 
+def start(services):
+    for s in services:
+        s.start()
+
+def stop(services):
+    errors = []
+    for s in services:
+        try:
+            s.stop()
+        except Exception as e:
+            errors.append(e)
+    if len(errors) != 0:
+        msg = ['there were errors while stopping services ...']
+        for e in errors:
+            msg.append(str(e))
+        raise RuntimeError('\n'.join(msg))
+
 class _Service:
     def __init__(self, busname, exe, args=None):
         self.__busname = busname
@@ -31,16 +48,22 @@ class _Service:
             ['gdbus', 'wait', '--session', self.__busname, '--timeout', '5'],
         )
         if completed_process.returncode != 0:
+            # busname did not appear within the given
+            # timeout. terminate service process, output its stderr if
+            # any.
             self.__process.terminate()
             self.__process.wait()
-
             print('STDERR >>>', file=sys.stderr)
-            print(self.__process.stderr.read())
+            print(str(self.__process.stderr.read(), encoding='ascii'))
             print('STDERR <<<', file=sys.stderr)
-            raise HeatingError('start: service exited with status {}'.format(self.__process.returncode))
+            rc = self.__process.returncode
+            self.__process = None
+
+            raise HeatingError('start: name {} did not appear within timeout'.format(self.__busname))
 
     def stop(self):
-        assert self.__process is not None
+        if self.__process is None:
+            return
 
         self.__process.terminate()
         # our services mess with signals a bit (graceful eventloop
@@ -90,6 +113,13 @@ class ThermometerService(_Service):
         super().stop()
         self.__ini.close()
 
+class ErrorService(_Service):
+    def __init__(self):
+        super().__init__(
+            exe='openheating-errors.py',
+            busname=dbusutil.ERRORS_BUSNAME,
+        )
+
 class ExceptionTesterService(_Service):
     def __init__(self):
         super().__init__(
@@ -104,5 +134,3 @@ class ManagedObjectTesterService(_Service):
             busname=dbusutil.MANAGEDOBJECTTESTER_BUSNAME,
             args=['--stamp-directory', stampdir],
         )
-
-        

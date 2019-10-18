@@ -76,6 +76,15 @@ THERMOMETERCENTER_IFACEXML = '''
 </interface>
 '''.format(name=THERMOMETERCENTER_IFACENAME)
 
+ERRORS_IFACENAME = DOMAIN + '.Errors'
+ERRORS_IFACEXML = '''
+<interface name='{name}'>
+  <method name='num_errors'>
+    <arg type='t' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=ERRORS_IFACENAME)
+
 EXCEPTIONTESTER_IFACENAME = DOMAIN + '.ExceptionTester'
 EXCEPTIONTESTER_IFACEXML = '''
 <interface name='{name}'>
@@ -166,3 +175,8 @@ class NodeDefinition:
 
     def apply_to(self, klass):
         klass.dbus = self.to_xml()
+
+class SignalMatch:
+    def __init__(self, interface, name):
+        self.interface = interface
+        self.name = name

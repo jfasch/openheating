@@ -95,19 +95,37 @@ class managed:
             cls._oh_lifecycle_shutdown = getattr(cls, self.__shutdown)
         return cls
 
-def run_server(loop, bus, busname, objects):
-    '''Run DBus server, requesting busname and publishing objects'''
+def run_server(loop, bus, busname, objects=None, signals=None):
+    '''Run DBus server.
+
+    * request busname
+    * publish objects (and manage their lifecycle)
+    * subscribe for signals
+    '''
 
     with GracefulTermination(loop=loop, signals=(signal.SIGINT, signal.SIGTERM, signal.SIGQUIT)):
         lifecycle_logger.info('starting objects')
+
+        if objects is None:
+            objects = []
+        if signals is None:
+            signals = []
+
         for _, o in objects:
             startup = getattr(o, '_oh_lifecycle_startup', None)
             if startup is not None:
                 startup()
 
-        bus.request_name(busname)
         for path, object in objects:
             bus.register_object(path, object, None)
+        for match, func in signals:
+            bus.subscribe(
+                iface=match.interface,
+                signal=match.name,
+                signal_fired=func)
+
+        if busname is not None:
+            bus.request_name(busname)
 
         loop.run()
 

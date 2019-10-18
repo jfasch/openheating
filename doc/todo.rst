@@ -1,6 +1,13 @@
 Stack (Hanging)
 ===============
 
+* error management
+
+  * test for dbus node, starting thermometers and errors
+  * proper match rules for signal
+  * dbusutil: convenience get_object_iface(), to be used in all client
+    wrappers. see ThermometerCenter_Client.__get_object_iface().
+
 Todo
 ====
 

@@ -2,6 +2,8 @@
 
 from openheating import logutil
 from openheating.dbus import dbusutil
+from openheating.dbus.util import lifecycle
+from openheating.dbus.errors import Errors_Server
 
 from gi.repository import GLib
 import pydbus
@@ -19,14 +21,12 @@ logutil.configure_from_argparse(args)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
-def handle_error(*args):
-    print(args)
+errors = Errors_Server()
 
-bus.subscribe(
-    iface=dbusutil.ERROREMITTER_IFACENAME,
-    signal='error',
-    signal_fired=handle_error)
-
-dbusutil.graceful_termination(loop)
-
-loop.run()
+lifecycle.run_server(
+    loop=loop,
+    bus=bus,
+    busname=dbusutil.ERRORS_BUSNAME,
+    objects=[('/', errors)],
+    signals=[(dbusutil.SignalMatch(interface=dbusutil.ERROREMITTER_IFACENAME, name='error'), errors.handle_error)],
+)
