@@ -9,12 +9,9 @@ Stack (Hanging)
     session bus - which cries for such situations)
   
     (RuntimeError is raised in such a case btw)
-  * remove dbusutil.publish()
   * lifecycle thermometer service: thread shutdown
   * encapsulate main loop singleton once and for all, and document the
     mess there.
-  * test service wrappers: remove suppress_stderr. instead, capture
-    stderr and output that on test failure.
 
 Todo
 ====

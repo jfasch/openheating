@@ -22,14 +22,6 @@ def bus_from_argparse(args):
     return args.session and SessionBus() or SystemBus()
 
 
-lifecycle_logger = logging.getLogger('lifecycle')
-
-def publish(bus, busname, objects):
-    bus.request_name(busname)
-    for path, object in objects:
-        bus.register_object(path, object, None)
-
-
 # centrally defined names, to ease modifications
 DOMAIN = 'org.openheating'
 
