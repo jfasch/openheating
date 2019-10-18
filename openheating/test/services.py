@@ -16,19 +16,21 @@ class _Service:
             self.__argv += args
         self.__process = None
 
-    def start(self, suppress_stderr=True):
-        if suppress_stderr:
-            kwargs = {'stderr': subprocess.DEVNULL}
-        else:
-            kwargs = {}
-
-        self.__process = subprocess.Popen(self.__argv, **kwargs)
+    def start(self):
+        self.__process = subprocess.Popen(self.__argv, stderr=subprocess.PIPE)
 
         # wait until busname appears
-        subprocess.run(
-            ['gdbus', 'wait', '--session', self.__busname, '--timeout', '10'],
-            check=True,
+        completed_process = subprocess.run(
+            ['gdbus', 'wait', '--session', self.__busname, '--timeout', '5'],
         )
+        if completed_process.returncode != 0:
+            self.__process.terminate()
+            self.__process.wait()
+
+            print('STDERR >>>', file=sys.stderr)
+            print(self.__process.stderr.read())
+            print('STDERR <<<', file=sys.stderr)
+            raise HeatingError('start: service exited with status {}'.format(self.__process.returncode))
 
     def stop(self):
         assert self.__process is not None
@@ -45,7 +47,10 @@ class _Service:
             self.__process.wait()
 
         if self.__process.returncode != 0:
-            raise HeatingError('service exited with status {}'.format(self.__process.returncode))
+            print('STDERR >>>', file=sys.stderr)
+            print(self.__process.stderr.read())
+            print('STDERR <<<', file=sys.stderr)
+            raise HeatingError('stop: service exited with status {}'.format(self.__process.returncode))
 
         # wait for busname to disappear
         for _ in range(10):
