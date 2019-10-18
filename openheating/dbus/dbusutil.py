@@ -1,4 +1,5 @@
 from ..error import HeatingError
+from .util import lifecycle as jjj_lifecycle
 
 from pydbus import SystemBus, SessionBus
 
@@ -53,22 +54,21 @@ class lifecycle:
         return cls
 
 def run_server(loop, bus, busname, objects):
-    graceful_termination(loop)
+    with jjj_lifecycle.GracefulTermination(loop=loop, signals=(signal.SIGINT, signal.SIGTERM, signal.SIGQUIT)):
+        lifecycle_logger.info('starting objects')
+        for _, o in objects:
+            startup = getattr(o, '_oh_lifecycle_startup', None)
+            if startup is not None:
+                startup()
 
-    lifecycle_logger.info('starting objects')
-    for _, o in objects:
-        startup = getattr(o, '_oh_lifecycle_startup', None)
-        if startup is not None:
-            startup()
+        publish(bus=bus, busname=busname, objects=objects)
+        loop.run()
 
-    publish(bus=bus, busname=busname, objects=objects)
-    loop.run()
-
-    lifecycle_logger.info('stopping objects')
-    for _, o in objects:
-        shutdown = getattr(o, '_oh_lifecycle_shutdown', None)
-        if shutdown is not None:
-            shutdown()
+        lifecycle_logger.info('stopping objects')
+        for _, o in objects:
+            shutdown = getattr(o, '_oh_lifecycle_shutdown', None)
+            if shutdown is not None:
+                shutdown()
 
 
 # centrally defined names, to ease modifications
