@@ -1,4 +1,5 @@
 from . import dbusutil
+from .util import lifecycle
 from ..thermometer import Thermometer
 from ..error import HeatingError
 from .. import timeutil
@@ -44,6 +45,7 @@ class TemperatureHistory_Client:
             timeutil.delta2unix(duration))
 
 
+@lifecycle.managed(startup='_startup', shutdown='_shutdown')
 class Thermometer_Server:
     # errors are emitted via here
     error = signal()
@@ -64,10 +66,9 @@ class Thermometer_Server:
         # schedule periodic temperature updates in a *background
         # thread*. this is because w1 bitbanging blocks for almost a
         # second per temperature read.
-
-        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, update_interval))
-        self.__background_thread = ThreadPoolExecutor(max_workers=1)
-        GLib.timeout_add_seconds(update_interval, self.__schedule_update)
+        self.__background_thread = None
+        self.__update_interval = update_interval
+        self.__update_timer_tag = None
 
     @dbusutil.unify_error
     def get_name(self):
@@ -122,6 +123,17 @@ class Thermometer_Server:
     def __receive_error(self, e):
         logger.debug('{}: receiving error {} from update-thread'.format(self.__name, e))
         self.error(str(e))
+
+    def _startup(self):
+        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, self.__update_interval))
+        self.__background_thread = ThreadPoolExecutor(max_workers=1)
+        self.__update_timer_tag = GLib.timeout_add_seconds(self.__update_interval, self.__schedule_update)
+
+    def _shutdown(self):
+        logger.info('{}: shutdown')
+        self.__background_thread.shutdown(wait=True)
+        GLib.source_remove(self.__update_timer_tag)
+
 
 dbusutil.define_node(
     klass=Thermometer_Server,

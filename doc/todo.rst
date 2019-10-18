@@ -9,7 +9,6 @@ Stack (Hanging)
     session bus - which cries for such situations)
   
     (RuntimeError is raised in such a case btw)
-  * lifecycle thermometer service: thread shutdown
   * encapsulate main loop singleton once and for all, and document the
     mess there.
 
