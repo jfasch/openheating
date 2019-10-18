@@ -4,13 +4,6 @@ Stack (Hanging)
 * unify bus publishing
 
   * dbusutil.run_server(): watch signals (calling callable)
-  * dbus: add check if busname is already had, and fail accordingly
-    (we do not start a temporary bus in the fixture, but attach to the
-    session bus - which cries for such situations)
-  
-    (RuntimeError is raised in such a case btw)
-  * encapsulate main loop singleton once and for all, and document the
-    mess there.
 
 Todo
 ====

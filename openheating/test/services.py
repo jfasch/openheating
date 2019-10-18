@@ -3,6 +3,8 @@ from . import testutils
 from openheating.error import HeatingError
 from openheating.dbus import dbusutil
 
+import pydbus
+
 import tempfile
 import subprocess
 import sys
@@ -17,6 +19,11 @@ class _Service:
         self.__process = None
 
     def start(self):
+        # check if busname is already taken. if so, it makes no sense
+        # to start the service; rather, fail right away
+        with pydbus.SessionBus() as bus:
+            with bus.request_name(self.__busname): pass
+
         self.__process = subprocess.Popen(self.__argv, stderr=subprocess.PIPE)
 
         # wait until busname appears
