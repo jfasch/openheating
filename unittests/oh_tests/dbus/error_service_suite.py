@@ -1,4 +1,5 @@
 from openheating.error import HeatingError
+from openheating.dbus.thermometer_center import ThermometerCenter_Client
 
 from openheating.test import testutils
 from openheating.test import services
@@ -22,7 +23,10 @@ class ErrorServiceTest(unittest.TestCase):
             'NOkBeforeError = 0'])
         self.__error_service = services.ErrorService()
 
-        services.start((self.__thermometer_service, self.__error_service))
+        services.start((
+            # error service starts first so it can see the errors
+            self.__error_service, 
+            self.__thermometer_service))
 
     def tearDown(self):
         services.stop((self.__thermometer_service, self.__error_service))

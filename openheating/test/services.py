@@ -53,8 +53,9 @@ class _Service:
             # any.
             self.__process.terminate()
             self.__process.wait()
+            self.stderr = str(self.__process.stderr.read(), encoding='ascii')
             print('STDERR >>>', file=sys.stderr)
-            print(str(self.__process.stderr.read(), encoding='ascii'))
+            print(self.stderr, file=sys.stderr)
             print('STDERR <<<', file=sys.stderr)
             rc = self.__process.returncode
             self.__process = None
@@ -76,9 +77,11 @@ class _Service:
             self.__process.kill()
             self.__process.wait()
 
+        self.stderr = str(self.__process.stderr.read(), encoding='ascii')
+
         if self.__process.returncode != 0:
             print('STDERR >>>', file=sys.stderr)
-            print(self.__process.stderr.read())
+            print(self.stderr, file=sys.stderr)
             print('STDERR <<<', file=sys.stderr)
             raise HeatingError('stop: service exited with status {}'.format(self.__process.returncode))
 

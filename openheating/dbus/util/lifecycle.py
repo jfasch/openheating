@@ -81,11 +81,21 @@ class managed:
     '''Class decorator to mark a class as participating in the
     startup/shutdown game
 
+    hooks:
+
+    * startup: called before object is visible on the bus
+
+    * shutdown: called before shutdown (object still visible)
+
+    * onbus: called when object is visible on the bus, after the
+      connection's bus name (if any) has been requested.
+
     '''
 
-    def __init__(self, startup=None, shutdown=None):
+    def __init__(self, startup=None, shutdown=None, onbus=None):
         self.__startup = startup
         self.__shutdown = shutdown
+        self.__onbus = onbus
 
     def __call__(self, cls):
         startup = shutdown = None
@@ -93,6 +103,8 @@ class managed:
             cls._oh_lifecycle_startup = getattr(cls, self.__startup)
         if self.__shutdown is not None:
             cls._oh_lifecycle_shutdown = getattr(cls, self.__shutdown)
+        if self.__onbus is not None:
+            cls._oh_lifecycle_onbus = getattr(cls, self.__onbus)
         return cls
 
 def run_server(loop, bus, busname, objects=None, signals=None):
@@ -126,6 +138,11 @@ def run_server(loop, bus, busname, objects=None, signals=None):
 
         if busname is not None:
             bus.request_name(busname)
+
+        for _, o in objects:
+            onbus = getattr(o, '_oh_lifecycle_onbus', None)
+            if onbus is not None:
+                onbus()
 
         loop.run()
 

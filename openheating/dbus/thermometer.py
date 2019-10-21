@@ -45,7 +45,7 @@ class TemperatureHistory_Client:
             timeutil.delta2unix(duration))
 
 
-@lifecycle.managed(startup='_startup', shutdown='_shutdown')
+@lifecycle.managed(startup='_startup', shutdown='_shutdown', onbus='_onbus')
 class Thermometer_Server:
     # errors are emitted via here
     error = signal()
@@ -62,6 +62,7 @@ class Thermometer_Server:
         self.__history = history
 
         self.__current_temperature = None
+        self.__current_error = HeatingError('reading temperature too early, not yet initialized')
 
         # schedule periodic temperature updates in a *background
         # thread*. this is because w1 bitbanging blocks for almost a
@@ -80,8 +81,8 @@ class Thermometer_Server:
 
     @dbusutil.unify_error
     def get_temperature(self):
-        if self.__current_temperature is None:
-            self.__current_temperature = self.__thermometer.get_temperature()
+        if self.__current_error:
+            raise self.__current_error
         return self.__current_temperature
 
     @dbusutil.unify_error
@@ -107,32 +108,48 @@ class Thermometer_Server:
 
         try:
             current_temperature = self.__thermometer.get_temperature()
-            GLib.idle_add(self.__receive_update, current_temperature)
+            logger.debug('{} (update-thread): sensor has {} degrees'.format(
+                self.__name, current_temperature))
+            GLib.idle_add(self.__receive_update, current_temperature, None)
         except Exception as e:
             logger.exception('{} (update-thread): thermometer error'.format(self.__name))
-            GLib.idle_add(self.__receive_error, e)
+            GLib.idle_add(self.__receive_update, None, e)
 
-        logger.debug('{} (update-thread): sensor has {} degrees; pushing into main loop'.format(
-            self.__name, current_temperature))
+    def __receive_update(self, current_temperature, current_error):
+        self.__make_current(current_temperature, current_error)
 
-    def __receive_update(self, current_temperature):
-        logger.debug('{}: receiving temperature ({} degrees) from update-thread'.format(self.__name, current_temperature))
+    def __make_current(self, current_temperature, current_error):
         self.__current_temperature = current_temperature
-        self.__history.add(time.time(), current_temperature)
+        if current_temperature is not None:
+            self.__history.add(time.time(), current_temperature)
+        self.__current_error = current_error
+        if current_error is not None:
+            logger.error('{} error: {}'.format(self.__name, current_error))
+            self.__emit_error(current_error)
 
-    def __receive_error(self, e):
-        logger.debug('{}: receiving error {} from update-thread'.format(self.__name, e))
+    def __emit_error(self, e):
         self.error(str(e))
 
     def _startup(self):
+        logger.info('{} starting'.format(self.__name))
+
+        try:
+            self.__make_current(self.__thermometer.get_temperature(), None)
+        except HeatingError as e:
+            self.__make_current(None, e)
+
         logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, self.__update_interval))
         self.__background_thread = ThreadPoolExecutor(max_workers=1)
         self.__update_timer_tag = GLib.timeout_add_seconds(self.__update_interval, self.__schedule_update)
 
     def _shutdown(self):
-        logger.info('{}: shutdown')
+        logger.info('{}: stopping'.format(self.__name))
         self.__background_thread.shutdown(wait=True)
         GLib.source_remove(self.__update_timer_tag)
+
+    def _onbus(self):
+        if self.__current_error is not None:
+            self.__emit_error(self.__current_error)
 
 
 dbusutil.define_node(

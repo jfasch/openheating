@@ -10,6 +10,7 @@ import pydbus
 
 import signal
 import argparse
+import sys
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: Error handler/logger')
