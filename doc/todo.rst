@@ -8,6 +8,26 @@ Stack (Hanging)
   * dbusutil: convenience get_object_iface(), to be used in all client
     wrappers. see ThermometerCenter_Client.__get_object_iface().
 
+* signal definition, offered by the dbus objects.
+
+  this is the normal use case. the dbus spec goes out of the way of
+  defining such a relationship: signals pop directly out of the dbus
+  connection, and this is where user code picks them up.
+
+* decorator that participates an "object" in siganl
+  reception. maintains a list (globally unfortunately; could wrap all
+  that - signal filters, loop, whatelse? - in a dbus_context class
+  maybe) that maps signal parameters onto callables.
+
+* tests. all via openheating-errors.py level tests is a bit hard.
+
+  * signal filters have nothing to do with dbus objects. just a mixin
+    between dbus and me. a mapping that is used there, indidentally
+    mapping dbus names blah onto something else. gets filled and used.
+  * decorator tests.
+  * and finally, errors. should i start to decouple dbus from logic
+    now? yes!
+
 Todo
 ====
 
