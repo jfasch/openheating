@@ -14,7 +14,7 @@ import subprocess
 
 class ThermometerServiceOK(unittest.TestCase):
     def setUp(self):
-        self.__service = services.ThermometerService(ini=[
+        self.__service = services.ThermometerService(conf=[
             '[TestThermometer]',
             'Type = fixed',
             'Description = Test Thermometer',
@@ -46,18 +46,10 @@ class ThermometerServiceOK(unittest.TestCase):
         self.assertEqual(len(thermometers), 1)
         self.assertIn('TestThermometer', thermometers)
 
-    def test__get_temperature__none_available__only_errors(self):
-        # thclient = ThermometerCenter_Client(bus).get_thermometer('Error')
-        # self.assertRaises(HeatingError, thclient.get_temperature)
-
-        self.fail()
-
-        
-
 
 class ThermometerServiceError(unittest.TestCase):
     def setUp(self):
-        self.__service = services.ThermometerService(ini=[
+        self.__service = services.ThermometerService(conf=[
             '[ErrorThermometer]',
             'Type = error',
             'Description = Error Thermometer',

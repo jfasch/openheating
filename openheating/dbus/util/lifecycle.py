@@ -132,7 +132,7 @@ def run_server(loop, bus, busname, objects=None, signals=None):
             bus.register_object(path, object, None)
         for match, func in signals:
             bus.subscribe(
-                iface=match.interface,
+            iface=match.interface,
                 signal=match.name,
                 signal_fired=func)
 

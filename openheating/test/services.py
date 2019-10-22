@@ -104,17 +104,23 @@ class _Service:
             self.fail('{} still on the bus'.format(self.__busname))
 
 class ThermometerService(_Service):
-    def __init__(self, ini):
-        self.__ini = tempfile.NamedTemporaryFile(mode='w')
-        self.__ini.write('\n'.join(ini))
-        self.__ini.flush()
+    def __init__(self, conf=None, pyconf=None):
+        self.__configfile = tempfile.NamedTemporaryFile(mode='w')
+        if conf is not None:
+            self.__configfile.write('\n'.join(conf))
+            confargs = ['--configfile', self.__configfile.name]
+        else:
+            assert pyconf is not None
+            confargs = ['--pyconfigfile', self.__configfile.name]
+        self.__configfile.flush()
 
-        super().__init__(exe='openheating-thermometers.py', busname=dbusutil.THERMOMETERS_BUSNAME,
-                         args=['--configfile', self.__ini.name])
+        super().__init__(exe='openheating-thermometers.py',
+                         busname=dbusutil.THERMOMETERS_BUSNAME,
+                         args=confargs)
 
     def stop(self):
         super().stop()
-        self.__ini.close()
+        self.__configfile.close()
 
 class ErrorService(_Service):
     def __init__(self):

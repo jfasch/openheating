@@ -1,4 +1,4 @@
-from .nodedef_suite import suite as nodedef_suite
+from .easysuite_nodedef import suite as nodedef_suite
 
 import unittest
 
