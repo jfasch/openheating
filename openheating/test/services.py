@@ -28,9 +28,11 @@ def stop(services):
         raise RuntimeError('\n'.join(msg))
 
 class _Service:
-    def __init__(self, busname, exe, args=None):
+    def __init__(self, busname, exe, debug=False, args=None):
         self.__busname = busname
         self.__argv = [testutils.find_executable(exe), '--session']
+        if debug:
+            self.__argv.extend(['--log-level', 'debug'])
         if args is not None:
             self.__argv += args
         self.__process = None
@@ -104,42 +106,47 @@ class _Service:
             self.fail('{} still on the bus'.format(self.__busname))
 
 class ThermometerService(_Service):
-    def __init__(self, conf=None, pyconf=None):
+    def __init__(self, conf=None, pyconf=None, debug=False):
         self.__configfile = tempfile.NamedTemporaryFile(mode='w')
         if conf is not None:
-            self.__configfile.write('\n'.join(conf))
             confargs = ['--configfile', self.__configfile.name]
         else:
             assert pyconf is not None
             confargs = ['--pyconfigfile', self.__configfile.name]
+
+        self.__configfile.write('\n'.join(conf or pyconf))
         self.__configfile.flush()
 
         super().__init__(exe='openheating-thermometers.py',
                          busname=dbusutil.THERMOMETERS_BUSNAME,
-                         args=confargs)
+                         args=confargs,
+                         debug=debug)
 
     def stop(self):
         super().stop()
         self.__configfile.close()
 
 class ErrorService(_Service):
-    def __init__(self):
+    def __init__(self, debug=False):
         super().__init__(
             exe='openheating-errors.py',
             busname=dbusutil.ERRORS_BUSNAME,
+            debug=debug,
         )
 
 class ExceptionTesterService(_Service):
-    def __init__(self):
+    def __init__(self, debug=False):
         super().__init__(
             exe='openheating-exception-tester.py',
             busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
+            debug=debug,
         )
 
 class ManagedObjectTesterService(_Service):
-    def __init__(self, stampdir):
+    def __init__(self, stampdir, debug=False):
         super().__init__(
             exe='openheating-managedobject-tester.py',
             busname=dbusutil.MANAGEDOBJECTTESTER_BUSNAME,
             args=['--stamp-directory', stampdir],
+            debug=debug,
         )

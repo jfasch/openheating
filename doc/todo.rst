@@ -28,10 +28,8 @@ Stack (Hanging)
       * and finally, errors. should i start to decouple dbus from logic
         now? yes!
 
-* python config iface.
-
-  * test: without dbus, do what's needed (exec pylinelist) and check
-    if context contains what needs checking.
+* test: without dbus, do what's needed (exec pylinelist) and check if
+  context contains what needs checking.
 
 Todo
 ====

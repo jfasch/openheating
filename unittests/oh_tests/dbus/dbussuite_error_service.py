@@ -16,14 +16,19 @@ import time
 
 class ErrorServiceTest(unittest.TestCase):
     def setUp(self):
-        self.__thermometer_service = services.ThermometerService(pyconf=[
-            "from openheating.thermometer import ErrorThermometer",
-            "THERMOMETERS['Error'] = ErrorThermometer(",
-            "    name='Error',",
-            "    descriptior='Error Thermometer',",
-            "    n_ok_before_error=0)"
-        ])
-        self.__error_service = services.ErrorService()
+        self.__thermometer_service = services.ThermometerService(
+            pyconf=[
+                "from openheating.thermometer import ErrorThermometer",
+                "THERMOMETERS['Error'] = ErrorThermometer(",
+                "    name='Error',",
+                "    description='Error Thermometer',",
+                "    n_ok_before_error=0)"
+            ],
+            debug=True,
+        )
+        self.__error_service = services.ErrorService(
+            debug=True,
+        )
 
         services.start((
             # error service starts first so it can see the errors

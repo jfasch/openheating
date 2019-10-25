@@ -134,8 +134,10 @@ class Thermometer_Server:
         logger.info('{} starting'.format(self.__name))
 
         try:
+            logger.debug('{} startup: successfully read temperature'.format(self.__name))
             self.__make_current(self.__thermometer.get_temperature(), None)
         except HeatingError as e:
+            logger.exception('{} startup: cannot read temperature'.format(self.__name))
             self.__make_current(None, e)
 
         logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, self.__update_interval))

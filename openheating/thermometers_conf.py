@@ -5,21 +5,35 @@ from openheating.error import BadDBusPathComponent
 from configparser import ConfigParser
 
 
-def read_string(s):
+def read_ini(conf):
     config = ConfigParser()
-    config.read_string(s)
-    return _parse(config)
 
-def read_file(f):
-    config = ConfigParser()
-    if hasattr(f, 'read'):
-        config.read_file(f)
+    if hasattr(conf, 'read'):
+        config.read_file(conf)
+    elif type(conf) is str:
+        config.read_string(conf)
     else:
-        with open(f) as fh:
-            config.read_file(fh)
-    return _parse(config)
+        config.read_string('\n'.join(conf))
 
-def _parse(config):
+    return _parse_ini(config)
+
+def read_pyconf(conf):
+    if hasattr(conf, 'read'):
+        code = conf.read()
+    elif type(conf) is str:
+        code = conf
+    else:
+        code = '\n'.join(conf)
+
+    thermometers = {}
+    context = {'THERMOMETERS': thermometers}
+    exec(code, context)
+    for name in thermometers.keys():
+        if not name.isidentifier():
+            raise BadDBusPathComponent(name=name)
+    return thermometers
+
+def _parse_ini(config):
     thermometers = {}
 
     for name in config.sections():
