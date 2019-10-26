@@ -18,6 +18,11 @@ Stack (Hanging)
       reception. maintains a list (globally unfortunately; could wrap all
       that - signal filters, loop, whatelse? - in a dbus_context class
       maybe) that maps signal parameters onto callables.
+
+    * signal emit encapsulation
+      (dbus.thermometer.Thermometer_Server.__emit_error)
+    * signal receive encapsulation
+      (dbus.errors.Errors_Server.handle_error)
     
     * tests. all via openheating-errors.py level tests is a bit hard.
     

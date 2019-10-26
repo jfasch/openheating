@@ -82,6 +82,9 @@ ERRORS_IFACEXML = '''
   <method name='num_errors'>
     <arg type='t' name='response' direction='out'/>
   </method>
+  <method name='get_errors'>
+    <arg type='as' name='response' direction='out'/>
+  </method>
 </interface>
 '''.format(name=ERRORS_IFACENAME)
 
@@ -129,7 +132,15 @@ class DBusHeatingError(HeatingError):
         that's what we do in __str__()
 
         '''
+        return self.to_json()
+
+    def to_json(self):
         return json.dumps(self.details)
+
+    @staticmethod
+    def from_json(js):
+        details = json.loads(js)
+        return DBusHeatingError(details=details)
 
 def unify_error(fun):
     '''Used as a decorator for callables that raise derived HeatingError

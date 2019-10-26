@@ -24,6 +24,18 @@ def available_thermometers():
         except W1Thermometer.BadPath:
             continue
 
+class W1ReadError(HeatingError):
+    def __init__(self, name, filename):
+        super().__init__(details={
+            'category': 'w1',
+            'message': '{}: cannot read file {}'.format(name, filename),
+            'w1': {
+                'name': name,
+                'issue': 'file read error',
+                'file': filename,
+            },
+        })
+
 class W1Thermometer(Thermometer):
     class BadPath(HeatingError):
         def __init__(self, msg):
@@ -50,14 +62,15 @@ class W1Thermometer(Thermometer):
                 lines = w1_slave.readlines()
         except IOError:
             logger.exception('{}: reading file {}'.format(self.name, filename))
-            raise HeatingError('{}: cannot read file {}'.format(self.name, filename))
+            raise W1ReadError(name=self.name, filename=filename)
 
         temperature = None
         for line in lines:
             crc_match = _re_crc.search(line)
             if crc_match:
                   if crc_match.group(1) != 'YES':
-                      raise HeatingError('CRC error in {}'.format(self.path))
+                      logger.exception('{}: CRC error reading file {}'.format(self.name, filename))
+                      raise W1ReadError(name=self.name, filename=filename)
 
             temp_match = _re_temp.search(line)
             if temp_match:

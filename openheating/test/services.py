@@ -2,7 +2,6 @@
 
 * Wrappers around openheating's DBus service executables. Reliable
   starting and stopping (checking presence of bus names).
-* "Controller" for sequenced startup/shutdown.
 '''
 
 from . import testutils
@@ -19,14 +18,25 @@ import unittest
 
 
 class ServiceTestCase(unittest.TestCase):
+    '''TestCase derivative which is good at managing dbus services as
+    subprocesses.
+
+    If failure is detected (see the decorator), then at tearDown the
+    stderr output of each service is printed.
+
+    '''
+
     @staticmethod
     def intercept_failure(testmethod):
+        '''test method decorator to intercept test case failures (these are
+        hard to come by otherwise)'''
         def wrapper(*args, **kwargs):
             self = args[0]
             try:
                 return testmethod(*args, **kwargs)
             except:
                 self.__failure = True
+                raise
         return wrapper
 
     def setUp(self):
@@ -42,7 +52,10 @@ class ServiceTestCase(unittest.TestCase):
             s.start()
 
     def stop_services(self, print_stderr=False):
-        services = self.__services
+        if self.__services is None:
+            services = []
+        else:
+            services = self.__services
         self.__services = None
 
         stderrs = []
@@ -57,8 +70,11 @@ class ServiceTestCase(unittest.TestCase):
         if print_stderr or self.__failure or len(errors):
             for busname, stderr in stderrs:
                 print('\n*** STDERR from {}'.format(busname), file=sys.stderr)
-                for line in stderr.split('\n'):
-                    print(' '*3, line, file=sys.stderr)
+                if stderr is None:
+                    print(' '*3, '(apparently unstarted)', file=sys.stderr)
+                else:
+                    for line in stderr.split('\n'):
+                        print(' '*3, line, file=sys.stderr)
 
         if len(errors):
             msg = ['there were errors while stopping services ...']
@@ -108,7 +124,7 @@ class _ServiceWrapper:
 
     def stop(self, print_stderr):
         if self.__process is None:
-            return
+            return None
 
         self.__process.terminate()
         # our services mess with signals a bit (graceful eventloop
