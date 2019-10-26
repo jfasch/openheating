@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h2>Errors</h2>
+
+{% set nerrors = app.errors_client.num_errors() %}
+
+{% if nerrors == 0 %}
+<p>There are no errors</p>
+{% else %}
+
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Message</th>
+    <th>Details</th>
+  <tr>
+
+  {% for e in app.errors_client.get_errors() %}
+  <tr>
+    <td>{{e.details['category']}}</td>
+    <td>{{e.details['message']}}</td>
+    {% if e.details['category'] == 'w1' %}
+    <td>{{e.details['w1']|pprint}}</td>
+    {% else %}
+    <td></td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+
+{% endif %}
+
+{% endblock %}
