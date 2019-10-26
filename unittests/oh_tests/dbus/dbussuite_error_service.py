@@ -19,17 +19,17 @@ class ErrorServiceTest(services.ServiceTestCase):
 
     @services.ServiceTestCase.intercept_failure
     def test__basic_error_count(self):
-        self.add_service(services.ErrorService())
-        self.add_service(services.ThermometerService(
-            pyconf=[
-                "from openheating.thermometer import ErrorThermometer",
-                "THERMOMETERS['Error'] = ErrorThermometer(",
-                "    name='Error',",
-                "    description='Error Thermometer',",
-                "    n_ok_before_error=0)"
-            ]))
-
-        self.start_services()
+        self.start_services([
+            services.ErrorService(),
+            services.ThermometerService(
+                pyconf=[
+                    "from openheating.thermometer import ErrorThermometer",
+                    "THERMOMETERS['Error'] = ErrorThermometer(",
+                    "    name='Error',",
+                    "    description='Error Thermometer',",
+                    "    n_ok_before_error=0)"
+                ])
+        ])
         self.__wait_error_occurred()
 
     # def test__w1__file_not_found(self):

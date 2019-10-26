@@ -28,6 +28,8 @@ Stack (Hanging)
       * and finally, errors. should i start to decouple dbus from logic
         now? yes!
 
+* errors suite: go ahead and define what w1 errors look like
+
 Todo
 ====
 

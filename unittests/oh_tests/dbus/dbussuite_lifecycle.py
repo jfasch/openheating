@@ -20,9 +20,8 @@ class ManagedTest(services.ServiceTestCase):
         self.__directory.cleanup()
         
     def test__basic(self):
-        self.add_service(services.ManagedObjectTesterService(stampdir=self.__directory.name))
-        self.start_services()
-        self.stop_services(print_stderr=False)
+        self.start_services([services.ManagedObjectTesterService(stampdir=self.__directory.name)])
+        self.stop_services()
         self.assertTrue(os.path.isfile(self.__directory.name+'/started'))
         self.assertTrue(os.path.isfile(self.__directory.name+'/stopped'))
 

@@ -30,50 +30,41 @@ class ServiceTestCase(unittest.TestCase):
         return wrapper
 
     def setUp(self):
-        self.__controller = Controller()
         self.__failure = False
+        self.__services = None
     def tearDown(self):
-        self.__controller.stop(print_stderr=self.__failure)
-        del self.__controller
+        self.stop_services()
 
-    def add_service(self, s):
-        self.__controller.add_service(s)
-    def start_services(self):
-        self.__controller.start()
-    def stop_services(self, print_stderr):
-        self.__controller.stop(print_stderr=print_stderr)
-
-class Controller:
-    '''Start and stop a list of service wrappers.
-
-    '''
-
-    def __init__(self):
-        self.__services = []
-        self.__running = False
-
-    def start(self):
-        self.__running = True
+    def start_services(self, services):
+        assert self.__services is None
+        self.__services = services
         for s in self.__services:
             s.start()
 
-    def stop(self, print_stderr):
-        self.__running = False
+    def stop_services(self, print_stderr=False):
+        services = self.__services
+        self.__services = None
+
+        stderrs = []
         errors = []
-        for s in self.__services:
+        for s in services:
             try:
-                s.stop(print_stderr=print_stderr)
+                stderr = s.stop(print_stderr=self.__failure or print_stderr)
+                stderrs.append((s.busname, stderr))
             except Exception as e:
                 errors.append(e)
-        if len(errors) != 0:
+
+        if print_stderr or self.__failure or len(errors):
+            for busname, stderr in stderrs:
+                print('\n*** STDERR from {}'.format(busname), file=sys.stderr)
+                for line in stderr.split('\n'):
+                    print(' '*3, line, file=sys.stderr)
+
+        if len(errors):
             msg = ['there were errors while stopping services ...']
             for e in errors:
                 msg.append(str(e))
             raise RuntimeError('\n'.join(msg))
-
-    def add_service(self, s):
-        assert not self.__running
-        self.__services.append(s)
 
 class _ServiceWrapper:
     def __init__(self, busname, exe, args=None):
@@ -82,7 +73,10 @@ class _ServiceWrapper:
         if args is not None:
             self.__argv += args
         self.__process = None
-        self.stderr = None
+
+    @property
+    def busname(self):
+        return self.__busname
 
     def start(self):
         # check if busname is already taken. if so, it makes no sense
@@ -93,21 +87,24 @@ class _ServiceWrapper:
         self.__process = subprocess.Popen(self.__argv, stderr=subprocess.PIPE)
 
         # wait until busname appears
-        completed_process = subprocess.run(
-            ['gdbus', 'wait', '--session', self.__busname, '--timeout', '5'],
-        )
+        gdbus_wait = ['gdbus', 'wait', '--session', self.__busname, '--timeout', '5']
+        completed_process = subprocess.run(gdbus_wait)
+
         if completed_process.returncode != 0:
             # busname did not appear within the given
             # timeout. terminate service process, output its stderr if
             # any.
             self.__process.terminate()
             self.__process.wait()
-            self.stderr = str(self.__process.stderr.read(), encoding='ascii')
+            stderr = str(self.__process.stderr.read(), encoding='ascii')
             rc = self.__process.returncode
             self.__process = None
 
-            raise HeatingError('start: name {} did not appear within timeout, '
-                               'stderr:\n{}'.format(self.__busname, self.indented_stderr()))
+            raise HeatingError('start: name {busname} did not appear within timeout, '
+                               'stderr from "{gdbus}":\n{stderr}'.format(
+                                   busname=self.__busname, 
+                                   gdbus=' '.join(gdbus_wait),
+                                   stderr=stderr))
 
     def stop(self, print_stderr):
         if self.__process is None:
@@ -124,11 +121,15 @@ class _ServiceWrapper:
             self.__process.kill()
             self.__process.wait()
 
-        self.stderr = str(self.__process.stderr.read(), encoding='ascii')
+        stderr = str(self.__process.stderr.read(), encoding='ascii')
+        exc = None
 
-        if print_stderr or self.__process.returncode != 0:
-            raise HeatingError('stop: service {} exited with status {}, '
-                               'stderr:\n{}'.format(self.__busname, self.__process.returncode, self.indented_stderr()))
+        if self.__process.returncode != 0:
+            exc = HeatingError('stop: name {busname} exited with status {status}, '
+                               'stderr:\n{stderr}'.format(
+                                   busname=self.__busname, 
+                                   status=self.__process.returncode, 
+                                   stderr=stderr))
 
         # wait for busname to disappear
         for _ in range(10):
@@ -148,10 +149,9 @@ class _ServiceWrapper:
         else:
             self.fail('{} still on the bus'.format(self.__busname))
 
-    def indented_stderr(self):
-        lines = self.stderr.split('\n')
-        lines = ['  {}: {}'.format(self.__busname, line) for line in lines]
-        return '\n'.join(lines)
+        if exc is not None:
+            raise exc
+        return stderr
 
 class ThermometerService(_ServiceWrapper):
     def __init__(self, conf=None, pyconf=None, debug=False):

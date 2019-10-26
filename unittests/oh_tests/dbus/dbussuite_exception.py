@@ -16,8 +16,7 @@ import json
 class ExceptionTest(services.ServiceTestCase):
     def setUp(self):
         super().setUp()
-        self.add_service(services.ExceptionTesterService())
-        self.start_services()
+        self.start_services([services.ExceptionTesterService()])
         
     def test__HeatingError(self):
         client = ExceptionTester_Client(pydbus.SessionBus())
