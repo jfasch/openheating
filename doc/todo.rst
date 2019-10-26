@@ -28,10 +28,7 @@ Stack (Hanging)
       * and finally, errors. should i start to decouple dbus from logic
         now? yes!
 
-* print stderr of service processes when test has failed
-
-  * remove context manager hooks from Controller
-  * remove services ctor parameter from Controller
+* services: intercept test failure: class deco? method deco?
 
 Todo
 ====

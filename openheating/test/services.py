@@ -20,7 +20,7 @@ import unittest
 
 class ServiceTestCase(unittest.TestCase):
     def setUp(self):
-        self.__controller = Controller([])
+        self.__controller = Controller()
         self.__failure = False
     def tearDown(self):
         self.__controller.stop(print_stderr=self.__failure)
@@ -40,8 +40,8 @@ class Controller:
 
     '''
 
-    def __init__(self, services):
-        self.__services = services
+    def __init__(self):
+        self.__services = []
         self.__running = False
 
     def start(self):
