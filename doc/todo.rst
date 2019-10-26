@@ -28,8 +28,6 @@ Stack (Hanging)
       * and finally, errors. should i start to decouple dbus from logic
         now? yes!
 
-* services: intercept test failure: class deco? method deco?
-
 Todo
 ====
 

@@ -19,6 +19,16 @@ import unittest
 
 
 class ServiceTestCase(unittest.TestCase):
+    @staticmethod
+    def intercept_failure(testmethod):
+        def wrapper(*args, **kwargs):
+            self = args[0]
+            try:
+                return testmethod(*args, **kwargs)
+            except:
+                self.__failure = True
+        return wrapper
+
     def setUp(self):
         self.__controller = Controller()
         self.__failure = False
@@ -28,8 +38,6 @@ class ServiceTestCase(unittest.TestCase):
 
     def add_service(self, s):
         self.__controller.add_service(s)
-    def record_failure(self):
-        self.__failure = True
     def start_services(self):
         self.__controller.start()
     def stop_services(self, print_stderr):
