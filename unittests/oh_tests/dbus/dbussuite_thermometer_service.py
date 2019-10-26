@@ -12,18 +12,16 @@ import unittest
 import subprocess
 
 
-class ThermometerServiceOK(unittest.TestCase):
+class ThermometerServiceOK(services.ServiceTestCase):
     def setUp(self):
-        self.__service = services.ThermometerService(conf=[
+        super().setUp()
+        self.add_service(services.ThermometerService(conf=[
             '[TestThermometer]',
             'Type = fixed',
             'Description = Test Thermometer',
-            'Value = 42'])
-        self.__service.start()
+            'Value = 42']))
+        self.start_services()
 
-    def tearDown(self):
-        self.__service.stop()
-        
     def test__start_stop(self):
         center_client = ThermometerCenter_Client(pydbus.SessionBus())
         thermometer_client = center_client.get_thermometer('TestThermometer')
@@ -47,18 +45,15 @@ class ThermometerServiceOK(unittest.TestCase):
         self.assertIn('TestThermometer', thermometers)
 
 
-class ThermometerServiceError(unittest.TestCase):
+class ThermometerServiceError(services.ServiceTestCase):
     def setUp(self):
-        self.__service = services.ThermometerService(conf=[
+        super().setUp()
+        self.add_service(services.ThermometerService(conf=[
             '[ErrorThermometer]',
             'Type = error',
             'Description = Error Thermometer',
-            'NOkBeforeError = 0'])
-
-        self.__service.start()
-
-    def tearDown(self):
-        self.__service.stop()
+            'NOkBeforeError = 0']))
+        self.start_services()
 
     def test__sensor_error_at_startup(self):
         # do nothing. this is only there to test if startup succeeds

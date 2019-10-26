@@ -4,6 +4,8 @@ from ..error import HeatingError
 
 import sys
 import logging
+import collections
+import json
 
 
 class Errors_Client:
@@ -19,15 +21,19 @@ logger = logging.getLogger('dbus-errors')
 @lifecycle.managed(startup='_start', shutdown='_stop')
 class Errors_Server:
     def __init__(self):
-        self.__num_errors = 0
+        self.__errors = collections.deque(maxlen=100)
 
     @dbusutil.unify_error
     def num_errors(self):
-        return self.__num_errors
+        return len(self.__errors)
 
-    def handle_error(self, sender, object, iface, signal, json):
-        print('jjjj handle_error sender {}, object {}, iface {}, signal {}, json {}'.format(sender, object, iface, signal, json), file=sys.stderr)
-        self.__num_errors += 1
+    def handle_error(self, sender, object, iface, signal, *args):
+        json_str = args[0][0] # wtf?
+        try:
+            details = json.loads(json_str)
+            self.__errors.append(HeatingError(details=details))
+        except json.JSONDecodeError as e:
+            logger.exception('cannot parse error details')
 
     def _start(self):
         logger.info('starting')

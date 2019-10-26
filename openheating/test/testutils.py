@@ -32,3 +32,4 @@ def find_executable(exe):
     if not os.path.isfile(fullexe):
         raise HeatingError('{} is not a file'.format(fullexe))
     return fullexe
+

@@ -1,3 +1,10 @@
+'''DBus service utilities for unit tests. 
+
+* Wrappers around openheating's DBus service executables. Reliable
+  starting and stopping (checking presence of bus names).
+* "Controller" for sequenced startup/shutdown.
+'''
+
 from . import testutils
 
 from openheating.error import HeatingError
@@ -8,34 +15,66 @@ import pydbus
 import tempfile
 import subprocess
 import sys
+import unittest
 
 
-def start(services):
-    for s in services:
-        s.start()
+class ServiceTestCase(unittest.TestCase):
+    def setUp(self):
+        self.__controller = Controller([])
+        self.__failure = False
+    def tearDown(self):
+        self.__controller.stop(print_stderr=self.__failure)
+        del self.__controller
 
-def stop(services):
-    errors = []
-    for s in services:
-        try:
-            s.stop()
-        except Exception as e:
-            errors.append(e)
-    if len(errors) != 0:
-        msg = ['there were errors while stopping services ...']
-        for e in errors:
-            msg.append(str(e))
-        raise RuntimeError('\n'.join(msg))
+    def add_service(self, s):
+        self.__controller.add_service(s)
+    def record_failure(self):
+        self.__failure = True
+    def start_services(self):
+        self.__controller.start()
+    def stop_services(self, print_stderr):
+        self.__controller.stop(print_stderr=print_stderr)
 
-class _Service:
-    def __init__(self, busname, exe, debug=False, args=None):
+class Controller:
+    '''Start and stop a list of service wrappers.
+
+    '''
+
+    def __init__(self, services):
+        self.__services = services
+        self.__running = False
+
+    def start(self):
+        self.__running = True
+        for s in self.__services:
+            s.start()
+
+    def stop(self, print_stderr):
+        self.__running = False
+        errors = []
+        for s in self.__services:
+            try:
+                s.stop(print_stderr=print_stderr)
+            except Exception as e:
+                errors.append(e)
+        if len(errors) != 0:
+            msg = ['there were errors while stopping services ...']
+            for e in errors:
+                msg.append(str(e))
+            raise RuntimeError('\n'.join(msg))
+
+    def add_service(self, s):
+        assert not self.__running
+        self.__services.append(s)
+
+class _ServiceWrapper:
+    def __init__(self, busname, exe, args=None):
         self.__busname = busname
-        self.__argv = [testutils.find_executable(exe), '--session']
-        if debug:
-            self.__argv.extend(['--log-level', 'debug'])
+        self.__argv = [testutils.find_executable(exe), '--session', '--log-level', 'debug']
         if args is not None:
             self.__argv += args
         self.__process = None
+        self.stderr = None
 
     def start(self):
         # check if busname is already taken. if so, it makes no sense
@@ -56,15 +95,13 @@ class _Service:
             self.__process.terminate()
             self.__process.wait()
             self.stderr = str(self.__process.stderr.read(), encoding='ascii')
-            print('STDERR >>>', file=sys.stderr)
-            print(self.stderr, file=sys.stderr)
-            print('STDERR <<<', file=sys.stderr)
             rc = self.__process.returncode
             self.__process = None
 
-            raise HeatingError('start: name {} did not appear within timeout'.format(self.__busname))
+            raise HeatingError('start: name {} did not appear within timeout, '
+                               'stderr:\n{}'.format(self.__busname, self.indented_stderr()))
 
-    def stop(self):
+    def stop(self, print_stderr):
         if self.__process is None:
             return
 
@@ -81,11 +118,9 @@ class _Service:
 
         self.stderr = str(self.__process.stderr.read(), encoding='ascii')
 
-        if self.__process.returncode != 0:
-            print('STDERR >>>', file=sys.stderr)
-            print(self.stderr, file=sys.stderr)
-            print('STDERR <<<', file=sys.stderr)
-            raise HeatingError('stop: service exited with status {}'.format(self.__process.returncode))
+        if print_stderr or self.__process.returncode != 0:
+            raise HeatingError('stop: service {} exited with status {}, '
+                               'stderr:\n{}'.format(self.__busname, self.__process.returncode, self.indented_stderr()))
 
         # wait for busname to disappear
         for _ in range(10):
@@ -105,7 +140,12 @@ class _Service:
         else:
             self.fail('{} still on the bus'.format(self.__busname))
 
-class ThermometerService(_Service):
+    def indented_stderr(self):
+        lines = self.stderr.split('\n')
+        lines = ['  {}: {}'.format(self.__busname, line) for line in lines]
+        return '\n'.join(lines)
+
+class ThermometerService(_ServiceWrapper):
     def __init__(self, conf=None, pyconf=None, debug=False):
         self.__configfile = tempfile.NamedTemporaryFile(mode='w')
         if conf is not None:
@@ -119,34 +159,29 @@ class ThermometerService(_Service):
 
         super().__init__(exe='openheating-thermometers.py',
                          busname=dbusutil.THERMOMETERS_BUSNAME,
-                         args=confargs,
-                         debug=debug)
+                         args=confargs)
 
-    def stop(self):
-        super().stop()
+    def stop(self, print_stderr):
+        super().stop(print_stderr=print_stderr)
         self.__configfile.close()
 
-class ErrorService(_Service):
+class ErrorService(_ServiceWrapper):
     def __init__(self, debug=False):
         super().__init__(
             exe='openheating-errors.py',
-            busname=dbusutil.ERRORS_BUSNAME,
-            debug=debug,
-        )
+            busname=dbusutil.ERRORS_BUSNAME)
 
-class ExceptionTesterService(_Service):
+class ExceptionTesterService(_ServiceWrapper):
     def __init__(self, debug=False):
         super().__init__(
             exe='openheating-exception-tester.py',
             busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
-            debug=debug,
         )
 
-class ManagedObjectTesterService(_Service):
+class ManagedObjectTesterService(_ServiceWrapper):
     def __init__(self, stampdir, debug=False):
         super().__init__(
             exe='openheating-managedobject-tester.py',
             busname=dbusutil.MANAGEDOBJECTTESTER_BUSNAME,
             args=['--stamp-directory', stampdir],
-            debug=debug,
         )

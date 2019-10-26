@@ -28,8 +28,10 @@ Stack (Hanging)
       * and finally, errors. should i start to decouple dbus from logic
         now? yes!
 
-* test: without dbus, do what's needed (exec pylinelist) and check if
-  context contains what needs checking.
+* print stderr of service processes when test has failed
+
+  * remove context manager hooks from Controller
+  * remove services ctor parameter from Controller
 
 Todo
 ====

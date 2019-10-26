@@ -12,16 +12,17 @@ import signal
 import os.path
 
 
-class ManagedTest(unittest.TestCase):
+class ManagedTest(services.ServiceTestCase):
     def setUp(self):
+        super().setUp()
         self.__directory = tempfile.TemporaryDirectory()
-        self.__service = services.ManagedObjectTesterService(stampdir=self.__directory.name)
     def tearDown(self):
         self.__directory.cleanup()
         
     def test__basic(self):
-        self.__service.start()
-        self.__service.stop()
+        self.add_service(services.ManagedObjectTesterService(stampdir=self.__directory.name))
+        self.start_services()
+        self.stop_services(print_stderr=False)
         self.assertTrue(os.path.isfile(self.__directory.name+'/started'))
         self.assertTrue(os.path.isfile(self.__directory.name+'/stopped'))
 

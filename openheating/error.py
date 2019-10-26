@@ -3,7 +3,7 @@ class HeatingError(Exception):
         if details is None:
             assert msg is not None
             self.__details = {
-                'type': 'HeatingError',
+                'category': 'general',
                 'message': msg,
             }
         else:

@@ -13,13 +13,11 @@ import subprocess
 import json
 
 
-class ExceptionTest(unittest.TestCase):
+class ExceptionTest(services.ServiceTestCase):
     def setUp(self):
-        self.__service = services.ExceptionTesterService()
-        self.__service.start()
-
-    def tearDown(self):
-        self.__service.stop()
+        super().setUp()
+        self.add_service(services.ExceptionTesterService())
+        self.start_services()
         
     def test__HeatingError(self):
         client = ExceptionTester_Client(pydbus.SessionBus())
@@ -29,17 +27,21 @@ class ExceptionTest(unittest.TestCase):
         client = ExceptionTester_Client(pydbus.SessionBus())
         try:
             client.raise_default_HeatingError('the message')
+            self.fail()
         except HeatingError as e:
-            self.assertEqual(e.details['type'], 'HeatingError')
-            self.assertEqual(e.details['message'], 'the message')
+            exc = e
+        self.assertEqual(exc.details['category'], 'general')
+        self.assertEqual(exc.details['message'], 'the message')
 
     def test__derived_default_HeatingError(self):
         client = ExceptionTester_Client(pydbus.SessionBus())
         try:
             client.raise_derived_default_HeatingError('the message')
+            self.fail()
         except HeatingError as e:
-            self.assertEqual(e.details['type'], 'HeatingError')
-            self.assertEqual(e.details['message'], 'the message')
+            exc = e
+        self.assertEqual(exc.details['category'], 'general')
+        self.assertEqual(exc.details['message'], 'the message')
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ExceptionTest))
