@@ -3,18 +3,38 @@
 <head>
   <meta charset="utf-8"/>
   <title>Home</title>
+  <style>
+    body {
+      font-family: Helvetica;
+    }
+
+    div.menu ul {
+      list-style: none;
+    }
+    div.menu ul li {
+      font-size: 2em;
+      display: inline-block;
+      background-color: gray;
+      border-radius: 3px;
+      margin-left: 20px;
+    }
+    div.menu ul li:first-child {
+      margin-left: 0;
+    }
+  </style>
 </head>
 
 <body>
 
-  <div id="menu">
-    <h1>Menu</h1>
-    <ul>
-      {% for link, name in menu %}
-      <li><a href={{link}}>{{name}}</a></li>
-      {% endfor %}
-    </ul>
-  </div>
+  <header>
+    <div class="menu">
+      <ul>
+	{% for link, name in menu %}
+	<li><a href={{link}}>{{name}}</a></li>
+	{% endfor %}
+      </ul>
+    </div>
+  </header>
 
   <div id="main">
     {% block main %}{% endblock %}
