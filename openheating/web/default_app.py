@@ -20,7 +20,7 @@ class DefaultApp:
         self.errors_client = Errors_Client(dbus_connection)
 
     def setup(self):
-        from . import home
+        from . import home_faschingbauer
         from . import thermometers
         from . import thermometer
         from . import errors
@@ -30,7 +30,7 @@ class DefaultApp:
 
     def render_template(self, template, **kwargs):
         menu =  [
-            (flask.url_for('home'), 'Home'),
+            (flask.url_for('home_faschingbauer'), 'Home'),
             (flask.url_for('thermometers'), 'Thermometers'),
             (flask.url_for('errors'), 'Errors'),
         ]

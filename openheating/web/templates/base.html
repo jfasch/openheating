@@ -8,18 +8,32 @@
       font-family: Helvetica;
     }
 
-    div.menu ul {
-      list-style: none;
+    header nav ul {
+      list-style-type: none;
     }
-    div.menu ul li {
+    header nav ul li {
       font-size: 2em;
+      text-transform: uppercase;
       display: inline-block;
-      background-color: gray;
-      border-radius: 3px;
+      background-color: lawngreen;
+      border-radius: 10px;
       margin-left: 20px;
+      width: 30%;
     }
-    div.menu ul li:first-child {
+    header nav ul li:first-child {
       margin-left: 0;
+    }
+
+    /* FASCHINGBAUER */
+    section#main div#user_home ul.faschingbauer_home_charts {
+      list-style: none;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }    
+    section#main div#user_home ul.faschingbauer_home_charts li {
+      width: 40%;
+      background: lightpink;
     }
   </style>
 </head>
@@ -27,24 +41,24 @@
 <body>
 
   <header>
-    <div class="menu">
+    <nav>
       <ul>
 	{% for link, name in menu %}
 	<li><a href={{link}}>{{name}}</a></li>
 	{% endfor %}
       </ul>
-    </div>
+    </nav>
   </header>
 
-  <div id="main">
+  <section id="main">
     {% block main %}{% endblock %}
-  </div>
+  </section>
 
-  <div id="footer">
+  <footer>
     <p>Logged in from {{request.remote_addr}}</p>
     <p><a href="{{url_for('errors', name='Errors')}}">{{app.errors_client.num_errors()}} Errors</a></p>
     {% block footer %}{% endblock %}
-  </div>
+  </footer>
 
 </body>
 

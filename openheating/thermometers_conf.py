@@ -1,9 +1,13 @@
 from openheating.thermometer import FixedThermometer, ErrorThermometer
 from openheating.w1 import W1Thermometer
-from openheating.error import BadDBusPathComponent
+from openheating.error import HeatingError, BadDBusPathComponent
 
 from configparser import ConfigParser
 
+
+class DuplicateError(HeatingError):
+    def __init__(self, name):
+        super().__init__(msg='Duplicate thermometer {}'.format(name))
 
 def read_ini(conf):
     config = ConfigParser()

@@ -115,6 +115,22 @@ class ThermometerConfigTest(unittest.TestCase):
                            "THERMOMETERS['bad-name'] = FixedThermometer(name='blah', description='blah', temperature=42)",
                           ])
 
+    def test__duplicates__ini(self):
+        self.assertRaises(thermometers_conf.DuplicateError, thermometers_conf.read_ini, 
+                          """
+                          [SameName]
+                          Type = w1
+                          Description = Same Name
+                          Path = /sys/bus/w1/devices/28-02131dace9aa
+                          
+                          [SameName]
+                          Type = w1
+                          Description = Same Name Again
+                          Path = /sys/bus/w1/devices/28-02131dace9ab
+                          """
+        )
+        
+
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerConfigTest)
 
 if __name__ == '__main__':
