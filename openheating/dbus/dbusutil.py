@@ -1,5 +1,4 @@
 from ..error import HeatingError
-from .util import lifecycle as jjj_lifecycle
 
 from pydbus import SystemBus, SessionBus
 

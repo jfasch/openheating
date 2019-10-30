@@ -2,7 +2,7 @@ from . import dbusutil
 from . import node
 from . import interfaces
 from . import names
-from .util import lifecycle
+from . import lifecycle
 from ..error import HeatingError
 
 import sys

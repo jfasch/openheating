@@ -5,7 +5,7 @@ from openheating.dbus import dbusutil
 from openheating.dbus import node
 from openheating.dbus import names
 from openheating.dbus import interfaces
-from openheating.dbus.util import lifecycle
+from openheating.dbus import lifecycle
 from openheating.dbus.errors import Errors_Server
 
 from gi.repository import GLib

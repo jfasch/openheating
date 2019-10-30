@@ -5,7 +5,7 @@ from openheating.history import History
 from openheating import logutil
 from openheating.dbus import dbusutil
 from openheating.dbus import names
-from openheating.dbus.util import lifecycle
+from openheating.dbus import lifecycle
 from openheating.dbus.thermometer import Thermometer_Server
 from openheating.dbus.thermometer_center import ThermometerCenter_Server
 

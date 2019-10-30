@@ -1,5 +1,5 @@
 from openheating.dbus import dbusutil
-from openheating.dbus.util import lifecycle
+from openheating.dbus import lifecycle
 from openheating.test import testutils
 from openheating.test import services
 
