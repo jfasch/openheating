@@ -1,4 +1,5 @@
 from . import dbusutil
+from . import node
 from .util import lifecycle
 from ..thermometer import Thermometer
 from ..error import HeatingError
@@ -71,21 +72,21 @@ class Thermometer_Server:
         self.__update_interval = update_interval
         self.__update_timer_tag = None
 
-    @dbusutil.unify_error
+    @node.unify_error
     def get_name(self):
         return self.__thermometer.get_name()
 
-    @dbusutil.unify_error
+    @node.unify_error
     def get_description(self):
         return self.__thermometer.get_description()
 
-    @dbusutil.unify_error
+    @node.unify_error
     def get_temperature(self):
         if self.__current_error:
             raise self.__current_error
         return self.__current_temperature
 
-    @dbusutil.unify_error
+    @node.unify_error
     def distill(self, granularity, duration):
         return self.__history.distill(granularity=granularity, duration=duration)
 
@@ -154,7 +155,7 @@ class Thermometer_Server:
             self.__emit_error(self.__current_error)
 
 
-dbusutil.define_node(
+node.define_node(
     klass=Thermometer_Server,
     interfaces=(dbusutil.THERMOMETER_IFACEXML,
                 dbusutil.TEMPERATUREHISTORY_IFACEXML,

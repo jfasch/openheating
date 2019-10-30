@@ -1,4 +1,4 @@
-from openheating.dbus.dbusutil import NodeDefinition
+from openheating.dbus.node import NodeDefinition
 
 import unittest
 import xml.etree.ElementTree as ET

@@ -3,27 +3,14 @@ Stack (Hanging)
 
 * error management
 
-  * test for dbus node, starting thermometers and errors
-  * proper match rules for signal
   * dbusutil: convenience get_object_iface(), to be used in all client
     wrappers. see ThermometerCenter_Client.__get_object_iface().
 
-    * signal definition, offered by the dbus objects.
-    
-      this is the normal use case. the dbus spec goes out of the way of
-      defining such a relationship: signals pop directly out of the dbus
-      connection, and this is where user code picks them up.
-    
     * decorator that participates an "object" in siganl
       reception. maintains a list (globally unfortunately; could wrap all
       that - signal filters, loop, whatelse? - in a dbus_context class
       maybe) that maps signal parameters onto callables.
 
-    * signal emit encapsulation
-      (dbus.thermometer.Thermometer_Server.__emit_error)
-    * signal receive encapsulation
-      (dbus.errors.Errors_Server.handle_error)
-    
     * tests. all via openheating-errors.py level tests is a bit hard.
     
       * signal filters have nothing to do with dbus objects. just a mixin
@@ -33,15 +20,33 @@ Stack (Hanging)
       * and finally, errors. should i start to decouple dbus from logic
         now? yes!
 
-* errors suite: go ahead and define what w1 errors look like
+* signal definition, offered by the dbus objects.
+
+  this is the normal use case. the dbus spec goes out of the way of
+  defining such a relationship: signals pop directly out of the dbus
+  connection, and this is where user code picks them up.
+    
+  * signal emit encapsulation
+    (dbus.thermometer.Thermometer_Server.__emit_error)
+  * signal receive encapsulation
+    (dbus.errors.Errors_Server.handle_error)
+
+* node definition: class decorator which makes a class into a dbus
+  node. could be done now. -> dbus.util.nodedef()
+
+  * define_node as deco creator
+  * unify_error automatically when defining node. parse xml.
 
 Todo
 ====
 
+* structure
+
+  * move openheating/ content into base/
+  * move openheating/test/ content into testutil/
+
 * NodeDefinition
 
-  * hehe: class decorator which makes a class into a dbus node. could
-    be done now. -> dbus.util.nodedef()
   * parse XML, and check for presence of methods and signals. 
 
     * This way errors appear at class composition time, rather than

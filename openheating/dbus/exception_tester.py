@@ -1,3 +1,4 @@
+from . import node
 from . import dbusutil
 from ..error import HeatingError
 
@@ -13,14 +14,14 @@ class ExceptionTester_Server:
     class DerivedDefaultHeatingError(HeatingError):
         def __init__(self, message):
             super().__init__(message)
-    @dbusutil.unify_error
+    @node.unify_error
     def raise_default_HeatingError(self, msg):
         raise HeatingError(msg)
-    @dbusutil.unify_error
+    @node.unify_error
     def raise_derived_default_HeatingError(self, msg):
         raise self.DerivedDefaultHeatingError(msg)
 
-dbusutil.define_node(
+node.define_node(
     klass=ExceptionTester_Server,
     interfaces=(dbusutil.EXCEPTIONTESTER_IFACEXML,)
 )

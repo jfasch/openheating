@@ -2,6 +2,7 @@
 
 from openheating import logutil
 from openheating.dbus import dbusutil
+from openheating.dbus import node
 from openheating.dbus.util import lifecycle
 from openheating.dbus.errors import Errors_Server
 
@@ -29,5 +30,5 @@ lifecycle.run_server(
     bus=bus,
     busname=dbusutil.ERRORS_BUSNAME,
     objects=[('/', errors)],
-    signals=[(dbusutil.SignalMatch(interface=dbusutil.ERROREMITTER_IFACENAME, name='error'), errors.handle_error)],
+    signals=[(node.SignalMatch(interface=dbusutil.ERROREMITTER_IFACENAME, name='error'), errors.handle_error)],
 )

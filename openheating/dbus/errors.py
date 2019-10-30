@@ -1,4 +1,5 @@
 from . import dbusutil
+from . import node
 from .util import lifecycle
 from ..error import HeatingError
 
@@ -24,11 +25,11 @@ class Errors_Server:
     def __init__(self):
         self.__errors = collections.deque(maxlen=100)
 
-    @dbusutil.unify_error
+    @node.unify_error
     def num_errors(self):
         return len(self.__errors)
 
-    @dbusutil.unify_error
+    @node.unify_error
     def get_errors(self):
         return [str(e) for e in self.__errors]
 
@@ -45,7 +46,7 @@ class Errors_Server:
     def _stop(self):
         logger.info('stopping')
 
-dbusutil.define_node(
+node.define_node(
     klass=Errors_Server,
     interfaces=(dbusutil.ERRORS_IFACEXML,)
 )

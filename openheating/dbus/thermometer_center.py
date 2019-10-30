@@ -1,4 +1,5 @@
 from . import dbusutil
+from . import node
 from .thermometer import Thermometer_Client, TemperatureHistory_Client
 from ..error import HeatingError
 
@@ -37,11 +38,11 @@ class ThermometerCenter_Server:
     def __init__(self, thermometers):
         self.__thermometers = thermometers
 
-    @dbusutil.unify_error
+    @node.unify_error
     def all_names(self):
         return self.__thermometers.keys()
 
-dbusutil.define_node(
+node.define_node(
     klass=ThermometerCenter_Server,
     interfaces=(dbusutil.THERMOMETERCENTER_IFACEXML,)
 )
