@@ -26,11 +26,9 @@ class Errors_Server:
     def __init__(self):
         self.__errors = collections.deque(maxlen=100)
 
-    @node.unify_error
     def num_errors(self):
         return len(self.__errors)
 
-    @node.unify_error
     def get_errors(self):
         return [str(e) for e in self.__errors]
 

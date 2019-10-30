@@ -39,6 +39,5 @@ class ThermometerCenter_Server:
     def __init__(self, thermometers):
         self.__thermometers = thermometers
 
-    @node.unify_error
     def all_names(self):
         return self.__thermometers.keys()

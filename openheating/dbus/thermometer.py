@@ -75,21 +75,17 @@ class Thermometer_Server:
         self.__update_interval = update_interval
         self.__update_timer_tag = None
 
-    @node.unify_error
     def get_name(self):
         return self.__thermometer.get_name()
 
-    @node.unify_error
     def get_description(self):
         return self.__thermometer.get_description()
 
-    @node.unify_error
     def get_temperature(self):
         if self.__current_error:
             raise self.__current_error
         return self.__current_temperature
 
-    @node.unify_error
     def distill(self, granularity, duration):
         return self.__history.distill(granularity=granularity, duration=duration)
 

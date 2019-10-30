@@ -31,10 +31,8 @@ Stack (Hanging)
   * signal receive encapsulation
     (dbus.errors.Errors_Server.handle_error)
 
-* node.Definition: absorb node.unify_error into class decorator
-  machinery: 
+* node.Definition
 
-  * wrap dbus methods like the @unify_error (and remove unify_error)
   * maintain a better interface definition. map name->xml or
     something. replace dbusutil.*IFACE{NAME,XML} with that.
 
