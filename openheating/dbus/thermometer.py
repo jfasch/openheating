@@ -47,6 +47,9 @@ class TemperatureHistory_Client:
 
 
 @lifecycle.managed(startup='_startup', shutdown='_shutdown', onbus='_onbus')
+@node.Definition(interfaces=(dbusutil.THERMOMETER_IFACEXML,
+                             dbusutil.TEMPERATUREHISTORY_IFACEXML,
+                             dbusutil.ERROREMITTER_IFACEXML))
 class Thermometer_Server:
     # errors are emitted via here
     error = signal()
@@ -153,10 +156,3 @@ class Thermometer_Server:
     def _onbus(self):
         if self.__current_error is not None:
             self.__emit_error(self.__current_error)
-
-
-node.define_node(
-    klass=Thermometer_Server,
-    interfaces=(dbusutil.THERMOMETER_IFACEXML,
-                dbusutil.TEMPERATUREHISTORY_IFACEXML,
-                dbusutil.ERROREMITTER_IFACEXML))

@@ -31,11 +31,12 @@ Stack (Hanging)
   * signal receive encapsulation
     (dbus.errors.Errors_Server.handle_error)
 
-* node definition: class decorator which makes a class into a dbus
-  node. could be done now. -> dbus.util.nodedef()
+* node.Definition: absorb node.unify_error into class decorator
+  machinery: 
 
-  * define_node as deco creator
-  * unify_error automatically when defining node. parse xml.
+  * extract dbus methods from xml
+  * verify that those are defined in the decorated class.
+  * wrap them like the ex @unify_error
 
 Todo
 ====

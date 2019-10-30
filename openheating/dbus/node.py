@@ -21,10 +21,7 @@ def unify_error(fun):
 
     return wrapper
 
-def define_node(klass, interfaces):
-    NodeDefinition(interfaces).apply_to(klass)
-
-class NodeDefinition:
+class Definition:
     '''DBus objects generally provide more than one interface, and one
     interface is generally provided by more than one object.
 
@@ -45,8 +42,10 @@ class NodeDefinition:
         ret += '</node>\n'
         return ret
 
-    def apply_to(self, klass):
+    def __call__(self, klass):
+        assert getattr(klass, 'dbus', None) is None
         klass.dbus = self.to_xml()
+        return klass
 
 class SignalMatch:
     def __init__(self, interface, name):

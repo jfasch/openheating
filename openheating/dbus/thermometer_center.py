@@ -34,6 +34,7 @@ class ThermometerCenter_Client:
         return self.__bus.get(busname, path)[iface]
     
 
+@node.Definition(interfaces=(dbusutil.THERMOMETERCENTER_IFACEXML,))
 class ThermometerCenter_Server:
     def __init__(self, thermometers):
         self.__thermometers = thermometers
@@ -41,8 +42,3 @@ class ThermometerCenter_Server:
     @node.unify_error
     def all_names(self):
         return self.__thermometers.keys()
-
-node.define_node(
-    klass=ThermometerCenter_Server,
-    interfaces=(dbusutil.THERMOMETERCENTER_IFACEXML,)
-)

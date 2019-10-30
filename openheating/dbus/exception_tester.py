@@ -10,6 +10,7 @@ class ExceptionTester_Client:
     def raise_derived_default_HeatingError(self, msg):
         return self.__iface.raise_derived_default_HeatingError(msg)
 
+@node.Definition(interfaces=(dbusutil.EXCEPTIONTESTER_IFACEXML,))
 class ExceptionTester_Server:
     class DerivedDefaultHeatingError(HeatingError):
         def __init__(self, message):
@@ -20,9 +21,3 @@ class ExceptionTester_Server:
     @node.unify_error
     def raise_derived_default_HeatingError(self, msg):
         raise self.DerivedDefaultHeatingError(msg)
-
-node.define_node(
-    klass=ExceptionTester_Server,
-    interfaces=(dbusutil.EXCEPTIONTESTER_IFACEXML,)
-)
-

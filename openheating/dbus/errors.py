@@ -21,6 +21,7 @@ class Errors_Client:
 logger = logging.getLogger('dbus-errors')
 
 @lifecycle.managed(startup='_start', shutdown='_stop')
+@node.Definition(interfaces=(dbusutil.ERRORS_IFACEXML,))
 class Errors_Server:
     def __init__(self):
         self.__errors = collections.deque(maxlen=100)
@@ -45,8 +46,3 @@ class Errors_Server:
         logger.info('starting')
     def _stop(self):
         logger.info('stopping')
-
-node.define_node(
-    klass=Errors_Server,
-    interfaces=(dbusutil.ERRORS_IFACEXML,)
-)

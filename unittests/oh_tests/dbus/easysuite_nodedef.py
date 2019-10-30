@@ -1,4 +1,4 @@
-from openheating.dbus.node import NodeDefinition
+from openheating.dbus import node
 
 import unittest
 import xml.etree.ElementTree as ET
@@ -16,12 +16,12 @@ class NodeDefinitionTest(unittest.TestCase):
         </interface>
         '''
 
-        nodedef = NodeDefinition(interfaces=(iface1, iface2))
+        nodedef = node.Definition(interfaces=(iface1, iface2))
 
-        node = ET.fromstring(nodedef.to_xml())
-        self.assertEqual(node.tag, 'node')
+        node_et = ET.fromstring(nodedef.to_xml())
+        self.assertEqual(node_et.tag, 'node')
         niface1 = niface2 = 0
-        for iface in node:
+        for iface in node_et:
             if iface.get('name') == 'iface1':
                 niface1 += 1
             if iface.get('name') == 'iface2':
@@ -30,7 +30,7 @@ class NodeDefinitionTest(unittest.TestCase):
         self.assertEqual(niface2, 1)
 
     def test__apply_to(self):
-        nodedef = NodeDefinition(interfaces=('''
+        nodedef = node.Definition(interfaces=('''
             <interface name='iface'>
             </interface>
             ''',))
@@ -38,7 +38,7 @@ class NodeDefinitionTest(unittest.TestCase):
         class klass:
             pass
 
-        nodedef.apply_to(klass)
+        nodedef(klass)
         self.assertEqual(klass.dbus, nodedef.to_xml())
 
 
