@@ -2,6 +2,7 @@
 
 from openheating.dbus import dbusutil
 from openheating.dbus.util import lifecycle
+from openheating.dbus import names
 from openheating.dbus.exception_tester import ExceptionTester_Server
 from openheating import logutil
 
@@ -22,6 +23,6 @@ bus = dbusutil.bus_from_argparse(args)
 lifecycle.run_server(
     loop=loop,
     bus=bus,
-    busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
+    busname=names.Bus.EXCEPTIONTESTER,
     objects=[('/', ExceptionTester_Server())],
 )

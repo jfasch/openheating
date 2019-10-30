@@ -7,7 +7,7 @@
 from . import testutils
 
 from openheating.error import HeatingError
-from openheating.dbus import dbusutil
+from openheating.dbus import names
 
 import pydbus
 
@@ -182,7 +182,7 @@ class ThermometerService(_ServiceWrapper):
         self.__configfile.flush()
 
         super().__init__(exe='openheating-thermometers.py',
-                         busname=dbusutil.THERMOMETERS_BUSNAME,
+                         busname=names.Bus.THERMOMETERS,
                          args=confargs)
 
     def stop(self, print_stderr):
@@ -193,19 +193,19 @@ class ErrorService(_ServiceWrapper):
     def __init__(self, debug=False):
         super().__init__(
             exe='openheating-errors.py',
-            busname=dbusutil.ERRORS_BUSNAME)
+            busname=names.Bus.ERRORS)
 
 class ExceptionTesterService(_ServiceWrapper):
     def __init__(self, debug=False):
         super().__init__(
             exe='openheating-exception-tester.py',
-            busname=dbusutil.EXCEPTIONTESTER_BUSNAME,
+            busname=names.Bus.EXCEPTIONTESTER,
         )
 
 class ManagedObjectTesterService(_ServiceWrapper):
     def __init__(self, stampdir, debug=False):
         super().__init__(
             exe='openheating-managedobject-tester.py',
-            busname=dbusutil.MANAGEDOBJECTTESTER_BUSNAME,
+            busname=names.Bus.MANAGEDOBJECTTESTER,
             args=['--stamp-directory', stampdir],
         )

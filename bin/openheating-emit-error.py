@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 from openheating.dbus import dbusutil
+from openheating.dbus import node
+from openheating.dbus import interfaces
 
 from gi.repository import GLib
 from pydbus.generic import signal
@@ -18,7 +20,7 @@ bus = dbusutil.bus_from_argparse(args)
 # emitting the error signal from its only interface.
 class DummyForEmittingErrors:
     error = signal()
-dbusutil.NodeDefinition(interfaces=(dbusutil.ERROREMITTER_IFACEXML,))\
+node.NodeDefinition(interfaces=(interfaces.ERROREMITTER,))\
 .apply_to(DummyForEmittingErrors)
 
 dummy = DummyForEmittingErrors()

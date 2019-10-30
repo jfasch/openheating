@@ -30,11 +30,9 @@ Stack (Hanging)
     (dbus.thermometer.Thermometer_Server.__emit_error)
   * signal receive encapsulation
     (dbus.errors.Errors_Server.handle_error)
+  * bin/openheating-emit-error.py
 
-* node.Definition
-
-  * maintain a better interface definition. map name->xml or
-    something. replace dbusutil.*IFACE{NAME,XML} with that.
+* move util/lifecycle to dbus/
 
 Todo
 ====

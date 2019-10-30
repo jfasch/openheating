@@ -1,5 +1,7 @@
 from . import dbusutil
 from . import node
+from . import interfaces
+from . import names
 from .util import lifecycle
 from ..error import HeatingError
 
@@ -11,7 +13,7 @@ import json
 
 class Errors_Client:
     def __init__(self, bus):
-        self.__iface = bus.get(dbusutil.ERRORS_BUSNAME, '/')[dbusutil.ERRORS_IFACENAME]
+        self.__iface = bus.get(names.Bus.ERRORS, '/')[interfaces.ERRORS]
     def num_errors(self):
         return self.__iface.num_errors()
     def get_errors(self):
@@ -21,7 +23,7 @@ class Errors_Client:
 logger = logging.getLogger('dbus-errors')
 
 @lifecycle.managed(startup='_start', shutdown='_stop')
-@node.Definition(interfaces=(dbusutil.ERRORS_IFACEXML,))
+@node.Definition(interfaces=(interfaces.get(interfaces.ERRORS),))
 class Errors_Server:
     def __init__(self):
         self.__errors = collections.deque(maxlen=100)

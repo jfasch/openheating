@@ -2,6 +2,7 @@
 
 from openheating import logutil
 from openheating.dbus import dbusutil
+from openheating.dbus import names
 from openheating.dbus.util import lifecycle
 
 from gi.repository import GLib
@@ -35,6 +36,6 @@ class TheObjectWhichIsManaged:
 lifecycle.run_server(
     loop=loop,
     bus=bus,
-    busname=dbusutil.MANAGEDOBJECTTESTER_BUSNAME,
+    busname=names.Bus.MANAGEDOBJECTTESTER,
     objects=[('/', TheObjectWhichIsManaged(stampdir=args.stamp_directory))],
 )

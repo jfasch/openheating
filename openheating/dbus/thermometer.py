@@ -1,4 +1,5 @@
 from . import dbusutil
+from . import interfaces
 from . import node
 from .util import lifecycle
 from ..thermometer import Thermometer
@@ -47,9 +48,9 @@ class TemperatureHistory_Client:
 
 
 @lifecycle.managed(startup='_startup', shutdown='_shutdown', onbus='_onbus')
-@node.Definition(interfaces=(dbusutil.THERMOMETER_IFACEXML,
-                             dbusutil.TEMPERATUREHISTORY_IFACEXML,
-                             dbusutil.ERROREMITTER_IFACEXML))
+@node.Definition(interfaces=(interfaces.get(interfaces.THERMOMETER),
+                             interfaces.get(interfaces.TEMPERATUREHISTORY),
+                             interfaces.get(interfaces.ERROREMITTER)))
 class Thermometer_Server:
     # errors are emitted via here
     error = signal()

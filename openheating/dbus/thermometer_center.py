@@ -1,5 +1,6 @@
-from . import dbusutil
+from . import interfaces
 from . import node
+from . import names
 from .thermometer import Thermometer_Client, TemperatureHistory_Client
 from ..error import HeatingError
 
@@ -8,9 +9,9 @@ class ThermometerCenter_Client:
     def __init__(self, bus):
         self.__bus = bus
         self.__iface = self.__get_object_iface(
-            busname=dbusutil.THERMOMETERS_BUSNAME,
+            busname=names.Bus.THERMOMETERS,
             path='/',
-            iface=dbusutil.THERMOMETERCENTER_IFACENAME)
+            iface=interfaces.THERMOMETERCENTER)
 
     def all_names(self):
         return self.__iface.all_names()
@@ -19,22 +20,22 @@ class ThermometerCenter_Client:
     def get_thermometer(self, name):
         return Thermometer_Client(
             proxy=self.__get_object_iface(
-                busname=dbusutil.THERMOMETERS_BUSNAME,
+                busname=names.Bus.THERMOMETERS,
                 path='/thermometers/'+name, 
-                iface=dbusutil.THERMOMETER_IFACENAME))
+                iface=interfaces.THERMOMETER))
 
     def get_history(self, name):
         return TemperatureHistory_Client(
             proxy=self.__get_object_iface(
-                busname=dbusutil.THERMOMETERS_BUSNAME,
+                busname=names.Bus.THERMOMETERS,
                 path='/thermometers/'+name, 
-                iface=dbusutil.TEMPERATUREHISTORY_IFACENAME))
+                iface=interfaces.TEMPERATUREHISTORY))
 
     def __get_object_iface(self, busname, path, iface):
         return self.__bus.get(busname, path)[iface]
     
 
-@node.Definition(interfaces=(dbusutil.THERMOMETERCENTER_IFACEXML,))
+@node.Definition(interfaces=(interfaces.get(interfaces.THERMOMETERCENTER),))
 class ThermometerCenter_Server:
     def __init__(self, thermometers):
         self.__thermometers = thermometers

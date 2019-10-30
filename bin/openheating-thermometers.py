@@ -4,6 +4,7 @@ from openheating import thermometers_conf
 from openheating.history import History
 from openheating import logutil
 from openheating.dbus import dbusutil
+from openheating.dbus import names
 from openheating.dbus.util import lifecycle
 from openheating.dbus.thermometer import Thermometer_Server
 from openheating.dbus.thermometer_center import ThermometerCenter_Server
@@ -47,6 +48,6 @@ for name, thermometer in thermometers.items():
 lifecycle.run_server(
     loop=loop,
     bus=bus,
-    busname=dbusutil.THERMOMETERS_BUSNAME,
+    busname=names.Bus.THERMOMETERS,
     objects=objects,
 )
