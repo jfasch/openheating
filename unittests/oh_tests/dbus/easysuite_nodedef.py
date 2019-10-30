@@ -18,7 +18,7 @@ class NodeDefinitionTest(unittest.TestCase):
 
         nodedef = node.Definition(interfaces=(iface1, iface2))
 
-        node_et = ET.fromstring(nodedef.to_xml())
+        node_et = ET.fromstring(nodedef.xml)
         self.assertEqual(node_et.tag, 'node')
         niface1 = niface2 = 0
         for iface in node_et:
@@ -39,7 +39,7 @@ class NodeDefinitionTest(unittest.TestCase):
             pass
 
         nodedef(klass)
-        self.assertEqual(klass.dbus, nodedef.to_xml())
+        self.assertEqual(klass.dbus, nodedef.xml)
 
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(NodeDefinitionTest)

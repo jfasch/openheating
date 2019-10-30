@@ -34,9 +34,9 @@ Stack (Hanging)
 * node.Definition: absorb node.unify_error into class decorator
   machinery: 
 
-  * extract dbus methods from xml
-  * verify that those are defined in the decorated class.
-  * wrap them like the ex @unify_error
+  * wrap dbus methods like the @unify_error (and remove unify_error)
+  * maintain a better interface definition. map name->xml or
+    something. replace dbusutil.*IFACE{NAME,XML} with that.
 
 Todo
 ====
