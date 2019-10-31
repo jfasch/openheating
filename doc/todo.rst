@@ -32,8 +32,6 @@ Stack (Hanging)
     (dbus.errors.Errors_Server.handle_error)
   * bin/openheating-emit-error.py
 
-* move DBusHeatingError/dbus translation setup into node.py
-
 Todo
 ====
 

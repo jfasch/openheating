@@ -1,27 +1,17 @@
 from . import dbusutil
+from . import names
 
 from ..error import HeatingError
+
+import pydbus.error
 
 import xml.etree.ElementTree as ET
 
 
-# def unify_error(fun):
-#     '''Used as a decorator for callables that raise derived HeatingError
-#     instances. (Generally, dbus node/interface methods are such
-#     callables.) If raised, such instances are converted to base
-#     HeatingError instances carrying the same information.
+# map, pydbus-wise, HeatingError exceptions to their dbus error
+# counterpart.
+pydbus.error.error_registration.map_error(dbusutil.DBusHeatingError, names.HEATINGERROR)
 
-#     Reason: pydbus-wise, we map only HeatingError onto its dbus
-#     equivalent, and not a comprehensive list of all derived errors.
-
-#     '''
-#     def wrapper(*args):
-#         try:
-#             return fun(*args)
-#         except HeatingError as e:
-#             raise dbusutil.DBusHeatingError(e.details)
-
-#     return wrapper
 
 class Definition:
     '''DBus objects generally provide more than one interface, and one
