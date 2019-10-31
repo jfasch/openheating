@@ -48,6 +48,8 @@ class Definition:
         return self.__xml
 
     def __call__(self, klass):
+        'descriptor functionality'
+
         # in klass, wrap all dbus methods to convert HeatingError
         # exceptions onto a dbus-understandable exception
         # (DBusHeatingError)
