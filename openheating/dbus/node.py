@@ -1,4 +1,3 @@
-from . import dbusutil
 from . import names
 
 from ..error import HeatingError
@@ -6,11 +5,54 @@ from ..error import HeatingError
 import pydbus.error
 
 import xml.etree.ElementTree as ET
+import traceback
+import logging
+import sys
+import json
 
+
+class DBusHeatingError(HeatingError):
+    '''Used to pass HeatingError exceptions across the bus.
+
+    Use @unify_error to decorate interface method implementations,
+    converting native HeatingError exceptions into a DBusHeatingError.
+
+    DBusHeatingError then collaborates with pydbus and brings the
+    error across the bus:
+
+    * on occurence (a server method throws), pydbus calls str() on it
+      to build the dbus ERROR argument (dbus string).
+
+    * at the client, when that sees a dbus ERROR, it call the
+      registered class ctor on the (json) string, converting it back
+      to a native DBusHeatingError. which is then thrown at the user.
+
+    '''
+    def __init__(self, details):
+        if type(details) is str:
+            # assume it came across the bus, so it must be json.
+            details = json.loads(details)
+        super().__init__(details=details)
+
+    def __str__(self):
+        '''pydbus calls str() on mapped exceptions to create the dbus ERROR
+        argument. we want our heating errors to travel as json, and
+        that's what we do in __str__()
+
+        '''
+        return self.to_json()
+
+    def to_json(self):
+        return json.dumps(self.details)
+
+    @staticmethod
+    def from_json(js):
+        details = json.loads(js)
+        return DBusHeatingError(details=details)
 
 # map, pydbus-wise, HeatingError exceptions to their dbus error
 # counterpart.
-pydbus.error.error_registration.map_error(dbusutil.DBusHeatingError, names.HEATINGERROR)
+pydbus.error.error_registration.map_error(DBusHeatingError, names.HEATINGERROR)
 
 
 class Definition:
@@ -38,13 +80,13 @@ class Definition:
         return self.__xml
 
     def __call__(self, klass):
-        'descriptor functionality'
+        'decorator functionality'
 
         # in klass, wrap all dbus methods to convert HeatingError
         # exceptions onto a dbus-understandable exception
         # (DBusHeatingError)
         for name, method in self.__dbus_methods(klass):
-            setattr(klass, name, self.__convert_error(method))
+            setattr(klass, name, self.__wrap_dbus_method(method))
 
         # create klass.dbus attribute which provide the node
         # definition for pydbus
@@ -64,13 +106,22 @@ class Definition:
             ret.append((methodname, method))
         return ret
 
-    @staticmethod
-    def __convert_error(func):
+    class UnexpectedExceptionError(HeatingError):
+        def __init__(self):
+            tbstr = traceback.format_exc()
+            super().__init__(details={'category': 'internal',
+                                      'message': str(e),
+                                      'traceback': tbstr})
+
+    @classmethod
+    def __wrap_dbus_method(klass, method):
         def wrapper(*args, **kwargs):
             try:
-                return func(*args, **kwargs)
+                return method(*args, **kwargs)
             except HeatingError as e:
-                raise dbusutil.DBusHeatingError(e.details)
+                raise DBusHeatingError(e.details)
+            except Exception as e:
+                raise DBusHeatingError(klass.UnexpectedExceptionError().details)
 
         return wrapper
 
