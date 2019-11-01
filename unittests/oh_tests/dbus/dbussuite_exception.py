@@ -22,25 +22,25 @@ class ExceptionTest(services.ServiceTestCase):
         client = ExceptionTester_Client(pydbus.SessionBus())
         self.assertRaises(HeatingError, client.raise_default_HeatingError, 'message')
 
-    def test__HeatingError_default_json_payload(self):
-        client = ExceptionTester_Client(pydbus.SessionBus())
-        try:
-            client.raise_default_HeatingError('the message')
-            self.fail()
-        except HeatingError as e:
-            exc = e
-        self.assertEqual(exc.details['category'], 'general')
-        self.assertEqual(exc.details['message'], 'the message')
+    # def test__HeatingError_default_json_payload(self):
+    #     client = ExceptionTester_Client(pydbus.SessionBus())
+    #     try:
+    #         client.raise_default_HeatingError('the message')
+    #         self.fail()
+    #     except HeatingError as e:
+    #         exc = e
+    #     self.assertEqual(exc.details['category'], 'general')
+    #     self.assertEqual(exc.details['message'], 'the message')
 
-    def test__derived_default_HeatingError(self):
-        client = ExceptionTester_Client(pydbus.SessionBus())
-        try:
-            client.raise_derived_default_HeatingError('the message')
-            self.fail()
-        except HeatingError as e:
-            exc = e
-        self.assertEqual(exc.details['category'], 'general')
-        self.assertEqual(exc.details['message'], 'the message')
+    # def test__derived_default_HeatingError(self):
+    #     client = ExceptionTester_Client(pydbus.SessionBus())
+    #     try:
+    #         client.raise_derived_default_HeatingError('the message')
+    #         self.fail()
+    #     except HeatingError as e:
+    #         exc = e
+    #     self.assertEqual(exc.details['category'], 'general')
+    #     self.assertEqual(exc.details['message'], 'the message')
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ExceptionTest))

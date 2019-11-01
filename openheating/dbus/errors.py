@@ -17,7 +17,7 @@ class Errors_Client:
     def num_errors(self):
         return self.__iface.num_errors()
     def get_errors(self):
-        return [dbusutil.DBusHeatingError.from_json(js) for js in self.__iface.get_errors()]
+        return [node.DBusHeatingError.from_json(js) for js in self.__iface.get_errors()]
 
 
 logger = logging.getLogger('dbus-errors')
@@ -37,7 +37,7 @@ class Errors_Server:
     def handle_error(self, sender, object, iface, signal, *args):
         json_str = args[0][0] # wtf?
         try:
-            e = dbusutil.DBusHeatingError.from_json(json_str)
+            e = node.DBusHeatingError.from_json(json_str)
             self.__errors.append(e)
         except json.JSONDecodeError as e:
             logger.exception('cannot parse error details')

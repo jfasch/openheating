@@ -1,11 +1,11 @@
 from openheating.error import HeatingError
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
+from openheating.dbus import node
+from openheating.dbus.errors import Errors_Client
 
 from openheating.test import testutils
 from openheating.test import services
 
-from openheating.dbus import dbusutil
-from openheating.dbus.errors import Errors_Client
 
 import pydbus
 
@@ -56,7 +56,7 @@ class ErrorServiceTest(services.ServiceTestCase):
             self.assertEqual(len(errors), 1)
 
             w1_error = errors[0]
-            self.assertIsInstance(w1_error, dbusutil.DBusHeatingError)
+            self.assertIsInstance(w1_error, node.DBusHeatingError)
             self.assertEqual(w1_error.details['category'], 'w1')
             self.assertIn('message', w1_error.details)
 

@@ -25,12 +25,27 @@ Stack (Hanging)
   this is the normal use case. the dbus spec goes out of the way of
   defining such a relationship: signals pop directly out of the dbus
   connection, and this is where user code picks them up.
+
+  node.Definition creates signal, plus a helper method to emit errors
+  on it. similar to the error conversion that we do in dbus call
+  wrapping.
     
   * signal emit encapsulation
     (dbus.thermometer.Thermometer_Server.__emit_error)
   * signal receive encapsulation
     (dbus.errors.Errors_Server.handle_error)
   * bin/openheating-emit-error.py
+
+* handle toplevel errors
+
+  wrapping dbus node implementations in node.Definition, handle
+  exceptions that are thrown. emit error signal containing "unexpected
+  exception" information; log; etc.
+
+  * write test for
+
+    * arbitrary exception
+    * exceptions thrown while handling exceptions.
 
 Todo
 ====

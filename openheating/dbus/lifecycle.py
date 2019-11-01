@@ -15,7 +15,7 @@ class GracefulTermination:
 
     Implements the 'self pipe trick',
     http://man7.org/tlpi/code/online/diff/altio/self_pipe.c.html, to
-    regularly and safely inject the termination request into the loop.
+    safely inject the termination request into the loop.
 
     '''
 

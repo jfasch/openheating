@@ -129,7 +129,7 @@ class Thermometer_Server:
             self.__emit_error(current_error)
 
     def __emit_error(self, e):
-        self.error(str(dbusutil.DBusHeatingError(e.details)))
+        self.error(str(node.DBusHeatingError(e.details)))
 
     def _startup(self):
         logger.info('{} starting'.format(self.__name))
