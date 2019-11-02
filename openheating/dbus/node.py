@@ -10,6 +10,7 @@ import traceback
 import logging
 import sys
 import json
+import functools
 
 
 class DBusHeatingError(HeatingError):
@@ -224,6 +225,7 @@ class Definition:
             })
 
     def __wrap_dbus_method(self, klass, method):
+        @functools.wraps(method)
         def wrapper(*args, **kwargs):
 
             # pydbus signals are weird. the signal object itself must
