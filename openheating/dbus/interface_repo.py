@@ -3,8 +3,11 @@ from . import names
 
 
 _repo = {}
-def get(name):
-    return _repo[name]
+def get(*ifacenames):
+    ret = []
+    for n in ifacenames:
+        ret.append((n, _repo[n]))
+    return ret
 
 
 THERMOMETER = names.DOMAIN + '.Thermometer'
@@ -71,6 +74,8 @@ _repo[EXCEPTIONTESTER] = '''
   </method>
   <method name='raise_derived_default_HeatingError'>
     <arg type='s' name='msg' direction='in'/>
+  </method>
+  <method name='raise_non_HeatingError'>
   </method>
 </interface>
 '''.format(name=EXCEPTIONTESTER)

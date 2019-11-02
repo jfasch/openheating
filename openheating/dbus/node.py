@@ -1,4 +1,5 @@
 from . import names
+from . import interface_repo
 
 from ..error import HeatingError
 
@@ -56,22 +57,96 @@ pydbus.error.error_registration.map_error(DBusHeatingError, names.HEATINGERROR)
 
 
 class Definition:
-    '''DBus objects generally provide more than one interface, and one
+    '''Class decorator for DBus node/object implementations, doing what
+    follows.
+
+    Interfaces
+    ----------
+
+    Interfaces are defined as XML fragments, like::
+
+       <interface name='org.openheating.Thermometer'>
+         <method name='get_name'>
+           <arg type='s' name='response' direction='out'/>
+         </method>
+         <method name='get_description'>
+           <arg type='s' name='response' direction='out'/>
+         </method>
+         <method name='get_temperature'>
+           <arg type='d' name='response' direction='out'/>
+         </method>
+       </interface>
+
+    DBus objects generally provide more than one interface, and one
     interface is generally provided by more than one object.
 
-    This class combines multiple interfaces (their XML fragments) into
-    one <node> definition which is then applied to a class - adding
-    the "dbus" attribute that pydbus requires a class to have.
+    This node.Definition class combines multiple interfaces (their XML
+    fragments) into one <node> definition which is then applied to a
+    class - adding the "dbus" attribute that pydbus requires a class
+    to have.
 
-    Instances are callable, thereby acting as a decorator for classes
-    that implement dbus node.
+    When applied to a class as a decorator (its intended usage), it
+    figures out what methods the XML defines. All those methods have
+    to be provided by the wrapped class; if not this is an
+    error. Every such method is wrapped into code that translates
+    HeatingError exception onto dbus exceptions, and that catches,
+    logs and reports unexpected internal errors.
+
+    Signals
+    -------
+
+    Signals, while their purpose is easily understood, are a bit,
+    well, dangling, with respect to methods:
+
+    * Emission: an object emits a signal via an interface. While the
+      entire point in interfaces is to contain methods for the
+      end-user to call, it is not immediately clear why the signal
+      specification - for the purpose of *emitting* - has to be part
+      of an interface.
+
+    * Reception: any bus connection can declare to receive
+      signals. Ideally this is done by using a filter saying for
+      example "I only want to receive signals from interface
+      'org.openheating.ErrorEmitter', and/or from objects hosted by
+      busname org.openheating.Thermometers and/or on path
+      /thermometers/Raum in that process).
+
+    Both signal emission and reception are somewhat narrowed by
+    node.Definition, by the following measures.
+
+    Emission
+    ........
+
+    * Interface org.openheating.ErrorEmitter is implicitly added to
+      every dbus node implementation. When calling server methods, we
+      catch unexpected exceptions and report that fact by sending out
+      a signal on said interface, so this interface has to be part of
+      the node's definition.
+
+    * All signal specifications that are found in the XML node
+      definition result in an equally named pydbus.generic.signal
+      class member - calling this signal (with an arbitrary set of
+      parameters) is the pydbus way of emitting signals.
+
+    * For the implicit org.openheating.ErrorEmitter interface, a
+      special emit_error(HeatingError:e) convenience method is
+      created.
+
+    Reception
+    .........
+
+    jjj tbd implement first
 
     '''
 
     def __init__(self, interfaces):
+        assert interface_repo.ERROREMITTER not in [name for name,_ in interfaces]
+        interfaces = list(interfaces)
+        interfaces.extend(interface_repo.get(interface_repo.ERROREMITTER))
+
         self.__xml = '<node>\n'
-        for i in interfaces:
-            self.__xml += i
+        for _,ifacexml in interfaces:
+            self.__xml += ifacexml
             self.__xml += '\n'
         self.__xml += '</node>\n'
 
@@ -82,21 +157,27 @@ class Definition:
     def __call__(self, klass):
         'decorator functionality'
 
+        et = ET.fromstring(self.__xml)
+
         # in klass, wrap all dbus methods to convert HeatingError
         # exceptions onto a dbus-understandable exception
         # (DBusHeatingError)
-        for name, method in self.__dbus_methods(klass):
+        for name, method in self.__dbus_methods(et, klass):
             setattr(klass, name, self.__wrap_dbus_method(method))
 
-        # create klass.dbus attribute which provide the node
+        for name in self.__dbus_signals(et):
+            assert getattr(klass, name, None) is None
+            signal = pydbus.generic.signal()
+            setattr(klass, name, signal)
+
+        # create klass.dbus attribute which provides the node
         # definition for pydbus
         assert getattr(klass, 'dbus', None) is None
         klass.dbus = self.__xml
         return klass
 
-    def __dbus_methods(self, klass):
+    def __dbus_methods(self, et, klass):
         ret = []
-        et = ET.fromstring(self.__xml)
         for methodname in (m.get('name') for m in et.findall('./interface/method')):
             method = getattr(klass, methodname, None)
             if method is None:
@@ -106,12 +187,16 @@ class Definition:
             ret.append((methodname, method))
         return ret
 
+    def __dbus_signals(self, et):
+        return [s.get('name') for s in et.findall('./interface/signal')]
+
     class UnexpectedExceptionError(HeatingError):
         def __init__(self):
-            tbstr = traceback.format_exc()
+            etype, e, tb = sys.exc_info()
             super().__init__(details={'category': 'internal',
                                       'message': str(e),
-                                      'traceback': tbstr})
+                                      'traceback': traceback.format_tb(tb),
+            })
 
     @classmethod
     def __wrap_dbus_method(klass, method):
@@ -120,7 +205,7 @@ class Definition:
                 return method(*args, **kwargs)
             except HeatingError as e:
                 raise DBusHeatingError(e.details)
-            except Exception as e:
+            except Exception:
                 raise DBusHeatingError(klass.UnexpectedExceptionError().details)
 
         return wrapper

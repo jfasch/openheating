@@ -1,5 +1,5 @@
 from . import dbusutil
-from . import interfaces
+from . import interface_repo
 from . import node
 from . import lifecycle
 from ..thermometer import Thermometer
@@ -48,19 +48,14 @@ class TemperatureHistory_Client:
 
 
 @lifecycle.managed(startup='_startup', shutdown='_shutdown', onbus='_onbus')
-@node.Definition(interfaces=(interfaces.get(interfaces.THERMOMETER),
-                             interfaces.get(interfaces.TEMPERATUREHISTORY),
-                             interfaces.get(interfaces.ERROREMITTER)))
+@node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETER, 
+                                               interface_repo.TEMPERATUREHISTORY))
 class Thermometer_Server:
-    # errors are emitted via here
-    error = signal()
-
     def __init__(self, update_interval, thermometer, history):
         assert isinstance(thermometer, Thermometer)
 
-        # trusting the GIL, we don't lock these against the update
-        # background thread (though we probably should anyway).
         self.__thermometer = thermometer
+
         # get name from thermometer once and forever, to prevent
         # errors during runtime.
         self.__name = self.__thermometer.get_name()

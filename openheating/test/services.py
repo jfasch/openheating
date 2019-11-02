@@ -48,10 +48,22 @@ class ServiceTestCase(unittest.TestCase):
     def start_services(self, services):
         assert self.__services is None
         self.__services = services
-        for s in self.__services:
-            s.start()
 
-    def stop_services(self, print_stderr=False):
+        started = []
+        start_error = None
+        for s in self.__services:
+            try:
+                s.start()
+                started.append(s)
+            except HeatingError as e:
+                start_error = e
+
+        if start_error is not None:
+            for s in reversed(started):
+                s.stop()
+            raise start_error
+
+    def stop_services(self):
         if self.__services is None:
             services = []
         else:
@@ -62,12 +74,12 @@ class ServiceTestCase(unittest.TestCase):
         errors = []
         for s in services:
             try:
-                stderr = s.stop(print_stderr=self.__failure or print_stderr)
+                stderr = s.stop()
                 stderrs.append((s.busname, stderr))
             except Exception as e:
                 errors.append(e)
 
-        if print_stderr or self.__failure or len(errors):
+        if self.__failure or len(errors):
             for busname, stderr in stderrs:
                 print('\n*** STDERR from {}'.format(busname), file=sys.stderr)
                 if stderr is None:
@@ -95,37 +107,55 @@ class _ServiceWrapper:
         return self.__busname
 
     def start(self):
+        service_cmdline = ' '.join(self.__argv)
+
         # check if busname is already taken. if so, it makes no sense
         # to start the service; rather, fail right away
         with pydbus.SessionBus() as bus:
-            with bus.request_name(self.__busname): pass
+            name_occupied = False
+            try:
+                with bus.request_name(self.__busname): pass
+            except RuntimeError:
+                name_occupied = True
+            if name_occupied:
+                raise HeatingError('start: {busname} already occupied, no point in starting "{cmdline}"'.format(
+                    busname=self.__busname, cmdline=service_cmdline))
 
-        self.__process = subprocess.Popen(self.__argv, stderr=subprocess.PIPE)
+        # start service, and wait until its busname appears.
+        self.__process = subprocess.Popen(self.__argv, stderr=subprocess.PIPE, universal_newlines=True)
+        for _ in range(5):
+            gdbus_wait = ['gdbus', 'wait', '--session', self.__busname, '--timeout', '1']
+            completed_process = subprocess.run(gdbus_wait)
+            if completed_process.returncode == 0:
+                break
 
-        # wait until busname appears
-        gdbus_wait = ['gdbus', 'wait', '--session', self.__busname, '--timeout', '5']
-        completed_process = subprocess.run(gdbus_wait)
+            # busname not yet taken. see if process has exited.
+            try:
+                self.__process.wait(timeout=0)
+                _, stderr = self.__process.communicate()
 
-        if completed_process.returncode != 0:
-            # busname did not appear within the given
-            # timeout. terminate service process, output its stderr if
-            # any.
+                raise HeatingError('start: {busname} not taken within timeout, "{cmdline}" has exited with status {status}, stderr:\n{stderr}'.format(
+                    busname=self.__busname,
+                    cmdline=service_cmdline,
+                    status=self.__process.returncode,
+                    stderr=_indent_str(stderr)))
+            except subprocess.TimeoutExpired:
+                continue
+        else:
+            # busname did not appear within the given timeout (5 times
+            # 1 second). terminate service process.
             self.__process.terminate()
             self.__process.wait()
-            stderr = str(self.__process.stderr.read(), encoding='ascii')
-            rc = self.__process.returncode
-            self.__process = None
+            _, stderr = self.__process.communicate()
+            raise HeatingError('start: name {busname} did not appear within timeout: "{cmdline}", stderr:\n{stderr}'.format(
+                busname=self.__busname, 
+                cmdline=service_cmdline,
+                stderr=_indent_str(stderr)))
 
-            raise HeatingError('start: name {busname} did not appear within timeout, '
-                               'stderr from "{gdbus}":\n{stderr}'.format(
-                                   busname=self.__busname, 
-                                   gdbus=' '.join(gdbus_wait),
-                                   stderr=stderr))
+    def stop(self):
+        assert self.__process.returncode is None, "stop() must not be called of start() hasn't succeeded"
 
-    def stop(self, print_stderr):
-        if self.__process is None:
-            return None
-
+        # terminate service process
         self.__process.terminate()
         # our services mess with signals a bit (graceful eventloop
         # termination), so apply a timeout in case anything goes
@@ -137,15 +167,7 @@ class _ServiceWrapper:
             self.__process.kill()
             self.__process.wait()
 
-        stderr = str(self.__process.stderr.read(), encoding='ascii')
-        exc = None
-
-        if self.__process.returncode != 0:
-            exc = HeatingError('stop: name {busname} exited with status {status}, '
-                               'stderr:\n{stderr}'.format(
-                                   busname=self.__busname, 
-                                   status=self.__process.returncode, 
-                                   stderr=stderr))
+        _, stderr = self.__process.communicate()
 
         # wait for busname to disappear
         for _ in range(10):
@@ -163,11 +185,21 @@ class _ServiceWrapper:
             else:
                 break
         else:
-            self.fail('{} still on the bus'.format(self.__busname))
+            # hmm. process has terminated? name still taken?
+            self.fail('{busname} still on the bus after "{cmdline}" has exited (?)'.format(
+                busname=self.__busname, cmdline=' '.join(self.__argv)))
 
-        if exc is not None:
-            raise exc
+        if self.__process.returncode != 0:
+            raise HeatingError('stop: name {busname} exited with status {status}, '
+                               'stderr:\n{stderr}'.format(
+                                   busname=self.__busname, 
+                                   status=self.__process.returncode, 
+                                   stderr=_indent_str(stderr)))
+
         return stderr
+
+def _indent_str(s):
+    return s.replace('\n', '\n    ')
 
 class ThermometerService(_ServiceWrapper):
     def __init__(self, conf=None, pyconf=None, debug=False):
@@ -185,8 +217,8 @@ class ThermometerService(_ServiceWrapper):
                          busname=names.Bus.THERMOMETERS,
                          args=confargs)
 
-    def stop(self, print_stderr):
-        super().stop(print_stderr=print_stderr)
+    def stop(self):
+        super().stop()
         self.__configfile.close()
 
 class ErrorService(_ServiceWrapper):

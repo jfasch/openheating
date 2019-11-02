@@ -36,6 +36,9 @@ Stack (Hanging)
     (dbus.errors.Errors_Server.handle_error)
   * bin/openheating-emit-error.py
 
+  * node emits errors by itself (every dbus call wrapper does it), so
+    implicitly add "error emitter" in node.Definition.
+
 * handle toplevel errors
 
   wrapping dbus node implementations in node.Definition, handle
@@ -46,6 +49,12 @@ Stack (Hanging)
 
     * arbitrary exception
     * exceptions thrown while handling exceptions.
+
+* doit
+
+  * cls.__dict__ -> vars(cls)
+  * functools.wraps
+  * inspect.signature
 
 Todo
 ====

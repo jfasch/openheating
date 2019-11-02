@@ -1,4 +1,4 @@
-from . import interfaces
+from . import interface_repo
 from . import node
 from . import names
 from .thermometer import Thermometer_Client, TemperatureHistory_Client
@@ -11,7 +11,7 @@ class ThermometerCenter_Client:
         self.__iface = self.__get_object_iface(
             busname=names.Bus.THERMOMETERS,
             path='/',
-            iface=interfaces.THERMOMETERCENTER)
+            iface=interface_repo.THERMOMETERCENTER)
 
     def all_names(self):
         return self.__iface.all_names()
@@ -22,20 +22,20 @@ class ThermometerCenter_Client:
             proxy=self.__get_object_iface(
                 busname=names.Bus.THERMOMETERS,
                 path='/thermometers/'+name, 
-                iface=interfaces.THERMOMETER))
+                iface=interface_repo.THERMOMETER))
 
     def get_history(self, name):
         return TemperatureHistory_Client(
             proxy=self.__get_object_iface(
                 busname=names.Bus.THERMOMETERS,
                 path='/thermometers/'+name, 
-                iface=interfaces.TEMPERATUREHISTORY))
+                iface=interface_repo.TEMPERATUREHISTORY))
 
     def __get_object_iface(self, busname, path, iface):
         return self.__bus.get(busname, path)[iface]
     
 
-@node.Definition(interfaces=(interfaces.get(interfaces.THERMOMETERCENTER),))
+@node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETERCENTER))
 class ThermometerCenter_Server:
     def __init__(self, thermometers):
         self.__thermometers = thermometers
