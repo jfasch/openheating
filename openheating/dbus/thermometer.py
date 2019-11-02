@@ -121,10 +121,7 @@ class Thermometer_Server:
         self.__current_error = current_error
         if current_error is not None:
             logger.error('{} error: {}'.format(self.__name, current_error))
-            self.__emit_error(current_error)
-
-    def __emit_error(self, e):
-        self.error(str(node.DBusHeatingError(e.details)))
+            self.emit_error(current_error)
 
     def _startup(self):
         logger.info('{} starting'.format(self.__name))
@@ -147,4 +144,4 @@ class Thermometer_Server:
 
     def _onbus(self):
         if self.__current_error is not None:
-            self.__emit_error(self.__current_error)
+            self.emit_error(self.__current_error)

@@ -142,6 +142,9 @@ class Definition:
     def __init__(self, interfaces):
         assert interface_repo.ERROREMITTER not in [name for name,_ in interfaces]
         interfaces = list(interfaces)
+
+        # implicitly add the 'error' signal to emit HeatingError
+        # instances on.
         interfaces.extend(interface_repo.get(interface_repo.ERROREMITTER))
 
         self.__xml = '<node>\n'
@@ -159,21 +162,43 @@ class Definition:
 
         et = ET.fromstring(self.__xml)
 
-        # in klass, wrap all dbus methods to convert HeatingError
-        # exceptions onto a dbus-understandable exception
-        # (DBusHeatingError)
-        for name, method in self.__dbus_methods(et, klass):
-            setattr(klass, name, self.__wrap_dbus_method(method))
+        if True:
+            # in klass, wrap all dbus methods to convert HeatingError
+            # exceptions to a dbus-understandable exception
+            # (DBusHeatingError)
 
-        for name in self.__dbus_signals(et):
-            assert getattr(klass, name, None) is None
-            signal = pydbus.generic.signal()
-            setattr(klass, name, signal)
+            for name, method in self.__dbus_methods(et, klass):
+                setattr(klass, name, self.__wrap_dbus_method(klass, method))
 
-        # create klass.dbus attribute which provides the node
-        # definition for pydbus
-        assert getattr(klass, 'dbus', None) is None
-        klass.dbus = self.__xml
+        if True:
+            # add signals
+
+            assert 'error' in self.__dbus_signals(et), "predefined 'error' signal not found in XML"
+            for name in self.__dbus_signals(et):
+                assert getattr(klass, name, None) is None
+
+                sig = pydbus.generic.signal()
+                setattr(klass, name, sig)
+
+                # add convenience method for sending HeatingError instances
+                # out on predefined 'error' signal.
+                if name == 'error':
+                    assert getattr(klass, 'emit_error', None) is None
+                    def emit_error_func(self, e):
+                        dbus_e = DBusHeatingError(e.details)
+                        # error is a class member, but I have to use
+                        # self not class. else the signall is simply
+                        # not emitted. gosh.
+                        self.error(str(dbus_e))
+                    setattr(klass, 'emit_error', emit_error_func)
+
+        if True:
+            # create klass.dbus attribute which provides the node
+            # definition for pydbus
+
+            assert getattr(klass, 'dbus', None) is None
+            klass.dbus = self.__xml
+
         return klass
 
     def __dbus_methods(self, et, klass):
@@ -198,15 +223,29 @@ class Definition:
                                       'traceback': traceback.format_tb(tb),
             })
 
-    @classmethod
-    def __wrap_dbus_method(klass, method):
+    def __wrap_dbus_method(self, klass, method):
         def wrapper(*args, **kwargs):
+
+            # pydbus signals are weird. the signal object itself must
+            # be a class member, whereas the signal is only really
+            # emitted if you use self to find it.
+            self = args[0]
+
+            raise_e = None
             try:
                 return method(*args, **kwargs)
             except HeatingError as e:
-                raise DBusHeatingError(e.details)
-            except Exception:
-                raise DBusHeatingError(klass.UnexpectedExceptionError().details)
+                logging.exception('method {} error'.format(method.__name__), e)
+                raise_e = DBusHeatingError(e.details)
+            except Exception as e:
+                logging.exception('method {} unexpected error'.format(method.__name__))
+                raise_e = DBusHeatingError(Definition.UnexpectedExceptionError().details)
+
+                # use self not class to emit signal
+                self.emit_error(raise_e)
+
+            if raise_e is not None:
+                raise raise_e
 
         return wrapper
 
