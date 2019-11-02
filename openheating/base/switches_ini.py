@@ -1,6 +1,6 @@
 from .switch import DummySwitch
 from . import gpio
-from openheating.error import BadDBusPathComponent
+from openheating.base.error import BadDBusPathComponent
 
 from configparser import ConfigParser
 

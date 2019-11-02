@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from openheating import logutil
+from openheating.base import logutil
 from openheating.dbus import dbusutil
 from openheating.dbus import node
 from openheating.dbus import names

@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
+from openheating.base import logutil
 from openheating.dbus import dbusutil
 from openheating.dbus import lifecycle
 from openheating.dbus import names
 from openheating.dbus.exception_tester import ExceptionTester_Server
-from openheating import logutil
 
 from gi.repository import GLib
 

@@ -1,6 +1,6 @@
-from openheating.switches_ini import read_string
-from openheating.switch import DummySwitch
-from openheating.error import BadDBusPathComponent
+from openheating.base.switches_ini import read_string
+from openheating.base.switch import DummySwitch
+from openheating.base.error import BadDBusPathComponent
 
 import unittest
 

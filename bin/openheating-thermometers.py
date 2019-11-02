@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from openheating import thermometers_conf
-from openheating.history import History
-from openheating import logutil
+from openheating.base import thermometers_conf
+from openheating.base.history import History
+from openheating.base import logutil
 from openheating.dbus import dbusutil
 from openheating.dbus import names
 from openheating.dbus import lifecycle

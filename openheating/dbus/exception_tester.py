@@ -1,7 +1,7 @@
 from . import node
 from . import names
 from . import interface_repo
-from ..error import HeatingError
+from ..base.error import HeatingError
 
 class ExceptionTester_Client:
     def __init__(self, bus):

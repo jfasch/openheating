@@ -1,6 +1,6 @@
-from openheating.thermometer import FixedThermometer, ErrorThermometer
-from openheating.w1 import W1Thermometer
-from openheating.error import HeatingError, BadDBusPathComponent
+from openheating.base.thermometer import FixedThermometer, ErrorThermometer
+from openheating.base.w1 import W1Thermometer
+from openheating.base.error import HeatingError, BadDBusPathComponent
 
 from configparser import ConfigParser
 

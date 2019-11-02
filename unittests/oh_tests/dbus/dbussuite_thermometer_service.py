@@ -1,4 +1,4 @@
-from openheating.error import HeatingError
+from openheating.base.error import HeatingError
 
 from openheating.test import testutils
 from openheating.test import services

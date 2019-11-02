@@ -2,10 +2,11 @@ from . import dbusutil
 from . import interface_repo
 from . import node
 from . import lifecycle
-from ..thermometer import Thermometer
-from ..error import HeatingError
-from .. import timeutil
-from .. import logutil
+
+from ..base.thermometer import Thermometer
+from ..base.error import HeatingError
+from ..base import timeutil
+from ..base import logutil
 
 from gi.repository import GLib
 from pydbus.generic import signal

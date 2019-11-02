@@ -2,7 +2,8 @@ from . import interface_repo
 from . import node
 from . import names
 from .thermometer import Thermometer_Client, TemperatureHistory_Client
-from ..error import HeatingError
+
+from ..base.error import HeatingError
 
 
 class ThermometerCenter_Client:

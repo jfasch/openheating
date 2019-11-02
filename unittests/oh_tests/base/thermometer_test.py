@@ -1,4 +1,4 @@
-from openheating.thermometer import Thermometer
+from openheating.base.thermometer import Thermometer
 
 import unittest
 

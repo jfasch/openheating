@@ -1,4 +1,5 @@
-from openheating.error import HeatingError
+from openheating.base.error import HeatingError
+
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus import node
 from openheating.dbus.errors import Errors_Client
@@ -23,7 +24,7 @@ class ErrorServiceTest(services.ServiceTestCase):
             services.ErrorService(),
             services.ThermometerService(
                 pyconf=[
-                    "from openheating.thermometer import ErrorThermometer",
+                    "from openheating.base.thermometer import ErrorThermometer",
                     "THERMOMETERS['Error'] = ErrorThermometer(",
                     "    name='Error',",
                     "    description='Error Thermometer',",
@@ -41,7 +42,7 @@ class ErrorServiceTest(services.ServiceTestCase):
             services.ErrorService(),
             services.ThermometerService(
                 pyconf=[
-                    "from openheating.w1 import W1Thermometer",
+                    "from openheating.base.w1 import W1Thermometer",
                     "THERMOMETERS['w1_erroneous'] = W1Thermometer(",
                     "    name='w1_erroneous',",
                     "    description='Some Thermometer',",

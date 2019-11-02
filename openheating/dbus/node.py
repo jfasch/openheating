@@ -1,7 +1,7 @@
 from . import names
 from . import interface_repo
 
-from ..error import HeatingError
+from ..base.error import HeatingError
 
 import pydbus.error
 

@@ -3,7 +3,8 @@ from . import node
 from . import interface_repo
 from . import names
 from . import lifecycle
-from ..error import HeatingError
+
+from ..base.error import HeatingError
 
 import sys
 import logging

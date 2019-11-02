@@ -1,4 +1,4 @@
-from openheating.history import History
+from openheating.base.history import History
 
 import time
 import datetime

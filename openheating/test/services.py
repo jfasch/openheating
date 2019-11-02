@@ -6,8 +6,8 @@
 
 from . import testutils
 
-from openheating.error import HeatingError
-from openheating.dbus import names
+from ..base.error import HeatingError
+from ..dbus import names
 
 import pydbus
 
@@ -153,7 +153,7 @@ class _ServiceWrapper:
                 stderr=_indent_str(stderr)))
 
     def stop(self):
-        assert self.__process.returncode is None, "stop() must not be called of start() hasn't succeeded"
+        assert self.__process.returncode is None, "stop() must not be called if start() hasn't succeeded"
 
         # terminate service process
         self.__process.terminate()

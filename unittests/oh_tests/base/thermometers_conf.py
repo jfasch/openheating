@@ -1,7 +1,7 @@
-from openheating import thermometers_conf
-from openheating.thermometer import FixedThermometer
-from openheating.w1 import W1Thermometer
-from openheating.error import BadDBusPathComponent
+from openheating.base import thermometers_conf
+from openheating.base.thermometer import FixedThermometer
+from openheating.base.w1 import W1Thermometer
+from openheating.base.error import BadDBusPathComponent
 from openheating.test import testutils
 
 import unittest
@@ -27,7 +27,7 @@ class ThermometerConfigTest(unittest.TestCase):
 
     def test__basic__pyconf(self):
         slist = [
-            "from openheating.thermometer import FixedThermometer",
+            "from openheating.base.thermometer import FixedThermometer",
             "THERMOMETERS['Oil'] = FixedThermometer(name='Oil', description='From Hell with Decimal Points', temperature=666.666)",
             "THERMOMETERS['Wood'] = FixedThermometer(name='Wood', description='The Answer with Decimal Points', temperature=42.42)",
         ]
@@ -77,7 +77,7 @@ class ThermometerConfigTest(unittest.TestCase):
 
     def test__w1__pyconf(self):
         thermometers = thermometers_conf.read_pyconf([
-            "from openheating.w1 import W1Thermometer",
+            "from openheating.base.w1 import W1Thermometer",
             "THERMOMETERS['Oil'] = W1Thermometer(",
             "    name='Oil',",
             "    description='Oil Burner',",
@@ -111,7 +111,7 @@ class ThermometerConfigTest(unittest.TestCase):
 
     def test__bad_thermometer_name__pyconf(self):
         self.assertRaises(BadDBusPathComponent, thermometers_conf.read_pyconf,
-                          ["from openheating.thermometer import FixedThermometer",
+                          ["from openheating.base.thermometer import FixedThermometer",
                            "THERMOMETERS['bad-name'] = FixedThermometer(name='blah', description='blah', temperature=42)",
                           ])
 
