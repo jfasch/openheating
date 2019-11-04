@@ -1,7 +1,7 @@
 from .instance import app
 from .history_utils import make_histogram_input__full_label
 
-from ..history import History
+from ..base.history import History
 
 from flask import request
 

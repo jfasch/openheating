@@ -1,10 +1,7 @@
 Stack (Hanging)
 ===============
 
-* structure
-
-  * move openheating/ content into base/
-  * move openheating/test/ content into testutil/
+* continue with home_faschingbauer web crap
 
 Todo
 ====
@@ -28,16 +25,6 @@ Todo
 
     Write a big fat docstring which says how HeatingError instances
     make it across the bus.
-
-* plotly, graph pages
-
-  * tooltips as links to thermometer pages for example
-  * main area has one sub-template that divides main area in two,
-    adding a div for "the graph", and a couple of alike possibities
-    for further subclassing.
-  * hierarchical naming through the area hierarchies created. for
-    example <div id="path.to.element"></div>, and easier-to-check
-    (make functions for them) references in css and graph placement.
 
 * error managers
 

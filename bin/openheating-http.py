@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from openheating import logutil
-from openheating.error import HeatingError
+from openheating.base import logutil
+from openheating.base.error import HeatingError
 from openheating.dbus import dbusutil
 
 from openheating.web.default_app import DefaultApp
