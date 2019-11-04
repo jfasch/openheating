@@ -92,6 +92,8 @@ setup(
 
     packages=[
         'openheating',
+        'openheating.base',
+        'openheating.test',
         'openheating.dbus',
         'openheating.web',
     ],
@@ -99,9 +101,9 @@ setup(
     data_files=[
         ('share/systemd',
          [
-             # service files
-             'systemd/openheating-thermometer-service.service.ac_subst',
+             'systemd/openheating-errors.service.ac_subst',
              'systemd/openheating-http.service.ac_subst',
+             'systemd/openheating-thermometers.service.ac_subst',
          ]
         ),
 
@@ -109,9 +111,6 @@ setup(
          [
              # system dbus policies
              'dbus/org.openheating.conf',
-
-             # service files
-             'dbus/org.openheating.ThermometerService.service',
          ]
         ),
 
@@ -130,7 +129,9 @@ setup(
         ('share/web/templates',
          [
              'openheating/web/templates/base.html',
+             'openheating/web/templates/errors.html',
              'openheating/web/templates/history_macros.html',
+             'openheating/web/templates/home_faschingbauer.html',
              'openheating/web/templates/home.html',
              'openheating/web/templates/thermometer.html',
              'openheating/web/templates/thermometers.html',
@@ -140,10 +141,10 @@ setup(
     ],
     scripts=[
         'bin/openheating-http.py',
-        'bin/openheating-switch-client.py',
-        'bin/openheating-switch-service.py',
+        'bin/openheating-thermometers.py',
+        'bin/openheating-errors.py',
+
         'bin/openheating-thermometer-client.py',
-        'bin/openheating-thermometer-service.py',
         'bin/openheating-w1-list.py',
     ],
 )
