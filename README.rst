@@ -110,5 +110,5 @@ The state of documentation is a drama. Ok, the thing is in the works,
 but documentation will always be a drama. 
 
 * For my own purposes, I maintain an `installation document
-  <doc/install.html>`__.
+  <doc/install.rst>`__.
 * Same with the `todo list <doc/todo.rst>`_.
