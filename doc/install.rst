@@ -19,13 +19,7 @@ Create and fill `/etc/openheating/`, ::
 
 Install systemd unit files, ::
 
-   # cp /some/prefix/share/systemd/openheating-thermometer-service.service /etc/systemd/system
-
-Install DBus service files (for bus activation). Location taken from
-https://www.freedesktop.org/wiki/IntroductionToDBus/), except that its
-neighbor directory ./system-services/ sounds more appropriate. ::
-
-   # cp /some/prefix/dbus/org.openheating.ThermometerService.service /usr/share/dbus-1/system-services/
+   # cp /some/prefix/share/systemd/openheating-*.service /etc/systemd/system
 
 Configure system DBus to allow us in, ::
 
@@ -34,5 +28,10 @@ Configure system DBus to allow us in, ::
 
 Start necessary services, ::
 
+   # systemctl enable openheating-errors.service
+   # systemctl enable openheating-thermometers.service
    # systemctl enable openheating-http.service
+
+   # systemctl start openheating-errors.service
+   # systemctl start openheating-thermometers.service
    # systemctl start openheating-http.service

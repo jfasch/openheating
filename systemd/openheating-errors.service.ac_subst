@@ -1,0 +1,12 @@
+[Unit]
+Description=Openheating Error Service
+
+[Service]
+User=openheating
+Environment=PYTHONPATH=${libdir}
+ExecStart=${bindir}/openheating.py --system
+Type=dbus
+BusName=org.openheating.Errors
+
+[Install]
+WantedBy=multi-user.target
