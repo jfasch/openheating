@@ -4,7 +4,7 @@ Description=Openheating Error Service
 [Service]
 User=openheating
 Environment=PYTHONPATH=${libdir}
-ExecStart=${bindir}/openheating.py --system
+ExecStart=${bindir}/openheating-errors.py --system
 Type=dbus
 BusName=org.openheating.Errors
 
