@@ -14,10 +14,11 @@ class ThermometerCenter_Client:
             path='/',
             iface=interface_repo.THERMOMETERCENTER)
 
+    @node.maperror
     def all_names(self):
         return self.__iface.all_names()
 
-
+    @node.maperror
     def get_thermometer(self, name):
         return Thermometer_Client(
             proxy=self.__get_object_iface(
@@ -25,6 +26,7 @@ class ThermometerCenter_Client:
                 path='/thermometers/'+name, 
                 iface=interface_repo.THERMOMETER))
 
+    @node.maperror
     def get_history(self, name):
         return TemperatureHistory_Client(
             proxy=self.__get_object_iface(

@@ -15,8 +15,10 @@ import json
 class Errors_Client:
     def __init__(self, bus):
         self.__iface = bus.get(names.Bus.ERRORS, '/')[interface_repo.ERRORS]
+    @node.maperror
     def num_errors(self):
         return self.__iface.num_errors()
+    @node.maperror
     def get_errors(self):
         return [node.DBusHeatingError.from_json(js) for js in self.__iface.get_errors()]
 

@@ -12,6 +12,7 @@ from . import interface_repo
 
 from ..base.error import HeatingError
 
+import gi.repository
 import pydbus.generic
 
 import xml.etree.ElementTree as ET
@@ -39,9 +40,10 @@ class DBusHeatingError(HeatingError):
       object for the name of its type, type(e).__name__. See
       pydbus.registration.ObjectWrapper.call_method() for details.
 
-    * at the client, when that sees a dbus ERROR, it call the
-      registered class ctor on the (json) string, converting it back
-      to a native DBusHeatingError. which is then thrown at the user.
+    * at the client, the converted errors arrive as the type we gave
+      it on the server side (org.openheating.HeatingError). only the
+      str argument has been mangled on its way - use the @maperror
+      decorator below to solve that particular weirdness.
 
     '''
     def __init__(self, details):
@@ -69,6 +71,22 @@ class DBusHeatingError(HeatingError):
 # on receipt of a server object exception, pydbus translates 
 DBusHeatingError.__name__ = names.HEATINGERROR
 assert DBusHeatingError.__name__ == names.HEATINGERROR
+
+
+def maperror(func):
+    '''Decorator for client objects methods, mapping 
+
+    '''
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except gi.repository.GLib.GError as e:
+            pat = 'GDBus.Error:org.openheating.HeatingError: '
+            assert e.message.find(pat) == 0
+            js = e.message[len(pat):]
+            raise HeatingError(details=json.loads(js))
+    return wrapped
 
 
 class Definition:
