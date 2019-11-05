@@ -1,14 +1,16 @@
+.. contents:: Table of Contents
+
 OpenHeating: Open Source Heating Control System
 ===============================================
 
 An open source heating system that is being developed to solve my
 particular needs,
 
-* Be able to have two _alternative heat sources_, _Oil_ and _Wood_.
-* _Switch between them automatically_; for example when somebody
+* Be able to have two *alternative heat sources*, *Oil* and *Wood*.
+* *Switch between them automatically*; for example when somebody
   lights the wood stove, the oil burner must be taken down gracefully
   (heat it up to its limit one last time, and reap the hot water).
-* _Configuration_ ("I want the heat to start coming at four in the
+* *Configuration* ("I want the heat to start coming at four in the
   morning so it's comfy at six when I get up") need not be better than
   in the current off-the-shelf system. It cannot not be done worse, so
   the first shot will be a config file that is edited with emacs. It
@@ -45,18 +47,21 @@ can), and only when there's nobody at home the oil is on.
 So far so good. Should be easy to control.
 
 * Two heat sources
+
   * Oil (fully automatic)
   * Wood (manual firing, in the living room). Wood currently dominates
     oil in a brutal way, in that a bi-metal temperature switch disbles
     oil burning abruptly when wood is coming.
+
 * Two heat sinks
+
   * Water; a 1000l buffer, where potable water is exchanged through
   * Radiators across the house, in a single circuit
 
 Rant
 ----
 
-_But no:_ When I take a step back and look at the workarounds in our
+*But no:* When I take a step back and look at the workarounds in our
 heating system, I can see that software is harder than hardware. It is
 common knowledge among plumbers how to install a wood oven alongside
 an oil burner, without touching the existing heating control.
@@ -78,8 +83,9 @@ place; I do not update written material regularly):
 * Sensors all over the place, fancy histograms on a web page.
 * Switch pumps on and off, based upon temperatures in the heat source
   and heat sink.
-* A combined heat source which _contains_ oil and wood, and acts as
-  one single heat source to the rest of the system.
+* A combined heat source which *contains* oil and wood (yay
+  overengineering), and acts as one single heat source to the rest of
+  the system.
 * Inside that combined heat source, one mixer valve that adjusts its
   position according to the respective temperatures of oil and wood.
 * Ah yes, error management (in fact, I started with that).
@@ -95,6 +101,7 @@ Inner Beauty
   <https://www.kernel.org/doc/Documentation/gpio/sysfs.txt>`__ (which
   is deprecated), but rather with the newer `gpiod
   <https://github.com/brgl/libgpiod/blob/master/README>`__.
+* Web done with `flask <https://palletsprojects.com/p/flask/>`__.
 
 Documentation
 -------------
@@ -102,6 +109,6 @@ Documentation
 The state of documentation is a drama. Ok, the thing is in the works,
 but documentation will always be a drama. 
 
-* For my own purposes, I maintain an installation document, see
-  :doc:`doc/install.rst`.
-* Same with the todo list, :doc:`doc/todo.rst`.
+* For my own purposes, I maintain an `installation document
+  <doc/install.html>`__.
+* Same with the `todo list <doc/todo.rst>`_.
