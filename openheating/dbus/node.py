@@ -1,9 +1,18 @@
+'''Tools to map regular python classes onto dbus.
+
+* @Definition: class decorator to create a dbus server object.
+
+* DBusHeatingError: pydbus has a brutal way of translating server
+  object exceptions onto dbus.
+
+'''
+
 from . import names
 from . import interface_repo
 
 from ..base.error import HeatingError
 
-import pydbus.error
+import pydbus.generic
 
 import xml.etree.ElementTree as ET
 import traceback
@@ -20,10 +29,15 @@ class DBusHeatingError(HeatingError):
     converting native HeatingError exceptions into a DBusHeatingError.
 
     DBusHeatingError then collaborates with pydbus and brings the
-    error across the bus:
+    error across the bus. Btw, dbus exception returne consist of the
+    exception type (a string) and any number of arguments (I believe),
+    of which pydbus only uses one, a string.
 
-    * on occurence (a server method throws), pydbus calls str() on it
-      to build the dbus ERROR argument (dbus string).
+    * Server: on exception occurence (a server method throws), pydbus
+      calls str() on it to build the dbus ERROR argument (dbus
+      string). As for the exception type, pydbus asks the exception
+      object for the name of its type, type(e).__name__. See
+      pydbus.registration.ObjectWrapper.call_method() for details.
 
     * at the client, when that sees a dbus ERROR, it call the
       registered class ctor on the (json) string, converting it back
@@ -52,9 +66,9 @@ class DBusHeatingError(HeatingError):
         details = json.loads(js)
         return DBusHeatingError(details=details)
 
-# map, pydbus-wise, HeatingError exceptions to their dbus error
-# counterpart.
-pydbus.error.error_registration.map_error(DBusHeatingError, names.HEATINGERROR)
+# on receipt of a server object exception, pydbus translates 
+DBusHeatingError.__name__ = names.HEATINGERROR
+assert DBusHeatingError.__name__ == names.HEATINGERROR
 
 
 class Definition:
@@ -136,7 +150,7 @@ class Definition:
     Reception
     .........
 
-    jjj tbd implement first
+    tbd implement first
 
     '''
 
