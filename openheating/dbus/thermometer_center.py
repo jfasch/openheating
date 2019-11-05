@@ -36,7 +36,7 @@ class ThermometerCenter_Client:
 
     def __get_object_iface(self, busname, path, iface):
         return self.__bus.get(busname, path)[iface]
-    
+
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETERCENTER))
 class ThermometerCenter_Server:
@@ -44,4 +44,4 @@ class ThermometerCenter_Server:
         self.__thermometers = thermometers
 
     def all_names(self):
-        return self.__thermometers.keys()
+        return list(self.__thermometers.keys())

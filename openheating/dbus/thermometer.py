@@ -88,7 +88,7 @@ class Thermometer_Server:
         return self.__current_temperature
 
     def distill(self, granularity, duration):
-        return self.__history.distill(granularity=granularity, duration=duration)
+        return list(self.__history.distill(granularity=granularity, duration=duration))
 
     def __schedule_update(self):
         # submit work to the background thread, *not* waiting for the

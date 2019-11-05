@@ -68,24 +68,31 @@ class DBusHeatingError(HeatingError):
         details = json.loads(js)
         return DBusHeatingError(details=details)
 
-# on receipt of a server object exception, pydbus translates 
+# on receipt of a server object exception, pydbus sends the native
+# exception type's name as the dbus exception type. monkey patch that.
 DBusHeatingError.__name__ = names.HEATINGERROR
 assert DBusHeatingError.__name__ == names.HEATINGERROR
 
 
 def maperror(func):
-    '''Decorator for client objects methods, mapping 
+    '''Decorator for client objects methods, mapping the gdbus error back
+    into its original HeatingError form.
 
     '''
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
+        glib_message = None
         try:
             return func(*args, **kwargs)
         except gi.repository.GLib.GError as e:
+            glib_message = e.message
+
+        if glib_message is not None:
             pat = 'GDBus.Error:org.openheating.HeatingError: '
-            assert e.message.find(pat) == 0
-            js = e.message[len(pat):]
+            assert glib_message.find(pat) == 0, pat
+            js = glib_message[len(pat):]
             raise HeatingError(details=json.loads(js))
+
     return wrapped
 
 

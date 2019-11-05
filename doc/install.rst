@@ -23,7 +23,7 @@ Install systemd unit files, ::
 
 Configure system DBus to allow us in, ::
 
-   # cp /some/prefix/share/systemd/org.openheating.conf /etc/dbus-1/system.d/
+   # cp /some/prefix/share/dbus/org.openheating.conf /etc/dbus-1/system.d/
    # systemctl reload dbus
 
 Start necessary services, ::
