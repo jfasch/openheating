@@ -15,7 +15,7 @@ def find_project_root():
     start = root = os.getcwd()
     while root != '/':
         if os.path.isfile(root + '/setup.py') and \
-           os.path.isfile(root + '/README.md'):
+           os.path.isfile(root + '/README.rst'):
             return root
         root = os.path.normpath(os.path.join(root, '..'))
     else:
