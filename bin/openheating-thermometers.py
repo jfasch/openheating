@@ -18,8 +18,7 @@ import sys
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
-config_group = parser.add_mutually_exclusive_group(required=True)
-config_group.add_argument('--pyconfigfile', help='Thermometer configuration file (python)')
+parser.add_argument('--pyconfigfile', help='Thermometer configuration file (python)')
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
