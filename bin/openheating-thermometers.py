@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from openheating.base import thermometers_conf
+from openheating.base import thermometers_pyconf
 from openheating.base.history import History
 from openheating.base import logutil
 from openheating.dbus import dbusutil
@@ -19,7 +19,6 @@ import sys
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 config_group = parser.add_mutually_exclusive_group(required=True)
-config_group.add_argument('--configfile', help='Thermometer configuration file (.ini style)')
 config_group.add_argument('--pyconfigfile', help='Thermometer configuration file (python)')
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
@@ -27,9 +26,8 @@ args = parser.parse_args()
 
 logutil.configure_from_argparse(args)
 
-conffile, read = args.configfile and (args.configfile, thermometers_conf.read_ini) or (args.pyconfigfile, thermometers_conf.read_pyconf)
-with open(conffile) as f:
-    thermometers = read(f)
+with open(args.pyconfigfile) as f:
+    thermometers = thermometers_pyconf.read(f)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 

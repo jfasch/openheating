@@ -15,7 +15,7 @@ Create `openheating` user, ::
 Create and fill `/etc/openheating/`, ::
 
    # mkdir /etc/openheating
-   # cp /some/prefix/share/installations/faschingbauer/thermometers.ini /etc/openheating/
+   # cp /some/prefix/share/installations/faschingbauer/thermometers.pyconf /etc/openheating/
 
 Install systemd unit files, ::
 

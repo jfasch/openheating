@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
-from openheating.w1 import available_thermometers, W1Thermometer
-from openheating.thermometers_ini import read_file
+from openheating.base.w1 import available_thermometers, W1Thermometer
+from openheating.base import thermometers_pyconf
 
 import argparse
 import sys
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: discover One-Wire temperature sensors')
-parser.add_argument('--configfile', help='Thermometer configuration file', default=None)
+parser.add_argument('--pyconfigfile', help='Thermometer configuration file (python)', default=None)
 parser.add_argument('--read-temperature', help='Display values of discovered sensors', action='store_true')
 parser.add_argument('--unconfigured-only', help='Display only sensors not found in the config', action='store_true')
 args = parser.parse_args()
@@ -18,8 +18,9 @@ if args.unconfigured_only and not args.configfile:
     sys.exit(1)
 
 conf = {}
-if args.configfile:
-    conf = read_file(args.configfile)
+if args.pyconfigfile:
+    with open(args.pyconfigfile) as f:
+        conf = thermometers_pyconf.read(f)
 
 def print_sensor(path, id, name, description, temperature):
     print(path)

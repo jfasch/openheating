@@ -4,7 +4,7 @@ Description=Openheating Thermometer Service
 [Service]
 User=openheating
 Environment=PYTHONPATH=${libdir}
-ExecStart=${bindir}/openheating-thermometers.py --system --configfile=/etc/openheating/thermometers.ini
+ExecStart=${bindir}/openheating-thermometers.py --system --pyconfigfile=/etc/openheating/thermometers.pyconf
 Type=dbus
 BusName=org.openheating.Thermometers
 

@@ -1,0 +1,21 @@
+# -*- python -*-
+
+from openheating.base.w1 import W1Thermometer
+
+THERMOMETERS['Raum'] = W1Thermometer('Raum', 'Raum', '/sys/bus/w1/devices/28-02131dc603aa')
+
+THERMOMETERS['SpeicherOben'] = W1Thermometer('SpeicherOben', 'Speicher Oben', '/sys/bus/w1/devices/28-011432f138f9')
+THERMOMETERS['SpeicherMitte'] = W1Thermometer('SpeicherMitte', 'Speicher Mitte', '/sys/bus/w1/devices/28-01131676b23f')
+THERMOMETERS['SpeicherUnten'] = W1Thermometer('SpeicherUnten', 'Speicher Unten', '/sys/bus/w1/devices/28-02131df83daa')
+THERMOMETERS['RuecklaufSolar'] = W1Thermometer('RuecklaufSolar', 'Ruecklauf Solar', '/sys/bus/w1/devices/28-02131d96bbaa')
+THERMOMETERS['VorlaufSolar'] = W1Thermometer('VorlaufSolar', 'Vorlauf Solar', '/sys/bus/w1/devices/28-02131d959eaa')
+
+THERMOMETERS['Oelbrenner'] = W1Thermometer('Oelbrenner', 'Oelbrenner', '/sys/bus/w1/devices/28-02131d676baa')
+
+THERMOMETERS['Holzbrenner'] = W1Thermometer('Holzbrenner', 'Holzbrenner', '/sys/bus/w1/devices/28-01131676d067')
+THERMOMETERS['RuecklaufHolz'] = W1Thermometer('RuecklaufHolz', 'Ruecklauf Holz', '/sys/bus/w1/devices/28-02131d9fdfaa')
+THERMOMETERS['VorlaufHolz'] = W1Thermometer('VorlaufHolz', 'Vorlauf Holz', '/sys/bus/w1/devices/28-02131dfd21aa')
+
+THERMOMETERS['VorlaufHeizkreis'] = W1Thermometer('VorlaufHeizkreis', 'Vorlauf Heizkreis', '/sys/bus/w1/devices/28-02131dace9aa')
+THERMOMETERS['VorlaufWarmwasser'] = W1Thermometer('VorlaufWarmwasser', 'Vorlauf Warmwasser', '/sys/bus/w1/devices/28-02131d9920aa')
+

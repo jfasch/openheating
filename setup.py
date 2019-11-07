@@ -116,7 +116,7 @@ setup(
 
         ('share/installations/faschingbauer',
          [
-             'installations/faschingbauer/thermometers.ini',
+             'installations/faschingbauer/thermometers.pyconf',
          ]
         ),
 

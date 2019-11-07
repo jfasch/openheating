@@ -1,4 +1,4 @@
-from openheating.base import thermometers_conf
+from openheating.base import thermometers_pyconf
 from openheating.base.thermometer import FixedThermometer
 from openheating.base.w1 import W1Thermometer
 from openheating.base.error import BadDBusPathComponent
@@ -9,22 +9,6 @@ import tempfile
 
 
 class ThermometerConfigTest(unittest.TestCase):
-    def test__basic__ini(self):
-        thermometers = thermometers_conf.read_ini(
-            """
-            [Oil]
-            Type = fixed
-            Description = From Hell with Decimal Points
-            Value = 666.666
-
-            [Wood]
-            Type = fixed
-            Description = The Answer with Decimal Points
-            Value = 42.42
-            """
-        )
-        self.__assert_basic__ok(thermometers)
-
     def test__basic__pyconf(self):
         slist = [
             "from openheating.base.thermometer import FixedThermometer",
@@ -32,16 +16,16 @@ class ThermometerConfigTest(unittest.TestCase):
             "THERMOMETERS['Wood'] = FixedThermometer(name='Wood', description='The Answer with Decimal Points', temperature=42.42)",
         ]
 
-        thermometers = thermometers_conf.read_pyconf(slist)
+        thermometers = thermometers_pyconf.read(slist)
         self.__assert_basic__ok(thermometers)
 
-        thermometers = thermometers_conf.read_pyconf('\n'.join(slist))
+        thermometers = thermometers_pyconf.read('\n'.join(slist))
         self.__assert_basic__ok(thermometers)
 
         with tempfile.TemporaryFile() as f:
             f.write('\n'.join(slist).encode(encoding='ascii'))
             f.seek(0)
-            thermometers = thermometers_conf.read_pyconf(f)
+            thermometers = thermometers_pyconf.read(f)
             self.__assert_basic__ok(thermometers)
 
     def __assert_basic__ok(self, thermometers):
@@ -59,24 +43,8 @@ class ThermometerConfigTest(unittest.TestCase):
         self.assertEqual(wood.name, 'Wood')
         self.assertEqual(wood.description, 'The Answer with Decimal Points')
 
-    def test__w1__ini(self):
-        thermometers = thermometers_conf.read_ini(
-            """
-            [Oil]
-            Type = w1
-            Description = Oil Burner
-            Path = /sys/bus/w1/devices/28-02131dace9aa
-
-            [Wood]
-            Type = w1
-            Description = Wood Oven
-            Path = /sys/bus/w1/devices/28-02131dace9ab
-            """
-        )
-        self.__assert_w1__ok(thermometers)
-
     def test__w1__pyconf(self):
-        thermometers = thermometers_conf.read_pyconf([
+        thermometers = thermometers_pyconf.read([
             "from openheating.base.w1 import W1Thermometer",
             "THERMOMETERS['Oil'] = W1Thermometer(",
             "    name='Oil',",
@@ -102,15 +70,8 @@ class ThermometerConfigTest(unittest.TestCase):
         self.assertEqual(wood.name, 'Wood')
         self.assertEqual(wood.description, 'Wood Oven')
 
-    def test__bad_thermometer_name__ini(self):
-        self.assertRaises(BadDBusPathComponent, thermometers_conf.read_ini,
-            """
-            [bad-name]
-            Type = w1
-            """)
-
     def test__bad_thermometer_name__pyconf(self):
-        self.assertRaises(BadDBusPathComponent, thermometers_conf.read_pyconf,
+        self.assertRaises(BadDBusPathComponent, thermometers_pyconf.read,
                           ["from openheating.base.thermometer import FixedThermometer",
                            "THERMOMETERS['bad-name'] = FixedThermometer(name='blah', description='blah', temperature=42)",
                           ])
