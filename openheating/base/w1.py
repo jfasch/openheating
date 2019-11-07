@@ -18,7 +18,7 @@ def available_thermometers():
     for entry in os.listdir(_w1dir):
         try:
             yield W1Thermometer(
-                name='dummy-name',
+                name=entry,
                 description='dummy-description', 
                 path=os.path.join(_w1dir, entry))
         except W1Thermometer.BadPath:
@@ -60,8 +60,7 @@ class W1Thermometer(Thermometer):
         try:
             with open(filename) as w1_slave:
                 lines = w1_slave.readlines()
-        except IOError:
-            logger.exception('{}: reading file {}'.format(self.name, filename))
+        except (FileNotFoundError, IOError):
             raise W1ReadError(name=self.name, filename=filename)
 
         temperature = None
