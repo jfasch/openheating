@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description='OpenHeating: discover One-Wire tem
 parser.add_argument('--pyconfigfile', help='Thermometer configuration file (python)', default=None)
 parser.add_argument('--read-temperature', help='Display values of discovered sensors', action='store_true')
 which = parser.add_mutually_exclusive_group(required=True)
-which.add_argument('--all', action='store_true', help='List all One-Wire thermometers in the system')
+which.add_argument('--available', action='store_true', help='List physically One-Wire thermometers in the system')
 which.add_argument('--configured', action='store_true', help='List only One-Wire thermometers that are found in the config')
 which.add_argument('--unconfigured', action='store_true', help='List only One-Wire thermometers that are not found in the config')
 args = parser.parse_args()
@@ -22,10 +22,6 @@ if (args.configured or args.unconfigured) and not args.pyconfigfile:
 
 def print_thermometers(thermometers):
     for th in thermometers:
-        print('*'*3)
-        print('Name:', th.name)
-        print('Description:', th.description)
-        print('Path:', th.path)
         if args.read_temperature:
             try:
                 temp = th.get_temperature()
@@ -34,6 +30,11 @@ def print_thermometers(thermometers):
                 stemp = 'ERROR'
             except Exception as e:
                 stemp = str(e)
+        print('*'*3)
+        print('Name:', th.name)
+        print('Description:', th.description)
+        print('Path:', th.path)
+        if args.read_temperature:
             print('Temperature:', stemp)
 
 configured_thermometers = []
@@ -56,7 +57,7 @@ for avth in available_thermometers:
 available_thermometers = new_available_thermometers
 
 
-if args.all:
+if args.available:
     print_thermometers(available_thermometers)
 elif args.configured:
     print_thermometers(configured_thermometers)

@@ -13,7 +13,7 @@ THERMOMETERS['VorlaufSolar'] = W1Thermometer('VorlaufSolar', 'Vorlauf Solar', '/
 THERMOMETERS['Oelbrenner'] = W1Thermometer('Oelbrenner', 'Oelbrenner', '/sys/bus/w1/devices/28-02131d676baa')
 
 THERMOMETERS['Holzbrenner'] = W1Thermometer('Holzbrenner', 'Holzbrenner', '/sys/bus/w1/devices/28-01131676d067')
-THERMOMETERS['RuecklaufHolz'] = W1Thermometer('RuecklaufHolz', 'Ruecklauf Holz', '/sys/bus/w1/devices/28-02131d9fdfaa')
+THERMOMETERS['RuecklaufHolz'] = W1Thermometer('RuecklaufHolz', 'Ruecklauf Holz', '/sys/bus/w1/devices/28-011432772cf9')
 THERMOMETERS['VorlaufHolz'] = W1Thermometer('VorlaufHolz', 'Vorlauf Holz', '/sys/bus/w1/devices/28-02131dfd21aa')
 
 THERMOMETERS['VorlaufHeizkreis'] = W1Thermometer('VorlaufHeizkreis', 'Vorlauf Heizkreis', '/sys/bus/w1/devices/28-02131dace9aa')
