@@ -22,7 +22,7 @@ def find_project_root():
         raise HeatingError('cannot find project root (started at {})'.format(start))
     
 def find_executable(exe):
-    '''Say exe=='openheating-blah.py', then this will return
+    '''Say exe='openheating-blah.py', then this will return
     '/project/root/bin/openheating-blah.py'.'''
 
     root = find_project_root()

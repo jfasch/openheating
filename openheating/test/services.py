@@ -170,24 +170,18 @@ class _ServiceWrapper:
         _, stderr = self.__process.communicate()
 
         # wait for busname to disappear
-        for _ in range(10):
-            completed_process = subprocess.run(
-                ['gdbus', 'call', '--session', '--dest', 'org.freedesktop.DBus',
-                 '--object-path', '/org/freedesktop/DBus', '--method', 'org.freedesktop.DBus.ListNames'],
-                stdout=subprocess.PIPE,
-                check=True,
-            )
-            names = eval(completed_process.stdout)
-            
-            if self.__busname in names:
-                time.sleep(0.5)
-                continue
+        with pydbus.SessionBus() as bus:
+            proxy = bus.get('org.freedesktop.DBus', '/org/freedesktop/DBus')['org.freedesktop.DBus']
+            for _ in range(10):
+                if self.__busname in proxy.ListNames():
+                    time.sleep(0.5)
+                    continue
+                else:
+                    break
             else:
-                break
-        else:
-            # hmm. process has terminated? name still taken?
-            self.fail('{busname} still on the bus after "{cmdline}" has exited (?)'.format(
-                busname=self.__busname, cmdline=' '.join(self.__argv)))
+                # hmm. process has terminated? name still taken?
+                self.fail('{busname} still on the bus after "{cmdline}" has exited (?)'.format(
+                    busname=self.__busname, cmdline=' '.join(self.__argv)))
 
         if self.__process.returncode != 0:
             raise HeatingError('stop: name {busname} exited with status {status}, '
