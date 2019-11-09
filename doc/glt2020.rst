@@ -1,0 +1,15 @@
+* Intro
+
+  * Why another heating system?
+
+    Pictures of oil burner, wood stove, valve switch, and bloody
+    off-the-shelf heating control.
+
+  * Overview of "technologies" used
+
+    * {lib,}gpiod (vs. deprecated (why?) sysfs)
+    * systemd
+    * D-Bus, pydbus
+    * ah yes, Python (why not asyncio?)
+    * Sensors: DS18x20
+
