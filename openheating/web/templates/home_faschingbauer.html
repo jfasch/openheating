@@ -7,39 +7,8 @@
 
 <div class="faschingbauer_home_charts">
 
-  <div id="faschingbauer_home_charts__solar" width="200" height="100"></div>
-  <div id="faschingbauer_home_charts__oel" width="200" height="100"></div>
-  <div id="faschingbauer_home_charts__holz" width="200" height="100"></div>
-  <div id="faschingbauer_home_charts__kreise" width="200" height="100"></div>
-
-  {% for gname, group in (('solar', solar), ('oel', oel), ('holz', holz), ('kreise', kreise)) %}
-  <script>
-
-    var layout = {
-	yaxis: {range: [0, 150]}
-    }
-    var data = []
-    
-    {% for thname, history in group.items() %}
-    data.push({
-	name: "{{thname}}",
-	x: [
-	    {% for timestamp, _ in history %}
-	    "{{timestamp}}",
-	    {% endfor %}
-	],
-	y: [
-	    {% for _, temperature in history %}
-	    "{{temperature}}",
-	    {% endfor %}
-	],
-	type: "scatter",
-    })
-    {% endfor %}
-
-    Plotly.newPlot("faschingbauer_home_charts__{{gname}}", data, layout)
-
-  </script>
+  {% for svg in charts %}
+  {{svg}}
   {% endfor %}
 
 </div>

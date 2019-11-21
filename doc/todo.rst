@@ -1,6 +1,14 @@
 Stack (Hanging)
 ===============
 
+* use matplotlib in home_faschingbuaer
+
+  * context manager for all those bullshit global matlabisms
+  * search for jjj
+
+Todo
+====
+
 * controlling pumps. better name required. transport(from,
   to).{de,}activate() or something.
 
@@ -57,9 +65,14 @@ Stack (Hanging)
     * nice opportunity for a new testcase helper, inject_timed()
       whatever.
 
-Todo
-====
-
 * beer spin off
 * home_faschingbauer web crap
 * error managers
+* test setups
+
+  * record temperatures in live system
+  * replay in simulation, incl. fast forward
+
+    * convert inexactly spaced timestamps into accurately spaced
+      per-second timestamps (just because we have numpy arrays and
+      scipy splice interpolation)

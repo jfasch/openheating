@@ -88,6 +88,8 @@ def maperror(func):
             glib_message = e.message
 
         if glib_message is not None:
+            # this is a gdbus implementation detail. we rely upon it,
+            # so this probably needs some tuning.
             pat = 'GDBus.Error:org.openheating.HeatingError: '
             assert glib_message.find(pat) == 0, pat
             js = glib_message[len(pat):]

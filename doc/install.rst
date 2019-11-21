@@ -31,6 +31,13 @@ Flask
 
    # pip3 install --system flask
 
+Gradients, Interpolation, Graphs
+--------------------------------
+
+:: 
+
+   # pip3 install --system numpy scipy matplotlib
+
 GPIO: libgpiod
 ..............
 
