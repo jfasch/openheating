@@ -4,7 +4,7 @@ from openheating.base import logutil
 from openheating.base.error import HeatingError
 from openheating.dbus import dbusutil
 
-from openheating.web.default_app import DefaultApp
+from openheating.web.faschingbauer_app import FaschingbauerApp
 from openheating.web import instance
 
 from systemd.daemon import notify as sd_notify
@@ -22,7 +22,7 @@ parser.add_argument('--static', default='./static', help='static/ directory (def
 args = parser.parse_args()
 
 logutil.configure_from_argparse(args)
-instance.app = DefaultApp(
+instance.app = FaschingbauerApp(
     flask_args = {
         'template_folder': args.templates,
         'static_folder': args.static,

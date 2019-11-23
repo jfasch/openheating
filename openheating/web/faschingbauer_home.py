@@ -1,11 +1,4 @@
-from .history_utils import make_histogram_input__full_label
 from .instance import app
-
-import flask
-import numpy
-from scipy import interpolate
-
-import datetime
 
 
 _thermometer_names = (
@@ -27,8 +20,8 @@ _thermometer_names = (
 )
 
 @app.flask.route('/')
-def home_faschingbauer():
+def home():
     return app.render_template(
-        'home_faschingbauer.html',
+        'faschingbauer_home.html',
         thermometers = _thermometer_names,
     )
