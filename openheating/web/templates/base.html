@@ -8,20 +8,30 @@
       font-family: Helvetica;
     }
 
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      width: 10%;
+      position: fixed;
+      height: 100%;
+    }
+    /* menu; https://www.youtube.com/watch?v=3MSOHCDTxdw */
     header nav ul {
       list-style-type: none;
     }
-    header nav ul li {
-      font-size: 2em;
-      text-transform: uppercase;
-      display: inline-block;
-      background-color: lawngreen;
-      border-radius: 10px;
-      margin-left: 20px;
-      width: 30%;
+    header nav ul li:hover {
+      transform: translate(10%,0);
     }
-    header nav ul li:first-child {
-      margin-left: 0;
+    header div#info {
+      float: below;
+    }
+
+    section#main {
+      float: right;
+      width: 90%;
     }
 
 
@@ -46,21 +56,26 @@
     <nav>
       <ul>
 	{% for entry in menu.entries %}
-	<li><a href={{entry.url}}>{{entry.altname}}</a></li>
+	<li>    
+	  <a href="{{entry.url}}">
+    	    <img src="{{entry.image_url}}" alt="{{entry.alt}}"/>
+          </a>
+	</li>
 	{% endfor %}
       </ul>
     </nav>
+
+    <div id="info">
+      <ul>
+	<li><a href="{{url_for('errors', name='Errors')}}">{{app.errors_client.num_errors()}} Errors</a></li>
+      </ul>
+    </div>
+
   </header>
 
   <section id="main">
     {% block main %}{% endblock %}
   </section>
-
-  <footer>
-    <p>Logged in from {{request.remote_addr}}</p>
-    <p><a href="{{url_for('errors', name='Errors')}}">{{app.errors_client.num_errors()}} Errors</a></p>
-    {% block footer %}{% endblock %}
-  </footer>
 
 </body>
 

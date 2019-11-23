@@ -33,9 +33,21 @@ class FaschingbauerApp:
 
     def render_template(self, template, **kwargs):
         fmenu = menu.Menu(entries=(
-            menu.Entry(altname='Home', url=flask.url_for('home')),
-            menu.Entry(altname='Thermometers', url=flask.url_for('thermometers')),
-            menu.Entry(altname='Errors', url=flask.url_for('errors')),
+            menu.Entry(
+                url=flask.url_for('home'),
+                image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_home.svg'),
+                alt='Home',
+            ),
+            menu.Entry(
+                url=flask.url_for('thermometers'),
+                image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_ics_thermometer.svg'),
+                alt='Thermometers',
+            ),
+            menu.Entry(
+                url=flask.url_for('errors'),
+                image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_warning.svg'),
+                alt='Errors',
+            ),
         ))
         return flask.render_template(
             template,

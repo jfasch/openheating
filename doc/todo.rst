@@ -11,17 +11,6 @@ Stack (Hanging)
 
 * create routes for svg/chart helpers, and embed those in pages
 
-* menu vertical left, icons
-
-* Icons
-
-  * https://medium.com/@101/the-best-free-icon-packs-26f36ddd732e
-
-* https://github.com/google/material-design-icons
-
-  * https://google.github.io/material-design-icons/ -> download
-  * create reference somwewhere html info section
-
 Todo
 ====
 
