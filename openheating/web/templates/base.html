@@ -45,8 +45,8 @@
   <header>
     <nav>
       <ul>
-	{% for link, name in menu %}
-	<li><a href={{link}}>{{name}}</a></li>
+	{% for entry in menu.entries %}
+	<li><a href={{entry.url}}>{{entry.altname}}</a></li>
 	{% endfor %}
       </ul>
     </nav>

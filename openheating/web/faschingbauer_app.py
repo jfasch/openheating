@@ -1,3 +1,5 @@
+from . import menu
+
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus.errors import Errors_Client
 
@@ -30,13 +32,13 @@ class FaschingbauerApp:
         self.flask.run(*args, **kwargs)
 
     def render_template(self, template, **kwargs):
-        menu =  [
-            (flask.url_for('home'), 'Home'),
-            (flask.url_for('thermometers'), 'Thermometers'),
-            (flask.url_for('errors'), 'Errors'),
-        ]
+        fmenu = menu.Menu(entries=(
+            menu.Entry(altname='Home', url=flask.url_for('home')),
+            menu.Entry(altname='Thermometers', url=flask.url_for('thermometers')),
+            menu.Entry(altname='Errors', url=flask.url_for('errors')),
+        ))
         return flask.render_template(
             template,
             app = self,
-            menu = menu,
+            menu = fmenu,
             **kwargs)
