@@ -1,10 +1,26 @@
 Stack (Hanging)
 ===============
 
-* use matplotlib in home_faschingbuaer
+* charts: get rid of javascript braindamage
 
-  * context manager for all those bullshit global matlabisms
-  * search for jjj
+  * loose ends
+  
+    * mplutil: context manager for all those bullshit global matlabisms
+    * mplutil: unify plot reaping
+    * search for jjj
+
+* create routes for svg/chart helpers, and embed those in pages
+
+* menu vertical left, icons
+
+* Icons
+
+  * https://medium.com/@101/the-best-free-icon-packs-26f36ddd732e
+
+* https://github.com/google/material-design-icons
+
+  * https://google.github.io/material-design-icons/ -> download
+  * create reference somwewhere html info section
 
 Todo
 ====
@@ -67,6 +83,7 @@ Todo
 
 * beer spin off
 * home_faschingbauer web crap
+* remove need for app.setup(), import in run(), makes no difference.
 * error managers
 * test setups
 

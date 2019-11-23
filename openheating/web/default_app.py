@@ -21,6 +21,7 @@ class DefaultApp:
 
     def setup(self):
         from . import home_faschingbauer
+        from . import svg
         from . import thermometers
         from . import thermometer
         from . import errors
