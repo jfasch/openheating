@@ -2,80 +2,73 @@ from .instance import app
 from ..base import mplutil
 
 import flask
+import numpy
+from scipy import interpolate
 
 import datetime
 
 
-@app.flask.route('/svg/thermometer/<name>')
-def svg_thermometer(name):
-    # gather raw samples
-    granularity = datetime.timedelta(minutes=30)
-    duration = datetime.timedelta(days=1)
+_one_day_s = int(datetime.timedelta(days=1).total_seconds())
+_half_an_hour_s = int(datetime.timedelta(minutes=30).total_seconds())
 
-    samples = app.thermometer_histories[name].distill(
-        granularity=granularity,
-        duration=duration)
-    assert len(samples) > 0
+@app.flask.route('/charts/temperature.svg', methods=('GET',))
+def temperature_chart():
+    names = flask.request.args.get('names')
+    xsize = flask.request.args.get('xsize', type=float, default=15)
+    ysize = flask.request.args.get('ysize', type=float, default=5)
+    duration = flask.request.args.get('duration', type=int, default=_one_day_s)
+    granularity = flask.request.args.get('granularity', type=int, default=_half_an_hour_s)
 
-    oldest_ts = samples[0][0]
-    youngest_ts = samples[-1][0]
+    # 'names' must be list literal
+    names = eval(names)
 
-    with mplutil.plot(xlim=(oldest_ts, youngest_ts), ylim=(0,100), size_inches=(13,0.7)):
-        mplutil.plot_samples(samples)
-        return flask.send_file(mplutil.as_svg_io(), mimetype='image/svg+xml')
-    
+    # cm->inch
+    xsize /= 2.54
+    ysize /= 2.54
 
+    samples_per_thermometer = []
+    for name in names:
+        samples = app.thermometer_histories[name].distill(
+            granularity=granularity,
+            duration=duration)
+        assert len(samples) > 0
+        samples_per_thermometer.append((name, samples))
 
-# create a group of plots in one figure, spline-interpolating to have
-# uniform time axis
+    # find global oldest and youngest samples
+    youngest_ts = 0 # epoch; very old
+    oldest_ts = datetime.datetime(2500, 1, 1).timestamp() # very young
+    maxnum = 0
+    for _,samples in samples_per_thermometer:
+        if samples[0][0] < oldest_ts:
+            oldest_ts = samples[0][0]
+        if samples[-1][0] > youngest_ts:
+            youngest_ts = samples[-1][0]
+        if len(samples) > maxnum:
+            maxnum = len(samples)
 
-# def _make_svg(title, thermometernames):
-#     all_samples = {} # {thermometername: samples}
+    # spline-interpolate and transform onto same time axis.
+    uniform_timeaxis = numpy.linspace(oldest_ts, youngest_ts, duration/granularity)
+    for _,samples in samples_per_thermometer:
+        if len(samples) <= 3:
+            # splrep() requires me to pass more than 3 if I leave k=3
+            # (the recommended default). While I don't understand how
+            # spline interpolation works, I do accept that it hurts if
+            # I don't play by the rules.
+            continue
+        splinefunc = interpolate.splrep([ts for ts,_ in samples],
+                                        [temp for _,temp in samples])
+        temperatures = interpolate.splev(uniform_timeaxis, splinefunc)
+        samples[:] = list(zip(uniform_timeaxis, temperatures))
 
-#     # gather raw samples
-#     granularity = datetime.timedelta(minutes=10)
-#     duration = datetime.timedelta(days=1)
-#     for name in thermometernames:
-#         samples = app.thermometer_histories[name].distill(granularity=granularity,
-#                                                            duration=duration)
-#         assert len(samples) > 0
-#         all_samples[name] = samples
+    youngest_dt = datetime.datetime.fromtimestamp(youngest_ts)
+    oldest_dt = datetime.datetime.fromtimestamp(oldest_ts)
 
-#     # find global oldest and youngest samples
-#     youngest_ts = 0 # epoch; very old
-#     oldest_ts = datetime.datetime(2500, 1, 1).timestamp() # very young
-#     maxnum = 0
-#     for samples in all_samples.values():
-#         if samples[0][0] < oldest_ts:
-#             oldest_ts = samples[0][0]
-#         if samples[-1][0] > youngest_ts:
-#             youngest_ts = samples[-1][0]
-#         if len(samples) > maxnum:
-#             maxnum = len(samples)
+    do_legend = len(names)>1 and True or False
 
-#     # spline-interpolate and transform onto same time axis.
-#     uniform_timeaxis = numpy.linspace(oldest_ts, youngest_ts, 
-#                                       duration.total_seconds()/granularity.total_seconds())
-#     for samples in all_samples.values():
-#         if len(samples) <= 3:
-#             # splrep() requires me to pass more than 3 if I leave k=3
-#             # (the recommended default). While I don't understand how
-#             # spline interpolation works, I do accept that it hurts if
-#             # I don't play by the rules.
-#             continue
-#         splinefunc = interpolate.splrep([ts for ts,_ in samples],
-#                                         [temp for _,temp in samples])
-#         temperatures = interpolate.splev(uniform_timeaxis, splinefunc)
-#         samples[:] = list(zip(uniform_timeaxis, temperatures))
+    with mplutil.plot(xlim=(oldest_ts, youngest_ts), ylim=(0,100), size_inches=(xsize,ysize)):
+        for name, samples in samples_per_thermometer:
+            mplutil.plot_samples(samples, label=name)
 
-#     youngest_dt = datetime.datetime.fromtimestamp(youngest_ts)
-#     oldest_dt = datetime.datetime.fromtimestamp(oldest_ts)
-
-#     mplutil.new_plot(title=title, 
-#                      xlabel='{} - {}'.format(oldest_dt, youngest_dt), 
-#                      xlim=(oldest_ts, youngest_ts))
-
-#     for name, samples in all_samples.items():
-#         mplutil.plot_samples(samples, label=name)
-
-#     return mplutil.plot_as_embeddable_svg()
+        return flask.send_file(
+            mplutil.as_svg_io(legend=do_legend),
+            mimetype='image/svg+xml')

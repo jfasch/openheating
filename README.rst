@@ -111,4 +111,4 @@ but documentation will always be a drama.
 
 * For my own purposes, I maintain an `installation document
   <doc/install.rst>`__.
-* Same with the `todo list <doc/todo.rst>`_.
+* Same with the `todo list <doc/todo.rst>`__.

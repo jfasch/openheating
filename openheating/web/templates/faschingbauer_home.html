@@ -9,7 +9,11 @@
   <tr>
     <td><b><a href="{{url_for('thermometer', name=name)}}">{{app.thermometers[name].get_description()}}</a></b></td>
     <td>{{app.thermometers[name].get_temperature()}}&#8451;</td>
-    <td><a href="{{url_for('thermometer', name=name)}}"><img src="{{url_for('svg_thermometer', name=name)}}"/></a></td>
+    <td>
+      <a href="{{url_for('thermometer', name=name)}}">
+	<img src="{{url_for('temperature_chart')}}?names=['{{name}}']&xsize=15&ysize=1.2&duration={{duration}}&granularity={{granularity}}"/>
+      </a>
+    </td>
   </tr>
   {% endfor %}
 </table>

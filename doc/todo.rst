@@ -11,6 +11,15 @@ Stack (Hanging)
 
 * create routes for svg/chart helpers, and embed those in pages
 
+  * Flask: GET/POST, Json: https://www.youtube.com/watch?v=hAEJajltHxc
+  * Javascript
+
+    * https://www.youtube.com/watch?v=mNrJDGfQGz0 compose and send off
+      json request
+    * https://www.youtube.com/watch?v=lD1iRp4ewZY ~5:10 onload, ~12:40
+      post
+    * https://www.youtube.com/watch?v=rJesac0_Ftw "JSON and AJAX"
+
 Todo
 ====
 

@@ -73,16 +73,10 @@ def plot_samples(samples, label=None):
 def as_svg_io(legend=True):
     'return io.BytesIO, suitable as input to flask.send_file()'
 
+    if legend:
+        plt.legend()
+    
     data = io.BytesIO()
     plt.savefig(data, format='svg')
     data.seek(0)
     return data
-
-def as_embeddable_svg(legend=True):
-    data = io.StringIO()
-    plt.savefig(data, format='svg')
-
-    # get rid of all the xml gibberish around the bare SVG which we
-    # want to embed.
-    gibberish = data.getvalue()
-    return gibberish[gibberish.index('<svg'):]
