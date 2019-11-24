@@ -1,4 +1,5 @@
 from .instance import app
+from . import svg
 
 import datetime
 
@@ -32,4 +33,5 @@ def home():
         thermometers = _thermometer_names,
         duration = _one_day_s,
         granularity = _half_an_hour_s,
+        svg = svg,
     )

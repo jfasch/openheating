@@ -8,6 +8,35 @@ from scipy import interpolate
 import datetime
 
 
+def url_for_chart(names, xsize=None, ysize=None, duration=None, granularity=None):
+    params = ['names=' + str(names)]
+    if xsize is not None:
+        params.append('xsize={}'.format(xsize))
+    if ysize is not None:
+        params.append('ysize={}'.format(ysize))
+    if duration is not None:
+        try:
+            duration = duration.total_seconds()
+        except AttributeError:
+            pass
+        params.append('duration={}'.format(duration))
+    if granularity is not None:
+        try:
+            granularity = granularity.total_seconds()
+        except AttributeError:
+            pass
+        params.append('granularity={}'.format(granularity))
+
+    url = flask.url_for('temperature_chart')
+    if len(params):
+        url += '?'
+        url += '&'.join(params)
+    return url
+
+
+# we permit defaults for duration and granularity, but only for the
+# purpose of quick testing. it is easier to enter in the browser's url
+# bar when certain values have defaults.
 _one_day_s = int(datetime.timedelta(days=1).total_seconds())
 _half_an_hour_s = int(datetime.timedelta(minutes=30).total_seconds())
 
@@ -18,6 +47,8 @@ def temperature_chart():
     ysize = flask.request.args.get('ysize', type=float, default=5)
     duration = flask.request.args.get('duration', type=int, default=_one_day_s)
     granularity = flask.request.args.get('granularity', type=int, default=_half_an_hour_s)
+
+    print(flask.request.url)
 
     # 'names' must be list literal
     names = eval(names)

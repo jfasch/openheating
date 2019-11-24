@@ -1,37 +1,3 @@
-{% macro use_plotly() -%}
-<script src="/static/plotly-1.49.4.js"></script>
-{%- endmacro %}
-
-{% macro temperature_histogram_single(samples, element_name) -%}
-
-<script src="/static/plotly-1.49.4.js"></script>
-
-<script>
-
-  var hist = {
-      x: [
-	  {% for timestamp, _ in samples %}
-	  "{{timestamp}}",
-	  {% endfor %}
-      ],
-      y: [
-	  {% for _, temperature in samples %}
-	  "{{temperature}}",
-	  {% endfor %}
-      ],
-      type: "scatter",
-  }
-  layout = {
-      yaxis: {range: [0, 100]}
-  }
-
-  Plotly.newPlot("{{element_name}}", [hist], layout)
-
-</script>
-
-{%- endmacro %}
-
-
 {% macro temperature_table(samples) -%}
 
 <table>

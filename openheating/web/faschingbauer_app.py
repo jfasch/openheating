@@ -21,6 +21,9 @@ class FaschingbauerApp:
             self.thermometer_histories[name] = self.thermometer_center_client.get_history(name)
         self.errors_client = Errors_Client(dbus_connection)
 
+    def thermometer_names(self):
+        return list(self.thermometers.keys())
+
     def setup(self):
         from . import faschingbauer_home
         from . import svg

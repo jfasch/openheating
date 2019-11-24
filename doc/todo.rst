@@ -3,11 +3,7 @@ Stack (Hanging)
 
 * charts: get rid of javascript braindamage
 
-  * loose ends
-  
-    * mplutil: context manager for all those bullshit global matlabisms
-    * mplutil: unify plot reaping
-    * search for jjj
+  * pass datetime and svg modules in base render routine
 
 * create routes for svg/chart helpers, and embed those in pages
 

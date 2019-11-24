@@ -11,7 +11,7 @@
     <td>{{app.thermometers[name].get_temperature()}}&#8451;</td>
     <td>
       <a href="{{url_for('thermometer', name=name)}}">
-	<img src="{{url_for('temperature_chart')}}?names=['{{name}}']&xsize=15&ysize=1.2&duration={{duration}}&granularity={{granularity}}"/>
+	<img src="{{svg.url_for_chart(names=[name], xsize=15, ysize=1.2, duration=duration, granularity=granularity)}}"/>
       </a>
     </td>
   </tr>

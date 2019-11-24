@@ -4,30 +4,32 @@
 
 {% from 'history_macros.html' import temperature_histogram_single, temperature_table %}
 
-<h2>Thermometer {{thermometer.get_name()}}</h2>
+<h2>Thermometer {{name}}</h2>
 
-<p>Current temperature: {{thermometer.get_temperature()}} </p>
+<p>Current temperature: {{app.thermometers[name].get_temperature()}} </p>
 
-<h3>Day ({{day_samples|length}} samples)</h3>
-<div id="day_chart" width="600" height="100"></div>
-{{temperature_histogram_single(samples=day_samples, element_name='day_chart')}}
+<h3>Day</h3>
+<img src="{{svg.url_for_chart(
+	  names=[name], 
+	  xsize=30, ysize=5, 
+	  duration=datetime.timedelta(days=1).total_seconds(),
+	  granularity=datetime.timedelta(seconds=30).total_seconds(),
+	  )}}"/>
 
-<h3>Hour ({{hour_samples|length}} samples)</h3>
-<div id="hour_chart" width="600" height="100"></div>
-{{temperature_histogram_single(samples=hour_samples, element_name='hour_chart')}}
+<h3>Hour</h3>
+<img src="{{svg.url_for_chart(
+	  names=[name], 
+	  xsize=30, ysize=5, 
+	  duration=datetime.timedelta(hours=1).total_seconds(),
+	  granularity=datetime.timedelta(minutes=1).total_seconds(),
+	  )}}"/>
 
-<h3>Short Term ({{decision_samples|length}} samples)</h3>
-<div id="decision_chart" width="600" height="100"></div>
-{{temperature_histogram_single(samples=decision_samples, element_name='decision_chart')}}
-
-
-<h3>Day ({{day_samples|length}} samples)</h3>
-{{temperature_table(samples=day_samples)}}
-
-<h3>Hour ({{hour_samples|length}} samples)</h3>
-{{temperature_table(samples=hour_samples)}}
-
-<h3>Short Term ({{decision_samples|length}} samples)</h3>
-{{temperature_table(samples=decision_samples)}}
+<h3>Short Term (10 minutes)</h3>
+<img src="{{svg.url_for_chart(
+	  names=[name], 
+	  xsize=30, ysize=5,
+	  duration=datetime.timedelta(minutes=10).total_seconds(),
+	  granularity=datetime.timedelta(seconds=10).total_seconds(),
+	  )}}"/>
 
 {% endblock %}

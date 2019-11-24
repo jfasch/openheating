@@ -2,12 +2,7 @@
 
 {% block main %}
 
-{% from 'history_macros.html' import use_plotly %}
-{{use_plotly()}}
-
 <h2>Thermometers</h2>
-
-<div id="__thermometers_chart"></div>
 
 <table>
 
@@ -22,37 +17,19 @@
     <td><a href="{{url_for('thermometer', name=name)}}">{{name}}</a></td>
     <td>{{thermometer.get_description()}}</td>
     <td>{{thermometer.get_temperature()}}</td>
+
   </tr>
   {% endfor %}
   
 </table>
 
-<script>
+<p>Past 24 hours</p>
 
-  var layout = {
-      yaxis: {range: [0, 150]}
-  }
-  var data = []
-  
-  {% for name, samples in samples_per_thermometer.items() %}
-  data.push({
-      name: "{{name}}",
-      x: [
-	  {% for timestamp, _ in samples %}
-	  "{{timestamp}}",
-	  {% endfor %}
-      ],
-      y: [
-	  {% for _, temperature in samples %}
-	  "{{temperature}}",
-	  {% endfor %}
-      ],
-      type: "scatter",
-  })
-  {% endfor %}
-
-  Plotly.newPlot("__thermometers_chart", data, layout)
-
-</script>
+<img src="{{svg.url_for_chart(
+	  names=app.thermometer_names(),
+	  xsize=30, ysize=15,
+	  duration=datetime.timedelta(days=1).total_seconds(),
+	  granularity=datetime.timedelta(minutes=30).total_seconds(),
+	  )}}"/>
 
 {% endblock %}
