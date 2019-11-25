@@ -48,8 +48,6 @@ def temperature_chart():
     duration = flask.request.args.get('duration', type=int, default=_one_day_s)
     granularity = flask.request.args.get('granularity', type=int, default=_half_an_hour_s)
 
-    print(flask.request.url)
-
     # 'names' must be list literal
     names = eval(names)
 

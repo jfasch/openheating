@@ -122,7 +122,7 @@ setup(
 
         ('share/web/static',
          [
-             'openheating/web/static/plotly-1.49.4.js',
+             'openheating/web/static/small.css',
          ],
         ),
 
