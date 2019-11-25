@@ -37,6 +37,9 @@ Gradients, Interpolation, Graphs
 :: 
 
    # pip3 install --system numpy scipy matplotlib
+   # pip3 install --upgrade --system numpy scipy matplotlib
+
+(Upgrading makes sense, especially with these)
 
 GPIO: libgpiod
 ..............
