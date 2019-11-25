@@ -67,7 +67,10 @@ def temperature_chart():
 
     # find global oldest and youngest samples
     youngest_ts = 0 # epoch; very old
-    oldest_ts = datetime.datetime(2500, 1, 1).timestamp() # very young
+    # very young. this is the highest possible value for timestamps on
+    # 32bit, aka "The Y2038 problem". still not solved on
+    # raspberry/raspbian, for example.
+    oldest_ts = datetime.datetime(2038, 1, 19).timestamp()
     maxnum = 0
     for _,samples in samples_per_thermometer:
         if samples[0][0] < oldest_ts:
