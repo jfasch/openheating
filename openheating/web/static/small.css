@@ -7,24 +7,18 @@ body {
     padding: 0;
 }
 
-header {
-    width: 10%;
-    position: fixed;
-    height: 100%;
-}
-/* MENU */
-header nav ul {
-    list-style-type: none;
-}
-header nav ul li:hover {
-    transform: translate(10%,0);
-}
-header div#info {
-    float: below;
+.oh-screen {
+    display: grid;
+    grid-template-columns: 1fr 9fr;
 }
 
-/* MAIN AREA */
-section#main {
-    float: right;
-    width: 90%;
+header {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+header img {
+    width: 70%;
+    height: 70%;
+    object-fit: cover;
 }
