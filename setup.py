@@ -122,7 +122,6 @@ setup(
 
         ('share/web/static/icons/www.opensecurityarchitecture.org',
          [
-             'openheating/web/static/small.css',
              'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_home.svg',
              'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_ics_drive.svg',
              'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_ics_thermometer.svg',
