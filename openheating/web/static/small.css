@@ -9,16 +9,24 @@ body {
 
 .oh-screen {
     display: grid;
-    grid-template-columns: 1fr 9fr;
+    grid-template-columns: 5% 95%;
 }
 
-header {
+.oh-screen header {
     display: grid;
     grid-template-columns: 1fr;
 }
 
-header img {
-    width: 70%;
-    height: 70%;
-    object-fit: cover;
+.oh-screen header nav {
+    display: block;
+}
+
+.oh-screen header nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.oh-screen header .oh-info-box {
+    display: block;
 }

@@ -12,21 +12,25 @@
 
     <header>
 
-      {% for entry in menu.entries %}
-      <div>
-	<a href="{{entry.url}}">
-    	  <img src="{{entry.image_url}}" alt="{{entry.alt}}"/>
-        </a>
-      </div>
-      {% endfor %}
+      <nav>
+	{% for entry in menu.entries %}
+	<div class="oh-menu-entry">
+	  <a href="{{entry.url}}">
+    	    <img src="{{entry.image_url}}" alt="{{entry.alt}}"/>
+          </a>
+	</div>
+	{% endfor %}
+      </nav>
 
-      <div>
-	<a href="{{url_for('errors', name='Errors')}}">{{app.errors_client.num_errors()}} Errors</a>
+      <div class="oh-info-box">
+	<div>
+	  <a href="{{url_for('errors', name='Errors')}}">{{app.errors_client.num_errors()}} Errors</a>
+	</div>
       </div>
 
     </header>
 
-    <section id="main">
+    <section id="oh-main">
       {% block main %}{% endblock %}
     </section>
 
