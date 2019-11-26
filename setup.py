@@ -120,6 +120,16 @@ setup(
          ]
         ),
 
+        ('share/web/static/icons/www.opensecurityarchitecture.org',
+         [
+             'openheating/web/static/small.css',
+             'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_home.svg',
+             'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_ics_drive.svg',
+             'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_ics_thermometer.svg',
+             'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_warning.svg',
+         ],
+        ),
+
         ('share/web/static',
          [
              'openheating/web/static/small.css',
@@ -131,8 +141,7 @@ setup(
              'openheating/web/templates/base.html',
              'openheating/web/templates/errors.html',
              'openheating/web/templates/history_macros.html',
-             'openheating/web/templates/home_faschingbauer.html',
-             'openheating/web/templates/home.html',
+             'openheating/web/templates/faschingbauer_home.html',
              'openheating/web/templates/thermometer.html',
              'openheating/web/templates/thermometers.html',
          ],
