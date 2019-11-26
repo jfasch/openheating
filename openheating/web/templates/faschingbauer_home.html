@@ -2,16 +2,21 @@
 
 {% block main %}
 
-<p>Temperatures from past 24h</p>
-
 <table>
+
+  <tr>
+    <th></th>
+    <th></th>
+    <th>{{(now - duration).strftime("%Y-%m-%d %H:%M:%S")}} - {{now.strftime("%Y-%m-%d %H:%M:%S")}} ({{duration.total_seconds()//60}} minutes)</th>
+  </tr>
+
   {% for name in thermometers %}
   <tr>
     <td><b><a href="{{url_for('thermometer', name=name)}}">{{app.thermometers[name].get_description()}}</a></b></td>
     <td>{{app.thermometers[name].get_temperature()}}&#8451;</td>
     <td>
       <a href="{{url_for('thermometer', name=name)}}">
-	<img src="{{svg.url_for_chart(names=[name], xsize=15, ysize=1.2, duration=duration, granularity=granularity)}}"/>
+	<img src="{{svg.url_for_chart(names=[name], xsize=15, ysize=1.2, duration=duration.total_seconds(), granularity=granularity.total_seconds())}}"/>
       </a>
     </td>
   </tr>
