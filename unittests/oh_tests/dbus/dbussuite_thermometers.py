@@ -12,7 +12,7 @@ import unittest
 import subprocess
 
 
-class ThermometerServiceOK(services.ServiceTestCase):
+class ThermometersOK(services.ServiceTestCase):
     def setUp(self):
         super().setUp()
         self.start_services([
@@ -45,7 +45,7 @@ class ThermometerServiceOK(services.ServiceTestCase):
         self.assertIn('TestThermometer', thermometers)
 
 
-class ThermometerServiceError(services.ServiceTestCase):
+class ThermometersError(services.ServiceTestCase):
     def setUp(self):
         super().setUp()
         self.start_services([
@@ -66,8 +66,8 @@ class ThermometerServiceError(services.ServiceTestCase):
         self.assertRaises(HeatingError, thermometer_client.get_temperature)
 
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerServiceOK))
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometerServiceError))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersOK))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersError))
 
 if __name__ == '__main__':
     testutils.run(suite)

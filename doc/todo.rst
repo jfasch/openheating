@@ -3,9 +3,6 @@ Stack (Hanging)
 
 * switches
 
-  * Differentiate between in and out switches -> 2 classes.
-  * gpio.create_switch() could use dict.setdefault() on the
-    _open_chips dict. more professional.
   * openheating-switches.py
 
 Todo

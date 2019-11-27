@@ -16,7 +16,7 @@ import time
 import sys
 
 
-class ErrorServiceTest(services.ServiceTestCase):
+class ErrorsTest(services.ServiceTestCase):
 
     @services.ServiceTestCase.intercept_failure
     def test__basic_error_count(self):
@@ -77,7 +77,7 @@ class ErrorServiceTest(services.ServiceTestCase):
 
 
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ErrorServiceTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ErrorsTest))
 
 if __name__ == '__main__':
     testutils.run(suite)

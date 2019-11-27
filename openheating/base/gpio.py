@@ -20,30 +20,13 @@ class GPIOSwitch(Switch):
     def get_state(self):
         return (self.line.get_value() == 1) and True or False
 
-class DummyGPIOSwitch(Switch):
-    def __init__(self, name, description, direction):
-        super().__init__(name, description)
-        self.direction = direction
-        self.state = False
-
-    def set_state(self, state):
-        if self.direction == _DIRECTION_IN:
-            raise HeatingError('cannot set when direction is "in"')
-        self.state = value
-
-    def get_state(self):
-        return self.state
-
-def create_switch(name, description, chiplabel, offset, direction, dummy=False):
+def create_switch(name, description, chiplabel, offset, direction):
     if direction == DIRECTION_IN:
         gpiod_direction = gpiod.LINE_REQ_DIR_IN
     elif direction == DIRECTION_OUT:
         gpiod_direction = gpiod.LINE_REQ_DIR_OUT
     else: 
         assert False
-
-    if dummy:
-        return DummyGPIOSwitch(name, description, direction)
 
     chip = _open_chips.get(chiplabel)
     if chip is None:
