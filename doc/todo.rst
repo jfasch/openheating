@@ -1,20 +1,12 @@
 Stack (Hanging)
 ===============
 
-* charts: get rid of javascript braindamage
+* switches
 
-  * pass datetime and svg modules in base render routine
-
-* create routes for svg/chart helpers, and embed those in pages
-
-  * Flask: GET/POST, Json: https://www.youtube.com/watch?v=hAEJajltHxc
-  * Javascript
-
-    * https://www.youtube.com/watch?v=mNrJDGfQGz0 compose and send off
-      json request
-    * https://www.youtube.com/watch?v=lD1iRp4ewZY ~5:10 onload, ~12:40
-      post
-    * https://www.youtube.com/watch?v=rJesac0_Ftw "JSON and AJAX"
+  * Differentiate between in and out switches -> 2 classes.
+  * gpio.create_switch() could use dict.setdefault() on the
+    _open_chips dict. more professional.
+  * openheating-switches.py
 
 Todo
 ====
