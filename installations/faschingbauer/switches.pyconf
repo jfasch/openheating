@@ -1,0 +1,63 @@
+# -*- python -*-
+
+from openheating.base import gpio
+
+
+SWITCHES = [
+    gpio.create_switch(
+        name = 'Relais1',
+        description = 'Relais 1',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 17,
+        direction = gpio.DIRECTION_OUT),
+
+    gpio.create_switch(
+        name = 'Relais2',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 27,
+        direction = gpio.DIRECTION_OUT,
+        description = 'Relais 2'),
+
+    gpio.create_switch(
+        name = 'Relais3',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 22,
+        direction = gpio.DIRECTION_OUT,
+        description = 'Relais 3'),
+
+    gpio.create_switch(
+        name = 'Relais4',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 5,
+        direction = gpio.DIRECTION_OUT,
+        description = 'Relais 4'),
+
+    gpio.create_switch(
+        name = 'Relais5',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 6,
+        direction = gpio.DIRECTION_OUT,
+        description = 'Relais 5'),
+
+    gpio.create_switch(
+        name = 'Relais6',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 13,
+        direction = gpio.DIRECTION_OUT,
+        description = 'Relais 6'),
+
+    gpio.create_switch(
+        name = 'Relais7',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 19,
+        direction = gpio.DIRECTION_OUT,
+        description = 'Relais 7'),
+
+    gpio.create_switch(
+        name = 'Relais8',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 26,
+        direction = gpio.DIRECTION_OUT,
+        description = 'Relais 8'),
+]
+

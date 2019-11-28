@@ -25,6 +25,33 @@ _repo[THERMOMETER] = '''
 </interface>
 '''.format(name=THERMOMETER)
 
+SWITCH = names.DOMAIN + '.Switch'
+_repo[SWITCH] = '''
+<interface name='{name}'>
+  <method name='get_name'>
+    <arg type='s' name='response' direction='out'/>
+  </method>
+  <method name='get_description'>
+    <arg type='s' name='response' direction='out'/>
+  </method>
+  <method name='set_state'>
+    <arg type='b' name='state' direction='in'/>
+  </method>
+  <method name='get_state'>
+    <arg type='b' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=SWITCH)
+
+SWITCHCENTER = names.DOMAIN + '.SwitchCenter'
+_repo[SWITCHCENTER] = '''
+<interface name='{name}'>
+  <method name='all_names'>
+    <arg type='as' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=SWITCHCENTER)
+
 ERROREMITTER = names.DOMAIN + '.ErrorEmitter'
 _repo[ERROREMITTER] = '''
 <interface name='{name}'>

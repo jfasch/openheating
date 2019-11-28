@@ -3,7 +3,15 @@ Stack (Hanging)
 
 * switches
 
-  * openheating-switches.py
+  * history? for ui only
+
+* openheating-switches.py
+
+* switches_pyconf: insist that pyconf sets a SWITCHES variable
+  (iterable containing switches)
+
+  * do the same for thermometers_pyconf
+  * thermometer base class/dummy: hide members just like switch
 
 Todo
 ====

@@ -3,8 +3,6 @@ from . import node
 from . import names
 from .thermometer import Thermometer_Client, TemperatureHistory_Client
 
-from ..base.error import HeatingError
-
 
 class ThermometerCenter_Client:
     def __init__(self, bus):
