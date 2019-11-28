@@ -18,7 +18,7 @@ class ThermometersOK(services.ServiceTestCase):
         self.start_services([
             services.ThermometerService(pyconf=[
                 "from openheating.base.thermometer import FixedThermometer",
-                "THERMOMETERS['TestThermometer'] = FixedThermometer('TestThermometer', 'Test Thermometer', 42)",
+                "THERMOMETERS = [FixedThermometer('TestThermometer', 'Test Thermometer', 42)]",
                 ])
         ])
 
@@ -51,7 +51,7 @@ class ThermometersError(services.ServiceTestCase):
         self.start_services([
             services.ThermometerService(pyconf=[
                 "from openheating.base.thermometer import ErrorThermometer",
-                "THERMOMETERS['ErrorThermometer'] = ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False)",
+                "THERMOMETERS = [ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False)]",
             ])
         ])
 

@@ -1,11 +1,28 @@
 from openheating.base.error import HeatingError
 
 
-class DuplicateError(HeatingError):
+class DuplicateName(HeatingError):
     def __init__(self, name):
-        super().__init__(msg='duplicate detected: "{}"'.format(name))
+        super().__init__(msg='duplicate name detected: "{}"'.format(name))
         self.name = name
-    
+
+class BadName(HeatingError):
+    """Used where e.g. a thermometer configuration gives the thermometer
+    a name that is unusable in a DBus object path"""
+    def __init__(self, name):
+        super().__init__(msg='{} is not a valid name (has to be a Python identifier'.format(name))
+        self.name = name
+
+
+def read_thermometers(thing):
+    context = {}
+    exec(_make_code(thing), context)
+
+    thermometers = context.get('THERMOMETERS')
+    if thermometers is None:
+        raise HeatingError('THERMOMETERS (iterable) expected but not there')
+    _check_names(thermometers)
+    return thermometers
 
 def read_switches(thing):
     context = {}
@@ -14,13 +31,7 @@ def read_switches(thing):
     switches = context.get('SWITCHES')
     if switches is None:
         raise HeatingError('SWITCHES (iterable) expected but not there')
-
-    names = set()
-    for s in switches:
-        if s.get_name() in names:
-            raise DuplicateError(s.get_name())
-        names.add(s.get_name())
-
+    _check_names(switches)
     return switches
 
 def _make_code(thing):
@@ -32,3 +43,13 @@ def _make_code(thing):
         code = '\n'.join(thing)
     return code
 
+def _check_names(sequence):
+    names = set()
+    for item in sequence:
+        name = item.get_name()
+        if name in names:
+            raise DuplicateName(name)
+        if not name.isidentifier():
+            raise BadName(name)
+        names.add(name)
+            

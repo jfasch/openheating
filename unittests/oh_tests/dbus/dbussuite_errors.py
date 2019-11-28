@@ -25,10 +25,12 @@ class ErrorsTest(services.ServiceTestCase):
             services.ThermometerService(
                 pyconf=[
                     "from openheating.base.thermometer import ErrorThermometer",
-                    "THERMOMETERS['Error'] = ErrorThermometer(",
-                    "    name='Error',",
-                    "    description='Error Thermometer',",
-                    "    n_ok_before_error=0)"
+                    "THERMOMETERS = [",
+                    "    ErrorThermometer(",
+                    "        name='Error',",
+                    "        description='Error Thermometer',",
+                    "        n_ok_before_error=0),",
+                    "]",
                 ])
         ])
         
@@ -43,10 +45,12 @@ class ErrorsTest(services.ServiceTestCase):
             services.ThermometerService(
                 pyconf=[
                     "from openheating.base.w1 import W1Thermometer",
-                    "THERMOMETERS['w1_erroneous'] = W1Thermometer(",
-                    "    name='w1_erroneous',",
-                    "    description='Some Thermometer',",
-                    "    path='/a/b/00-00000000')"
+                    "THERMOMETERS = [",
+                    "    W1Thermometer(",
+                    "        name='w1_erroneous',",
+                    "        description='Some Thermometer',",
+                    "        path='/a/b/00-00000000'),",
+                    "]",
                 ])
         ])
 

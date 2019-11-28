@@ -2,19 +2,22 @@
 
 from openheating.base.thermometer import FixedThermometer
 
-THERMOMETERS['Raum'] = FixedThermometer('Raum', 'Raum', 24)
 
-THERMOMETERS['SpeicherOben'] = FixedThermometer('SpeicherOben', 'Speicher Oben', 70)
-THERMOMETERS['SpeicherMitte'] = FixedThermometer('SpeicherMitte', 'Speicher Mitte', 60)
-THERMOMETERS['SpeicherUnten'] = FixedThermometer('SpeicherUnten', 'Speicher Unten', 50)
-THERMOMETERS['RuecklaufSolar'] = FixedThermometer('RuecklaufSolar', 'Ruecklauf Solar', 42)
-THERMOMETERS['VorlaufSolar'] = FixedThermometer('VorlaufSolar', 'Vorlauf Solar', 60)
+THERMOMETERS = [
+    FixedThermometer('Raum', 'Raum', 24),
 
-THERMOMETERS['Oelbrenner'] = FixedThermometer('Oelbrenner', 'Oelbrenner', 30)
+    FixedThermometer('SpeicherOben', 'Speicher Oben', 70),
+    FixedThermometer('SpeicherMitte', 'Speicher Mitte', 60),
+    FixedThermometer('SpeicherUnten', 'Speicher Unten', 50),
+    FixedThermometer('RuecklaufSolar', 'Ruecklauf Solar', 42),
+    FixedThermometer('VorlaufSolar', 'Vorlauf Solar', 60),
 
-THERMOMETERS['Holzbrenner'] = FixedThermometer('Holzbrenner', 'Holzbrenner', 50)
-THERMOMETERS['RuecklaufHolz'] = FixedThermometer('RuecklaufHolz', 'Ruecklauf Holz', 35)
-THERMOMETERS['VorlaufHolz'] = FixedThermometer('VorlaufHolz', 'Vorlauf Holz', 48)
+    FixedThermometer('Oelbrenner', 'Oelbrenner', 30),
 
-THERMOMETERS['VorlaufHeizkreis'] = FixedThermometer('VorlaufHeizkreis', 'Vorlauf Heizkreis', 50)
-THERMOMETERS['VorlaufWarmwasser'] = FixedThermometer('VorlaufWarmwasser', 'Vorlauf Warmwasser', 45)
+    FixedThermometer('Holzbrenner', 'Holzbrenner', 50),
+    FixedThermometer('RuecklaufHolz', 'Ruecklauf Holz', 35),
+    FixedThermometer('VorlaufHolz', 'Vorlauf Holz', 48),
+
+    FixedThermometer('VorlaufHeizkreis', 'Vorlauf Heizkreis', 50),
+    FixedThermometer('VorlaufWarmwasser', 'Vorlauf Warmwasser', 45),
+]

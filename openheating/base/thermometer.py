@@ -23,35 +23,35 @@ class Thermometer(metaclass=ABCMeta):
 class FixedThermometer(Thermometer):
     def __init__(self, name, description, temperature):
         super().__init__()
-        self.name = name
-        self.description = description
-        self.temperature = temperature
+        self.__name = name
+        self.__description = description
+        self.__temperature = temperature
 
     def get_name(self):
-        return self.name
+        return self.__name
 
     def get_description(self):
-        return self.description
+        return self.__description
 
     def get_temperature(self):
-        return self.temperature
+        return self.__temperature
 
 
 class ErrorThermometer(Thermometer):
     def __init__(self, name, description, n_ok_before_error):
         super().__init__()
-        self.name = name
-        self.description = description
-        self.n_ok_before_error = n_ok_before_error
+        self.__name = name
+        self.__description = description
+        self.__n_ok_before_error = n_ok_before_error
 
     def get_name(self):
-        return self.name
+        return self.__name
 
     def get_description(self):
-        return self.description
+        return self.__description
 
     def get_temperature(self):
-        if self.n_ok_before_error > 0:
-            self.n_ok_before_error -= 1
+        if self.__n_ok_before_error > 0:
+            self.__n_ok_before_error -= 1
             return 42
         raise HeatingError('bullshit temperature')

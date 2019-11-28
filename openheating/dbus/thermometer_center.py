@@ -42,4 +42,4 @@ class ThermometerCenter_Server:
         self.__thermometers = thermometers
 
     def all_names(self):
-        return list(self.__thermometers.keys())
+        return [t.get_name() for t in self.__thermometers]
