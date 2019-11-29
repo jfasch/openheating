@@ -1,7 +1,12 @@
 Stack (Hanging)
 ===============
 
-* hysteresis
+* circuit
+
+  * has: pump, producer, consumer
+  * {de,}activate() -> state
+  * hysteresis (producer-consumer)
+  * look(now)
 
 Todo
 ====

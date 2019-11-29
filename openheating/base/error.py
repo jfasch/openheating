@@ -14,3 +14,7 @@ class HeatingError(Exception):
     @property
     def details(self):
         return self.__details
+
+class ClockSkewError(HeatingError):
+    def __init__(self):
+        super().__init__('clock skew detected')

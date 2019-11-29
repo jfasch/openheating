@@ -5,3 +5,9 @@ def delta2unix(delta):
         num = delta
     # cap fractional timestamps to entire seconds
     return int(num)
+
+def dt2unix(dt):
+    try:
+        return dt.timestamp()
+    except AttributeError:
+        return dt

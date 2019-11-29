@@ -19,6 +19,24 @@ class Thermometer(metaclass=ABCMeta):
         assert False, 'abstract'
         return 23.4
 
+class DummyThermometer(Thermometer):
+    def __init__(self, name, description, value):
+        super().__init__()
+        self.__name = name
+        self.__description = description
+        self.__value = value
+
+    def get_name(self):
+        return self.__name
+
+    def get_description(self):
+        return self.__description
+
+    def get_temperature(self):
+        return self.__value
+
+    def set_temperature(self, value):
+        self.__value = value
 
 class FixedThermometer(Thermometer):
     def __init__(self, name, description, temperature):
