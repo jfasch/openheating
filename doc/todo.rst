@@ -1,12 +1,11 @@
 Stack (Hanging)
 ===============
 
-* circuit
+* openheating-circuits.py
 
-  * has: pump, producer, consumer
-  * {de,}activate() -> state
-  * hysteresis (producer-consumer)
-  * look(now)
+  * pyconf
+  * can we abstract *_Center? CircuitCenter would be the third.
+  * http: menu for circuits
 
 Todo
 ====
