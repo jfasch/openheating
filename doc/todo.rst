@@ -6,6 +6,9 @@ Stack (Hanging)
   * pyconf
   * can we abstract *_Center? CircuitCenter would be the third.
   * http: menu for circuits
+  * tests
+
+    * poll_until(predicate, timeout)
 
 Todo
 ====
