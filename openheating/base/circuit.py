@@ -28,6 +28,7 @@ class Circuit:
     def deactivate(self):
         if self.__active:
             logging.debug('{}: deactivated'.format(self.__name))
+            self.__pump_off()
             self.__active = False
 
     def is_active(self):
