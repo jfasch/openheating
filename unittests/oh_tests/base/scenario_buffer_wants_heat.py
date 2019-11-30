@@ -9,7 +9,7 @@ import logging
 import itertools
 
 
-class HeatWantedTest(unittest.TestCase):
+class BufferWantsHeatTest(unittest.TestCase):
     def setUp(self):
         self.__pump = DummySwitch('pump', 'some pump', False)
         self.__heater_thermometer = DummyThermometer('heater', 'some heater', 10)
@@ -82,7 +82,7 @@ class HeatWantedTest(unittest.TestCase):
         self.assertTrue(self.__pump.get_state())
         
 
-suite = unittest.defaultTestLoader.loadTestsFromTestCase(HeatWantedTest)
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(BufferWantsHeatTest)
 
 if __name__ == '__main__':
     # logging.basicConfig(level=logging.DEBUG)

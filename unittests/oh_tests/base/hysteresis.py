@@ -14,7 +14,7 @@ class HysteresisTest(unittest.TestCase):
             nonlocal n_below_low
             n_below_low += 1
 
-        hy = Hysteresis(low=20, high=25, 
+        hy = Hysteresis(name='name', low=20, high=25, 
                         below_low=below, above_high=above)
 
         # below
