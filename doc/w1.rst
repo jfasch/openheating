@@ -65,3 +65,16 @@ Anyway. In `/boot/config.txt`, you write ::
    dtoverlay=w1-gpio,gpiopin=24
    dtoverlay=w1-gpio,gpiopin=25
    ...
+
+Issues
+======
+
+Some sensors read 0 degrees, starting at some point::
+
+    # cat /sys/bus/w1/devices/28-011432f138f9/w1_slave 
+    00 00 00 00 00 00 00 00 00 : crc=00 YES
+    00 00 00 00 00 00 00 00 00 t=0
+
+Links
+
+* https://www.raspberrypi.org/forums/viewtopic.php?t=164059
