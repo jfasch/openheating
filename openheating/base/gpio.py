@@ -15,7 +15,7 @@ def create_switch(name, description, chiplabel, offset, direction=None, loop=Non
         assert False, '{} is not a valid direction'.format(direction)
 
     line = _get_chip(chiplabel).get_line(offset)
-    line.request(consumer='openheating:'+name, type=gpiod_type)
+    line.request(consumer='openheating:'+name, type=gpiod_type, default_val=False)
     return _GPIOSwitch(name=name, description=description, line=line)
 
 def create_pushbutton(name, description, chiplabel, offset, loop, debounce_limit):
