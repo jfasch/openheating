@@ -7,76 +7,6 @@ import os
 
 lifecycle_logger = logging.getLogger('lifecycle')
 
-class GracefulTermination:
-    '''Terminate event loop when one of a set of signals arrives.
-
-    Can be used as a 'with' context manager, setting up signal
-    handlers on entry, and clearing them on exit.
-
-    Implements the 'self pipe trick',
-    http://man7.org/tlpi/code/online/diff/altio/self_pipe.c.html, to
-    safely inject the termination request into the loop.
-
-    '''
-
-    def __init__(self, loop, signals):
-        self.__loop = loop
-        self.__requested = False
-        self.__signals = list(signals)
-
-        # I'd rather use eventfd(2), but a pipe is more readily
-        # available in python.
-        self.__pipe = os.pipe()
-        # doing the self pipe trick, we watch pipe[0] (the
-        # read-side). glib hands us a 'tag' which is used to remove
-        # the watch later.
-        self.__rfd_tag = None
-
-    def __enter__(self):
-        self.install()
-        return self
-
-    def __exit__(self, *args):
-        self.uninstall()
-        return False # dont suppress exceptions
-
-    @property
-    def requested(self):
-        return self.__requested
-
-    def install(self):
-        for sig in self.__signals:
-            signal.signal(sig, self.__sighandler)
-            r,_ = self.__pipe
-        self.__rfd_tag = GLib.io_add_watch(r, GLib.IO_IN, self.__terminate_iocallback)
-
-    def uninstall(self):
-        r,_ = self.__pipe
-        ok = GLib.source_remove(self.__rfd_tag)
-        assert ok
-
-        for sig in self.__signals:
-            signal.signal(sig, signal.SIG_DFL)
-
-    def __sighandler(self, signal, frame):
-        lifecycle_logger.info('signal {} received, sending termination request'.format(signal))
-        self.__requested = True
-        _,w = self.__pipe
-        os.write(w,b'q')
-
-    def __terminate_iocallback(self, source, condition):
-        lifecycle_logger.info('termination request seen, terminating')
-        r,_ = self.__pipe
-        # paranoia
-        assert source == r
-        assert condition == GLib.IO_IN
-
-        # read from pipe so event does not keep firing
-        os.read(r, 1)
-
-        self.__loop.quit()
-        return True # keep watching
-
 class managed:
     '''Class decorator to mark a class as participating in the
     startup/shutdown game
@@ -112,43 +42,61 @@ def run_server(loop, bus, busname, objects=None, signals=None):
 
     * request busname
     * publish objects (and manage their lifecycle)
-    * subscribe for signals
+    * subscribe for DBus signals
     '''
 
-    with GracefulTermination(loop=loop, signals=(signal.SIGINT, signal.SIGTERM, signal.SIGQUIT)):
-        lifecycle_logger.info('starting objects')
+    lifecycle_logger.info('starting objects')
 
-        if objects is None:
-            objects = []
-        if signals is None:
-            signals = []
+    if objects is None:
+        objects = []
+    if signals is None:
+        signals = []
 
-        for _, o in objects:
-            startup = getattr(o, '_oh_lifecycle_startup', None)
-            if startup is not None:
-                startup()
+    for _, o in objects:
+        startup = getattr(o, '_oh_lifecycle_startup', None)
+        if startup is not None:
+            startup()
 
-        for path, object in objects:
-            bus.register_object(path, object, None)
-        for match, func in signals:
-            bus.subscribe(
-                iface=match.interface,
-                signal=match.name,
-                signal_fired=func)
+    for path, object in objects:
+        bus.register_object(path, object, None)
+    for match, func in signals:
+        bus.subscribe(
+            iface=match.interface,
+            signal=match.name,
+            signal_fired=func)
 
-        if busname is not None:
-            bus.request_name(busname)
+    if busname is not None:
+        bus.request_name(busname)
 
-        for _, o in objects:
-            onbus = getattr(o, '_oh_lifecycle_onbus', None)
-            if onbus is not None:
-                onbus()
+    for _, o in objects:
+        onbus = getattr(o, '_oh_lifecycle_onbus', None)
+        if onbus is not None:
+            onbus()
 
-        loop.run()
+    # setup graceful termination. BIG RANT: they will only let me
+    # handle a predefined set of signals which smells like ... well
+    # ... like some ugly kind of bullshit is going on. read yourself:
 
-        lifecycle_logger.info('stopping objects')
-        for _, o in objects:
-            shutdown = getattr(o, '_oh_lifecycle_shutdown', None)
-            if shutdown is not None:
-                shutdown()
+    # lifecycle.py:177: Warning: g_unix_signal_source_new: assertion 'signum == SIGHUP || signum == SIGINT || signum == SIGTERM || signum == SIGUSR1 || signum == SIGUSR2' failed
+    #   GLib.unix_signal_add(GLib.PRIORITY_HIGH, sig, _quit, sig)
+    # /home/jfasch/openheating/openheating/dbus/lifecycle.py:177: Warning: g_source_set_priority: assertion 'source != NULL' failed
+    #   GLib.unix_signal_add(GLib.PRIORITY_HIGH, sig, _quit, sig)
+    # /home/jfasch/openheating/openheating/dbus/lifecycle.py:177: Warning: g_source_set_callback: assertion 'source != NULL' failed
+    #   GLib.unix_signal_add(GLib.PRIORITY_HIGH, sig, _quit, sig)
+    # Speicherzugriffsfehler
+
+    # not that I insist in handling SIGQUIT, but ...
+
+    def _quit(sig):
+        loop.quit()
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        GLib.unix_signal_add(GLib.PRIORITY_HIGH, sig, _quit, sig)
+
+    loop.run()
+
+    lifecycle_logger.info('stopping objects')
+    for _, o in objects:
+        shutdown = getattr(o, '_oh_lifecycle_shutdown', None)
+        if shutdown is not None:
+            shutdown()
 

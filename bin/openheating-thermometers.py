@@ -13,8 +13,6 @@ from gi.repository import GLib
 
 import datetime
 import argparse
-import logging
-import sys
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
