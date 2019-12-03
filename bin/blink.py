@@ -55,21 +55,21 @@ green = panelutil.LEDButton(
         debounce_limit=0.2)
 )
 
-loop.run_until_complete(
-    asyncio.gather(
-        panelutil.iterate_frequencies(
-            led=green.led,
-            interval=5,
+prog__red_button_http2thermometers = asyncio.gather(
+    panelutil.button_runs_subprocess(
+        button=red.button,
+        cmd=['/usr/bin/chromium-browser', '--no-new-tab', 'http://192.168.1.30:5000/thermometers']),
+    panelutil.button_stops(
+        button=yellow.button,
+        coro=panelutil.iterate_frequencies(
+            led=yellow.led,
+            interval=3,
             frequencies=itertools.cycle((0.1, 0.5, 1))),
-        panelutil.button_stops(
-            button=yellow.button,
-            coro=panelutil.iterate_frequencies(
-                led=yellow.led,
-                interval=3,
-                frequencies=itertools.cycle((0.1, 0.5, 1))),
-            and_then=panelutil.blink(0.05, led=yellow.led)),
-        panelutil.button_iterates_frequencies(
-            combo=red,
-            frequencies=itertools.cycle((0.1, 0.5, 1))),
-    )
+        and_then=panelutil.blink(0.05, led=yellow.led)),
+    panelutil.button_iterates_frequencies(
+        ledbutton=green,
+        frequencies=itertools.cycle((0.1, 0.5, 1))),
 )
+
+
+loop.run_until_complete(prog__red_button_http2thermometers)

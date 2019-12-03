@@ -1,4 +1,5 @@
 from collections import namedtuple
+import subprocess
 import asyncio
 
 
@@ -50,12 +51,17 @@ async def button_stops(button, coro, and_then=None):
         finally:
             task.cancel()
 
-async def button_iterates_frequencies(combo, frequencies):
+async def button_runs_subprocess(button, cmd):
+    while True:
+        await button.state_changed()
+        subprocess.run(cmd)
+
+async def button_iterates_frequencies(ledbutton, frequencies):
     for f in frequencies:
-        task = asyncio.ensure_future(blink(f, combo.led))
+        task = asyncio.ensure_future(blink(f, ledbutton.led))
         try:
-            await combo.button.state_changed()
-        except CancelledError:
+            await ledbutton.button.state_changed()
+        except asyncio.CancelledError:
             break
         finally:
             task.cancel()
