@@ -24,14 +24,17 @@ class FaschingbauerApp:
     def thermometer_names(self):
         return list(self.thermometers.keys())
 
-    def setup(self):
+    def run(self, *args, **kwargs):
+        # those contain flask routes, mostly. flask's @route decorator
+        # goes into a global object of type flask.Flask, so I have to
+        # import all routes *after* I put the global object (self,
+        # namely) in place.
         from . import faschingbauer_home
         from . import svg
         from . import thermometers
         from . import thermometer
         from . import errors
 
-    def run(self, *args, **kwargs):
         self.flask.run(*args, **kwargs)
 
     def render_template(self, template, **kwargs):

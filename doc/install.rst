@@ -61,10 +61,16 @@ independently from libgpiod.)
 Installation
 ++++++++++++
 
-This is a bit tedious (hope is that Raspbian's ``libgpiod`` will bring
-the Python binding in future versions). ``libgpiod`` requires the
-`autoconf archive <https://www.gnu.org/software/autoconf-archive/>`_
-which definitely needs some love.
+This is a bit tedious (hope is that Raspbian's ``libgpiod`` package
+will bring the Python binding in future versions). ``libgpiod``
+requires the `autoconf archive
+<https://www.gnu.org/software/autoconf-archive/>`_ which definitely
+needs some love.
+
+Check build dependencies::
+
+   # apt install autoconf
+   # apt install libtool
 
 Build and install::
 

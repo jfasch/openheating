@@ -70,8 +70,6 @@ Todo
       whatever.
 
 * beer spin off
-* home_faschingbauer web crap
-* remove need for app.setup(), import in run(), makes no difference.
 * error managers
 * test setups
 

@@ -30,8 +30,6 @@ instance.app = FaschingbauerApp(
     dbus_connection = dbusutil.bus_from_argparse(args),
 )
 
-instance.app.setup()
-
 # notify systemd about readiness
 if not args.no_notify:
     if not sd_notify("READY=1"):
