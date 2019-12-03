@@ -32,9 +32,17 @@ async def sequence(*coroutines):
     for coro in coroutines:
         await coro
 
+async def n_times(n, coro):
+    for _ in range(n):
+        await coro
+
 async def iterate_frequencies(led, interval, frequencies):
     for f in frequencies:
         await duration(interval, blink(f, led))
+
+async def button_starts_async(button, coro):
+    await button.state_changed()
+    asyncio.ensure_future(coro)
 
 async def button_stops(button, coro, and_then=None):
     task = asyncio.ensure_future(coro)
@@ -66,3 +74,5 @@ async def button_iterates_frequencies(ledbutton, frequencies):
         finally:
             task.cancel()
 
+async def http_get(url):
+    subprocess.run(['/usr/bin/chromium-browser', '--no-new-tab', url])
