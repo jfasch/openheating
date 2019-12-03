@@ -10,6 +10,26 @@ Stack (Hanging)
 
     * poll_until(predicate, timeout)
 
+* panel
+
+  async generator factories that take their repective closures, and
+  are yielded by a generator. build that into blink that toggles state
+  based upon that -> on/off. *yay functional!*
+
+  * json interface, without any protocol, simply modeled on top of
+    whats needed:
+
+    * notification -> subscribe. 
+
+      * errors
+      * state change monitors (emitting events) in every node. 
+
+	* for example oil on off, wood request firing, oil
+          disabled/enabled
+	* class State with set/get. maybe some metaprogramming.
+
+  * mqtt
+
 Todo
 ====
 
