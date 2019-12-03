@@ -19,16 +19,41 @@ Stack (Hanging)
   * json interface, without any protocol, simply modeled on top of
     whats needed:
 
-    * notification -> subscribe. 
+    * receive notification -> subscribe.
 
       * errors
       * state change monitors (emitting events) in every node. 
 
 	* for example oil on off, wood request firing, oil
           disabled/enabled
-	* class State with set/get. maybe some metaprogramming.
+	* class State with set/get. maybe some metaprogramming, owning
+          the dot.
 
-  * mqtt
+    * sending notification -> publish.
+
+      * requests to for example, disable oil, ack wood firing
+        requested state, ...
+
+    * maybe on top of that, a synchronous call with a timeout. request
+      cookie in the response? crap, ask google for solutions.
+
+  * mqtt. payload decoded as json, topics encoded as dbus object
+    names.
+
+    * maybe pull defined names out of dbus, into a common "naming"
+      module. use it from
+
+      * dbus. generate dbus names and paths from there.
+      * mqtt. generate topics and json messages from there.
+
+      Could even pull interface_repo out of dbus, generating XML from
+      an independent representation (easily done with namedtuple which
+      is named for typed access, and iterable for a generator).
+
+    * alternatives
+
+      * http. status polling? no way.
+      * 
 
 Todo
 ====
