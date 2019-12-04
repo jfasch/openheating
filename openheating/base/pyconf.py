@@ -34,6 +34,16 @@ def read_switches(thing):
     _check_names(switches)
     return switches
 
+def read_circuits(thing):
+    context = {}
+    exec(_make_code(thing), context)
+    
+    circuits = context.get('CIRCUITS')
+    if circuits is None:
+        raise HeatingError('CIRCUITS (iterable) expected but not there')
+    _check_names(circuits)
+    return circuits
+
 def _make_code(thing):
     if hasattr(thing, 'read'):
         code = thing.read()

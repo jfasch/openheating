@@ -3,11 +3,13 @@ from .error import ClockSkewError
 from . import timeutil
 
 import logging
+from abc import ABCMeta, abstractmethod
 
 
-class Circuit:
-    def __init__(self, name, pump, producer, consumer, diff_low, diff_high):
+class Circuit(metaclass=ABCMeta):
+    def __init__(self, name, description, pump, producer, consumer, diff_low, diff_high):
         self.__name = name
+        self.__description = description
         self.__pump = pump
         self.__producer = producer
         self.__consumer = consumer
@@ -19,6 +21,12 @@ class Circuit:
             above_high=self.__pump_on)
         self.__active = False
         self.__last_ts = None
+
+    def get_name(self):
+        return self.__name
+
+    def get_description(self):
+        return self.__description
 
     def activate(self):
         if not self.__active:

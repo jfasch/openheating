@@ -17,6 +17,7 @@ class BufferWantsHeatTest(unittest.TestCase):
 
         self.__circuit = Circuit(
             name='testcircuit',
+            description='description',
             pump=self.__pump,
             producer=self.__heater_thermometer,
             consumer=self.__buffer_thermometer,

@@ -43,6 +43,28 @@ _repo[SWITCH] = '''
 </interface>
 '''.format(name=SWITCH)
 
+CIRCUIT = names.DOMAIN + '.Circuit'
+_repo[CIRCUIT] = '''
+<interface name='{name}'>
+  <method name='get_name'>
+    <arg type='s' name='response' direction='out'/>
+  </method>
+  <method name='get_description'>
+    <arg type='s' name='response' direction='out'/>
+  </method>
+  <method name='activate'>
+  </method>
+  <method name='deactivate'>
+  </method>
+  <method name='is_active'>
+    <arg type='b' name='response' direction='out'/>
+  </method>
+  <method name='poll'>
+    <arg type='t' name='timestamp' direction='in'/>
+  </method>
+</interface>
+'''.format(name=CIRCUIT)
+
 SWITCHCENTER = names.DOMAIN + '.SwitchCenter'
 _repo[SWITCHCENTER] = '''
 <interface name='{name}'>
@@ -51,6 +73,15 @@ _repo[SWITCHCENTER] = '''
   </method>
 </interface>
 '''.format(name=SWITCHCENTER)
+
+CIRCUITCENTER = names.DOMAIN + '.CircuitCenter'
+_repo[CIRCUITCENTER] = '''
+<interface name='{name}'>
+  <method name='all_names'>
+    <arg type='as' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=CIRCUITCENTER)
 
 ERROREMITTER = names.DOMAIN + '.ErrorEmitter'
 _repo[ERROREMITTER] = '''

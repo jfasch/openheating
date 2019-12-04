@@ -10,59 +10,6 @@ Stack (Hanging)
 
     * poll_until(predicate, timeout)
 
-* panel
-
-  async generator factories that take their repective closures, and
-  are yielded by a generator. build that into blink that toggles state
-  based upon that -> on/off. *yay functional!*
-
-  * play queue button, evtl. mit reset
-
-    * task/coro started off doing a wait on a asyncio.Queue
-    * maintains a task that it cancels/restarts appropriately as
-      requests come in
-    * requests are short programs that operate on the
-      led/button/ledbutton combination
-
-  * json interface, without any protocol, simply modeled on top of
-    whats needed:
-
-    * receive notification -> subscribe.
-
-      * errors
-      * state change monitors (emitting events) in every node. 
-
-	* for example oil on off, wood request firing, oil
-          disabled/enabled
-	* class State with set/get. maybe some metaprogramming, owning
-          the dot.
-
-    * sending notification -> publish.
-
-      * requests to for example, disable oil, ack wood firing
-        requested state, ...
-
-    * maybe on top of that, a synchronous call with a timeout. request
-      cookie in the response? crap, ask google for solutions.
-
-  * mqtt. payload decoded as json, topics encoded as dbus object
-    names.
-
-    * maybe pull defined names out of dbus, into a common "naming"
-      module. use it from
-
-      * dbus. generate dbus names and paths from there.
-      * mqtt. generate topics and json messages from there.
-
-      Could even pull interface_repo out of dbus, generating XML from
-      an independent representation (easily done with namedtuple which
-      is named for typed access, and iterable for a generator).
-
-    * alternatives
-
-      * http. status polling? no way.
-      * 
-
 Todo
 ====
 
@@ -126,6 +73,55 @@ Todo
 
     * nice opportunity for a new testcase helper, inject_timed()
       whatever.
+
+
+* panel
+
+  * play queue button, evtl. mit reset
+
+    * task/coro started off doing a wait on a asyncio.Queue
+    * maintains a task that it cancels/restarts appropriately as
+      requests come in
+    * requests are short programs that operate on the
+      led/button/ledbutton combination
+
+  * json interface, without any protocol, simply modeled on top of
+    whats needed:
+
+    * receive notification -> subscribe.
+
+      * errors
+      * state change monitors (emitting events) in every node. 
+
+	* for example oil on off, wood request firing, oil
+          disabled/enabled
+	* class State with set/get. maybe some metaprogramming, owning
+          the dot.
+
+    * sending notification -> publish.
+
+      * requests to for example, disable oil, ack wood firing
+        requested state, ...
+
+    * maybe on top of that, a synchronous call with a timeout. request
+      cookie in the response? crap, ask google for solutions.
+
+  * mqtt. payload decoded as json, topics encoded as dbus object
+    names.
+
+    * maybe pull defined names out of dbus, into a common "naming"
+      module. use it from
+
+      * dbus. generate dbus names and paths from there.
+      * mqtt. generate topics and json messages from there.
+
+      Could even pull interface_repo out of dbus, generating XML from
+      an independent representation (easily done with namedtuple which
+      is named for typed access, and iterable for a generator).
+
+    * alternatives
+
+      * http. status polling? no way.
 
 * beer spin off
 * error managers

@@ -227,6 +227,22 @@ class SwitchService(_ServiceWrapper):
         super().stop()
         self.__pyconfigfile.close()
 
+class CircuitService(_ServiceWrapper):
+    def __init__(self, pyconf, debug=False):
+        self.__pyconfigfile = tempfile.NamedTemporaryFile(mode='w')
+        confargs = ['--pyconfigfile', self.__pyconfigfile.name]
+
+        self.__pyconfigfile.write('\n'.join(pyconf))
+        self.__pyconfigfile.flush()
+
+        super().__init__(exe='openheating-circuits.py',
+                         busname=names.Bus.CIRCUITS,
+                         args=confargs)
+
+    def stop(self):
+        super().stop()
+        self.__pyconfigfile.close()
+
 class ErrorService(_ServiceWrapper):
     def __init__(self, debug=False):
         super().__init__(

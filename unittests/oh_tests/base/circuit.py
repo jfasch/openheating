@@ -15,6 +15,7 @@ class CircuitTest(unittest.TestCase):
         self.__consumer = DummyThermometer('consumer', 'some consumer', 10)
         self.__circuit = Circuit(
             name='name',
+            description='description',
             pump=self.__pump,
             producer=self.__producer,
             consumer=self.__consumer,
