@@ -15,7 +15,8 @@
 
     * {lib,}gpiod (vs. deprecated (why?) sysfs)
     * systemd
-    * D-Bus, pydbus
+    * D-Bus, pydbus -> "microservices" (management buy-in, especially
+      with dbus interfaces defined in XML)
     * ah yes, Python (why not asyncio?)
     * Sensors: DS18x20
 
