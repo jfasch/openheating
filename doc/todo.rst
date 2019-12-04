@@ -16,6 +16,14 @@ Stack (Hanging)
   are yielded by a generator. build that into blink that toggles state
   based upon that -> on/off. *yay functional!*
 
+  * play queue button, evtl. mit reset
+
+    * task/coro started off doing a wait on a asyncio.Queue
+    * maintains a task that it cancels/restarts appropriately as
+      requests come in
+    * requests are short programs that operate on the
+      led/button/ledbutton combination
+
   * json interface, without any protocol, simply modeled on top of
     whats needed:
 
@@ -57,6 +65,11 @@ Stack (Hanging)
 
 Todo
 ====
+
+* populate conf/
+
+  * move dbus/ and systemd/ into conf/
+  * fix setup.py accordingly
 
 * controlling pumps. better name required. transport(from,
   to).{de,}activate() or something.
