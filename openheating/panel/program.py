@@ -18,6 +18,10 @@ def program(coro):
         return create_coro
     return factory
 
+def launch(prog):
+    coro = prog()
+    return asyncio.ensure_future(coro)
+
 @program
 async def blink(interval, led):
     state = saved_state = led.get_state()
@@ -51,19 +55,21 @@ async def sequence(*progs):
 @program
 async def n_times(n, prog):
     for _ in range(n):
-        await prog()
+        try:
+            current = launch(prog)
+            await current
+        except asyncio.CancelledError:
+            current.cancel()
 
 @program
 async def forever(*progs):
-    current = None
-    try:
-        while True:
-            for prog in progs:
-                current = prog()
+    while True:
+        for prog in progs:
+            try:
+                current = launch(prog)
                 await current
-    finally:
-        if current:
-            current.cancel()
+            except asyncio.CancelledError:
+                current.cancel()
 
 @program
 async def all(*progs):

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.base import gpio
-from openheating.base.panelutil import *
+from openheating.panel.program import *
 
 import asyncio
 import sys
