@@ -4,7 +4,8 @@ from openheating.base import gpio
 from openheating.base.panelutil import *
 
 import asyncio
-import itertools
+import sys
+
 
 
 loop = asyncio.get_event_loop()
@@ -55,44 +56,44 @@ green = LEDButton(
         debounce_limit=0.2)
 )
 
-# prog = asyncio.gather(
-#     panelutil.button_runs_subprocess(
-#         button=red.button,
-#         cmd=['/usr/bin/chromium-browser', '--no-new-tab', 'http://192.168.1.30:5000/thermometers']),
-#     panelutil.button_stops(
-#         button=yellow.button,
-#         coro=panelutil.iterate_frequencies(
-#             led=yellow.led,
-#             interval=3,
-#             frequencies=itertools.cycle((0.1, 0.5, 1)))),
-#     panelutil.button_iterates_frequencies(
-#         ledbutton=green,
-#         frequencies=itertools.cycle((0.1, 0.5, 1))),
-# )
 
-# prog = sequence(
-#     duration(3, blink(0.5, red.led)),
-#     asyncio.sleep(1.5),
-#     duration(3, blink(0.1, green.led)),
-#     asyncio.sleep(3),
-#     duration(1, blink(0.1, green.led)),
-#     button_stops(red.button, 
-#                  blink(0.1, red.led),
-#     ),
-# )
-        
-prog = asyncio.gather(
-    # home
-    button_starts_async(green.button, http_get('http://192.168.1.30:5000/')),
-    blink(1, green.led),
-
-    # thermometers
-    button_starts_async(yellow.button, http_get('http://192.168.1.30:5000/thermometers')),
-    blink(1, yellow.led),
-
-    # errors
-    button_starts_async(red.button, http_get('http://192.168.1.30:5000/errors')),
-    blink(0.2, red.led),
+def open_url(ledbutton, url):
+    return forever(
+        any(
+            blink(1, ledbutton.led),
+            wait_button(ledbutton.button),
+        ),
+        any(
+            blink(0.1, ledbutton.led),
+            sequence(
+                wake_display(),
+                http_get(url),
+            ),
+        ),
     )
 
-loop.run_until_complete(prog)
+programs = {
+    'simple-blink-green': blink(1, green.led),
+    'three-stages-blinking': sequence(any(sleep(3), blink(0.2, green.led)),
+                                      any(sleep(3), blink(0.2, yellow.led)),
+                                      any(sleep(3), blink(0.2, red.led))),
+    'parallel-blink-forever': all(
+        blink(0.1, green.led),
+        blink(0.2, yellow.led),
+        blink(0.3, red.led),
+    ),
+    'parallel-blink-five-seconds': any(
+        blink(0.1, green.led),
+        blink(0.2, yellow.led),
+        blink(0.3, red.led),
+        sleep(5),
+    ),
+        
+    'button-navigation': all(
+        open_url(green, 'http://192.168.1.30:5000/'),
+        open_url(yellow, 'http://192.168.1.30:5000/thermometers'),
+        open_url(red, 'http://192.168.1.30:5000/errors'),
+    )
+}
+
+run(loop, programs[sys.argv[1]])

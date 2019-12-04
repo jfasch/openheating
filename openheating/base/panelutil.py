@@ -1,78 +1,103 @@
 from collections import namedtuple
 import subprocess
 import asyncio
+import functools
 
 
 LEDButton = namedtuple('LEDButton', ('led', 'button'))
 
+
+def run(loop, prog):
+    coro = prog()
+    loop.run_until_complete(coro)
+
+def program(coro):
+    def factory(*args, **kwargs):
+        def create_coro():
+            return coro(*args, **kwargs)
+        return create_coro
+    return factory
+
+@program
 async def blink(interval, led):
+    state = saved_state = led.get_state()
     try:
-        state = True
         while True:
+            state = not state
             led.set_state(state)
             await asyncio.sleep(interval)
-            state = not state
     finally:
-        led.set_state(False)
+        led.set_state(saved_state)
 
+@program
 async def on(led):
     led.set_state(True)
 
+@program
 async def off(led):
     led.set_state(False)
 
-async def duration(duration, coro):
-    task = asyncio.ensure_future(coro)
-    try:
-        await asyncio.sleep(duration)
-    finally:
-        task.cancel()
+@program
+async def duration(delta, prog):
+    await any(
+        prog(),
+        sleep(delta)())
 
-async def sequence(*coroutines):
-    for coro in coroutines:
-        await coro
+@program
+async def sequence(*progs):
+    for prog in progs:
+        await prog()
 
-async def n_times(n, coro):
+@program
+async def n_times(n, prog):
     for _ in range(n):
-        await coro
+        await prog()
 
-async def iterate_frequencies(led, interval, frequencies):
-    for f in frequencies:
-        await duration(interval, blink(f, led))
-
-async def button_starts_async(button, coro):
-    await button.state_changed()
-    asyncio.ensure_future(coro)
-
-async def button_stops(button, coro, and_then=None):
-    task = asyncio.ensure_future(coro)
+@program
+async def forever(*progs):
+    current = None
     try:
-        await button.state_changed()
+        while True:
+            for prog in progs:
+                current = prog()
+                await current
     finally:
-        task.cancel()
+        if current:
+            current.cancel()
 
-    if and_then:
-        await button.state_changed()
-        task = asyncio.ensure_future(and_then)
-        try:
-            await task
-        finally:
-            task.cancel()
+@program
+async def all(*progs):
+    'run progs in parallel and wail until all are done'
+    await asyncio.gather(*[p() for p in progs])
 
-async def button_runs_subprocess(button, cmd):
-    while True:
-        await button.state_changed()
-        subprocess.run(cmd)
+@program
+async def any(*progs):
+    done, pending = await asyncio.wait([prog() for prog in progs], return_when=asyncio.FIRST_COMPLETED)
+    for p in pending:
+        p.cancel()
 
-async def button_iterates_frequencies(ledbutton, frequencies):
-    for f in frequencies:
-        task = asyncio.ensure_future(blink(f, ledbutton.led))
-        try:
-            await ledbutton.button.state_changed()
-        except asyncio.CancelledError:
-            break
-        finally:
-            task.cancel()
+@program
+async def sleep(secs):
+    await asyncio.sleep(secs)
 
+@program
+async def wait_button(button):
+    await button.state_changed()
+
+@program
+async def subprocess_shell(cmd):
+    process = await asyncio.create_subprocess_shell(cmd)
+    try:
+        await process.wait()
+    except asyncio.CancelledError:
+        process.terminate()
+
+@program
 async def http_get(url):
-    subprocess.run(['/usr/bin/chromium-browser', '--no-new-tab', url])
+    prog = subprocess_shell('/usr/bin/chromium-browser --no-new-tab {}'.format(url))
+    await prog()
+
+@program
+async def wake_display():
+    prog = subprocess_shell('xset s reset')
+    await prog()
