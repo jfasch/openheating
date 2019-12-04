@@ -7,10 +7,6 @@ import functools
 LEDButton = namedtuple('LEDButton', ('led', 'button'))
 
 
-def run(loop, prog):
-    coro = prog()
-    loop.run_until_complete(coro)
-
 def program(coro):
     def factory(*args, **kwargs):
         def create_coro():
@@ -19,8 +15,7 @@ def program(coro):
     return factory
 
 def launch(prog):
-    coro = prog()
-    return asyncio.ensure_future(coro)
+    return asyncio.ensure_future(prog())
 
 @program
 async def blink(interval, led):
@@ -74,13 +69,22 @@ async def forever(*progs):
 @program
 async def all(*progs):
     'run progs in parallel and wail until all are done'
-    await asyncio.gather(*[p() for p in progs])
+    task = asyncio.ensure_future(asyncio.gather(*[p() for p in progs]))
+    try:
+        await task
+    except asyncio.CancelledError:
+        task.cancel()
 
 @program
 async def any(*progs):
-    done, pending = await asyncio.wait([prog() for prog in progs], return_when=asyncio.FIRST_COMPLETED)
-    for p in pending:
-        p.cancel()
+    tasks = [launch(prog) for prog in progs]
+    try:
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+        for p in pending:
+            p.cancel()
+    except asyncio.CancelledError:
+        for task in tasks:
+            task.cancel()
 
 @program
 async def sleep(secs):

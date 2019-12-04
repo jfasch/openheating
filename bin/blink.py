@@ -2,6 +2,7 @@
 
 from openheating.base import gpio
 from openheating.panel.program import *
+from openheating.panel.cli import CLI
 
 import asyncio
 import sys
@@ -74,9 +75,11 @@ def open_url(ledbutton, url):
 
 programs = {
     'simple-blink-green': blink(1, green.led),
-    'three-stages-blinking': sequence(any(sleep(3), blink(0.2, green.led)),
-                                      any(sleep(3), blink(0.2, yellow.led)),
-                                      any(sleep(3), blink(0.2, red.led))),
+    'simple-blink-yellow': blink(1, yellow.led),
+    'simple-blink-red': blink(1, red.led),
+    'three-stages-blinking': forever(any(sleep(3), blink(0.2, green.led)),
+                                     any(sleep(3), blink(0.2, yellow.led)),
+                                     any(sleep(3), blink(0.2, red.led))),
     'parallel-blink-forever': all(
         blink(0.1, green.led),
         blink(0.2, yellow.led),
@@ -96,4 +99,14 @@ programs = {
     )
 }
 
-run(loop, programs[sys.argv[1]])
+async def cli():
+    async for line in linereader(sys.stdin):
+        print(line)
+
+pnames = sys.argv[1:]
+if pnames:
+    coro = launch(all(*[programs[pname] for pname in pnames]))
+else:
+    coro = CLI(programs).run()
+
+loop.run_until_complete(coro)
