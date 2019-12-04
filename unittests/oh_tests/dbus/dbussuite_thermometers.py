@@ -29,20 +29,16 @@ class ThermometersOK(services.ServiceTestCase):
         self.assertEqual(thermometer_client.get_description(), 'Test Thermometer')
         self.assertAlmostEqual(thermometer_client.get_temperature(), 42)
 
-    def test__thermometer_client_prog__current(self):
-        completed_process = subprocess.run(
-            [testutils.find_executable('openheating-thermometer-client.py'), '--session', 'current', 'TestThermometer'],
-            stdout=subprocess.PIPE, check=True, universal_newlines=True)
-        temperature = eval(completed_process.stdout)
-        self.assertAlmostEqual(temperature, 42)
+    def test__get_temperature(self):
+        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        thermometer_client = center_client.get_thermometer('TestThermometer')
+        self.assertAlmostEqual(thermometer_client.get_temperature(), 42)
 
-    def test__thermometer_client_prog__list(self):
-        completed_process = subprocess.run(
-            [testutils.find_executable('openheating-thermometer-client.py'), '--session', 'list'], 
-            stdout=subprocess.PIPE, check=True, universal_newlines=True)
-        thermometers = [name for name in completed_process.stdout.split('\n') if name != '']
-        self.assertEqual(len(thermometers), 1)
-        self.assertIn('TestThermometer', thermometers)
+    def test__list(self):
+        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        all_names = center_client.all_names()
+        self.assertEqual(len(all_names), 1)
+        self.assertIn('TestThermometer', all_names)
 
 
 class ThermometersError(services.ServiceTestCase):

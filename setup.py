@@ -152,7 +152,6 @@ setup(
         'bin/openheating-thermometers.py',
         'bin/openheating-errors.py',
 
-        'bin/openheating-thermometer-client.py',
         'bin/openheating-w1-list.py',
     ],
 )
