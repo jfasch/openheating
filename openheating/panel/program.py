@@ -2,6 +2,7 @@ from collections import namedtuple
 import subprocess
 import asyncio
 import functools
+import sys
 
 
 LEDButton = namedtuple('LEDButton', ('led', 'button'))
@@ -89,6 +90,10 @@ async def any(*progs):
 @program
 async def sleep(secs):
     await asyncio.sleep(secs)
+
+@program
+async def debug(*args):
+    print(*args, file=sys.stderr)
 
 @program
 async def wait_button(button):
