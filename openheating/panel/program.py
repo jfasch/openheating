@@ -38,23 +38,25 @@ async def off(led):
     led.set_state(False)
 
 @program
-async def duration(delta, prog):
-    await any(
-        prog(),
-        sleep(delta)())
-
-@program
 async def sequence(*progs):
-    for prog in progs:
-        await prog()
+    current = None
+    try:
+        for prog in progs:
+            current = launch(prog)
+            await current
+    finally:
+        if current:
+            current.cancel()
 
 @program
 async def n_times(n, prog):
-    for _ in range(n):
-        try:
+    current = None
+    try:
+        for _ in range(n):
             current = launch(prog)
             await current
-        except asyncio.CancelledError:
+    finally:
+        if current:
             current.cancel()
 
 @program
@@ -119,3 +121,10 @@ async def http_get(url):
 async def wake_display():
     prog = subprocess_shell('xset s reset')
     await prog()
+
+def duration(delta, prog):
+    return any(
+        prog,
+        sleep(delta),
+    )
+

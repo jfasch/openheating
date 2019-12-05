@@ -107,6 +107,8 @@ programs = {
         open_url(red, 'http://192.168.1.30:5000/errors'),
     ),
 
+    'duration': duration(5, forever(debug('seas oida!'), sleep(1))),
+
     'weird': forever(
         any(
             forever(
