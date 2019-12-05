@@ -59,13 +59,15 @@ async def n_times(n, prog):
 
 @program
 async def forever(*progs):
-    while True:
-        for prog in progs:
-            try:
+    current = None
+    try:
+        while True:
+            for prog in progs:
                 current = launch(prog)
                 await current
-            except asyncio.CancelledError:
-                current.cancel()
+    finally:
+        if current: 
+            current.cancel()
 
 @program
 async def all(*progs):
