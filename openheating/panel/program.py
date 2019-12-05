@@ -104,6 +104,7 @@ async def subprocess_shell(cmd):
 
 @program
 async def http_get(url):
+    url += '?menu=false'
     prog = subprocess_shell('/usr/bin/chromium-browser --no-new-tab {}'.format(url))
     await prog()
 

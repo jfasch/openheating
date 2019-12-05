@@ -10,6 +10,7 @@
 
   <div class="oh-screen">
 
+    {% if menu %}
     <header>
 
       <nav>
@@ -29,6 +30,7 @@
       </div>
 
     </header>
+    {% endif %}
 
     <section id="oh-main">
       {% block main %}{% endblock %}

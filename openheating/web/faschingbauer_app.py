@@ -38,23 +38,28 @@ class FaschingbauerApp:
         self.flask.run(*args, **kwargs)
 
     def render_template(self, template, **kwargs):
-        fmenu = menu.Menu(entries=(
-            menu.Entry(
-                url=flask.url_for('home'),
-                image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_home.svg'),
-                alt='Home',
-            ),
-            menu.Entry(
-                url=flask.url_for('thermometers'),
-                image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_ics_thermometer.svg'),
-                alt='Thermometers',
-            ),
-            menu.Entry(
-                url=flask.url_for('errors'),
-                image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_warning.svg'),
-                alt='Errors',
-            ),
-        ))
+        do_menu = flask.request.args.get('menu', 'true')
+        if do_menu == 'true':
+            fmenu = menu.Menu(entries=(
+                menu.Entry(
+                    url=flask.url_for('home'),
+                    image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_home.svg'),
+                    alt='Home',
+                ),
+                menu.Entry(
+                    url=flask.url_for('thermometers'),
+                    image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_ics_thermometer.svg'),
+                    alt='Thermometers',
+                ),
+                menu.Entry(
+                    url=flask.url_for('errors'),
+                    image_url=flask.url_for('static', filename='icons/www.opensecurityarchitecture.org/osa_warning.svg'),
+                    alt='Errors',
+                ),
+            ))
+        else:
+            fmenu = None
+
         return flask.render_template(
             template,
             app = self,
