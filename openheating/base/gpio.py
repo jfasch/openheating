@@ -6,7 +6,15 @@ import asyncio
 from collections import deque
 
 
-def create_switch(name, description, chiplabel, offset, direction=None, loop=None):
+def input(name, description, chiplabel, offset):
+    return switch(name=name, description=description, 
+                  chiplabel=chiplabel, offset=offset, direction=DIRECTION_IN)
+
+def output(name, description, chiplabel, offset):
+    return switch(name=name, description=description, 
+                  chiplabel=chiplabel, offset=offset, direction=DIRECTION_OUT)
+
+def switch(name, description, chiplabel, offset, direction=None, loop=None):
     if direction == DIRECTION_IN:
         gpiod_type = gpiod.LINE_REQ_DIR_IN
     elif direction == DIRECTION_OUT:
@@ -18,7 +26,7 @@ def create_switch(name, description, chiplabel, offset, direction=None, loop=Non
     line.request(consumer='openheating:'+name, type=gpiod_type, default_val=False)
     return _GPIOSwitch(name=name, description=description, line=line)
 
-def create_pushbutton(name, description, chiplabel, offset, loop, debounce_limit):
+def pushbutton(name, description, chiplabel, offset, loop, debounce_limit):
     line = _get_chip(chiplabel).get_line(offset)
     line.request(consumer='openheating:'+name, type=gpiod.LINE_REQ_EV_FALLING_EDGE)
     return _GPIOPushButton(name=name, description=description, 

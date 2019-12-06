@@ -21,13 +21,12 @@ if args.simulation:
     green = yellow = red = LEDButton(None, None)
 else:
     red = LEDButton(
-        gpio.create_switch(
+        gpio.output(
             name='red_led',
             description='Red LED',
             chiplabel='pinctrl-bcm2835',
-            offset=21,
-            direction=gpio.DIRECTION_OUT),
-        gpio.create_pushbutton(
+            offset=21),
+        gpio.pushbutton(
             name='red_button',
             description='Red Button',
             chiplabel='pinctrl-bcm2835',
@@ -36,13 +35,12 @@ else:
             debounce_limit=0.2)
     )
     yellow = LEDButton(
-        gpio.create_switch(
+        gpio.output(
             name='yellow_led',
             description='Yellow LED',
             chiplabel='pinctrl-bcm2835',
-            offset=12,
-            direction=gpio.DIRECTION_OUT),
-        gpio.create_pushbutton(
+            offset=12),
+        gpio.pushbutton(
             name='yellow_button',
             description='Yellow Button',
             chiplabel='pinctrl-bcm2835',
@@ -51,13 +49,12 @@ else:
             debounce_limit=0.2)
     )
     green = LEDButton(
-        gpio.create_switch(
+        gpio.output(
             name='greem_led',
             description='Green LED',
             chiplabel='pinctrl-bcm2835',
-            offset=24,
-            direction=gpio.DIRECTION_OUT),
-        gpio.create_pushbutton(
+            offset=24),
+        gpio.pushbutton(
             name='green_button',
             description='Green Button',
             chiplabel='pinctrl-bcm2835',
@@ -108,8 +105,18 @@ programs = {
     ),
 
     'duration': duration(5, forever(debug('seas oida!'), sleep(1))),
+    '5-times': n_times(5, all(debug('hello'), sleep(2))),
 
-    'weird': forever(
+    'three-debuggers-in-parallel': forever(
+        all(
+            any(sleep(0.5), forever(debug('0.5'), sleep(0.1))),
+            all(sleep(1.0), debug('1.0')),
+            all(sleep(1.5), debug('1.5')),
+        ),
+        debug('next'),
+    ),
+
+    'weird-debugging': forever(
         any(
             forever(
                 debug('1'),
@@ -121,10 +128,6 @@ programs = {
         sleep(1),
     ),
 }
-
-async def cli():
-    async for line in linereader(sys.stdin):
-        print(line)
 
 if len(args.programs):
     coro = launch(all(*[programs[pname] for pname in args.programs]))
