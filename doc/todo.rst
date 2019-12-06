@@ -1,17 +1,58 @@
 Stack (Hanging)
 ===============
 
-* openheating-circuits.py
+* hotwater cycle overtake
 
-  * pyconf
-  * can we abstract *_Center? CircuitCenter would be the third.
-  * http: menu for circuits
-  * tests
+  * openheating-circuits.py
+  
+    * pyconf
+    * can we abstract *_Center? CircuitCenter would be the third.
+    * http: menu for circuits
+    * tests
+  
+      * poll_until(predicate, timeout)
 
-    * poll_until(predicate, timeout)
+    * toplevel main()-like thing. 
 
+      * watchdog. could for example periodically check thermometers in
+	case everybody else forgets -> easy and funny, simply pull the
+	line on error. should make sure that thermometers raises the
+	currently active exception of each thermometer. add
+	clear_exception() to Thermometer.
+      * poll() on every participant in the game. could do toplevel
+	error handling, using the exceptions of each poll call, being
+	the only one that writes to .Errors. HAH! maybe best *be* the
+	error logger.
+      * error handling: carry a simple table of errors to handle with
+	a watchdog pull.
+  
 Todo
 ====
+
+* blink
+
+  * context, maybe added as a closure in @program(). geil -> add to
+    presentation.
+  * tests
+    1. count down until value on each run. program name sub(), subs an
+       object contained in a closure. together with a check, maybe
+       cmp(sub(100),0).
+    1. while loop, as a logical extension.
+  * next evolution step: add python code and asyncio logic. pieces
+    needed.
+
+    * read up on globals() and locals(), and lookup in general
+    * python code that is run in every lauch(), taking context (global
+      variables? or something that can mimic this? is there a way to
+      run a coroutine with a specialized context? easily? lets own the
+      dot in ... wtf ... maybe something extensible in collections?
+    * task management. is there something built in to
+      asyncio. routines that are available to programs.
+
+      * asyncio.ensure_future(), have to take care of yourself. likely
+	catching CancelledError and maybe do cleanup.
+      * program.child(). automatic cleanup on cancel().
+      * program.wait(). await launch(). geil.
 
 * populate conf/
 
