@@ -14,7 +14,6 @@ red = LEDButton(
         description='Red Button',
         chiplabel='pinctrl-bcm2835',
         offset=20,
-        loop=loop,
         debounce_limit=0.2)
 )
 yellow = LEDButton(
@@ -28,7 +27,6 @@ yellow = LEDButton(
         description='Yellow Button',
         chiplabel='pinctrl-bcm2835',
         offset=7,
-        loop=loop,
         debounce_limit=0.2)
 )
 green = LEDButton(
@@ -42,6 +40,5 @@ green = LEDButton(
         description='Green Button',
         chiplabel='pinctrl-bcm2835',
         offset=23,
-        loop=loop,
         debounce_limit=0.2)
 )

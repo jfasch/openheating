@@ -26,11 +26,12 @@ def switch(name, description, chiplabel, offset, direction=None, loop=None):
     line.request(consumer='openheating:'+name, type=gpiod_type, default_val=False)
     return _GPIOSwitch(name=name, description=description, line=line)
 
-def pushbutton(name, description, chiplabel, offset, loop, debounce_limit):
+def pushbutton(name, description, chiplabel, offset, debounce_limit):
     line = _get_chip(chiplabel).get_line(offset)
     line.request(consumer='openheating:'+name, type=gpiod.LINE_REQ_EV_FALLING_EDGE)
     return _GPIOPushButton(name=name, description=description, 
-                           line=line, debounce_limit=debounce_limit, loop=loop)
+                           line=line, debounce_limit=debounce_limit, 
+                           loop=asyncio.get_event_loop())
 
 # one uses a chip to retrieve a gpio handle. the chip must remain open
 # to keep the handle valid, which is what this dictionary is used for.
