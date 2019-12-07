@@ -1,3 +1,6 @@
+RELAIS ABSICHERN!!!!! WIE HOCH??? ist gach jedes extra intern
+abgesichert?
+
 Stack (Hanging)
 ===============
 
@@ -53,6 +56,51 @@ Todo
 	catching CancelledError and maybe do cleanup.
       * program.child(). automatic cleanup on cancel().
       * program.wait(). await launch(). geil.
+
+    * interface. hmm. we have toplevel code objects, programs made by
+      primitives in in the program module, like everything else. why
+      not just add another primitive program.lauch_code(), or simply
+      recognize a coroutine ??? is there an api for that, I believe
+      yes!!)
+
+      then simply await the task by adding it to one of our running
+      lists. hmm. wait(). child(). fire_off() or
+      asyncio.create_task().
+
+      add these as a replacement for launch(). look into "warning"
+      type exceptions. how easy that could be.
+
+  * next evolution step: marketing. on a group of buttons, pulse sine
+    waves with varying frequencies.
+
+    * forever(... hmmm .. something like ... with numpy.sine() on an
+         itertools.cycle()d iterator.
+
+	 on(red),
+	 any(
+	    # blink(... sine ... rate ... frequency -> iterator!!!)
+	    # -> numpy blah await asyncio.sleep(...) so geil!
+	    # -> presentation
+	    # think about wait() child() whatever primitives.
+	    call(pyprog, *args, **kwargs))
+	    wait_button(red),
+	 ),
+	 any(
+	    blink(red, 0.5),
+	    wait_button(red)
+	 ),
+	 # annoy a bit more
+	 any(
+	    blink(red. 0.1),
+	    wait_button(red),
+	 ),
+      )
+	 
+    * (**) @program() should work on range() too? that would be the
+      hammer!
+    * call(pycode) takes a code object (in whatever precompiled form),
+      eval()s it (in whatever context, current?) and turns it into a
+      program. hammer!
 
 * populate conf/
 

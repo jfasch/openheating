@@ -8,10 +8,17 @@ import sys
 LEDButton = namedtuple('LEDButton', ('led', 'button'))
 
 
-def program(coro):
+def program(corofunc):
+    # this is what you get when you write
+    #   @program
+    #   async def blah(a, b, c): ...
+
+    # when called, it gives you a function create_coro() 
     def factory(*args, **kwargs):
+        # create_coro(), when called, gives the caller the actual
+        # coroutine to work with.
         def create_coro():
-            return coro(*args, **kwargs)
+            return corofunc(*args, **kwargs)
         return create_coro
     return factory
 
@@ -127,4 +134,3 @@ def duration(delta, prog):
         prog,
         sleep(delta),
     )
-

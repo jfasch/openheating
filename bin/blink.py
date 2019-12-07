@@ -3,6 +3,7 @@
 from openheating.base import gpio
 from openheating.panel.program import *
 from openheating.panel.cli import CLI
+from openheating.panel import ledbuttons
 
 import asyncio
 import sys
@@ -20,49 +21,9 @@ loop = asyncio.get_event_loop()
 if args.simulation:
     green = yellow = red = LEDButton(None, None)
 else:
-    red = LEDButton(
-        gpio.output(
-            name='red_led',
-            description='Red LED',
-            chiplabel='pinctrl-bcm2835',
-            offset=21),
-        gpio.pushbutton(
-            name='red_button',
-            description='Red Button',
-            chiplabel='pinctrl-bcm2835',
-            offset=20,
-            loop=loop,
-            debounce_limit=0.2)
-    )
-    yellow = LEDButton(
-        gpio.output(
-            name='yellow_led',
-            description='Yellow LED',
-            chiplabel='pinctrl-bcm2835',
-            offset=12),
-        gpio.pushbutton(
-            name='yellow_button',
-            description='Yellow Button',
-            chiplabel='pinctrl-bcm2835',
-            offset=7,
-            loop=loop,
-            debounce_limit=0.2)
-    )
-    green = LEDButton(
-        gpio.output(
-            name='greem_led',
-            description='Green LED',
-            chiplabel='pinctrl-bcm2835',
-            offset=24),
-        gpio.pushbutton(
-            name='green_button',
-            description='Green Button',
-            chiplabel='pinctrl-bcm2835',
-            offset=23,
-            loop=loop,
-            debounce_limit=0.2)
-    )
-
+    green = ledbuttons.green
+    yellow = ledbuttons.yellow
+    red = ledbuttons.red
 
 def open_url(ledbutton, url):
     return forever(
@@ -127,6 +88,8 @@ programs = {
         debug('pause'),
         sleep(1),
     ),
+
+    
 }
 
 if len(args.programs):
