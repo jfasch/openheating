@@ -1,0 +1,12 @@
+[Unit]
+Description=Openheating Switch Service
+
+[Service]
+User=openheating
+Environment=PYTHONPATH=${libdir}
+ExecStart=${bindir}/openheating-switches.py --system --pyconfigfile=/etc/openheating/switches.pyconf
+Type=dbus
+BusName=org.openheating.Switches
+
+[Install]
+WantedBy=multi-user.target

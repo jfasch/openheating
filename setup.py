@@ -104,6 +104,7 @@ setup(
              'systemd/openheating-errors.service.ac_subst',
              'systemd/openheating-http.service.ac_subst',
              'systemd/openheating-thermometers.service.ac_subst',
+             'systemd/openheating-switches.service.ac_subst',
          ]
         ),
 
@@ -117,6 +118,7 @@ setup(
         ('share/installations/faschingbauer',
          [
              'installations/faschingbauer/thermometers.pyconf',
+             'installations/faschingbauer/switches.pyconf',
          ]
         ),
 

@@ -4,60 +4,103 @@ from openheating.base import gpio
 
 
 SWITCHES = [
-    gpio.create_switch(
-        name = 'Relais1',
-        description = 'Relais 1',
+    gpio.output(
+        name = 'Relay1_1',
+        description = 'Relay 1/1',
         chiplabel = 'pinctrl-bcm2835',
         offset = 17,
-        direction = gpio.DIRECTION_OUT),
-
-    gpio.create_switch(
-        name = 'Relais2',
+    ),
+    gpio.output(
+        name = 'Relay1_2',
+        description = 'Relay 1/2',
         chiplabel = 'pinctrl-bcm2835',
         offset = 27,
-        direction = gpio.DIRECTION_OUT,
-        description = 'Relais 2'),
-
-    gpio.create_switch(
-        name = 'Relais3',
+    ),
+    gpio.output(
+        name = 'Relay1_3',
+        description = 'Relay 1/3',
         chiplabel = 'pinctrl-bcm2835',
         offset = 22,
-        direction = gpio.DIRECTION_OUT,
-        description = 'Relais 3'),
-
-    gpio.create_switch(
-        name = 'Relais4',
+    ),
+    gpio.output(
+        name = 'Relay1_4',
+        description = 'Relay 1/4',
         chiplabel = 'pinctrl-bcm2835',
         offset = 5,
-        direction = gpio.DIRECTION_OUT,
-        description = 'Relais 4'),
-
-    gpio.create_switch(
-        name = 'Relais5',
+    ),
+    gpio.output(
+        name = 'Relay1_5',
+        description = 'Relay 1/5',
         chiplabel = 'pinctrl-bcm2835',
         offset = 6,
-        direction = gpio.DIRECTION_OUT,
-        description = 'Relais 5'),
-
-    gpio.create_switch(
-        name = 'Relais6',
+    ),
+    gpio.output(
+        name = 'Relay1_6',
+        description = 'Relay 1/6',
         chiplabel = 'pinctrl-bcm2835',
         offset = 13,
-        direction = gpio.DIRECTION_OUT,
-        description = 'Relais 6'),
-
-    gpio.create_switch(
-        name = 'Relais7',
+    ),
+    gpio.output(
+        name = 'Relay1_7',
+        description = 'Relay 1/7',
         chiplabel = 'pinctrl-bcm2835',
         offset = 19,
-        direction = gpio.DIRECTION_OUT,
-        description = 'Relais 7'),
-
-    gpio.create_switch(
-        name = 'Relais8',
+    ),
+    gpio.output(
+        name = 'Relay1_8',
+        description = 'Relay 1/8',
         chiplabel = 'pinctrl-bcm2835',
         offset = 26,
-        direction = gpio.DIRECTION_OUT,
-        description = 'Relais 8'),
+    ),
+
+
+    gpio.output(
+        name = 'Relay2_1',
+        description = 'Relay 2/1',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 21,
+    ),
+    gpio.output(
+        name = 'Relay2_2',
+        description = 'Relay 2/2',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 20,
+    ),
+    gpio.output(
+        name = 'Relay2_3',
+        description = 'Relay 2/3',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 16,
+    ),
+    gpio.output(
+        name = 'Relay2_4',
+        description = 'Relay 2/4',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 12,
+    ),
+    gpio.output(
+        name = 'Relay2_5',
+        description = 'Relay 2/5',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 7,
+    ),
+    gpio.output(
+        name = 'Relay2_6',
+        description = 'Relay 2/6',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 18,
+    ),
+    gpio.output(
+        name = 'Relay2_7',
+        description = 'Relay 2/7',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 15,
+    ),
+    gpio.output(
+        name = 'Relay2_8',
+        description = 'Relay 2/8',
+        chiplabel = 'pinctrl-bcm2835',
+        offset = 14,
+    ),
 ]
 

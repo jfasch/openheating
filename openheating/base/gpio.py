@@ -14,7 +14,7 @@ def output(name, description, chiplabel, offset):
     return switch(name=name, description=description, 
                   chiplabel=chiplabel, offset=offset, direction=DIRECTION_OUT)
 
-def switch(name, description, chiplabel, offset, direction=None, loop=None):
+def switch(name, description, chiplabel, offset, direction):
     if direction == DIRECTION_IN:
         gpiod_type = gpiod.LINE_REQ_DIR_IN
     elif direction == DIRECTION_OUT:
@@ -23,7 +23,7 @@ def switch(name, description, chiplabel, offset, direction=None, loop=None):
         assert False, '{} is not a valid direction'.format(direction)
 
     line = _get_chip(chiplabel).get_line(offset)
-    line.request(consumer='openheating:'+name, type=gpiod_type, default_val=False)
+    line.request(consumer='openheating:'+name, type=gpiod_type)
     return _GPIOSwitch(name=name, description=description, line=line)
 
 def pushbutton(name, description, chiplabel, offset, debounce_limit):
