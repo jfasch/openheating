@@ -127,6 +127,7 @@ Create and fill `/etc/openheating/`, ::
 
    # mkdir /etc/openheating
    # cp /some/prefix/share/installations/faschingbauer/thermometers.pyconf /etc/openheating/
+   # cp /some/prefix/share/installations/faschingbauer/switches.pyconf /etc/openheating/
 
 Install systemd unit files, ::
 

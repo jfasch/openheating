@@ -152,6 +152,7 @@ setup(
     scripts=[
         'bin/openheating-http.py',
         'bin/openheating-thermometers.py',
+        'bin/openheating-switches.py',
         'bin/openheating-errors.py',
 
         'bin/openheating-w1-list.py',

@@ -31,7 +31,7 @@ yellow = LEDButton(
 )
 green = LEDButton(
     gpio.output(
-        name='greem_led',
+        name='green_led',
         description='Green LED',
         chiplabel='pinctrl-bcm2835',
         offset=24),
