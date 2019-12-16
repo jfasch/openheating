@@ -23,7 +23,21 @@ def switch(name, description, chiplabel, offset, direction):
         assert False, '{} is not a valid direction'.format(direction)
 
     line = _get_chip(chiplabel).get_line(offset)
-    line.request(consumer='openheating:'+name, type=gpiod_type)
+
+    # request line.
+
+    # hmm. funny inconsistency with sysfs /sys/class/gpio
+    # behaviour. with sysfs, I take a line ("echo NN > export") and it
+    # is not ON immediately. I set it by doing "echo 1 > value".
+
+    # here, with libgpiod, if I take a line (line.request()) without
+    # specifying a default value, then it sets the line to 1 by
+    # itself.
+
+    # workaround: specify "default_val=False", knowing that
+    # Line.request's docstring says that default_val is deprecated.
+    line.request(consumer='openheating:'+name, type=gpiod_type, default_val=False)
+
     return _GPIOSwitch(name=name, description=description, line=line)
 
 def pushbutton(name, description, chiplabel, offset, debounce_limit):
