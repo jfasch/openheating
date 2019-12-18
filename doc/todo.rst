@@ -222,3 +222,37 @@ Todo
     * convert inexactly spaced timestamps into accurately spaced
       per-second timestamps (just because we have numpy arrays and
       scipy splice interpolation)
+
+* hardware woes. write that down when done (if ever), to bring a story
+  in the GLT2020 talk.
+
+  * internal gpios can only switch 50mA in total. controlling 16
+    relays (via optocouplers; 2 LEDs and a ~500 resistor) is too
+    hard. have to use transistors.
+
+    story
+
+    * learned the hard way that not all GPIOs have the same POR
+      settings. from those visible on P1 header, GPIO0 through GPIO8
+      are configured to have a pullup resistor (is it ~50K? check
+      that), where the others have a pulldown resistor.
+
+  * tried to use a mcp23017 IO expander via I2C. plan was to save tons
+    of transistors and resistors, and simply connect it over I2C.
+
+    that did not work out though. background: I use libgpiod (the new
+    /dev/ interface) because all reserved GPIOs get properly reset to
+    their original settings when the application terminates,
+    auomatically.
+
+    mcp23017 (respectively, drivers/pinctrl/pinctrl-mcp23s08.c) does
+    not do that. must be a bug which sure can be fixed. I'd really
+    like to know the gpiod implementation, but not now :-)
+
+    BCM GPIOs (LED on GPIO26, for 3 seconds): ::
+
+      gpioset -m time -s 3 pinctrl-bcm2835 26=1
+
+    MCP23017 GPIOs (LED on GPA0, forever): ::
+
+      gpioset -m time -s 3 mcp23017 0=1

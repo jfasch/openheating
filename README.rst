@@ -80,7 +80,7 @@ its intended functionality, a definitive intent is to keep things
 apart as far as possible. Components on the horizon (or even yet in
 place; I do not update written material regularly):
 
-* Sensors all over the place, fancy histograms on a web page.
+* Sensors all over the place, fancy histograms on a web page (done).
 * Switch pumps on and off, based upon temperatures in the heat source
   and heat sink.
 * A combined heat source which *contains* oil and wood (yay
@@ -88,7 +88,8 @@ place; I do not update written material regularly):
   the system.
 * Inside that combined heat source, one mixer valve that adjusts its
   position according to the respective temperatures of oil and wood.
-* Ah yes, error management (in fact, I started with that).
+* Ah yes, error management (in fact, I started with that) (partly
+  done).
 * Did I forget something?
 
 Inner Beauty
@@ -107,7 +108,8 @@ Documentation
 -------------
 
 The state of documentation is a drama. Ok, the thing is in the works,
-but documentation will always be a drama. 
+but documentation will always be a drama. All of the existing
+documentation is in `the ``doc/`` subdirectory <dooc/>`__.
 
 * For my own purposes, I maintain an `installation document
   <doc/install.rst>`__.
