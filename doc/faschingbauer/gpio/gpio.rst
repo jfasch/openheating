@@ -1,8 +1,8 @@
 GPIO
 ====
 
-Boot Loader Config
-------------------
+Using Built-In GPIOs
+--------------------
 
 Sainsmart relay boards operate at 5V, the Raspi IOs do so at
 3.3V. Using BC548C and two resistors to handle that; see jjj for a
@@ -17,25 +17,38 @@ datasheet but it makes sense). I have no idea
   configured as "in"
 
 The effect of all this is that some relays are switched and some are
-not, from power on until I configure them in
-openheating-switches.py. To keep the duration with undefined state at
-a minimum, in `/boot/config.txt` you write ::
+not.
 
-  # "op" ... output
-  # "dl" ... drive low
-  gpio=17=op,dl
-  gpio=27=op,dl
-  gpio=22=op,dl
-  gpio=5=op,dl
-  gpio=6=op,dl
-  gpio=13=op,dl
-  gpio=19=op,dl
-  gpio=26=op,dl
-  gpio=14=op,dl
-  gpio=15=op,dl
-  gpio=18=op,dl
-  gpio=7=op,dl
-  gpio=12=op,dl
-  gpio=16=op,dl
-  gpio=20=op,dl
-  gpio=21=op,dl
+* Beginners (i.e. myself) reading:
+  https://embeddedartistry.com/blog/2018/06/04/demystifying-microcontroller-gpio-settings/
+
+* Processor datasheet excerpt, regarding GPIOs:
+  https://elinux.org/RPi_BCM2835_GPIOs
+
+  Most interesting being the different pullup/down POR configurations
+  of the pins which explain the effects that I see. For example, GPIO
+  5 and 6 tend to rebel - as the table shows, these are configured as
+  pullup, so applying a pull-down resistor is rather
+  counterproductive.
+
+  Original datasheet; see page 100ff, "GPIO Pull-up/down Register
+  (GPPUD)":
+  http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
+
+  Note also the sentence at the bottom of page 100, "The Alternate
+  function table also has the pull state which is applied after a
+  power down." So, the states listed there are the POR states of the
+  respective IOs.
+
+Using MCP23017
+--------------
+
+MCP23017 is a I2C/SPI IO expander. Easily attached (see for example
+http://www.faschingbauer.co.at/de/howtos/gpio-mcp23017/, but dont
+forget to connect RESET to 3V3 :-) )
+
+Issues:
+
+* (using gpiod) closing the chip fd does not reset pins to their POR
+  state. Unusable. This is likely the driver's fault.
+* CPU reset does not propagate to MCP23017. Unusable.

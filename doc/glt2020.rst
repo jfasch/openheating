@@ -13,7 +13,11 @@
 
   * Overview of "technologies" used
 
-    * {lib,}gpiod (vs. deprecated (why?) sysfs)
+    * {lib,}gpiod
+
+      * vs. deprecated (why?) sysfs
+      * vs. RPi.GPIO @#$%^&*
+
     * systemd
     * D-Bus, pydbus -> "microservices" (management buy-in, especially
       with dbus interfaces defined in XML)
