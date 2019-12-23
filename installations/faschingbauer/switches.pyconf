@@ -3,13 +3,44 @@
 from openheating.base import gpio
 
 
-SWITCHES = [
-    gpio.output(name = 'Relay_{}'.format(i),
-                description = 'Relay #{}'.format(i),
-                chiplabel = 'mcp23017',
+_pins = [
+    17,
+    27,
+    22,
+    10,
+    9,
+    11,
+    13,
+    19,
 
-                offset = i,
+    18,
+    23,
+    24,
+    25,
+    12,
+    16,
+    20,
+    21,
+]
+
+SWITCHES = [
+    gpio.output(name = 'Relay_{}'.format(seq),
+                description = 'Relay #{} on pin #{}'.format(seq, pin),
+                chiplabel = 'pinctrl-bcm2835',
+                offset = pin,
     )
 
-    for i in range(16)
+    for seq, pin in enumerate(_pins)
 ]
+
+
+# SWITCHES = [
+#     gpio.output(name = 'Relay_{}'.format(i),
+#                 description = 'Relay #{}'.format(i),
+#                 chiplabel = 'mcp23017',
+
+#                 offset = i,
+#     )
+
+#     for i in range(16)
+# ]

@@ -213,8 +213,8 @@ Todo
 
     BCM GPIOs (LED on GPIO26, for 3 seconds): ::
 
-      gpioset -m time -s 3 pinctrl-bcm2835 26=1
+      $ gpioset -m time -s 3 pinctrl-bcm2835 26=1
 
     MCP23017 GPIOs (LED on GPA0, forever): ::
 
-      gpioset -m time -s 3 mcp23017 0=1
+      $ gpioset -m time -s 3 mcp23017 0=1
