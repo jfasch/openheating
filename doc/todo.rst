@@ -218,3 +218,12 @@ Todo
     MCP23017 GPIOs (LED on GPA0, forever): ::
 
       $ gpioset -m time -s 3 mcp23017 0=1
+
+  * buy one of those I2C/W1 masters and do all that in
+    hardware. bit-banging is no good, I see errors from time to time
+    (worse yet, reading temperatures of 0 degrees, unusable).
+
+    even more so, I am running out of GPIOs. according to
+    https://www.raspberrypi.org/documentation/configuration/device-tree.md#part4.6,
+    UART0 takes the pins of GPIO 14,15, so I configured it away. 15
+    still does not work though.
