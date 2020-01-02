@@ -48,7 +48,8 @@ class DBusHeatingError(HeatingError):
     '''
     def __init__(self, details):
         if type(details) is str:
-            # assume it came across the bus, so it must be json.
+            # assume it came across the bus, so it must be json. take
+            # it literally.
             details = json.loads(details)
         super().__init__(details=details)
 
@@ -88,10 +89,15 @@ def maperror(func):
             glib_message = e.message
 
         if glib_message is not None:
-            # this is a gdbus implementation detail. we rely upon it,
-            # so this probably needs some tuning.
+            # we assume that we talk to a properly defined (as per
+            # node.Definition) dbus object, and expect only
+            # HeatingError instances to come through. the remote type
+            # manifests itself in the formatted message of the dbus
+            # error. (this is a gdbus/pydbus implementation detail, so
+            # this probably needs some tuning.)
+
             pat = 'GDBus.Error:org.openheating.HeatingError: '
-            assert glib_message.find(pat) == 0, pat
+            assert glib_message.find(pat) == 0, '"{}" not found in GError.message "{}"'.format(pat, glib_message)
             js = glib_message[len(pat):]
             raise HeatingError(details=json.loads(js))
 
@@ -257,14 +263,6 @@ class Definition:
     def __dbus_signals(self, et):
         return [s.get('name') for s in et.findall('./interface/signal')]
 
-    class UnexpectedExceptionError(HeatingError):
-        def __init__(self):
-            etype, e, tb = sys.exc_info()
-            super().__init__(details={'category': 'internal',
-                                      'message': str(e),
-                                      'traceback': traceback.format_tb(tb),
-            })
-
     def __wrap_dbus_method(self, klass, method):
         @functools.wraps(method)
         def wrapper(*args, **kwargs):
@@ -278,11 +276,12 @@ class Definition:
             try:
                 return method(*args, **kwargs)
             except HeatingError as e:
-                logging.exception('method {} error'.format(method.__name__), e)
+                logging.exception('method "{}": heating error'.format(method.__name__), e)
                 raise_e = DBusHeatingError(e.details)
             except Exception as e:
-                logging.exception('method {} unexpected error'.format(method.__name__))
-                raise_e = DBusHeatingError(Definition.UnexpectedExceptionError().details)
+                logging.exception('method "{}": unexpected error'.format(method.__name__))
+                he = HeatingError('Unexpected error: "{}"'.format(e))
+                raise_e = DBusHeatingError(he.details)
 
                 # use self not class to emit signal
                 self.emit_error(raise_e)

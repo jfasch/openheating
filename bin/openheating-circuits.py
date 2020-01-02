@@ -21,10 +21,11 @@ args = parser.parse_args()
 
 logutil.configure_from_argparse(args)
 
-with open(args.pyconfigfile) as f:
-    circuits = pyconf.read_circuits(f)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
+
+with open(args.pyconfigfile) as f:
+    circuits = pyconf.read_circuits(f, bus)
 
 objects = [
     ('/', CircuitCenter_Server(circuits=circuits))

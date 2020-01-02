@@ -34,8 +34,8 @@ def read_switches(thing):
     _check_names(switches)
     return switches
 
-def read_circuits(thing):
-    context = {}
+def read_circuits(thing, bus):
+    context = { 'BUS': bus }
     exec(_make_code(thing), context)
     
     circuits = context.get('CIRCUITS')

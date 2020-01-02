@@ -25,7 +25,13 @@ Stack (Hanging)
 	error logger.
       * error handling: carry a simple table of errors to handle with
 	a watchdog pull.
-  
+
+* fix fucking crap
+
+  * pass BUS into pyconf's context, generally
+  * get error translation right: well-define it as client-side and
+    server-side HeatingError incarnations
+
 Todo
 ====
 

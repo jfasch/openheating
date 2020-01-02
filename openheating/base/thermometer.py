@@ -1,6 +1,7 @@
 from .error import HeatingError
 
 from abc import ABCMeta, abstractmethod
+import tempfile
 
 
 class Thermometer(metaclass=ABCMeta):
@@ -73,3 +74,26 @@ class ErrorThermometer(Thermometer):
             self.__n_ok_before_error -= 1
             return 42
         raise HeatingError('bullshit temperature')
+
+class FileThermometer(Thermometer):
+    def __init__(self, name, description, path):
+        self.__name = name
+        self.__description = description
+        self.__path = path
+
+    def get_name(self):
+        return self.__name
+
+    def get_description(self):
+        return self.__description
+
+    def get_temperature(self):
+        with open(self.__path) as f:
+            return float(f.read())
+
+    @classmethod
+    def init_file(cls, temperature):
+        tf = tempfile.NamedTemporaryFile(mode='w')
+        tf.write(str(temperature))
+        tf.flush()
+        return tf

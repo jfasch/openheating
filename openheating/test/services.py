@@ -208,8 +208,8 @@ class ThermometerService(_ServiceWrapper):
                          args=confargs)
 
     def stop(self):
-        super().stop()
         self.__pyconfigfile.close()
+        return super().stop()
 
 class SwitchService(_ServiceWrapper):
     def __init__(self, pyconf, debug=False):
@@ -224,8 +224,8 @@ class SwitchService(_ServiceWrapper):
                          args=confargs)
 
     def stop(self):
-        super().stop()
         self.__pyconfigfile.close()
+        return super().stop()
 
 class CircuitService(_ServiceWrapper):
     def __init__(self, pyconf, debug=False):
@@ -240,8 +240,8 @@ class CircuitService(_ServiceWrapper):
                          args=confargs)
 
     def stop(self):
-        super().stop()
         self.__pyconfigfile.close()
+        return super().stop()
 
 class ErrorService(_ServiceWrapper):
     def __init__(self, debug=False):
