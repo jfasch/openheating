@@ -32,6 +32,8 @@ Stack (Hanging)
   * get error translation right: well-define it as client-side and
     server-side HeatingError incarnations
 
+    * add traceback to *all* errors
+
 Todo
 ====
 
