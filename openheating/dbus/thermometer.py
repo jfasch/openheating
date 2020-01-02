@@ -1,6 +1,7 @@
 from . import dbusutil
 from . import interface_repo
 from . import node
+from . import error
 from . import lifecycle
 
 from ..base.thermometer import Thermometer
@@ -25,19 +26,19 @@ class Thermometer_Client(Thermometer):
         self.name = None
         self.description = None
 
-    @node.maperror
+    @error.maperror
     def get_name(self):
         if self.name is None:
             self.name = self.proxy.get_name()
         return self.name
 
-    @node.maperror
+    @error.maperror
     def get_description(self):
         if self.description is None:
             self.description = self.proxy.get_description()
         return self.description
 
-    @node.maperror
+    @error.maperror
     def get_temperature(self):
         return self.proxy.get_temperature()
 
@@ -45,7 +46,7 @@ class TemperatureHistory_Client:
     def __init__(self, proxy):
         self.__proxy = proxy
 
-    @node.maperror
+    @error.maperror
     def distill(self, granularity, duration):
         return self.__proxy.distill(
             timeutil.delta2unix(granularity), 

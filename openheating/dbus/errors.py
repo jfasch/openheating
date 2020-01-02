@@ -1,5 +1,6 @@
 from . import dbusutil
 from . import node
+from . import error
 from . import interface_repo
 from . import names
 from . import lifecycle
@@ -15,10 +16,10 @@ import json
 class Errors_Client:
     def __init__(self, bus):
         self.__iface = bus.get(names.Bus.ERRORS, '/')[interface_repo.ERRORS]
-    @node.maperror
+    @error.maperror
     def num_errors(self):
         return self.__iface.num_errors()
-    @node.maperror
+    @error.maperror
     def get_errors(self):
         return [node.DBusHeatingError.from_json(js) for js in self.__iface.get_errors()]
 

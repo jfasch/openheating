@@ -1,19 +1,20 @@
 from . import node
 from . import names
 from . import interface_repo
+from . import error
 from ..base.error import HeatingError
 
 
 class ExceptionTester_Client:
     def __init__(self, bus):
         self.__iface = bus.get(names.Bus.EXCEPTIONTESTER, '/')[names.Bus.EXCEPTIONTESTER]
-    @node.maperror
+    @error.maperror
     def raise_default_HeatingError(self, msg):
         return self.__iface.raise_default_HeatingError(msg)
-    @node.maperror
+    @error.maperror
     def raise_derived_default_HeatingError(self, msg):
         return self.__iface.raise_derived_default_HeatingError(msg)
-    @node.maperror
+    @error.maperror
     def raise_non_HeatingError(self):
         return self.__iface.raise_non_HeatingError()
         

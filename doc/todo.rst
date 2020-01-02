@@ -34,6 +34,12 @@ Stack (Hanging)
 
     * add traceback to *all* errors
 
+* rip DBusHeatingError out into error.py
+
+  * dont forget doc
+  * maperror: better name, making obvious that it is intended for
+    client side usage
+
 Todo
 ====
 

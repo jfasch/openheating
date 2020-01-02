@@ -1,4 +1,5 @@
 from . import node
+from . import error
 from . import interface_repo
 
 from ..base.switch import Switch
@@ -12,23 +13,23 @@ class Switch_Client(Switch):
         # cached attributes
         self.__name = self.__description = None
         
-    @node.maperror
+    @error.maperror
     def get_name(self):
         if self.__name is None:
             self.__name = self.__proxy.get_name()
         return self.__name
         
-    @node.maperror
+    @error.maperror
     def get_description(self):
         if self.__description is None:
             self.__description = self.__proxy.get_description()
         return self.__description
 
-    @node.maperror
+    @error.maperror
     def set_state(self, state):
         self.__proxy.set_state(state)
 
-    @node.maperror
+    @error.maperror
     def get_state(self):
         return self.__proxy.get_state()
 

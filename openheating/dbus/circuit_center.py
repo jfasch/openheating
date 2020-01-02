@@ -1,5 +1,6 @@
 from . import interface_repo
 from . import node
+from . import error
 from . import names
 from .circuit import Circuit_Client
 
@@ -12,11 +13,11 @@ class CircuitCenter_Client:
             path='/',
             iface=interface_repo.CIRCUITCENTER)
 
-    @node.maperror
+    @error.maperror
     def all_names(self):
         return self.__iface.all_names()
 
-    @node.maperror
+    @error.maperror
     def get_circuit(self, name):
         return Circuit_Client(
             proxy=self.__get_object_iface(

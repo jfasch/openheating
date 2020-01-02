@@ -1,4 +1,5 @@
 from . import node
+from . import error
 from . import interface_repo
 
 from ..base.circuit import Circuit
@@ -11,31 +12,31 @@ class Circuit_Client:
         # cached attributes
         self.__name = self.__description = None
         
-    @node.maperror
+    @error.maperror
     def get_name(self):
         if self.__name is None:
             self.__name = self.__proxy.get_name()
         return self.__name
         
-    @node.maperror
+    @error.maperror
     def get_description(self):
         if self.__description is None:
             self.__description = self.__proxy.get_description()
         return self.__description
 
-    @node.maperror
+    @error.maperror
     def activate(self):
         self.__proxy.activate()
 
-    @node.maperror
+    @error.maperror
     def deactivate(self):
         return self.__proxy.deactivate()
 
-    @node.maperror
+    @error.maperror
     def is_active(self):
         return self.__proxy.is_active()
 
-    @node.maperror
+    @error.maperror
     def poll(self, timestamp):
         return self.__proxy.poll()
 

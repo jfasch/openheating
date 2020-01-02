@@ -1,5 +1,6 @@
 from . import interface_repo
 from . import node
+from . import error
 from . import names
 from .switch import Switch_Client
 
@@ -12,11 +13,11 @@ class SwitchCenter_Client:
             path='/',
             iface=interface_repo.SWITCHCENTER)
 
-    @node.maperror
+    @error.maperror
     def all_names(self):
         return self.__iface.all_names()
 
-    @node.maperror
+    @error.maperror
     def get_switch(self, name):
         return Switch_Client(
             proxy=self.__get_object_iface(
