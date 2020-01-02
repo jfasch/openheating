@@ -26,20 +26,6 @@ Stack (Hanging)
       * error handling: carry a simple table of errors to handle with
 	a watchdog pull.
 
-* fix fucking crap
-
-  * pass BUS into pyconf's context, generally
-  * get error translation right: well-define it as client-side and
-    server-side HeatingError incarnations
-
-    * add traceback to *all* errors
-
-* rip DBusHeatingError out into error.py
-
-  * dont forget doc
-  * maperror: better name, making obvious that it is intended for
-    client side usage
-
 Todo
 ====
 

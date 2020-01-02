@@ -14,35 +14,24 @@ class BadName(HeatingError):
         self.name = name
 
 
-def read_thermometers(thing):
-    context = {}
-    exec(_make_code(thing), context)
-
-    thermometers = context.get('THERMOMETERS')
-    if thermometers is None:
-        raise HeatingError('THERMOMETERS (iterable) expected but not there')
-    _check_names(thermometers)
-    return thermometers
-
-def read_switches(thing):
-    context = {}
-    exec(_make_code(thing), context)
-    
-    switches = context.get('SWITCHES')
-    if switches is None:
-        raise HeatingError('SWITCHES (iterable) expected but not there')
-    _check_names(switches)
-    return switches
-
-def read_circuits(thing, bus):
+def read(thing, bus, name):
     context = { 'BUS': bus }
     exec(_make_code(thing), context)
-    
-    circuits = context.get('CIRCUITS')
-    if circuits is None:
-        raise HeatingError('CIRCUITS (iterable) expected but not there')
-    _check_names(circuits)
-    return circuits
+
+    objs = context.get(name)
+    if objs is None:
+        raise HeatingError('{} (iterable) expected but not there'.format(name))
+    _check_names(objs)
+    return objs
+
+def read_thermometers(thing, bus):
+    return read(thing, bus, 'THERMOMETERS')
+
+def read_switches(thing, bus):
+    return read(thing, bus, 'SWITCHES')
+
+def read_circuits(thing, bus):
+    return read(thing, bus, 'CIRCUITS')
 
 def _make_code(thing):
     if hasattr(thing, 'read'):

@@ -1,4 +1,4 @@
-from openheating.base import pyconf
+from openheating.dbus import pyconf
 from openheating.base.thermometer import FixedThermometer
 from openheating.base.w1 import W1Thermometer
 from openheating.test import testutils
@@ -18,18 +18,19 @@ class ThermometerConfigTest(unittest.TestCase):
         ]
 
         # read from line-list
-        thermometers = pyconf.read_thermometers(slist)
+        thermometers = pyconf.read_thermometers(
+            slist, bus = None)
         self.__assert_basic__ok(thermometers)
 
         # read from str
-        thermometers = pyconf.read_thermometers('\n'.join(slist))
+        thermometers = pyconf.read_thermometers('\n'.join(slist), bus = None)
         self.__assert_basic__ok(thermometers)
 
         # read from file
         with tempfile.TemporaryFile() as f:
             f.write('\n'.join(slist).encode(encoding='ascii'))
             f.seek(0)
-            self.__assert_basic__ok(pyconf.read_thermometers(f))
+            self.__assert_basic__ok(pyconf.read_thermometers(f, bus = None))
 
     def __assert_basic__ok(self, thermometers):
         have_oil = have_wood = False
@@ -52,19 +53,21 @@ class ThermometerConfigTest(unittest.TestCase):
         self.assertTrue(have_wood)
 
     def test__w1__pyconf(self):
-        self.__assert_w1__ok(pyconf.read_thermometers([
-            "from openheating.base.w1 import W1Thermometer",
-            "THERMOMETERS = [",
-            "    W1Thermometer(",
-            "        name='Oil',",
-            "        description='Oil Burner',",
-            "        path='/sys/bus/w1/devices/28-02131dace9aa'),",
-            "    W1Thermometer(",
-            "        name='Wood',",
-            "        description='Wood Oven',",
-            "        path='/sys/bus/w1/devices/28-02131dace9ab'),",
-            "]",
-        ]))
+        self.__assert_w1__ok(pyconf.read_thermometers(
+            [
+                "from openheating.base.w1 import W1Thermometer",
+                "THERMOMETERS = [",
+                "    W1Thermometer(",
+                "        name='Oil',",
+                "        description='Oil Burner',",
+                "        path='/sys/bus/w1/devices/28-02131dace9aa'),",
+                "    W1Thermometer(",
+                "        name='Wood',",
+                "        description='Wood Oven',",
+                "        path='/sys/bus/w1/devices/28-02131dace9ab'),",
+                "]",
+            ],
+            bus = None))
 
     def __assert_w1__ok(self, thermometers):
         have_oil = have_wood = False
@@ -88,10 +91,12 @@ class ThermometerConfigTest(unittest.TestCase):
 
     def test__bad_thermometer_name__pyconf(self):
         with self.assertRaises(pyconf.BadName) as what:
-            pyconf.read_thermometers([
-                "from openheating.base.thermometer import FixedThermometer",
-                "THERMOMETERS = [FixedThermometer(name='bad-name', description='blah', temperature=42)]",
-            ])
+            pyconf.read_thermometers(
+                [
+                    "from openheating.base.thermometer import FixedThermometer",
+                    "THERMOMETERS = [FixedThermometer(name='bad-name', description='blah', temperature=42)]",
+                ], 
+                bus = None)
 
         self.assertEqual(what.exception.name, 'bad-name')
 

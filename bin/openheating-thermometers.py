@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.base import pyconf
 from openheating.base.history import History
 from openheating.base import logutil
+from openheating.dbus import pyconf
 from openheating.dbus import dbusutil
 from openheating.dbus import names
 from openheating.dbus import lifecycle
@@ -23,10 +23,11 @@ args = parser.parse_args()
 
 logutil.configure_from_argparse(args)
 
-with open(args.pyconfigfile) as f:
-    thermometers = pyconf.read_thermometers(f)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
+
+with open(args.pyconfigfile) as f:
+    thermometers = pyconf.read_thermometers(f, bus)
 
 objects = [
     ('/', ThermometerCenter_Server(thermometers=thermometers))
