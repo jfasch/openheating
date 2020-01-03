@@ -74,23 +74,3 @@ class ErrorThermometer(Thermometer):
             self.__n_ok_before_error -= 1
             return 42
         raise HeatingError('bullshit temperature')
-
-class FileThermometer(Thermometer):
-    def __init__(self, name, description, path):
-        self.__name = name
-        self.__description = description
-        self.__path = path
-
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
-
-    def get_temperature(self):
-        with open(self.__path) as f:
-            return float(f.read())
-
-    def set_temperature(self, t):
-        with open(self.__path, 'w') as f:
-            f.write(str(t))

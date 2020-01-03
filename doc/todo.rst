@@ -13,22 +13,18 @@ Stack (Hanging)
   
       * poll_until(predicate, timeout)
 
-    * toplevel main()-like thing. 
+* toplevel main()-like thing. 
 
-      * watchdog. could for example periodically check thermometers in
-	case everybody else forgets -> easy and funny, simply pull the
-	line on error. should make sure that thermometers raises the
-	currently active exception of each thermometer. add
-	clear_exception() to Thermometer.
-      * poll() on every participant in the game. could do toplevel
-	error handling, using the exceptions of each poll call, being
-	the only one that writes to .Errors. HAH! maybe best *be* the
-	error logger.
-      * error handling: carry a simple table of errors to handle with
-	a watchdog pull.
-
-* gosh. cannot easily set temperature on a FileThermometer, have to
-  inject it somehow. or force read.
+  * watchdog. could for example periodically check thermometers in
+    case everybody else forgets -> easy and funny, simply pull the
+    line on error. should make sure that thermometers raises the
+    currently active exception of each thermometer. add
+    clear_exception() to Thermometer.
+  * poll() on every participant in the game. could do toplevel error
+    handling, using the exceptions of each poll call, being the only
+    one that writes to .Errors. HAH! maybe best *be* the error logger.
+  * error handling: carry a simple table of errors to handle with a
+    watchdog pull.
 
 Todo
 ====

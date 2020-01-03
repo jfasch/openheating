@@ -41,23 +41,3 @@ class DummySwitch(Switch):
 
     def get_state(self):
         return self.__state
-
-class FileSwitch(Switch):
-    def __init__(self, name, description, path):
-        self.__name = name
-        self.__description = description
-        self.__path = path
-
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
-
-    def get_state(self):
-        with open(self.__path) as f:
-            return bool(f.read())
-
-    def set_state(self, state):
-        assert 'not yet implemented'
-
