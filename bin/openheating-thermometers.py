@@ -17,6 +17,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 parser.add_argument('--pyconfigfile', help='Thermometer configuration file (python)')
+parser.add_argument('--interval', help='Temperature read interval (seconds); default 5', default=5, type=float)
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
@@ -37,7 +38,7 @@ for thermometer in thermometers:
     history = History(duration=datetime.timedelta(days=1))
     objects.append(('/thermometers/'+thermometer.get_name(),
                     Thermometer_Server(
-                        update_interval=5, 
+                        update_interval=args.interval,
                         thermometer=thermometer,
                         history=history)))
 

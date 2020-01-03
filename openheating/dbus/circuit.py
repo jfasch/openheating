@@ -38,7 +38,7 @@ class Circuit_Client:
 
     @error.maperror
     def poll(self, timestamp):
-        return self.__proxy.poll()
+        return self.__proxy.poll(timestamp)
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.CIRCUIT))
 class Circuit_Server:

@@ -39,7 +39,7 @@ class ThermometersOK(services.ServiceTestCase):
         all_names = center_client.all_names()
         self.assertEqual(len(all_names), 1)
         self.assertIn('TestThermometer', all_names)
-
+    
 
 class ThermometersError(services.ServiceTestCase):
     def setUp(self):

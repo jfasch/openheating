@@ -61,10 +61,3 @@ class FileSwitch(Switch):
     def set_state(self, state):
         assert 'not yet implemented'
 
-    @classmethod
-    def init_file(cls, state):
-        tf = tempfile.NamedTemporaryFile(mode='w')
-        tf.write(str(state))
-        tf.flush()
-        return tf
-

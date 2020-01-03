@@ -3,6 +3,7 @@ Stack (Hanging)
 
 * hotwater circuit overtake
 
+  * any commented-out tests in dbussuite_circuits?
   * openheating-circuits.py
   
     * pyconf
@@ -25,6 +26,9 @@ Stack (Hanging)
 	error logger.
       * error handling: carry a simple table of errors to handle with
 	a watchdog pull.
+
+* gosh. cannot easily set temperature on a FileThermometer, have to
+  inject it somehow. or force read.
 
 Todo
 ====

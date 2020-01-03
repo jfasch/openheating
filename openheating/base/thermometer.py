@@ -91,9 +91,6 @@ class FileThermometer(Thermometer):
         with open(self.__path) as f:
             return float(f.read())
 
-    @classmethod
-    def init_file(cls, temperature):
-        tf = tempfile.NamedTemporaryFile(mode='w')
-        tf.write(str(temperature))
-        tf.flush()
-        return tf
+    def set_temperature(self, t):
+        with open(self.__path, 'w') as f:
+            f.write(str(t))

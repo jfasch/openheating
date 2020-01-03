@@ -1,4 +1,5 @@
 from openheating.dbus.circuit_center import CircuitCenter_Client
+from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.base.thermometer import FileThermometer
 from openheating.base.switch import FileSwitch
 
@@ -8,6 +9,8 @@ from openheating.test import testutils
 import pydbus
 
 import unittest
+from tempfile import NamedTemporaryFile
+import time
 
 
 class CircuitsTest(services.ServiceTestCase):
@@ -15,24 +18,34 @@ class CircuitsTest(services.ServiceTestCase):
         super().setUp()
 
         # create and init thermometer and switch files
-        self.__consumer_thermometer = FileThermometer.init_file(10)
-        self.__producer_thermometer = FileThermometer.init_file(10)
-        self.__pump_switch = FileSwitch.init_file(False)
+        self.__consumer_thermometer_file = NamedTemporaryFile(mode='w')
+        self.__producer_thermometer_file = NamedTemporaryFile(mode='w')
+        self.__pump_switch_file = NamedTemporaryFile(mode='w')
+
+        self.__consumer_thermometer = FileThermometer('consumer', 'consumer', self.__consumer_thermometer_file.name)
+        self.__producer_thermometer = FileThermometer('producer', 'producer', self.__producer_thermometer_file.name)
+        self.__pump_switch = FileSwitch('pump', 'pump', self.__pump_switch_file.name)
+
+        self.__consumer_thermometer.set_temperature(10)
+        self.__producer_thermometer.set_temperature(10)
+        self.__pump_switch.set_state(False)
 
         self.start_services([
-            services.ThermometerService(pyconf=[
-                'from openheating.base.thermometer import FileThermometer',
+            services.ThermometerService(
+                pyconf=[
+                    'from openheating.base.thermometer import FileThermometer',
                 
-                'THERMOMETERS = [',
-                '    FileThermometer("consumer", "the consumer", "'+self.__consumer_thermometer.name+'"),',
-                '    FileThermometer("producer", "the producer", "'+self.__producer_thermometer.name+'"),',
-                ']',
-            ]),
+                    'THERMOMETERS = [',
+                    '    FileThermometer("consumer", "the consumer", "'+self.__consumer_thermometer_file.name+'"),',
+                    '    FileThermometer("producer", "the producer", "'+self.__producer_thermometer_file.name+'"),',
+                    ']',
+                ],
+                interval=0.1),
             services.SwitchService(pyconf=[
                 'from openheating.base.switch import FileSwitch',
                 
                 'SWITCHES = [',
-                '    FileSwitch("pump", "the pump", "'+self.__pump_switch.name+'"),',
+                '    FileSwitch("pump", "the pump", "'+self.__pump_switch_file.name+'"),',
                 ']',
             ]),
             services.CircuitService(pyconf=[
@@ -54,31 +67,58 @@ class CircuitsTest(services.ServiceTestCase):
             ]),
         ])
 
+        circuite_center_client = CircuitCenter_Client(pydbus.SessionBus())
+        self.__circuit_client = circuite_center_client.get_circuit('TestCircuit')
+        self.assertEqual(self.__circuit_client.get_name(), 'TestCircuit')
+        self.assertEqual(self.__circuit_client.get_description(), 'Test Circuit')
+
+        thermometer_center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        self.__producer_thermometer_client = thermometer_center_client.get_thermometer('producer')
+        self.__consumer_thermometer_client = thermometer_center_client.get_thermometer('consumer')
+
     def tearDown(self):
-        self.__consumer_thermometer.close()
-        self.__producer_thermometer.close()
-        self.__pump_switch.close()
+        self.__consumer_thermometer_file.close()
+        self.__producer_thermometer_file.close()
+        self.__pump_switch_file.close()
 
         super().tearDown()
 
     @services.ServiceTestCase.intercept_failure
-    def test__basic(self):
-        center_client = CircuitCenter_Client(pydbus.SessionBus())
-        circuit_client = center_client.get_circuit('TestCircuit')
-        self.assertEqual(circuit_client.get_name(), 'TestCircuit')
-        self.assertEqual(circuit_client.get_description(), 'Test Circuit')
+    def test__activate_deactivate(self):
+        self.__circuit_client.activate()
+        self.assertTrue(self.__circuit_client.is_active())
 
-        circuit_client.activate()
-        self.assertTrue(circuit_client.is_active())
+        self.__circuit_client.deactivate()
+        self.assertFalse(self.__circuit_client.is_active())
 
-        circuit_client.deactivate()
-        self.assertFalse(circuit_client.is_active())
-
+    # jjj
+    
+    # @services.ServiceTestCase.intercept_failure
     # def test__pump_on_off(self):
-    #     self.fail('file switches, file thermometers')
+    #     # paranoia. we initialized the thermometers to give 10
+    #     # degrees.
+    #     self.assertAlmostEqual(self.__consumer_thermometer.get_temperature(), 10)
+    #     self.assertAlmostEqual(self.__producer_thermometer.get_temperature(), 10)
 
-    # def test__poll(self):
-    #     self.fail()
+    #     self.__circuit_client.activate()
+    #     self.__circuit_client.poll(0) # epoch
+    #     self.assertFalse(self.__pump_switch.get_state())
+
+    #     self.__producer_thermometer.set_temperature(50)
+    #     self.assertAlmostEqual(self.__producer_thermometer.get_temperature(), 50)
+
+    #     # wait until thermometer service has seen the change.
+    #     for _ in range(20):
+    #         time.sleep(0.1)
+    #         temp = self.__producer_thermometer_client.get_temperature()
+    #         if 49.5 < temp < 50.5: # we set it to 50, and it is a
+    #                                # float :-)
+    #             break
+    #     else:
+    #         self.fail('temperature change not seen within timeout')
+
+    #     self.__circuit_client.poll(10) # epoch+10
+    #     self.assertTrue(self.__pump_switch.get_state())
 
     # def test__notifications(self):
     #     self.fail('pump on/off, activated')
