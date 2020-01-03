@@ -30,42 +30,46 @@ class CircuitsTest(services.ServiceTestCase):
         self.__producer_thermometer.set_temperature(10)
         self.__pump_switch.set_state(False)
 
-        self.start_services([
-            services.ThermometerService(
-                pyconf=[
-                    'from openheating.base.thermometer import FileThermometer',
+        self.start_services(
+            [
+                services.ThermometerService(
+                    pyconf=[
+                        'from openheating.base.thermometer import FileThermometer',
+                        
+                        'THERMOMETERS = [',
+                        '    FileThermometer("consumer", "the consumer", "'+self.__consumer_thermometer_file.name+'"),',
+                        '    FileThermometer("producer", "the producer", "'+self.__producer_thermometer_file.name+'"),',
+                        ']',
+                    ],
+                    update_interval=0),
+                services.SwitchService(
+                    pyconf=[
+                        'from openheating.base.switch import FileSwitch',
                 
-                    'THERMOMETERS = [',
-                    '    FileThermometer("consumer", "the consumer", "'+self.__consumer_thermometer_file.name+'"),',
-                    '    FileThermometer("producer", "the producer", "'+self.__producer_thermometer_file.name+'"),',
-                    ']',
-                ],
-                interval=0.1),
-            services.SwitchService(pyconf=[
-                'from openheating.base.switch import FileSwitch',
-                
-                'SWITCHES = [',
-                '    FileSwitch("pump", "the pump", "'+self.__pump_switch_file.name+'"),',
-                ']',
-            ]),
-            services.CircuitService(pyconf=[
-                'from openheating.base.circuit import Circuit',
-                'from openheating.dbus.thermometer_center import ThermometerCenter_Client',
-                'from openheating.dbus.switch_center import SwitchCenter_Client',
-
-                'thermometer_center = ThermometerCenter_Client(bus=BUS)',
-                'switch_center = SwitchCenter_Client(bus=BUS)',
-                'consumer_thermometer = thermometer_center.get_thermometer("consumer")',
-                'producer_thermometer = thermometer_center.get_thermometer("producer")',
-                'pump_switch = switch_center.get_switch("pump")',
-
-                'CIRCUITS = [',
-                '   Circuit("TestCircuit", "Test Circuit",',
-                '           pump=pump_switch, producer=producer_thermometer, consumer=consumer_thermometer,',
-                '           diff_low=3, diff_high=10)',
-                ']',
-            ]),
-        ])
+                        'SWITCHES = [',
+                        '    FileSwitch("pump", "the pump", "'+self.__pump_switch_file.name+'"),',
+                        ']',
+                    ]),
+                services.CircuitService(
+                    pyconf=[
+                        'from openheating.base.circuit import Circuit',
+                        'from openheating.dbus.thermometer_center import ThermometerCenter_Client',
+                        'from openheating.dbus.switch_center import SwitchCenter_Client',
+                        
+                        'thermometer_center = ThermometerCenter_Client(bus=BUS)',
+                        'switch_center = SwitchCenter_Client(bus=BUS)',
+                        'consumer_thermometer = thermometer_center.get_thermometer("consumer")',
+                        'producer_thermometer = thermometer_center.get_thermometer("producer")',
+                        'pump_switch = switch_center.get_switch("pump")',
+                        
+                        'CIRCUITS = [',
+                        '   Circuit("TestCircuit", "Test Circuit",',
+                        '           pump=pump_switch, producer=producer_thermometer, consumer=consumer_thermometer,',
+                        '           diff_low=3, diff_high=10)',
+                        ']',
+                    ]),
+            ]
+        )
 
         circuite_center_client = CircuitCenter_Client(pydbus.SessionBus())
         self.__circuit_client = circuite_center_client.get_circuit('TestCircuit')

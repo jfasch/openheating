@@ -42,6 +42,10 @@ class Thermometer_Client(Thermometer):
     def get_temperature(self):
         return self.proxy.get_temperature()
 
+    @error.maperror
+    def inject_sample(self, timestamp, temperature):
+        self.proxy.inject_sample(timestamp, temperature)
+
 class TemperatureHistory_Client:
     def __init__(self, proxy):
         self.__proxy = proxy
@@ -88,6 +92,13 @@ class Thermometer_Server:
             raise self.__current_error
         return self.__current_temperature
 
+    def inject_sample(self, timestamp, temperature):
+        if self.__update_interval != 0:
+            e = HeatingError('cannot inject sample when doing background updates')
+            e.set_tag('INJECT_WHILE_BACKGROUND_UPDATE')
+            raise e
+        self.__make_current(timestamp=timestamp, temperature=temperature)
+
     def distill(self, granularity, duration):
         return list(self.__history.distill(granularity=granularity, duration=duration))
 
@@ -112,41 +123,46 @@ class Thermometer_Server:
             current_temperature = self.__thermometer.get_temperature()
             logger.debug('{} (update-thread): sensor has {} degrees'.format(
                 self.__name, current_temperature))
-            GLib.idle_add(self.__receive_update, current_temperature, None)
+            GLib.idle_add(self.__receive_update, time.time(), current_temperature, None)
         except Exception as e:
             logger.exception('{} (update-thread): thermometer error'.format(self.__name))
-            GLib.idle_add(self.__receive_update, None, e)
+            GLib.idle_add(self.__receive_update, time.time(), None, e)
 
-    def __receive_update(self, current_temperature, current_error):
-        self.__make_current(current_temperature, current_error)
+    def __receive_update(self, timestamp, temperature, error):
+        self.__make_current(timestamp=timestamp, temperature=temperature, error=error)
 
-    def __make_current(self, current_temperature, current_error):
-        self.__current_temperature = current_temperature
-        if current_temperature is not None:
-            self.__history.add(time.time(), current_temperature)
-        self.__current_error = current_error
-        if current_error is not None:
-            logger.error('{} error: {}'.format(self.__name, current_error))
-            self.emit_error(current_error)
+    def __make_current(self, timestamp, temperature=None, error=None):
+        self.__current_temperature = temperature
+        if temperature is not None:
+            self.__history.add(timestamp, temperature)
+        self.__current_error = error
+        if error is not None:
+            logger.error('{} error: {}'.format(self.__name, error))
+            self.emit_error(error)
 
     def _startup(self):
         logger.info('{} starting'.format(self.__name))
 
-        try:
-            logger.debug('{} startup: successfully read temperature'.format(self.__name))
-            self.__make_current(self.__thermometer.get_temperature(), None)
-        except HeatingError as e:
-            logger.exception('{} startup: cannot read temperature'.format(self.__name))
-            self.__make_current(None, e)
+        if self.__update_interval == 0:
+            logger.info('{}: no background updates desired'.format(self.__name))
+        else:
+            try:
+                temperature = self.__thermometer.get_temperature()
+                self.__make_current(timestamp=time.time(), temperature=temperature, error=None)
+                logger.debug('{} startup: successfully read temperature -> {}'.format(self.__name, temperature))
+            except HeatingError as e:
+                logger.exception('{} startup: cannot read temperature'.format(self.__name))
+                self.__make_current(timestamp=time.time(), temperature=None, error=e)
 
-        logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, self.__update_interval))
-        self.__background_thread = ThreadPoolExecutor(max_workers=1)
-        self.__update_timer_tag = GLib.timeout_add_seconds(self.__update_interval, self.__schedule_update)
+            logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, self.__update_interval))
+            self.__background_thread = ThreadPoolExecutor(max_workers=1)
+            self.__update_timer_tag = GLib.timeout_add_seconds(self.__update_interval, self.__schedule_update)
 
     def _shutdown(self):
         logger.info('{}: stopping'.format(self.__name))
-        self.__background_thread.shutdown(wait=True)
-        GLib.source_remove(self.__update_timer_tag)
+        if self.__update_interval != 0:
+            self.__background_thread.shutdown(wait=True)
+            GLib.source_remove(self.__update_timer_tag)
 
     def _onbus(self):
         if self.__current_error is not None:

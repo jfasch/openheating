@@ -20,19 +20,22 @@ class ErrorsTest(services.ServiceTestCase):
 
     @services.ServiceTestCase.intercept_failure
     def test__basic_error_count(self):
-        self.start_services([
-            services.ErrorService(),
-            services.ThermometerService(
-                pyconf=[
-                    "from openheating.base.thermometer import ErrorThermometer",
-                    "THERMOMETERS = [",
-                    "    ErrorThermometer(",
-                    "        name='Error',",
-                    "        description='Error Thermometer',",
-                    "        n_ok_before_error=0),",
-                    "]",
-                ])
-        ])
+        self.start_services(
+            [
+                services.ErrorService(),
+                services.ThermometerService(
+                    pyconf=[
+                        "from openheating.base.thermometer import ErrorThermometer",
+                        "THERMOMETERS = [",
+                        "    ErrorThermometer(",
+                        "        name='Error',",
+                        "        description='Error Thermometer',",
+                        "        n_ok_before_error=0),",
+                        "]",
+                    ],
+                    update_interval=5)
+            ]
+        )
         
         with pydbus.SessionBus() as bus:
             client = Errors_Client(bus)
@@ -40,19 +43,22 @@ class ErrorsTest(services.ServiceTestCase):
 
     @services.ServiceTestCase.intercept_failure
     def test__w1__file_not_found(self):
-        self.start_services([
-            services.ErrorService(),
-            services.ThermometerService(
-                pyconf=[
-                    "from openheating.base.w1 import W1Thermometer",
-                    "THERMOMETERS = [",
-                    "    W1Thermometer(",
-                    "        name='w1_erroneous',",
-                    "        description='Some Thermometer',",
-                    "        path='/a/b/00-00000000'),",
-                    "]",
-                ])
-        ])
+        self.start_services(
+            [
+                services.ErrorService(),
+                services.ThermometerService(
+                    pyconf=[
+                        "from openheating.base.w1 import W1Thermometer",
+                        "THERMOMETERS = [",
+                        "    W1Thermometer(",
+                        "        name='w1_erroneous',",
+                        "        description='Some Thermometer',",
+                        "        path='/a/b/00-00000000'),",
+                        "]",
+                    ],
+                    update_interval=5)
+            ]
+        )
 
         with pydbus.SessionBus() as bus:
             client = Errors_Client(bus)

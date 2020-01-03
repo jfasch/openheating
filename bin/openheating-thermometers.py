@@ -17,7 +17,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 parser.add_argument('--pyconfigfile', help='Thermometer configuration file (python)')
-parser.add_argument('--interval', help='Temperature read interval (seconds); default 5', default=5, type=float)
+parser.add_argument('--interval', help='Temperature read interval (seconds); default 5; 0 to disable updates', default=5, type=int)
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()

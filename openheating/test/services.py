@@ -196,18 +196,16 @@ def _indent_str(s):
     return s.replace('\n', '\n    ')
 
 class ThermometerService(_ServiceWrapper):
-    def __init__(self, pyconf, interval=None, debug=False):
+    def __init__(self, pyconf, update_interval, debug=False):
         self.__pyconfigfile = tempfile.NamedTemporaryFile(mode='w')
         self.__pyconfigfile.write('\n'.join(pyconf))
         self.__pyconfigfile.flush()
 
-        args = ['--pyconfigfile', self.__pyconfigfile.name]
-        if interval is not None:
-            args += ['--interval', str(interval)]
-
         super().__init__(exe='openheating-thermometers.py',
                          busname=names.Bus.THERMOMETERS,
-                         args=args)
+                         args=['--pyconfigfile', self.__pyconfigfile.name,
+                               '--interval', str(update_interval),
+                         ])
 
     def stop(self):
         self.__pyconfigfile.close()
