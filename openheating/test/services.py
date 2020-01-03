@@ -57,6 +57,7 @@ class ServiceTestCase(unittest.TestCase):
                 started.append(s)
             except HeatingError as e:
                 start_error = e
+                break
 
         if start_error is not None:
             for s in reversed(started):
