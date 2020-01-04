@@ -26,6 +26,15 @@ Stack (Hanging)
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
 
+* Plant has services
+
+  * solve the "bus problem".
+
+    * attach clients somewhere. there we use pydbus.SessionBus().
+    * attach services somewhere. there we use --session.
+    * during plant startup/shutdown, we fire gdbus and
+      friends. --session/--user or so.
+
 Todo
 ====
 

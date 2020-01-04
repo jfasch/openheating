@@ -1,101 +1,15 @@
-'''DBus service utilities for unit tests. 
-
-* Wrappers around openheating's DBus service executables. Reliable
-  starting and stopping (checking presence of bus names).
-'''
-
 from . import testutils
 
-from ..base.error import HeatingError
-from ..dbus import names
+from openheating.base.error import HeatingError
+from openheating.dbus import names
 
 import pydbus
 
 import tempfile
 import subprocess
-import sys
-import unittest
 
 
-class ServiceTestCase(unittest.TestCase):
-    '''TestCase derivative which is good at managing dbus services as
-    subprocesses.
-
-    If failure is detected (see the decorator), then at tearDown the
-    stderr output of each service is printed.
-
-    '''
-
-    @staticmethod
-    def intercept_failure(testmethod):
-        '''test method decorator to intercept test case failures (these are
-        hard to come by otherwise)'''
-        def wrapper(*args, **kwargs):
-            self = args[0]
-            try:
-                return testmethod(*args, **kwargs)
-            except:
-                self.__failure = True
-                raise
-        return wrapper
-
-    def setUp(self):
-        self.__failure = False
-        self.__services = None
-    def tearDown(self):
-        self.stop_services()
-
-    def start_services(self, services):
-        assert self.__services is None
-        self.__services = services
-
-        started = []
-        start_error = None
-        for s in self.__services:
-            try:
-                s.start()
-                started.append(s)
-            except HeatingError as e:
-                start_error = e
-                break
-
-        if start_error is not None:
-            for s in reversed(started):
-                s.stop()
-            raise start_error
-
-    def stop_services(self):
-        if self.__services is None:
-            services = []
-        else:
-            services = self.__services
-        self.__services = None
-
-        stderrs = []
-        errors = []
-        for s in services:
-            try:
-                stderr = s.stop()
-                stderrs.append((s.busname, stderr))
-            except Exception as e:
-                errors.append(e)
-
-        if self.__failure or len(errors):
-            for busname, stderr in stderrs:
-                print('\n*** STDERR from {}'.format(busname), file=sys.stderr)
-                if stderr is None:
-                    print(' '*3, '(apparently unstarted)', file=sys.stderr)
-                else:
-                    for line in stderr.split('\n'):
-                        print(' '*3, line, file=sys.stderr)
-
-        if len(errors):
-            msg = ['there were errors while stopping services ...']
-            for e in errors:
-                msg.append(str(e))
-            raise RuntimeError('\n'.join(msg))
-
-class _ServiceWrapper:
+class Service:
     def __init__(self, busname, exe, args=None):
         self.__busname = busname
         self.__argv = [testutils.find_executable(exe), '--session', '--log-level', 'debug']
@@ -196,7 +110,7 @@ class _ServiceWrapper:
 def _indent_str(s):
     return s.replace('\n', '\n    ')
 
-class ThermometerService(_ServiceWrapper):
+class ThermometerService(Service):
     def __init__(self, pyconf, update_interval, debug=False):
         self.__pyconfigfile = tempfile.NamedTemporaryFile(mode='w')
         self.__pyconfigfile.write('\n'.join(pyconf))
@@ -212,7 +126,7 @@ class ThermometerService(_ServiceWrapper):
         self.__pyconfigfile.close()
         return super().stop()
 
-class SwitchService(_ServiceWrapper):
+class SwitchService(Service):
     def __init__(self, pyconf, debug=False):
         self.__pyconfigfile = tempfile.NamedTemporaryFile(mode='w')        
         self.__pyconfigfile.write('\n'.join(pyconf))
@@ -226,7 +140,7 @@ class SwitchService(_ServiceWrapper):
         self.__pyconfigfile.close()
         return super().stop()
 
-class CircuitService(_ServiceWrapper):
+class CircuitService(Service):
     def __init__(self, pyconf, debug=False):
         self.__pyconfigfile = tempfile.NamedTemporaryFile(mode='w')
         self.__pyconfigfile.write('\n'.join(pyconf))
@@ -240,20 +154,20 @@ class CircuitService(_ServiceWrapper):
         self.__pyconfigfile.close()
         return super().stop()
 
-class ErrorService(_ServiceWrapper):
+class ErrorService(Service):
     def __init__(self, debug=False):
         super().__init__(
             exe='openheating-errors.py',
             busname=names.Bus.ERRORS)
 
-class ExceptionTesterService(_ServiceWrapper):
+class ExceptionTesterService(Service):
     def __init__(self, debug=False):
         super().__init__(
             exe='openheating-exception-tester.py',
             busname=names.Bus.EXCEPTIONTESTER,
         )
 
-class ManagedObjectTesterService(_ServiceWrapper):
+class ManagedObjectTesterService(Service):
     def __init__(self, stampdir, debug=False):
         super().__init__(
             exe='openheating-managedobject-tester.py',
