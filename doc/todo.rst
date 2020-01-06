@@ -28,12 +28,7 @@ Stack (Hanging)
 
 * Plant has services
 
-  * solve the "bus problem".
-
-    * attach clients somewhere. there we use pydbus.SessionBus().
-    * attach services somewhere. there we use --session.
-    * during plant startup/shutdown, we fire gdbus and
-      friends. --session/--user or so.
+  * rewrite remaining tests
 
 Todo
 ====

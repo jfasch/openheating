@@ -1,10 +1,10 @@
-from openheating.test import services
 from openheating.test import testutils
+from openheating.test.plant_testcase import PlantTestCase
 
 import unittest
 
 
-class MainTest(services.ServiceTestCase):
+class MainTest(PlantTestCase):
     pass
 
 suite = unittest.TestSuite()

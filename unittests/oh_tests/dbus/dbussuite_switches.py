@@ -1,24 +1,26 @@
 from openheating.dbus.switch_center import SwitchCenter_Client
 
-from openheating.test import services
+from openheating.test import service
 from openheating.test import testutils
+from openheating.test.plant_testcase import PlantTestCase
+from openheating.test.plant import Plant
 
 import pydbus
 
 import unittest
 
 
-class SwitchesTest(services.ServiceTestCase):
+class SwitchesTest(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_services([
-            services.SwitchService(pyconf=[
+        self.start_plant(Plant([
+            service.SwitchService(pyconf=[
                 'from openheating.base.switch import DummySwitch',
                 'SWITCHES = [',
                 '    DummySwitch("TestSwitch", "Test Switch", False),',
                 ']'
             ]),
-        ])
+        ]))
 
     def test__basic(self):
         center_client = SwitchCenter_Client(pydbus.SessionBus())

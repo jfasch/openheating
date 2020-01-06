@@ -45,3 +45,8 @@ class PlantTestCase(unittest.TestCase):
     def start_plant(self, plant):
         self.__plant = plant
         self.__plant.startup()
+
+    def stop_plant(self):
+        assert self.__plant is not None
+        self.__plant.shutdown(is_failure=False)
+        self.__plant = None

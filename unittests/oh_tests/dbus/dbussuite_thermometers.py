@@ -1,7 +1,9 @@
 from openheating.base.error import HeatingError
 
 from openheating.test import testutils
-from openheating.test import services
+from openheating.test import service
+from openheating.test.plant import Plant
+from openheating.test.plant_testcase import PlantTestCase
 
 from openheating.dbus import dbusutil
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
@@ -12,19 +14,19 @@ import unittest
 import subprocess
 
 
-class ThermometersOK(services.ServiceTestCase):
+class ThermometersOK(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_services(
+        self.start_plant(Plant(
             [
-                services.ThermometerService(
+                service.ThermometerService(
                     pyconf=[
                         "from openheating.base.thermometer import FixedThermometer",
                         "THERMOMETERS = [FixedThermometer('TestThermometer', 'Test Thermometer', 42)]",
                     ],
                     update_interval=5)
             ]
-        )
+        ))
 
     def test__start_stop(self):
         center_client = ThermometerCenter_Client(pydbus.SessionBus())
@@ -57,12 +59,12 @@ class ThermometersOK(services.ServiceTestCase):
             self.assertEqual(e.details['tag'], 'INJECT_WHILE_BACKGROUND_UPDATE')
 
 
-class ThermometersInjectSamples(services.ServiceTestCase):
+class ThermometersInjectSamples(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_services(
+        self.start_plant(Plant(
             [
-                services.ThermometerService(
+                service.ThermometerService(
                     pyconf=[
                         "from openheating.base.thermometer import DummyThermometer",
                         "THERMOMETERS = [DummyThermometer('TestThermometer', 'Test Thermometer', 42)]",
@@ -70,7 +72,7 @@ class ThermometersInjectSamples(services.ServiceTestCase):
                     # no updates; else injecting won't work
                     update_interval=0)
             ]
-        )
+        ))
 
     def test__inject_sample(self):
         center_client = ThermometerCenter_Client(pydbus.SessionBus())
@@ -78,19 +80,19 @@ class ThermometersInjectSamples(services.ServiceTestCase):
         thermometer_client.inject_sample(timestamp=0, temperature=20)
         self.assertAlmostEqual(thermometer_client.get_temperature(), 20)
 
-class ThermometersError(services.ServiceTestCase):
+class ThermometersError(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_services(
+        self.start_plant(Plant(
             [
-                services.ThermometerService(
+                service.ThermometerService(
                     pyconf=[
                         "from openheating.base.thermometer import ErrorThermometer",
                         "THERMOMETERS = [ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False)]",
                     ],
                     update_interval=5),
             ]
-        )
+        ))
 
     def test__sensor_error_at_startup(self):
         # do nothing. this is only there to test if startup succeeds

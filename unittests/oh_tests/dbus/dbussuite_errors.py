@@ -5,7 +5,9 @@ from openheating.dbus import node
 from openheating.dbus.errors import Errors_Client
 
 from openheating.test import testutils
-from openheating.test import services
+from openheating.test import service
+from openheating.test.plant import Plant
+from openheating.test.plant_testcase import PlantTestCase
 
 
 import pydbus
@@ -16,14 +18,14 @@ import time
 import sys
 
 
-class ErrorsTest(services.ServiceTestCase):
+class ErrorsTest(PlantTestCase):
 
-    @services.ServiceTestCase.intercept_failure
+    @PlantTestCase.intercept_failure
     def test__basic_error_count(self):
-        self.start_services(
+        self.start_plant(Plant(
             [
-                services.ErrorService(),
-                services.ThermometerService(
+                service.ErrorService(),
+                service.ThermometerService(
                     pyconf=[
                         "from openheating.base.thermometer import ErrorThermometer",
                         "THERMOMETERS = [",
@@ -35,18 +37,18 @@ class ErrorsTest(services.ServiceTestCase):
                     ],
                     update_interval=5)
             ]
-        )
+        ))
         
         with pydbus.SessionBus() as bus:
             client = Errors_Client(bus)
             self.__wait_error_occurred(client)
 
-    @services.ServiceTestCase.intercept_failure
+    @PlantTestCase.intercept_failure
     def test__w1__file_not_found(self):
-        self.start_services(
+        self.start_plant(Plant(
             [
-                services.ErrorService(),
-                services.ThermometerService(
+                service.ErrorService(),
+                service.ThermometerService(
                     pyconf=[
                         "from openheating.base.w1 import W1Thermometer",
                         "THERMOMETERS = [",
@@ -58,7 +60,7 @@ class ErrorsTest(services.ServiceTestCase):
                     ],
                     update_interval=5)
             ]
-        )
+        ))
 
         with pydbus.SessionBus() as bus:
             client = Errors_Client(bus)

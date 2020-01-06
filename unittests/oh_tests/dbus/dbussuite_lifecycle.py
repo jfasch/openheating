@@ -1,7 +1,9 @@
 from openheating.dbus import dbusutil
 from openheating.dbus import lifecycle
 from openheating.test import testutils
-from openheating.test import services
+from openheating.test import service
+from openheating.test.plant_testcase import PlantTestCase
+from openheating.test.plant import Plant
 
 from gi.repository import GLib
 
@@ -12,7 +14,7 @@ import signal
 import os.path
 
 
-class ManagedTest(services.ServiceTestCase):
+class ManagedTest(PlantTestCase):
     def setUp(self):
         super().setUp()
         self.__directory = tempfile.TemporaryDirectory()
@@ -20,8 +22,8 @@ class ManagedTest(services.ServiceTestCase):
         self.__directory.cleanup()
         
     def test__basic(self):
-        self.start_services([services.ManagedObjectTesterService(stampdir=self.__directory.name)])
-        self.stop_services()
+        self.start_plant(Plant([service.ManagedObjectTesterService(stampdir=self.__directory.name)]))
+        self.stop_plant()
         self.assertTrue(os.path.isfile(self.__directory.name+'/started'))
         self.assertTrue(os.path.isfile(self.__directory.name+'/stopped'))
 
