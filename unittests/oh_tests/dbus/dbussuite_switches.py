@@ -9,9 +9,18 @@ import pydbus
 
 import unittest
 import os.path
+import tempfile
 
 
 class SwitchesTest(PlantTestCase):
+    def setUp(self):
+        super().setUp()
+        self.__tmpdir = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self.__tmpdir.cleanup()
+        super().tearDown()
+
     def test__basic(self):
         self.start_plant(Plant([
             service.SwitchService(
@@ -32,19 +41,21 @@ class SwitchesTest(PlantTestCase):
         self.assertEqual(switch_client.get_state(), True)
 
     def test__simulated_dir(self):
+        swdir = self.__tmpdir.name+'/some/dir/to/contain/switches'
+
         self.start_plant(Plant([
             service.SwitchService(
                 config=[
                     'from openheating.base.switch import DummySwitch',
                     'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
 
-                    'assert GET_SIMULATED_SWITCHES_DIR() == "/tmp/some/dir/to/contain/switches", GET_SIMULATED_SWITCHES_DIR()',
+                    'assert GET_SIMULATED_SWITCHES_DIR() == "{}", GET_SIMULATED_SWITCHES_DIR()'.format(swdir),
                 ],
-                simulated_switches_dir='/tmp/some/dir/to/contain/switches',
+                simulated_switches_dir=swdir,
             ),
         ]))
         
-        self.assertTrue(os.path.isdir('/tmp/some/dir/to/contain/switches'))
+        self.assertTrue(os.path.isdir(swdir)) # created by service process
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SwitchesTest))

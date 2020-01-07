@@ -12,7 +12,7 @@ import pydbus
 
 import os.path
 import unittest
-import subprocess
+import tempfile
 
 
 class ThermometersOK(PlantTestCase):
@@ -107,19 +107,29 @@ class ThermometersError(PlantTestCase):
         self.assertRaises(HeatingError, thermometer_client.get_temperature)
 
 class ThermometersSimulation(PlantTestCase):
+    def setUp(self):
+        super().setUp()
+        self.__tmpdir = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self.__tmpdir.cleanup()
+        super().tearDown()
+
     def test__simulated_thermometers_dir__passed(self):
+        thdir = self.__tmpdir.name+'/some/dir/to/contain/thermometers'
+
         self.start_plant(Plant(
             [
                 service.ThermometerService(
                     config=[
-                        'assert GET_SIMULATED_THERMOMETERS_DIR() == "/tmp/some/dir/to/contain/thermometers"',
+                        'assert GET_SIMULATED_THERMOMETERS_DIR() == "{}"'.format(thdir)
                     ],
-                    simulated_thermometers_dir='/tmp/some/dir/to/contain/thermometers',
+                    simulated_thermometers_dir=thdir
                 ),
             ]
         ))
 
-        self.assertTrue(os.path.isdir('/tmp/some/dir/to/contain/thermometers'))
+        self.assertTrue(os.path.isdir(thdir)) # has been created by service
 
     def test__simulated_thermometers_dir__not_passed(self):
         self.start_plant(Plant(
