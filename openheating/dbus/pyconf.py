@@ -80,37 +80,24 @@ class SwitchesConfig:
             code = compile(source, path, 'exec')
             exec(code, context)
 
+class CircuitsConfig:
+    def __init__(self):
+        self.__circuits = []
 
-def read(thing, bus, name, context):
-    the_context = { 'BUS': bus }
-    the_context.update(context)
-    exec(_make_code(thing), the_context)
+    def add_circuit(self, c):
+        if c.get_name() in [have.get_name() for have in self.__circuits]:
+            raise DuplicateName(c.get_name())
+        self.__circuits.append(c)
+    def get_circuits(self):
+        return self.__circuits
 
-    objs = the_context.get(name)
-    if objs is None:
-        raise HeatingError('{} (iterable) expected but not there'.format(name))
-    _check_names(objs)
-    return objs
-
-def read_circuits(thing, bus):
-    return read(thing, bus, 'CIRCUITS', {})
-
-def _make_code(thing):
-    if hasattr(thing, 'read'):
-        code = thing.read()
-    elif type(thing) is str:
-        code = thing
-    else:
-        code = '\n'.join(thing)
-    return code
-
-def _check_names(sequence):
-    names = set()
-    for item in sequence:
-        name = item.get_name()
-        if name in names:
-            raise DuplicateName(name)
-        if not name.isidentifier():
-            raise BadName(name)
-        names.add(name)
-            
+    def parse(self, path, bus):
+        context = {
+            'GET_BUS': lambda: bus,
+            'ADD_CIRCUIT': self.add_circuit,
+            'GET_CIRCUITS': self.get_circuits,
+        }
+        with open(path) as f:
+            source = f.read()
+            code = compile(source, path, 'exec')
+            exec(code, context)

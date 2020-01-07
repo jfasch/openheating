@@ -32,22 +32,22 @@ class SimplePlant(Plant):
                         'ADD_SWITCH(DummySwitch("pump", "the pump", False))',
                     ]),
                 service.CircuitService(
-                    pyconf=[
+                    config=[
                         'from openheating.base.circuit import Circuit',
                         'from openheating.dbus.thermometer_center import ThermometerCenter_Client',
                         'from openheating.dbus.switch_center import SwitchCenter_Client',
 
-                        'thermometer_center = ThermometerCenter_Client(bus=BUS)',
-                        'switch_center = SwitchCenter_Client(bus=BUS)',
+                        'thermometer_center = ThermometerCenter_Client(bus=GET_BUS())',
+                        'switch_center = SwitchCenter_Client(bus=GET_BUS())',
                         'consumer_thermometer = thermometer_center.get_thermometer("consumer")',
                         'producer_thermometer = thermometer_center.get_thermometer("producer")',
                         'pump_switch = switch_center.get_switch("pump")',
                         
-                        'CIRCUITS = [',
+                        'ADD_CIRCUIT(',
                         '   Circuit("TestCircuit", "Test Circuit",',
                         '           pump=pump_switch, producer=producer_thermometer, consumer=consumer_thermometer,',
                         '           diff_low=3, diff_high=10)',
-                        ']',
+                        ')',
                     ]),
             ])
 
