@@ -20,17 +20,16 @@ class SimplePlant(Plant):
 
                         'ADD_THERMOMETER(DummyThermometer("consumer", "the consumer", 0))',
                         'ADD_THERMOMETER(DummyThermometer("producer", "the producer", 0))',
-                        # do not read temperatures, we inject
+                        # suppress periodic temperature reads; we
+                        # inject
                         'SET_UPDATE_INTERVAL(0)',
                     ],
                 ),
                 service.SwitchService(
-                    pyconf=[
+                    config=[
                         'from openheating.base.switch import DummySwitch',
                         
-                        'SWITCHES = [',
-                        '    DummySwitch("pump", "the pump", False),',
-                        ']',
+                        'ADD_SWITCH(DummySwitch("pump", "the pump", False))',
                     ]),
                 service.CircuitService(
                     pyconf=[

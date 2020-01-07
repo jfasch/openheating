@@ -130,17 +130,17 @@ class ThermometerService(Service):
         return super().stop()
 
 class SwitchService(Service):
-    def __init__(self, pyconf, debug=False):
-        self.__pyconfigfile = tempfile.NamedTemporaryFile(mode='w')        
-        self.__pyconfigfile.write('\n'.join(pyconf))
-        self.__pyconfigfile.flush()
+    def __init__(self, config, simulated_switches_dir=None, debug=False):
+        self.__configfile = tempfile.NamedTemporaryFile(mode='w')        
+        self.__configfile.write('\n'.join(config))
+        self.__configfile.flush()
 
         super().__init__(exe='openheating-switches.py',
                          busname=names.Bus.SWITCHES,
-                         args=['--pyconfigfile', self.__pyconfigfile.name])
+                         args=['--config', self.__configfile.name])
 
     def stop(self):
-        self.__pyconfigfile.close()
+        self.__configfile.close()
         return super().stop()
 
 class CircuitService(Service):

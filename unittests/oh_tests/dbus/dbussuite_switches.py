@@ -14,12 +14,11 @@ class SwitchesTest(PlantTestCase):
     def setUp(self):
         super().setUp()
         self.start_plant(Plant([
-            service.SwitchService(pyconf=[
-                'from openheating.base.switch import DummySwitch',
-                'SWITCHES = [',
-                '    DummySwitch("TestSwitch", "Test Switch", False),',
-                ']'
-            ]),
+            service.SwitchService(
+                config=[
+                    'from openheating.base.switch import DummySwitch',
+                    'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
+                ]),
         ]))
 
     def test__basic(self):

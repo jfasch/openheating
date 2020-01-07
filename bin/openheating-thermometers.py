@@ -34,13 +34,11 @@ loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 config = ThermometersConfig()
-
 if args.simulated_thermometers_dir is not None:
     os.makedirs(args.simulated_thermometers_dir, exist_ok=True)
     config.set_simulated_thermometers_dir(args.simulated_thermometers_dir)
 
-with open(args.config) as f:
-    thermometers = config.parse(args.config, bus=bus)
+config.parse(args.config, bus=bus)
 
 # update_interval: cmdline overrides config
 if args.update_interval is not None:

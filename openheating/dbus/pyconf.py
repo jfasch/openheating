@@ -46,11 +46,40 @@ class ThermometersConfig:
             'ADD_THERMOMETER': self.add_thermometer,
             'GET_THERMOMETERS': self.get_thermometers,
         }
-
         with open(path) as f:
             source = f.read()
             code = compile(source, path, 'exec')
             exec(code, context)
+
+class SwitchesConfig:
+    def __init__(self):
+        self.__simulated_switches_dir = None
+        self.__switches = []
+
+    def get_simulated_switches_dir(self):
+        return self.__simulated_switches_dir
+    def set_simulated_switches_dir(self, path):
+        self.__simulated_switches_dir = path
+    
+    def add_switch(self, sw):
+        if sw.get_name() in [have.get_name() for have in self.__switches]:
+            raise DuplicateName(sw.get_name())
+        self.__switches.append(sw)
+    def get_switches(self):
+        return self.__switches
+
+    def parse(self, path, bus):
+        context = {
+            'GET_BUS': lambda: bus,
+            'GET_SIMULATED_SWITCHES_DIR': self.get_simulated_switches_dir,
+            'ADD_SWITCH': self.add_switch,
+            'GET_SWITCHES': self.get_switches,
+        }
+        with open(path) as f:
+            source = f.read()
+            code = compile(source, path, 'exec')
+            exec(code, context)
+
 
 def read(thing, bus, name, context):
     the_context = { 'BUS': bus }
@@ -62,9 +91,6 @@ def read(thing, bus, name, context):
         raise HeatingError('{} (iterable) expected but not there'.format(name))
     _check_names(objs)
     return objs
-
-def read_switches(thing, bus):
-    return read(thing, bus, 'SWITCHES', {})
 
 def read_circuits(thing, bus):
     return read(thing, bus, 'CIRCUITS', {})

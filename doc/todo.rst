@@ -39,6 +39,7 @@ Stack (Hanging)
   * --pyconfigfile -> --config
   * --pyconfigfile -> --config (circuits)
   * file switch
+  * rename pyconf -> config
 
 Todo
 ====
