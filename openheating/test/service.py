@@ -122,8 +122,7 @@ class ThermometerService(Service):
 
         super().__init__(exe='openheating-thermometers.py',
                          busname=names.Bus.THERMOMETERS,
-                         args=args,
-        )
+                         args=args)
 
     def stop(self):
         self.__configfile.close()
@@ -135,9 +134,13 @@ class SwitchService(Service):
         self.__configfile.write('\n'.join(config))
         self.__configfile.flush()
 
+        args = ['--config', self.__configfile.name]
+        if simulated_switches_dir is not None:
+            args += ['--simulated-switches-dir', simulated_switches_dir]
+
         super().__init__(exe='openheating-switches.py',
                          busname=names.Bus.SWITCHES,
-                         args=['--config', self.__configfile.name])
+                         args=args)
 
     def stop(self):
         self.__configfile.close()

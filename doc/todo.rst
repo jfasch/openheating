@@ -36,10 +36,11 @@ Stack (Hanging)
 
 * switches
 
-  * --pyconfigfile -> --config
   * --pyconfigfile -> --config (circuits)
   * file switch
   * rename pyconf -> config
+  * tests: real tmpdir, and cleanup simulated-dirs (thermometers and
+    switches)
 
 Todo
 ====

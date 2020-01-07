@@ -10,6 +10,7 @@ from openheating.dbus.thermometer_center import ThermometerCenter_Client
 
 import pydbus
 
+import os.path
 import unittest
 import subprocess
 
@@ -111,14 +112,14 @@ class ThermometersSimulation(PlantTestCase):
             [
                 service.ThermometerService(
                     config=[
-                        'import os.path',
                         'assert GET_SIMULATED_THERMOMETERS_DIR() == "/tmp/some/dir/to/contain/thermometers"',
-                        'assert os.path.isdir(GET_SIMULATED_THERMOMETERS_DIR()), GET_SIMULATED_THERMOMETERS_DIR()',
                     ],
                     simulated_thermometers_dir='/tmp/some/dir/to/contain/thermometers',
                 ),
             ]
         ))
+
+        self.assertTrue(os.path.isdir('/tmp/some/dir/to/contain/thermometers'))
 
     def test__simulated_thermometers_dir__not_passed(self):
         self.start_plant(Plant(

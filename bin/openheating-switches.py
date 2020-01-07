@@ -11,6 +11,7 @@ from openheating.dbus.switch_center import SwitchCenter_Server
 from gi.repository import GLib
 
 import argparse
+import os
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus switch service')
