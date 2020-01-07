@@ -1,7 +1,10 @@
 # -*- python -*-
 
 from openheating.base.w1 import W1Thermometer
-from openheating.base.thermometer import DummyThermometer
+from openheating.base.thermometer import FileThermometer
+
+import os.path
+
 
 _thermometers = [
     ('Raum', 'Raum', '/sys/bus/w1/devices/28-02131dc603aa'),
@@ -19,6 +22,14 @@ _thermometers = [
 ]
 
 if SIMULATED_THERMOMETERS_DIR:
-    THERMOMETERS = [DummyThermometer(name, description, 0) for name, description, _ in _thermometers]
+    THERMOMETERS = [
+        FileThermometer(name, description, 
+                        os.path.join(SIMULATED_THERMOMETERS_DIR, name),
+                        initial_value=20)
+        for name, description, _ in _thermometers
+    ]
 else:
-    THERMOMETERS = [W1Thermometer(name, description, path) for name, description, path in _thermometers]
+    THERMOMETERS = [
+        W1Thermometer(name, description, path) 
+        for name, description, path in _thermometers
+    ]

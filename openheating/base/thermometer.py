@@ -20,6 +20,26 @@ class Thermometer(metaclass=ABCMeta):
         assert False, 'abstract'
         return 23.4
 
+class FileThermometer(Thermometer):
+    'Thermometer that reads its temperature from a file'
+
+    def __init__(self, name, description, path, initial_value=None):
+        self.__name = name
+        self.__description = description
+        self.__path = path
+
+        if initial_value is not None:
+            with open(self.__path, 'w') as f:
+                f.write(str(initial_value)+'\n')
+
+    def get_name(self):
+        return self.__name
+    def get_description(self):
+        return self.__description
+    def get_temperature(self):
+        with open(self.__path) as f:
+            return float(f.read())
+
 class DummyThermometer(Thermometer):
     def __init__(self, name, description, value):
         super().__init__()
