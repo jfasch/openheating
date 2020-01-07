@@ -1,34 +1,41 @@
 # -*- python -*-
 
 from openheating.base import gpio
+from openheating.base.switch import FileSwitch
+
+import os
 
 
-_pins = [
-    17,
-    27,
-    22,
-    10,
-    9,
-    11,
-    13,
-    19,
-
-    18,
-    23,
-    24,
-    25,
-    12,
-    16,
-    20,
-    21,
+_switches = [
+    ('relay_0',  'Relay 0',  17),
+    ('relay_1',  'Relay 1',  27),
+    ('relay_2',  'Relay 2',  22),
+    ('relay_3',  'Relay 3',  10),
+    ('relay_4',  'Relay 4',   9),
+    ('relay_5',  'Relay 5',  11),
+    ('relay_6',  'Relay 6',  13),
+    ('relay_7',  'Relay 7',  19),
+    ('relay_8',  'Relay 8',  18),
+    ('relay_9',  'Relay 9',  23),
+    ('relay_10', 'Relay 10', 24),
+    ('relay_11', 'Relay 11', 25),
+    ('relay_12', 'Relay 12', 12),
+    ('relay_13', 'Relay 13', 16),
+    ('relay_14', 'Relay 14', 20),
+    ('relay_15', 'Relay 15', 21),
 ]
 
-SWITCHES = [
-    gpio.output(name = 'Relay_{}'.format(seq),
-                description = 'Relay #{} on pin #{}'.format(seq, pin),
-                chiplabel = 'pinctrl-bcm2835',
-                offset = pin,
-    )
-
-    for seq, pin in enumerate(_pins)
-]
+if GET_SIMULATED_SWITCHES_DIR():
+    for name, description, _ in _switches:
+        ADD_SWITCH(
+            FileSwitch(name, description,
+                       os.path.join(GET_SIMULATED_SWITCHES_DIR(), name),
+                       initial_value = False)
+        )
+else:
+    for name, description, pin in _switches:
+        ADD_SWITCH(
+            gpio.output(name, description,
+                        chiplabel = 'pinctrl-bcm2835', 
+                        offset = pin)
+        )

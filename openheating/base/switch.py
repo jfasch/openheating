@@ -23,6 +23,28 @@ class Switch(metaclass=ABCMeta):
         assert False, 'abstract'
         return False
 
+class FileSwitch(Switch):
+    def __init__(self, name, description, path, initial_value=None):
+        self.__name = name
+        self.__description = description
+        self.__path = path
+
+        if initial_value is not None:
+            with open(self.__path, 'w') as f:
+                f.write(str(initial_value)+'\n')
+
+    def get_name(self):
+        return self.__name
+    def get_description(self):
+        return self.__description
+    def set_state(self, value):
+        with open(self.__path, 'w') as f:
+            f.write(str(value)+'\n')
+    def get_state(self):
+        with open(self.__path) as f:
+            return bool(eval(f.read()))
+
+
 class DummySwitch(Switch):
     def __init__(self, name, description, state):
         super().__init__()

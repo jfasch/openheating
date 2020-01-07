@@ -22,14 +22,14 @@ _thermometers = [
 ]
 
 if GET_SIMULATED_THERMOMETERS_DIR():
-    THERMOMETERS = [
-        FileThermometer(name, description, 
-                        os.path.join(GET_SIMULATED_THERMOMETERS_DIR(), name),
-                        initial_value=20)
-        for name, description, _ in _thermometers
-    ]
+    for name, description, _ in _thermometers:
+        ADD_THERMOMETER(
+            FileThermometer(name, description, 
+                            os.path.join(GET_SIMULATED_THERMOMETERS_DIR(), name),
+                            initial_value=20)
+        )
 else:
-    THERMOMETERS = [
-        W1Thermometer(name, description, path) 
-        for name, description, path in _thermometers
-    ]
+    for name, description, path in _thermometers:
+        ADD_THERMOMETER(
+            W1Thermometer(name, description, path)
+        )
