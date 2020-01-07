@@ -1,23 +1,24 @@
 # -*- python -*-
 
 from openheating.base.w1 import W1Thermometer
+from openheating.base.thermometer import DummyThermometer
 
-
-THERMOMETERS = [
-    W1Thermometer('Raum', 'Raum', '/sys/bus/w1/devices/28-02131dc603aa'),
-
-    W1Thermometer('SpeicherOben', 'Speicher Oben', '/sys/bus/w1/devices/28-011432f138f9'),
-    W1Thermometer('SpeicherMitte', 'Speicher Mitte', '/sys/bus/w1/devices/28-01131676b23f'),
-    W1Thermometer('SpeicherUnten', 'Speicher Unten', '/sys/bus/w1/devices/28-02131df83daa'),
-    W1Thermometer('RuecklaufSolar', 'Ruecklauf Solar', '/sys/bus/w1/devices/28-02131d96bbaa'),
-    W1Thermometer('VorlaufSolar', 'Vorlauf Solar', '/sys/bus/w1/devices/28-02131d959eaa'),
-
-    W1Thermometer('Oelbrenner', 'Oelbrenner', '/sys/bus/w1/devices/28-02131d676baa'),
-
-    W1Thermometer('Holzbrenner', 'Holzbrenner', '/sys/bus/w1/devices/28-01131676d067'),
-    W1Thermometer('RuecklaufHolz', 'Ruecklauf Holz', '/sys/bus/w1/devices/28-011432772cf9'),
-    W1Thermometer('VorlaufHolz', 'Vorlauf Holz', '/sys/bus/w1/devices/28-02131dfd21aa'),
-
-    W1Thermometer('VorlaufHeizkreis', 'Vorlauf Heizkreis', '/sys/bus/w1/devices/28-02131dace9aa'),
-    W1Thermometer('VorlaufWarmwasser', 'Vorlauf Warmwasser', '/sys/bus/w1/devices/28-02131d9920aa'),
+_thermometers = [
+    ('Raum', 'Raum', '/sys/bus/w1/devices/28-02131dc603aa'),
+    ('SpeicherOben', 'Speicher Oben', '/sys/bus/w1/devices/28-011432f138f9'),
+    ('SpeicherMitte', 'Speicher Mitte', '/sys/bus/w1/devices/28-01131676b23f'),
+    ('SpeicherUnten', 'Speicher Unten', '/sys/bus/w1/devices/28-02131df83daa'),
+    ('RuecklaufSolar', 'Ruecklauf Solar', '/sys/bus/w1/devices/28-02131d96bbaa'),
+    ('VorlaufSolar', 'Vorlauf Solar', '/sys/bus/w1/devices/28-02131d959eaa'),
+    ('Oelbrenner', 'Oelbrenner', '/sys/bus/w1/devices/28-02131d676baa'),
+    ('Holzbrenner', 'Holzbrenner', '/sys/bus/w1/devices/28-01131676d067'),
+    ('RuecklaufHolz', 'Ruecklauf Holz', '/sys/bus/w1/devices/28-011432772cf9'),
+    ('VorlaufHolz', 'Vorlauf Holz', '/sys/bus/w1/devices/28-02131dfd21aa'),
+    ('VorlaufHeizkreis', 'Vorlauf Heizkreis', '/sys/bus/w1/devices/28-02131dace9aa'),
+    ('VorlaufWarmwasser', 'Vorlauf Warmwasser', '/sys/bus/w1/devices/28-02131d9920aa'),
 ]
+
+if SIMULATED_THERMOMETERS_DIR:
+    THERMOMETERS = [DummyThermometer(name, description, 0) for name, description, _ in _thermometers]
+else:
+    THERMOMETERS = [W1Thermometer(name, description, path) for name, description, path in _thermometers]

@@ -74,3 +74,4 @@ class ErrorThermometer(Thermometer):
             self.__n_ok_before_error -= 1
             return 42
         raise HeatingError('bullshit temperature')
+

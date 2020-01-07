@@ -104,10 +104,41 @@ class ThermometersError(PlantTestCase):
         thermometer_client = center_client.get_thermometer('ErrorThermometer')
         self.assertRaises(HeatingError, thermometer_client.get_temperature)
 
+class ThermometersSimulation(PlantTestCase):
+    def test__simulated_thermometers_dir__passed(self):
+        self.start_plant(Plant(
+            [
+                service.ThermometerService(
+                    pyconf=[
+                        'import os.path',
+                        'assert SIMULATED_THERMOMETERS_DIR == "/tmp/some/dir/to/contain/thermometers"',
+                        'assert os.path.isdir(SIMULATED_THERMOMETERS_DIR), SIMULATED_THERMOMETERS_DIR',
+                        'THERMOMETERS = []',
+                    ],
+                    update_interval=5,
+                    simulated_thermometers_dir='/tmp/some/dir/to/contain/thermometers',
+                ),
+            ]
+        ))
+
+    def test__simulated_thermometers_dir__not_passed(self):
+        self.start_plant(Plant(
+            [
+                service.ThermometerService(
+                    pyconf=[
+                        'assert SIMULATED_THERMOMETERS_DIR is None',
+                        'THERMOMETERS = []',
+                    ],
+                    update_interval=5,
+                ),
+            ]
+        ))
+
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersOK))
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersInjectSamples))
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersError))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersSimulation))
 
 if __name__ == '__main__':
     testutils.run(suite)

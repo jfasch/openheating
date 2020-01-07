@@ -32,15 +32,3 @@ SWITCHES = [
 
     for seq, pin in enumerate(_pins)
 ]
-
-
-# SWITCHES = [
-#     gpio.output(name = 'Relay_{}'.format(i),
-#                 description = 'Relay #{}'.format(i),
-#                 chiplabel = 'mcp23017',
-
-#                 offset = i,
-#     )
-
-#     for i in range(16)
-# ]

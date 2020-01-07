@@ -26,9 +26,21 @@ Stack (Hanging)
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
 
-* Plant has services
+* openheating-faschingbauer.py
 
-  * rewrite remaining tests
+  * move plant into dbus (better yet, create an installations/ module
+    containing simple_plant, faschingbauer_plant, etc.)
+  * remove config files (these are now created by the plant definition
+    code)
+  * continue with unittests/oh_tests/installations/faschingbauer.py
+
+* thermometer config
+
+  * accept list of strings/lines, or a single string which is
+    interpreted as a file then.
+  * move update interval into config file
+  * abandon pyconf generic read, we need more
+  * filethermometer
 
 Todo
 ====

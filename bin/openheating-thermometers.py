@@ -13,11 +13,15 @@ from gi.repository import GLib
 
 import datetime
 import argparse
+import os
 
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 parser.add_argument('--pyconfigfile', help='Thermometer configuration file (python)')
 parser.add_argument('--interval', help='Temperature read interval (seconds); default 5; 0 to disable updates', default=5, type=int)
+parser.add_argument('--simulated-thermometers-dir', metavar='DIR', 
+                    help='Create "thermometer" files in DIR, and read temperatures from there. '
+                    'DIR is created, and is passed into the config as "SIMULATED_THERMOMETERS_DIR".')
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
@@ -27,8 +31,11 @@ logutil.configure_from_argparse(args)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
+if args.simulated_thermometers_dir:
+    os.makedirs(args.simulated_thermometers_dir, exist_ok=True)
+
 with open(args.pyconfigfile) as f:
-    thermometers = pyconf.read_thermometers(f, bus)
+    thermometers = pyconf.read_thermometers(f, bus, simulated_thermometers_dir=args.simulated_thermometers_dir)
 
 objects = [
     ('/', ThermometerCenter_Server(thermometers=thermometers))

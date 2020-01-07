@@ -14,18 +14,19 @@ class BadName(HeatingError):
         self.name = name
 
 
-def read(thing, bus, name):
-    context = { 'BUS': bus }
-    exec(_make_code(thing), context)
+def read(thing, bus, name, context):
+    the_context = { 'BUS': bus }
+    the_context.update(context)
+    exec(_make_code(thing), the_context)
 
-    objs = context.get(name)
+    objs = the_context.get(name)
     if objs is None:
         raise HeatingError('{} (iterable) expected but not there'.format(name))
     _check_names(objs)
     return objs
 
-def read_thermometers(thing, bus):
-    return read(thing, bus, 'THERMOMETERS')
+def read_thermometers(thing, bus, simulated_thermometers_dir):
+    return read(thing, bus, 'THERMOMETERS', {'SIMULATED_THERMOMETERS_DIR': simulated_thermometers_dir})
 
 def read_switches(thing, bus):
     return read(thing, bus, 'SWITCHES')
