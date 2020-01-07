@@ -15,15 +15,15 @@ class SimplePlant(Plant):
         super().__init__(
             [
                 service.ThermometerService(
-                    pyconf=[
+                    config=[
                         'from openheating.base.thermometer import DummyThermometer',
-                        
-                        'THERMOMETERS = [',
-                        '    DummyThermometer("consumer", "the consumer", 0),',
-                        '    DummyThermometer("producer", "the producer", 0),',
-                        ']',
+
+                        'ADD_THERMOMETER(DummyThermometer("consumer", "the consumer", 0))',
+                        'ADD_THERMOMETER(DummyThermometer("producer", "the producer", 0))',
+                        # do not read temperatures, we inject
+                        'SET_UPDATE_INTERVAL(0)',
                     ],
-                    update_interval=0),
+                ),
                 service.SwitchService(
                     pyconf=[
                         'from openheating.base.switch import DummySwitch',

@@ -34,10 +34,11 @@ Stack (Hanging)
     code)
   * continue with unittests/oh_tests/installations/faschingbauer.py
 
-* thermometer config
+* switches
 
-  * accept list of strings/lines, or a single string which is
-    interpreted as a file then.
+  * --pyconfigfile -> --config
+  * --pyconfigfile -> --config (circuits)
+  * file switch
 
 Todo
 ====

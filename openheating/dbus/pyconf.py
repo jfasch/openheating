@@ -63,14 +63,11 @@ def read(thing, bus, name, context):
     _check_names(objs)
     return objs
 
-def read_thermometers(thing, bus, simulated_thermometers_dir):
-    return read(thing, bus, 'THERMOMETERS', {'SIMULATED_THERMOMETERS_DIR': simulated_thermometers_dir})
-
 def read_switches(thing, bus):
-    return read(thing, bus, 'SWITCHES')
+    return read(thing, bus, 'SWITCHES', {})
 
 def read_circuits(thing, bus):
-    return read(thing, bus, 'CIRCUITS')
+    return read(thing, bus, 'CIRCUITS', {})
 
 def _make_code(thing):
     if hasattr(thing, 'read'):

@@ -26,16 +26,16 @@ class ErrorsTest(PlantTestCase):
             [
                 service.ErrorService(),
                 service.ThermometerService(
-                    pyconf=[
+                    config=[
                         "from openheating.base.thermometer import ErrorThermometer",
-                        "THERMOMETERS = [",
+                        "ADD_THERMOMETER(",
                         "    ErrorThermometer(",
                         "        name='Error',",
                         "        description='Error Thermometer',",
                         "        n_ok_before_error=0),",
-                        "]",
+                        ")",
                     ],
-                    update_interval=5)
+                ),
             ]
         ))
         
@@ -49,16 +49,16 @@ class ErrorsTest(PlantTestCase):
             [
                 service.ErrorService(),
                 service.ThermometerService(
-                    pyconf=[
+                    config=[
                         "from openheating.base.w1 import W1Thermometer",
-                        "THERMOMETERS = [",
+                        "ADD_THERMOMETER(",
                         "    W1Thermometer(",
                         "        name='w1_erroneous',",
                         "        description='Some Thermometer',",
                         "        path='/a/b/00-00000000'),",
-                        "]",
+                        ")",
                     ],
-                    update_interval=5)
+                ),
             ]
         ))
 
