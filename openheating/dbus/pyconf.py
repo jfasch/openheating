@@ -13,6 +13,44 @@ class BadName(HeatingError):
         super().__init__(msg='{} is not a valid name (has to be a Python identifier'.format(name))
         self.name = name
 
+class ThermometersConfig:
+    def __init__(self):
+        self.__simulated_thermometers_dir = None
+        self.__update_interval = 5
+        self.__thermometers = []
+
+    def get_simulated_thermometers_dir(self):
+        return self.__simulated_thermometers_dir
+    def set_simulated_thermometers_dir(self, path):
+        self.__simulated_thermometers_dir = path
+
+    def get_update_interval(self):
+        return self.__update_interval
+    def set_update_interval(self, secs):
+        self.__update_interval = secs
+
+    def add_thermometer(self, th):
+        if th.get_name() in [have.get_name() for have in self.__thermometers]:
+            raise DuplicateName(th.get_name())
+        self.__thermometers.append(th)
+
+    def get_thermometers(self):
+        return self.__thermometers
+
+    def parse(self, path, bus):
+        context = {
+            'GET_BUS': lambda: bus,
+            'GET_SIMULATED_THERMOMETERS_DIR': self.get_simulated_thermometers_dir,
+            'GET_UPDATE_INTERVAL': self.get_update_interval,
+            'SET_UPDATE_INTERVAL': self.set_update_interval,
+            'ADD_THERMOMETER': self.add_thermometer,
+            'GET_THERMOMETERS': self.get_thermometers,
+        }
+
+        with open(path) as f:
+            source = f.read()
+            code = compile(source, path, 'exec')
+            exec(code, context)
 
 def read(thing, bus, name, context):
     the_context = { 'BUS': bus }

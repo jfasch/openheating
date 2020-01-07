@@ -38,9 +38,6 @@ Stack (Hanging)
 
   * accept list of strings/lines, or a single string which is
     interpreted as a file then.
-  * move update interval into config file
-  * abandon pyconf generic read, we need more
-  * filethermometer
 
 Todo
 ====

@@ -111,14 +111,12 @@ def _indent_str(s):
     return s.replace('\n', '\n    ')
 
 class ThermometerService(Service):
-    def __init__(self, pyconf, update_interval, simulated_thermometers_dir=None, debug=False):
-        self.__pyconfigfile = tempfile.NamedTemporaryFile(mode='w')
-        self.__pyconfigfile.write('\n'.join(pyconf))
-        self.__pyconfigfile.flush()
+    def __init__(self, config, simulated_thermometers_dir=None, debug=False):
+        self.__configfile = tempfile.NamedTemporaryFile(mode='w')
+        self.__configfile.write('\n'.join(config))
+        self.__configfile.flush()
 
-        args = ['--pyconfigfile', self.__pyconfigfile.name,
-                '--interval', str(update_interval),
-        ]
+        args = ['--config', self.__configfile.name]
         if simulated_thermometers_dir is not None:
             args += ['--simulated-thermometers-dir', simulated_thermometers_dir]
 
@@ -128,7 +126,7 @@ class ThermometerService(Service):
         )
 
     def stop(self):
-        self.__pyconfigfile.close()
+        self.__configfile.close()
         return super().stop()
 
 class SwitchService(Service):

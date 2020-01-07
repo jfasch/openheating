@@ -20,11 +20,11 @@ class ThermometersOK(PlantTestCase):
         self.start_plant(Plant(
             [
                 service.ThermometerService(
-                    pyconf=[
+                    config=[
                         "from openheating.base.thermometer import FixedThermometer",
-                        "THERMOMETERS = [FixedThermometer('TestThermometer', 'Test Thermometer', 42)]",
-                    ],
-                    update_interval=5)
+                        "ADD_THERMOMETER(FixedThermometer('TestThermometer', 'Test Thermometer', 42))",
+                    ]
+                ),
             ]
         ))
 
@@ -65,12 +65,13 @@ class ThermometersInjectSamples(PlantTestCase):
         self.start_plant(Plant(
             [
                 service.ThermometerService(
-                    pyconf=[
+                    config=[
                         "from openheating.base.thermometer import DummyThermometer",
-                        "THERMOMETERS = [DummyThermometer('TestThermometer', 'Test Thermometer', 42)]",
+                        "ADD_THERMOMETER(DummyThermometer('TestThermometer', 'Test Thermometer', 42))",
+                        # no updates; else injecting won't work
+                        "SET_UPDATE_INTERVAL(0)",
                     ],
-                    # no updates; else injecting won't work
-                    update_interval=0)
+                ),
             ]
         ))
 
@@ -86,11 +87,11 @@ class ThermometersError(PlantTestCase):
         self.start_plant(Plant(
             [
                 service.ThermometerService(
-                    pyconf=[
+                    config=[
                         "from openheating.base.thermometer import ErrorThermometer",
-                        "THERMOMETERS = [ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False)]",
+                        "ADD_THERMOMETER(ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False))",
                     ],
-                    update_interval=5),
+                ),
             ]
         ))
 
@@ -109,13 +110,11 @@ class ThermometersSimulation(PlantTestCase):
         self.start_plant(Plant(
             [
                 service.ThermometerService(
-                    pyconf=[
+                    config=[
                         'import os.path',
-                        'assert SIMULATED_THERMOMETERS_DIR == "/tmp/some/dir/to/contain/thermometers"',
-                        'assert os.path.isdir(SIMULATED_THERMOMETERS_DIR), SIMULATED_THERMOMETERS_DIR',
-                        'THERMOMETERS = []',
+                        'assert GET_SIMULATED_THERMOMETERS_DIR() == "/tmp/some/dir/to/contain/thermometers"',
+                        'assert os.path.isdir(GET_SIMULATED_THERMOMETERS_DIR()), GET_SIMULATED_THERMOMETERS_DIR()',
                     ],
-                    update_interval=5,
                     simulated_thermometers_dir='/tmp/some/dir/to/contain/thermometers',
                 ),
             ]
@@ -125,11 +124,9 @@ class ThermometersSimulation(PlantTestCase):
         self.start_plant(Plant(
             [
                 service.ThermometerService(
-                    pyconf=[
-                        'assert SIMULATED_THERMOMETERS_DIR is None',
-                        'THERMOMETERS = []',
+                    config=[
+                        'assert GET_SIMULATED_THERMOMETERS_DIR() is None',
                     ],
-                    update_interval=5,
                 ),
             ]
         ))
