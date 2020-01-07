@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from openheating.base import logutil
-from openheating.dbus.pyconf import SwitchesConfig
+from openheating.dbus.config import SwitchesConfig
 from openheating.dbus import dbusutil
 from openheating.dbus import names
 from openheating.dbus import lifecycle

@@ -2,7 +2,7 @@
 
 from openheating.base.history import History
 from openheating.base import logutil
-from openheating.dbus.pyconf import ThermometersConfig
+from openheating.dbus.config import ThermometersConfig
 from openheating.dbus import dbusutil
 from openheating.dbus import names
 from openheating.dbus import lifecycle
