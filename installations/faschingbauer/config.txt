@@ -7,21 +7,29 @@
 
 # free GPIO 14,15. according to
 # https://www.raspberrypi.org/documentation/configuration/device-tree.md,
-# those are TXD0 and RXD0, resp., on the Pi2 (but not the Pi3). but
-# see below.
+# those are TXD0 and RXD0, resp., on the Pi2 (but not the Pi3). 
+
+# this apparently does not have the desired effect. I tried to use the
+# "now-free" GPIO 14 and 15 for the two w1-gpio lines, and failed.
+
 enable_uart=0
+
+# W1
+# =========================================
 
 # W1 Ofen
 # -------
-dtoverlay=w1-gpio,gpiopin=14
+
+# pin 7's pull{up,down} POR state is "pullup" which means I cannot use
+# it to control a relay for example. W1 is fine.
+
+dtoverlay=w1-gpio,gpiopin=7
 
 # W1 Heiz
 # -------
 
-# GPIO 15 does not work for *whatever* reason, although I configured
-# UART0 away.
-
-# todo: buy one of those i2c/w1 masters and do it in hardware.
+# I'd have liked to use 8 (pull-POR same as 7) as second W1 line, but
+# this does not work. occupy relay-capable 26.
 
 dtoverlay=w1-gpio,gpiopin=26
 
