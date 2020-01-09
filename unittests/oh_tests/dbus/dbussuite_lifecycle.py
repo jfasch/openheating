@@ -8,7 +8,6 @@ from openheating.test.plant import Plant
 from gi.repository import GLib
 
 import unittest
-import tempfile
 import time
 import signal
 import os.path
@@ -17,9 +16,7 @@ import os.path
 class ManagedTest(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.__directory = tempfile.TemporaryDirectory()
-    def tearDown(self):
-        self.__directory.cleanup()
+        self.__directory = self.tempdir()
         
     def test__basic(self):
         self.start_plant(Plant([service.ManagedObjectTesterService(stampdir=self.__directory.name)]))

@@ -36,8 +36,6 @@ Stack (Hanging)
 
 * test: installations/faschingbauer.py
 
-  * replace all TemporaryDirectory() with
-    PlantTestCase.tempdir(suffix=None)
   * structuring: probably move core components into a
     "runtime". FaschingbauerPlant has-a runtime which contributes its
     own services/components (thermometers, switches, errors), and

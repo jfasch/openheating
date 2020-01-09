@@ -4,18 +4,15 @@ from openheating.test.plant import Plant
 from openheating.test import service
 
 import unittest
-import tempfile
 import os.path
 
 
 class FaschingbauerTest(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.__thermometers_dir = tempfile.TemporaryDirectory(suffix='-thermometers')
-        self.__switches_dir = tempfile.TemporaryDirectory(suffix='-switches')
+        self.__thermometers_dir = self.tempdir(suffix='.thermometers')
+        self.__switches_dir = self.tempdir(suffix='.switches')
     def tearDown(self):
-        self.__thermometers_dir.cleanup()
-        self.__switches_dir.cleanup()
         super().tearDown()
 
     @PlantTestCase.intercept_failure

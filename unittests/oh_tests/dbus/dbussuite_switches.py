@@ -9,28 +9,23 @@ import pydbus
 
 import unittest
 import os.path
-import tempfile
 
 
 class SwitchesTest(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.__tmpdir = tempfile.TemporaryDirectory()
-
-    def tearDown(self):
-        self.__tmpdir.cleanup()
-        super().tearDown()
+        self.__tmpdir = self.tempdir()
 
     def test__basic(self):
-        self.start_plant(Plant([
-            service.SwitchService(
-                config=[
-                    'from openheating.base.switch import DummySwitch',
-                    'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
+        config=self.tempfile(
+            lines=[
+                'from openheating.base.switch import DummySwitch',
+                'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
 
-                    'assert GET_SIMULATED_SWITCHES_DIR() is None, GET_SIMULATED_SWITCHES_DIR()',
-                ]),
-        ]))
+                'assert GET_SIMULATED_SWITCHES_DIR() is None, GET_SIMULATED_SWITCHES_DIR()',
+            ]
+        )
+        self.start_plant(Plant([service.SwitchService(config=config.name)]))
 
         center_client = SwitchCenter_Client(pydbus.SessionBus())
         switch_client = center_client.get_switch('TestSwitch')
@@ -42,15 +37,18 @@ class SwitchesTest(PlantTestCase):
 
     def test__simulated_dir(self):
         swdir = self.__tmpdir.name+'/some/dir/to/contain/switches'
+        config=self.tempfile(
+            lines=[
+                'from openheating.base.switch import DummySwitch',
+                'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
+
+                'assert GET_SIMULATED_SWITCHES_DIR() == "{}", GET_SIMULATED_SWITCHES_DIR()'.format(swdir),
+            ]
+        )
 
         self.start_plant(Plant([
             service.SwitchService(
-                config=[
-                    'from openheating.base.switch import DummySwitch',
-                    'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
-
-                    'assert GET_SIMULATED_SWITCHES_DIR() == "{}", GET_SIMULATED_SWITCHES_DIR()'.format(swdir),
-                ],
+                config=config.name,
                 simulated_switches_dir=swdir,
             ),
         ]))

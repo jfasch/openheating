@@ -12,22 +12,19 @@ import pydbus
 
 import os.path
 import unittest
-import tempfile
 
 
 class ThermometersOK(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_plant(Plant(
-            [
-                service.ThermometerService(
-                    config=[
-                        "from openheating.base.thermometer import FixedThermometer",
-                        "ADD_THERMOMETER(FixedThermometer('TestThermometer', 'Test Thermometer', 42))",
-                    ]
-                ),
-            ]
-        ))
+        config = self.tempfile(
+            lines=[
+                "from openheating.base.thermometer import FixedThermometer",
+                "ADD_THERMOMETER(FixedThermometer('TestThermometer', 'Test Thermometer', 42))",
+            ],
+            suffix='.thermometers-config',
+        )
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
     def test__start_stop(self):
         center_client = ThermometerCenter_Client(pydbus.SessionBus())
@@ -63,18 +60,16 @@ class ThermometersOK(PlantTestCase):
 class ThermometersInjectSamples(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_plant(Plant(
-            [
-                service.ThermometerService(
-                    config=[
-                        "from openheating.base.thermometer import DummyThermometer",
-                        "ADD_THERMOMETER(DummyThermometer('TestThermometer', 'Test Thermometer', 42))",
-                        # no updates; else injecting won't work
-                        "SET_UPDATE_INTERVAL(0)",
-                    ],
-                ),
-            ]
-        ))
+        config=self.tempfile(
+            lines=[
+                "from openheating.base.thermometer import DummyThermometer",
+                "ADD_THERMOMETER(DummyThermometer('TestThermometer', 'Test Thermometer', 42))",
+                # no updates; else injecting won't work
+                "SET_UPDATE_INTERVAL(0)",
+            ],
+            suffix='.thermometers-config',
+        )
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
     def test__inject_sample(self):
         center_client = ThermometerCenter_Client(pydbus.SessionBus())
@@ -85,16 +80,14 @@ class ThermometersInjectSamples(PlantTestCase):
 class ThermometersError(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_plant(Plant(
-            [
-                service.ThermometerService(
-                    config=[
-                        "from openheating.base.thermometer import ErrorThermometer",
-                        "ADD_THERMOMETER(ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False))",
-                    ],
-                ),
-            ]
-        ))
+        config=self.tempfile(
+            lines=[
+                "from openheating.base.thermometer import ErrorThermometer",
+                "ADD_THERMOMETER(ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False))",
+            ],
+            suffix='.thermometers-config',
+        )
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
     def test__sensor_error_at_startup(self):
         # do nothing. this is only there to test if startup succeeds
@@ -109,21 +102,23 @@ class ThermometersError(PlantTestCase):
 class ThermometersSimulation(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.__tmpdir = tempfile.TemporaryDirectory()
+        self.__tmpdir = self.tempdir()
 
     def tearDown(self):
-        self.__tmpdir.cleanup()
         super().tearDown()
 
     def test__simulated_thermometers_dir__passed(self):
         thdir = self.__tmpdir.name+'/some/dir/to/contain/thermometers'
-
+        config=self.tempfile(
+            lines=[
+                'assert GET_SIMULATED_THERMOMETERS_DIR() == "{}"'.format(thdir)
+            ],
+            suffix='.thermometers-config',
+        )
         self.start_plant(Plant(
             [
                 service.ThermometerService(
-                    config=[
-                        'assert GET_SIMULATED_THERMOMETERS_DIR() == "{}"'.format(thdir)
-                    ],
+                    config=config.name,
                     simulated_thermometers_dir=thdir
                 ),
             ]
@@ -132,15 +127,13 @@ class ThermometersSimulation(PlantTestCase):
         self.assertTrue(os.path.isdir(thdir)) # has been created by service
 
     def test__simulated_thermometers_dir__not_passed(self):
-        self.start_plant(Plant(
-            [
-                service.ThermometerService(
-                    config=[
-                        'assert GET_SIMULATED_THERMOMETERS_DIR() is None',
-                    ],
-                ),
-            ]
-        ))
+        config=self.tempfile(
+            lines=[
+                'assert GET_SIMULATED_THERMOMETERS_DIR() is None',
+            ],
+            suffix='.thermometers-config',
+        )
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersOK))

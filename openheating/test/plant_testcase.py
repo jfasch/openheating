@@ -38,9 +38,15 @@ class PlantTestCase(unittest.TestCase):
     def setUp(self):
         self.__is_failure = False
         self.__plant = None
+        self.__tempdirs = []
+        self.__tempfiles = []
     def tearDown(self):
         if self.__plant:
             self.__plant.shutdown(self.__is_failure)
+        for d in self.__tempdirs:
+            d.cleanup()
+        for f in self.__tempfiles:
+            f.close()
 
     def start_plant(self, plant):
         self.__plant = plant
@@ -50,3 +56,16 @@ class PlantTestCase(unittest.TestCase):
         assert self.__plant is not None
         self.__plant.shutdown(is_failure=False)
         self.__plant = None
+
+    def tempdir(self, suffix=None):
+        d = tempfile.TemporaryDirectory(prefix=self.__class__.__name__, suffix=suffix)
+        self.__tempdirs.append(d)
+        return d
+        
+    def tempfile(self, lines=None, suffix=None):
+        f = tempfile.NamedTemporaryFile(prefix=self.__class__.__name__, suffix=suffix, mode='w')
+        self.__tempfiles.append(f)
+        if lines is not None:
+            f.write('\n'.join(lines))
+            f.flush()
+        return f

@@ -3,17 +3,15 @@ from openheating.test.simple_plant import SimplePlant
 from openheating.test import testutils
 
 import unittest
-from tempfile import NamedTemporaryFile
 import time
 import itertools
-
 
 
 class CircuitsTest(PlantTestCase):
     def setUp(self):
         super().setUp()
 
-        self.__plant = SimplePlant()
+        self.__plant = SimplePlant(make_tempfile=self.tempfile)
         self.start_plant(self.__plant)
         self.__clients = self.__plant.create_clients()
 

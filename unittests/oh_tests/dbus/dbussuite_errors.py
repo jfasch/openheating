@@ -22,20 +22,23 @@ class ErrorsTest(PlantTestCase):
 
     @PlantTestCase.intercept_failure
     def test__basic_error_count(self):
+        thermometers_config = self.tempfile(
+            lines=[
+                "from openheating.base.thermometer import ErrorThermometer",
+                "ADD_THERMOMETER(",
+                "    ErrorThermometer(",
+                "        name='Error',",
+                "        description='Error Thermometer',",
+                "        n_ok_before_error=0),",
+                ")",
+            ],
+            suffix='.thermometers-config',
+        )
+
         self.start_plant(Plant(
             [
                 service.ErrorService(),
-                service.ThermometerService(
-                    config=[
-                        "from openheating.base.thermometer import ErrorThermometer",
-                        "ADD_THERMOMETER(",
-                        "    ErrorThermometer(",
-                        "        name='Error',",
-                        "        description='Error Thermometer',",
-                        "        n_ok_before_error=0),",
-                        ")",
-                    ],
-                ),
+                service.ThermometerService(config=thermometers_config.name),                    
             ]
         ))
         
@@ -45,20 +48,23 @@ class ErrorsTest(PlantTestCase):
 
     @PlantTestCase.intercept_failure
     def test__w1__file_not_found(self):
+        thermometers_config = self.tempfile(
+            lines=[
+                "from openheating.base.w1 import W1Thermometer",
+                "ADD_THERMOMETER(",
+                "    W1Thermometer(",
+                "        name='w1_erroneous',",
+                "        description='Some Thermometer',",
+                "        path='/a/b/00-00000000'),",
+                ")",
+            ],
+            suffix='.thermometers-config',
+        )
+
         self.start_plant(Plant(
             [
                 service.ErrorService(),
-                service.ThermometerService(
-                    config=[
-                        "from openheating.base.w1 import W1Thermometer",
-                        "ADD_THERMOMETER(",
-                        "    W1Thermometer(",
-                        "        name='w1_erroneous',",
-                        "        description='Some Thermometer',",
-                        "        path='/a/b/00-00000000'),",
-                        ")",
-                    ],
-                ),
+                service.ThermometerService(config=thermometers_config.name),
             ]
         ))
 

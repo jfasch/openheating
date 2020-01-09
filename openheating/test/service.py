@@ -112,9 +112,8 @@ def _indent_str(s):
 
 class ThermometerService(Service):
     def __init__(self, config, simulated_thermometers_dir=None, debug=False):
-        self.__configfile = _make_configfile(config)
-
-        args = ['--config', self.__configfile.name]
+        assert type(config) is str
+        args = ['--config', config]
         if simulated_thermometers_dir is not None:
             args += ['--simulated-thermometers-dir', simulated_thermometers_dir]
 
@@ -122,15 +121,10 @@ class ThermometerService(Service):
                          busname=names.Bus.THERMOMETERS,
                          args=args)
 
-    def stop(self):
-        self.__configfile.close()
-        return super().stop()
-
 class SwitchService(Service):
     def __init__(self, config, simulated_switches_dir=None, debug=False):
-        self.__configfile = _make_configfile(config)
-
-        args = ['--config', self.__configfile.name]
+        assert type(config) is str
+        args = ['--config', config]
         if simulated_switches_dir is not None:
             args += ['--simulated-switches-dir', simulated_switches_dir]
 
@@ -138,21 +132,12 @@ class SwitchService(Service):
                          busname=names.Bus.SWITCHES,
                          args=args)
 
-    def stop(self):
-        self.__configfile.close()
-        return super().stop()
-
 class CircuitService(Service):
     def __init__(self, config, debug=False):
-        self.__configfile = _make_configfile(config)
-
+        assert type(config) is str
         super().__init__(exe='openheating-circuits.py',
                          busname=names.Bus.CIRCUITS,
-                         args=['--config', self.__configfile.name])
-
-    def stop(self):
-        self.__configfile.close()
-        return super().stop()
+                         args=['--config', config])
 
 class ErrorService(Service):
     def __init__(self, debug=False):
@@ -174,12 +159,3 @@ class ManagedObjectTesterService(Service):
             busname=names.Bus.MANAGEDOBJECTTESTER,
             args=['--stamp-directory', stampdir],
         )
-
-def _make_configfile(config):
-    if type(config) is str:  # filename
-        return open(config)
-    else:  # list of lines. write to tempfile.
-        configfile = tempfile.NamedTemporaryFile(mode='w')
-        configfile.write('\n'.join(config))
-        configfile.flush()
-        return configfile

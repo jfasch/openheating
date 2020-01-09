@@ -11,44 +11,54 @@ from collections import namedtuple
 
 
 class SimplePlant(Plant):
-    def __init__(self):
+    def __init__(self, make_tempfile):
+        thermometers_config = make_tempfile(
+            lines=[
+                'from openheating.base.thermometer import DummyThermometer',
+
+                'ADD_THERMOMETER(DummyThermometer("consumer", "the consumer", 0))',
+                'ADD_THERMOMETER(DummyThermometer("producer", "the producer", 0))',
+                # suppress periodic temperature reads; we
+                # inject
+                'SET_UPDATE_INTERVAL(0)',
+            ],
+            suffix='.thermometers-config',
+        )
+
+        switches_config = make_tempfile(
+            lines=[
+                'from openheating.base.switch import DummySwitch',
+                'ADD_SWITCH(DummySwitch("pump", "the pump", False))',
+            ],
+            suffix='.switches-config'
+        )
+
+        circuits_config = make_tempfile(
+            lines=[
+                'from openheating.base.circuit import Circuit',
+                'from openheating.dbus.thermometer_center import ThermometerCenter_Client',
+                'from openheating.dbus.switch_center import SwitchCenter_Client',
+
+                'thermometer_center = ThermometerCenter_Client(bus=GET_BUS())',
+                'switch_center = SwitchCenter_Client(bus=GET_BUS())',
+                'consumer_thermometer = thermometer_center.get_thermometer("consumer")',
+                'producer_thermometer = thermometer_center.get_thermometer("producer")',
+                'pump_switch = switch_center.get_switch("pump")',
+
+                'ADD_CIRCUIT(',
+                '   Circuit("TestCircuit", "Test Circuit",',
+                '           pump=pump_switch, producer=producer_thermometer, consumer=consumer_thermometer,',
+                '           diff_low=3, diff_high=10)',
+                ')',
+            ],
+            suffix='.circuits-config',
+        )
+
         super().__init__(
             [
-                service.ThermometerService(
-                    config=[
-                        'from openheating.base.thermometer import DummyThermometer',
-
-                        'ADD_THERMOMETER(DummyThermometer("consumer", "the consumer", 0))',
-                        'ADD_THERMOMETER(DummyThermometer("producer", "the producer", 0))',
-                        # suppress periodic temperature reads; we
-                        # inject
-                        'SET_UPDATE_INTERVAL(0)',
-                    ],
-                ),
-                service.SwitchService(
-                    config=[
-                        'from openheating.base.switch import DummySwitch',
-                        
-                        'ADD_SWITCH(DummySwitch("pump", "the pump", False))',
-                    ]),
-                service.CircuitService(
-                    config=[
-                        'from openheating.base.circuit import Circuit',
-                        'from openheating.dbus.thermometer_center import ThermometerCenter_Client',
-                        'from openheating.dbus.switch_center import SwitchCenter_Client',
-
-                        'thermometer_center = ThermometerCenter_Client(bus=GET_BUS())',
-                        'switch_center = SwitchCenter_Client(bus=GET_BUS())',
-                        'consumer_thermometer = thermometer_center.get_thermometer("consumer")',
-                        'producer_thermometer = thermometer_center.get_thermometer("producer")',
-                        'pump_switch = switch_center.get_switch("pump")',
-                        
-                        'ADD_CIRCUIT(',
-                        '   Circuit("TestCircuit", "Test Circuit",',
-                        '           pump=pump_switch, producer=producer_thermometer, consumer=consumer_thermometer,',
-                        '           diff_low=3, diff_high=10)',
-                        ')',
-                    ]),
+                service.ThermometerService(config=thermometers_config.name),
+                service.SwitchService(config=switches_config.name),
+                service.CircuitService(config=circuits_config.name),
             ])
 
     def create_clients(self):
