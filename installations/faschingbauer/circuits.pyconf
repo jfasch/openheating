@@ -1,0 +1,18 @@
+# -*- python -*-
+
+from openheating.base.circuit import Circuit
+from openheating.dbus.thermometer_center import ThermometerCenter_Client
+from openheating.dbus.switch_center import SwitchCenter_Client
+
+thermometer_center = ThermometerCenter_Client(bus=GET_BUS())
+switch_center = SwitchCenter_Client(bus=GET_BUS())
+speicheroben_thermometer = thermometer_center.get_thermometer('SpeicherOben')
+holzbrenner_thermometer = thermometer_center.get_thermometer('Holzbrenner')
+ww_pumpe = switch_center.get_switch('ww')
+
+ADD_CIRCUIT(
+    Circuit('ww', 'Warmwasserkreis',
+            pump=ww_pumpe,
+            producer=holzbrenner_thermometer, consumer=speicheroben_thermometer,
+            diff_low=3, diff_high=10)
+)

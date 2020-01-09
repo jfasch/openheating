@@ -112,9 +112,7 @@ def _indent_str(s):
 
 class ThermometerService(Service):
     def __init__(self, config, simulated_thermometers_dir=None, debug=False):
-        self.__configfile = tempfile.NamedTemporaryFile(mode='w')
-        self.__configfile.write('\n'.join(config))
-        self.__configfile.flush()
+        self.__configfile = _make_configfile(config)
 
         args = ['--config', self.__configfile.name]
         if simulated_thermometers_dir is not None:
@@ -130,9 +128,7 @@ class ThermometerService(Service):
 
 class SwitchService(Service):
     def __init__(self, config, simulated_switches_dir=None, debug=False):
-        self.__configfile = tempfile.NamedTemporaryFile(mode='w')        
-        self.__configfile.write('\n'.join(config))
-        self.__configfile.flush()
+        self.__configfile = _make_configfile(config)
 
         args = ['--config', self.__configfile.name]
         if simulated_switches_dir is not None:
@@ -148,9 +144,7 @@ class SwitchService(Service):
 
 class CircuitService(Service):
     def __init__(self, config, debug=False):
-        self.__configfile = tempfile.NamedTemporaryFile(mode='w')
-        self.__configfile.write('\n'.join(config))
-        self.__configfile.flush()
+        self.__configfile = _make_configfile(config)
 
         super().__init__(exe='openheating-circuits.py',
                          busname=names.Bus.CIRCUITS,
@@ -180,3 +174,12 @@ class ManagedObjectTesterService(Service):
             busname=names.Bus.MANAGEDOBJECTTESTER,
             args=['--stamp-directory', stampdir],
         )
+
+def _make_configfile(config):
+    if type(config) is str:  # filename
+        return open(config)
+    else:  # list of lines. write to tempfile.
+        configfile = tempfile.NamedTemporaryFile(mode='w')
+        configfile.write('\n'.join(config))
+        configfile.flush()
+        return configfile

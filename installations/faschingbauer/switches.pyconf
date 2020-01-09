@@ -7,8 +7,8 @@ import os
 
 
 _switches = [
-    ('relay_0',  'Relay 0',  17),
-    ('relay_1',  'Relay 1',  27),
+    ('ww_nimm',  'Nimm diw Warmwasserpumpe!',  17),
+    ('ww',  'Schalt die Warmwasserpumpe!',  27),
     ('relay_2',  'Relay 2',  22),
     ('relay_3',  'Relay 3',  10),
     ('relay_4',  'Relay 4',   9),

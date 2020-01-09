@@ -26,7 +26,7 @@ Stack (Hanging)
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
 
-* openheating-faschingbauer.py
+* openheating-run-plant.py
 
   * move plant into dbus (better yet, create an installations/ module
     containing simple_plant, faschingbauer_plant, etc.)
@@ -34,10 +34,19 @@ Stack (Hanging)
     code)
   * continue with unittests/oh_tests/installations/faschingbauer.py
 
-* switches
+* test: installations/faschingbauer.py
 
-  * --pyconfigfile -> --config (circuits)
-  * rename pyconf -> config
+  * replace all TemporaryDirectory() with
+    PlantTestCase.tempdir(suffix=None)
+  * structuring: probably move core components into a
+    "runtime". FaschingbauerPlant has-a runtime which contributes its
+    own services/components (thermometers, switches, errors), and
+    brings a couple of its own (a mixer, a boiler, a wood oven, oil
+    burner).
+  * BoilerService
+  * WoodOvenService
+  * OilBurnerService
+  * MixerService
 
 Todo
 ====
