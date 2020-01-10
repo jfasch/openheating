@@ -10,12 +10,12 @@ class Plant:
     def running(self):
         return self.__running
 
-    def startup(self):
+    def startup(self, find_exe, bus_kind, debug):
         started = []
         start_error = None
         for s in self.__services:
             try:
-                s.start()
+                s.start(find_exe, bus_kind, debug)
                 started.append(s)
             except HeatingError as e:
                 start_error = e

@@ -2,12 +2,9 @@ from . import testutils
 
 from ..base.error import HeatingError
 from ..dbus import names
-
-import pydbus
+from ..plant.service import Service
 
 import tempfile
-import subprocess
-import sys
 import unittest
 
 
@@ -50,7 +47,8 @@ class PlantTestCase(unittest.TestCase):
 
     def start_plant(self, plant):
         self.__plant = plant
-        self.__plant.startup()
+        self.__plant.startup(find_exe=testutils.find_executable, 
+                             bus_kind=Service.BUS_KIND_SESSION, debug=True)
 
     def stop_plant(self):
         assert self.__plant is not None

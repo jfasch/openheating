@@ -1,9 +1,9 @@
 from openheating.dbus import dbusutil
 from openheating.dbus import lifecycle
-from openheating.test import testutils
-from openheating.test import service
-from openheating.test.plant_testcase import PlantTestCase
-from openheating.test.plant import Plant
+from openheating.testutils import testutils
+from openheating.testutils.plant_testcase import PlantTestCase
+from openheating.plant import service
+from openheating.plant.plant import Plant
 
 from gi.repository import GLib
 

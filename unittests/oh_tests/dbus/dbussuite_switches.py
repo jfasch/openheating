@@ -1,9 +1,9 @@
 from openheating.dbus.switch_center import SwitchCenter_Client
 
-from openheating.test import service
-from openheating.test import testutils
-from openheating.test.plant_testcase import PlantTestCase
-from openheating.test.plant import Plant
+from openheating.plant import service
+from openheating.plant.plant import Plant
+from openheating.testutils import testutils
+from openheating.testutils.plant_testcase import PlantTestCase
 
 import pydbus
 

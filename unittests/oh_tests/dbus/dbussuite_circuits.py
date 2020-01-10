@@ -1,6 +1,6 @@
-from openheating.test.plant_testcase import PlantTestCase
-from openheating.test.simple_plant import SimplePlant
-from openheating.test import testutils
+from openheating.testutils.plant_testcase import PlantTestCase
+from openheating.testutils import testutils
+from openheating.plant.simple_plant import SimplePlant
 
 import unittest
 import time

@@ -23,13 +23,16 @@ def find_project_root():
     
 def find_executable(exe):
     '''Say exe='openheating-blah.py', then this will return
-    '/project/root/bin/openheating-blah.py'.'''
+    '/project/root/bin/openheating-blah.py'.
+
+    This mimics the behavior of shutil.which(), hence returns None if
+    exe not found.
+
+    '''
 
     root = find_project_root()
     fullexe = '{}/bin/{}'.format(root, exe)
-    if not os.path.exists(fullexe):
-        raise HeatingError('{} does not exist'.format(fullexe))
-    if not os.path.isfile(fullexe):
-        raise HeatingError('{} is not a file'.format(fullexe))
+    if not (os.path.exists(fullexe) or os.path.isfile(fullexe)):
+        return None
     return fullexe
 
