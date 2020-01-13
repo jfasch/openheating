@@ -28,16 +28,18 @@ class FaschingbauerTest(PlantTestCase):
 
     @PlantTestCase.intercept_failure
     def test__run_plant(self):
-        # self.start_plant(Plant([
-        #     service.PlantRunnerService(
-        #         config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
-        #         simulated_thermometers_dir=self.__thermometers_dir.name,
-        #         simulated_switches_dir=self.__switches_dir.name),
-        # ]))
+        self.start_plant(Plant([
+            service.PlantRunnerService(
+                config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
+                simulated_thermometers_dir=self.__thermometers_dir.name,
+                simulated_switches_dir=self.__switches_dir.name),
+        ]))
 
-        # thermometer_center = ThermometerCenter_Client(
+        thermometer_center = ThermometerCenter_Client(self.bus)
+        self.assertIn('Raum', thermometer_center.all_names())
 
-        pass
+        switch_center = SwitchCenter_Client(self.bus)
+        self.assertIn('ww', switch_center.all_names())
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FaschingbauerTest))

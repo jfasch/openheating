@@ -4,6 +4,8 @@ from ..base.error import HeatingError
 from ..dbus import names
 from ..plant.service import Service
 
+import pydbus
+
 import tempfile
 import unittest
 
@@ -45,8 +47,6 @@ class PlantTestCase(unittest.TestCase):
             d.cleanup()
         for f in self.__tempfiles:
             f.close()
-        if self.__bus is not None:
-            self.__bus.__exit__()
 
     def start_plant(self, plant):
         self.__plant = plant

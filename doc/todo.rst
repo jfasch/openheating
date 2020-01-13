@@ -51,6 +51,10 @@ Stack (Hanging)
   installations/dbussuite_faschingbauer.py,
   FaschingbauerTest.test__run_plant()
 
+  * start plant services
+  * see how we can write to temperature/switch files and force an
+    update
+
 Todo
 ====
 
