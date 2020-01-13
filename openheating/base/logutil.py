@@ -18,6 +18,13 @@ def _str2level(s):
     else:
         raise argparse.ArgumentTypeError('invalid log level: '+s)
 
+def _level2str(l):
+    for levelstr, level in _levels:
+        if l == level:
+            return levelstr
+    else:
+        assert False, 'level {} not found'.format(l)
+
 def add_log_options(parser):
     levels = ', '.join(('"{}"'.format(levelstr) for levelstr, _ in _levels))
     parser.add_argument('--log-level', 
@@ -27,6 +34,9 @@ def add_log_options(parser):
 
 def configure_from_argparse(args):
     logging.basicConfig(level=args.log_level)
+
+def get_log_config_from_argparse(args):
+    return ['--log-level', _level2str(args.log_level)]
 
 async def handle_task_exceptions(awaitable):
     '''To be wrapped around coroutines when they are run by something like

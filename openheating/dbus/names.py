@@ -3,6 +3,7 @@ DOMAIN = 'org.openheating'
 HEATINGERROR = DOMAIN + '.HeatingError'
 
 class Bus:
+    RUNNER = DOMAIN + '.Runner'
     THERMOMETERS = DOMAIN + '.Thermometers'
     SWITCHES = DOMAIN + '.Switches'
     CIRCUITS = DOMAIN + '.Circuits'

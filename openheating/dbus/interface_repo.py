@@ -142,3 +142,8 @@ _repo[EXCEPTIONTESTER] = '''
 </interface>
 '''.format(name=EXCEPTIONTESTER)
 
+RUNNER = names.DOMAIN + '.Runner'
+_repo[RUNNER] = '''
+<interface name='{name}'>
+</interface>
+'''.format(name=RUNNER)

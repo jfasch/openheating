@@ -1,5 +1,6 @@
-from openheating.base.error import HeatingError
-from openheating.dbus import names
+from ..base.error import HeatingError
+from ..dbus import names
+from ..dbus import dbusutil
 
 import pydbus
 
@@ -8,21 +9,19 @@ import subprocess
 
 
 class Service:
-    BUS_KIND_SESSION = 7
-    BUS_KIND_SYSTEM = 42
-
-    def __init__(self, busname, exe, args=None):
+    def __init__(self, busname, exe, args):
         self.__busname = busname
         self.__exe = exe
-        self.__args = args
-        self.__process = None
+        self.__specific_args = args
         self.__bus_kind = None
+        self.__process = None # valid once started
+        self.__cmdline = None # valid once started
 
     @property
     def busname(self):
         return self.__busname
 
-    def start(self, find_exe, bus_kind, debug):
+    def start(self, find_exe, bus_kind, common_args):
         assert self.__bus_kind is None
         self.__bus_kind = bus_kind
 
@@ -33,12 +32,10 @@ class Service:
 
         argv = [the_exe]
         argv.append(self._oh_bus_arg())
-        if debug:
-            argv += ['--log-level', 'debug']
-        if self.__args is not None:
-            argv += self.__args
+        argv += common_args
+        argv += self.__specific_args
 
-        service_cmdline = ' '.join(argv)
+        self.__cmdline = ' '.join(argv)
 
         # start service, and wait until its busname appears.
         self.__insist_busname_available()
@@ -46,6 +43,9 @@ class Service:
         self.__insist_busname_taken()
 
     def stop(self):
+        if self.__process is None:
+            raise 
+
         assert self.__process.returncode is None, "stop() must not be called if start() hasn't succeeded"
 
         # terminate service process
@@ -87,9 +87,9 @@ class Service:
 
     def _oh_bus_arg(self):
         'openheating service commandline option for bus selection'
-        if self.__bus_kind == Service.BUS_KIND_SESSION:
+        if self.__bus_kind == dbusutil.BUS_KIND_SESSION:
             return '--session'
-        if self.__bus_kind == Service.BUS_KIND_SYSTEM:
+        if self.__bus_kind == dbusutil.BUS_KIND_SYSTEM:
             return '--system'
         assert False
 
@@ -98,9 +98,9 @@ class Service:
 
     def _bus(self):
         'pydbus.SessionBus() or pydbus.SystemBus()'
-        if self.__bus_kind == Service.BUS_KIND_SESSION:
+        if self.__bus_kind == dbusutil.BUS_KIND_SESSION:
             return pydbus.SessionBus()
-        if self.__bus_kind == Service.BUS_KIND_SYSTEM:
+        if self.__bus_kind == dbusutil.BUS_KIND_SYSTEM:
             return pydbus.SystemBus()
         assert False
 
@@ -132,7 +132,7 @@ class Service:
 
                 raise HeatingError('start: {busname} not taken within timeout, "{cmdline}" has exited with status {status}, stderr:\n{stderr}'.format(
                     busname=self.__busname,
-                    cmdline=service_cmdline,
+                    cmdline=self.__cmdline,
                     status=self.__process.returncode,
                     stderr=_indent_str(stderr)))
             except subprocess.TimeoutExpired:
@@ -152,8 +152,7 @@ def _indent_str(s):
     return s.replace('\n', '\n    ')
 
 class ThermometerService(Service):
-    def __init__(self, config, simulated_thermometers_dir=None, debug=False):
-        assert type(config) is str
+    def __init__(self, config, simulated_thermometers_dir=None):
         args = ['--config', config]
         if simulated_thermometers_dir is not None:
             args += ['--simulated-thermometers-dir', simulated_thermometers_dir]
@@ -163,8 +162,7 @@ class ThermometerService(Service):
                          args=args)
 
 class SwitchService(Service):
-    def __init__(self, config, simulated_switches_dir=None, debug=False):
-        assert type(config) is str
+    def __init__(self, config, simulated_switches_dir=None):
         args = ['--config', config]
         if simulated_switches_dir is not None:
             args += ['--simulated-switches-dir', simulated_switches_dir]
@@ -174,29 +172,39 @@ class SwitchService(Service):
                          args=args)
 
 class CircuitService(Service):
-    def __init__(self, config, debug=False):
+    def __init__(self, config):
         assert type(config) is str
         super().__init__(exe='openheating-circuits.py',
                          busname=names.Bus.CIRCUITS,
                          args=['--config', config])
 
 class ErrorService(Service):
-    def __init__(self, debug=False):
+    def __init__(self):
         super().__init__(
             exe='openheating-errors.py',
             busname=names.Bus.ERRORS)
 
 class ExceptionTesterService(Service):
-    def __init__(self, debug=False):
+    def __init__(self):
         super().__init__(
             exe='openheating-exception-tester.py',
             busname=names.Bus.EXCEPTIONTESTER,
         )
 
 class ManagedObjectTesterService(Service):
-    def __init__(self, stampdir, debug=False):
+    def __init__(self, stampdir):
         super().__init__(
             exe='openheating-managedobject-tester.py',
             busname=names.Bus.MANAGEDOBJECTTESTER,
             args=['--stamp-directory', stampdir],
         )
+
+class PlantRunnerService(Service):
+    def __init__(self, config, simulated_dir):
+        args = ['--config', config]
+        if simulated_dir is not None:
+            args += ['--simulation-dir', simulated_dir]
+
+        super().__init__(exe='openheating-runplant.py',
+                         busname=names.Bus.RUNNER,
+                         args=args)

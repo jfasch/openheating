@@ -13,6 +13,10 @@ Stack (Hanging)
   
       * poll_until(predicate, timeout)
 
+    * cleanup
+
+      * move logutil, dbusutil, config to plant/
+
 * toplevel main()-like thing. 
 
   * watchdog. could for example periodically check thermometers in
@@ -26,34 +30,23 @@ Stack (Hanging)
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
 
-* openheating-run-plant.py
+* plant runner service
 
-  * move plant into dbus (better yet, create an installations/ module
-    containing simple_plant, faschingbauer_plant, etc.)
-  * remove config files (these are now created by the plant definition
-    code)
-  * continue with unittests/oh_tests/installations/faschingbauer.py
-
-* test: installations/faschingbauer.py
-
-  * decouple from gdbus: handcode service management stuff
-  * structuring: probably move core components into a
-    "runtime". FaschingbauerPlant has-a runtime which contributes its
-    own services/components (thermometers, switches, errors), and
-    brings a couple of its own (a mixer, a boiler, a wood oven, oil
-    burner).
-  * BoilerService
-  * WoodOvenService
-  * OilBurnerService
-  * MixerService
-
-* plant runner. defunct test in
-  installations/dbussuite_faschingbauer.py,
-  FaschingbauerTest.test__run_plant()
-
-  * start plant services
   * see how we can write to temperature/switch files and force an
     update
+  * add missing services
+
+    * BoilerService
+    * WoodOvenService
+    * OilBurnerService
+    * MixerService
+
+  * Service.start()
+
+    * replace find_exe with exe_dir or None (->search in path)
+    * same with the config files. installed or from source, that's
+      basically the question. should be consistent with the exes.
+    * fix plant.pyconf
 
 Todo
 ====

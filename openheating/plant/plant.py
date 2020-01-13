@@ -3,42 +3,34 @@ from openheating.base.error import HeatingError
 
 class Plant:
     def __init__(self, services):
-        self.__services = services
+        self.__registered_services = services
+        self.__running_services = []
         self.__running = False
 
     @property
     def running(self):
         return self.__running
 
-    def startup(self, find_exe, bus_kind, debug):
+    def startup(self, find_exe, bus_kind, common_args):
         started = []
         start_error = None
-        for s in self.__services:
-            try:
-                s.start(find_exe, bus_kind, debug)
-                started.append(s)
-            except HeatingError as e:
-                start_error = e
-                break
+        while len(self.__registered_services):
+            s = self.__registered_services[0]
+            s.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args)
+            del self.__registered_services[0]
+            self.__running_services.insert(0, s)
 
-        if start_error is not None:
-            for s in reversed(started):
-                s.stop()
-            raise start_error
-
-        self.__running = True
-
-    def shutdown(self, is_failure):
+    def shutdown(self, print_stderr=False):
         stderrs = []
         errors = []
-        for s in reversed(self.__services):
+        for s in reversed(self.__running_services):
             try:
                 stderr = s.stop()
                 stderrs.append((s.busname, stderr))
             except Exception as e:
                 errors.append(e)
 
-        if is_failure or len(errors):
+        if print_stderr or len(errors):
             for busname, stderr in stderrs:
                 print('\n*** STDERR from {}'.format(busname), file=sys.stderr)
                 if stderr is None:

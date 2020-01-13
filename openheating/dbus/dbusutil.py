@@ -1,6 +1,9 @@
 from pydbus import SystemBus, SessionBus
 
 
+BUS_KIND_SESSION = 7
+BUS_KIND_SYSTEM = 42
+
 def argparse_add_bus(parser):
     '''add --session|--system options to commandline parsing'''
 
@@ -13,3 +16,6 @@ def bus_from_argparse(args):
     bus, and return the bus object'''
 
     return args.session and SessionBus() or SystemBus()
+
+def buskind_from_argparse(args):
+    return args.session and BUS_KIND_SESSION or BUS_KIND_SYSTEM

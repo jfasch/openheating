@@ -101,3 +101,30 @@ class CircuitsConfig:
             source = f.read()
             code = compile(source, path, 'exec')
             exec(code, context)
+
+class RunnerConfig:
+    def __init__(self):
+        self.__services = []
+        self.__simulation_dir = None
+
+    def get_simulation_dir(self):
+        return self.__simulation_dir
+    def set_simulation_dir(self, path):
+        self.__simulation_dir = path
+
+    def add_service(self, s):
+        self.__services.append(s)
+    def get_services(self):
+        return self.__services
+
+    def parse(self, path, bus):
+        context = {
+            'GET_BUS': lambda: bus,
+            'GET_SIMULATION_DIR': self.get_simulation_dir,
+            'ADD_SERVICE': self.add_service,
+            'GET_SERVICES': self.get_services,
+        }
+        with open(path) as f:
+            source = f.read()
+            code = compile(source, path, 'exec')
+            exec(code, context)
