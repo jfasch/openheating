@@ -8,8 +8,6 @@ from openheating.plant.plant import Plant
 from openheating.dbus import dbusutil
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 
-import pydbus
-
 import os.path
 import unittest
 
@@ -27,19 +25,19 @@ class ThermometersOK(PlantTestCase):
         self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
     def test__start_stop(self):
-        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        center_client = ThermometerCenter_Client(self.bus)
         thermometer_client = center_client.get_thermometer('TestThermometer')
         self.assertEqual(thermometer_client.get_name(), 'TestThermometer')
         self.assertEqual(thermometer_client.get_description(), 'Test Thermometer')
         self.assertAlmostEqual(thermometer_client.get_temperature(), 42)
 
     def test__get_temperature(self):
-        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        center_client = ThermometerCenter_Client(self.bus)
         thermometer_client = center_client.get_thermometer('TestThermometer')
         self.assertAlmostEqual(thermometer_client.get_temperature(), 42)
 
     def test__list(self):
-        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        center_client = ThermometerCenter_Client(self.bus)
         all_names = center_client.all_names()
         self.assertEqual(len(all_names), 1)
         self.assertIn('TestThermometer', all_names)
@@ -47,7 +45,7 @@ class ThermometersOK(PlantTestCase):
     def test__inject_sample__not_possible(self):
         # we are running periodic updates, so it must not be possible
         # to inject samples
-        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        center_client = ThermometerCenter_Client(self.bus)
         thermometer_client = center_client.get_thermometer('TestThermometer')
         try:
             thermometer_client.inject_sample(timestamp=666, temperature=42)
@@ -72,7 +70,7 @@ class ThermometersInjectSamples(PlantTestCase):
         self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
     def test__inject_sample(self):
-        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        center_client = ThermometerCenter_Client(self.bus)
         thermometer_client = center_client.get_thermometer('TestThermometer')
         thermometer_client.inject_sample(timestamp=0, temperature=20)
         self.assertAlmostEqual(thermometer_client.get_temperature(), 20)
@@ -95,7 +93,7 @@ class ThermometersError(PlantTestCase):
         pass
 
     def test__client_error(self):
-        center_client = ThermometerCenter_Client(pydbus.SessionBus())
+        center_client = ThermometerCenter_Client(self.bus)
         thermometer_client = center_client.get_thermometer('ErrorThermometer')
         self.assertRaises(HeatingError, thermometer_client.get_temperature)
 

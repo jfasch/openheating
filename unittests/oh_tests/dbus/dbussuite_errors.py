@@ -9,9 +9,6 @@ from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.plant import service
 from openheating.plant.plant import Plant
 
-
-import pydbus
-
 import unittest
 import subprocess
 import time
@@ -42,9 +39,8 @@ class ErrorsTest(PlantTestCase):
             ]
         ))
         
-        with pydbus.SessionBus() as bus:
-            client = Errors_Client(bus)
-            self.__wait_error_occurred(client)
+        client = Errors_Client(self.bus)
+        self.__wait_error_occurred(client)
 
     @PlantTestCase.intercept_failure
     def test__w1__file_not_found(self):
@@ -68,21 +64,20 @@ class ErrorsTest(PlantTestCase):
             ]
         ))
 
-        with pydbus.SessionBus() as bus:
-            client = Errors_Client(bus)
-            self.__wait_error_occurred(client)
-            errors = client.get_errors()
-            self.assertEqual(len(errors), 1)
+        client = Errors_Client(self.bus)
+        self.__wait_error_occurred(client)
+        errors = client.get_errors()
+        self.assertEqual(len(errors), 1)
 
-            w1_error = errors[0]
-            self.assertIsInstance(w1_error, node.DBusHeatingError)
-            self.assertEqual(w1_error.details['category'], 'w1')
-            self.assertIn('message', w1_error.details)
+        w1_error = errors[0]
+        self.assertIsInstance(w1_error, node.DBusHeatingError)
+        self.assertEqual(w1_error.details['category'], 'w1')
+        self.assertIn('message', w1_error.details)
 
-            w1_specifics = w1_error.details['w1']
-            self.assertEqual(w1_specifics['name'], 'w1_erroneous')
-            self.assertEqual(w1_specifics['issue'], 'file read error')
-            self.assertEqual(w1_specifics['file'], '/a/b/00-00000000/w1_slave')
+        w1_specifics = w1_error.details['w1']
+        self.assertEqual(w1_specifics['name'], 'w1_erroneous')
+        self.assertEqual(w1_specifics['issue'], 'file read error')
+        self.assertEqual(w1_specifics['file'], '/a/b/00-00000000/w1_slave')
 
     def __wait_error_occurred(self, client):
         for _ in range(10):

@@ -37,6 +37,7 @@ class PlantTestCase(unittest.TestCase):
         self.__plant = None
         self.__tempdirs = []
         self.__tempfiles = []
+        self.__bus = None
     def tearDown(self):
         if self.__plant:
             self.__plant.shutdown(self.__is_failure)
@@ -44,6 +45,8 @@ class PlantTestCase(unittest.TestCase):
             d.cleanup()
         for f in self.__tempfiles:
             f.close()
+        if self.__bus is not None:
+            self.__bus.__exit__()
 
     def start_plant(self, plant):
         self.__plant = plant
@@ -67,3 +70,9 @@ class PlantTestCase(unittest.TestCase):
             f.write('\n'.join(lines))
             f.flush()
         return f
+
+    @property
+    def bus(self):
+        if self.__bus is None:
+            self.__bus = pydbus.SessionBus()
+        return self.__bus

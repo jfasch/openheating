@@ -9,8 +9,6 @@ from openheating.dbus import dbusutil
 from openheating.dbus.exception_tester import ExceptionTester_Client
 from openheating.dbus.errors import Errors_Client
 
-import pydbus
-
 import unittest
 import subprocess
 import json
@@ -24,7 +22,7 @@ class ExceptionTest(PlantTestCase):
 
     @PlantTestCase.intercept_failure
     def test__HeatingError(self):
-        exctester_client = ExceptionTester_Client(pydbus.SessionBus())
+        exctester_client = ExceptionTester_Client(self.bus)
         try:
             exctester_client.raise_default_HeatingError('the message')
             self.fail()
@@ -35,12 +33,12 @@ class ExceptionTest(PlantTestCase):
 
         # a HeatingError is not implicitly signaled onto the bus, so
         # the errors services cannot pick it up.
-        errors_client = Errors_Client(pydbus.SessionBus())
+        errors_client = Errors_Client(self.bus)
         self.assertEqual(errors_client.num_errors(), 0)
 
     @PlantTestCase.intercept_failure
     def test__derived_default_HeatingError(self):
-        exctester_client = ExceptionTester_Client(pydbus.SessionBus())
+        exctester_client = ExceptionTester_Client(self.bus)
         try:
             exctester_client.raise_derived_default_HeatingError('the message')
             self.fail()
@@ -51,12 +49,12 @@ class ExceptionTest(PlantTestCase):
 
         # a HeatingError is not implicitly signaled onto the bus, so
         # the errors services cannot pick it up.
-        errors_client = Errors_Client(pydbus.SessionBus())
+        errors_client = Errors_Client(self.bus)
         self.assertEqual(errors_client.num_errors(), 0)
 
     @PlantTestCase.intercept_failure
     def test__non_HeatingError(self):
-        exctester_client = ExceptionTester_Client(pydbus.SessionBus())
+        exctester_client = ExceptionTester_Client(self.bus)
         try:
             exctester_client.raise_non_HeatingError()
             self.fail()
@@ -68,7 +66,7 @@ class ExceptionTest(PlantTestCase):
 
         # non-HeatingErrors are signaled on the bus, so the errors
         # service picks it up.
-        errors_client = Errors_Client(pydbus.SessionBus())
+        errors_client = Errors_Client(self.bus)
         self.assertEqual(errors_client.num_errors(), 1)
 
         error = errors_client.get_errors()[0]

@@ -36,9 +36,6 @@ Stack (Hanging)
 
 * test: installations/faschingbauer.py
 
-  * plant runner. defunct test in
-    installations/dbussuite_faschingbauer.py,
-    FaschingbauerTest.test__run_plant()
   * decouple from gdbus: handcode service management stuff
   * structuring: probably move core components into a
     "runtime". FaschingbauerPlant has-a runtime which contributes its
@@ -49,6 +46,10 @@ Stack (Hanging)
   * WoodOvenService
   * OilBurnerService
   * MixerService
+
+* plant runner. defunct test in
+  installations/dbussuite_faschingbauer.py,
+  FaschingbauerTest.test__run_plant()
 
 Todo
 ====
