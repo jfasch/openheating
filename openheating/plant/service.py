@@ -1,6 +1,7 @@
+from . import dbusutil
+
 from ..base.error import HeatingError
 from ..dbus import names
-from ..dbus import dbusutil
 
 import pydbus
 
@@ -9,10 +10,13 @@ import subprocess
 
 
 class Service:
-    def __init__(self, busname, exe, args):
+    def __init__(self, busname, exe, args=None):
         self.__busname = busname
         self.__exe = exe
-        self.__specific_args = args
+        if args is None:
+            self.__specific_args = []
+        else:
+            self.__specific_args = args
         self.__bus_kind = None
         self.__process = None # valid once started
         self.__cmdline = None # valid once started

@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from openheating.base.history import History
-from openheating.base import logutil
+from openheating.plant import logutil
+from openheating.plant import dbusutil
 from openheating.dbus.config import ThermometersConfig
-from openheating.dbus import dbusutil
 from openheating.dbus import names
 from openheating.dbus import lifecycle
 from openheating.dbus.thermometer import Thermometer_Server

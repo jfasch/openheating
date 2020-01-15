@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from openheating.base import logutil
-from openheating.dbus import dbusutil
+from openheating.plant import logutil
+from openheating.plant import dbusutil
 from openheating.dbus import names
 from openheating.dbus import lifecycle
 from openheating.dbus.runner import Runner_Server

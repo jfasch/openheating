@@ -1,4 +1,3 @@
-from . import dbusutil
 from . import interface_repo
 from . import node
 from . import error
@@ -7,7 +6,6 @@ from . import lifecycle
 from ..base.thermometer import Thermometer
 from ..base.error import HeatingError
 from ..base import timeutil
-from ..base import logutil
 
 from gi.repository import GLib
 from pydbus.generic import signal

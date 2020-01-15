@@ -19,6 +19,7 @@ class Plant:
             s.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args)
             del self.__registered_services[0]
             self.__running_services.insert(0, s)
+        self.__running = True
 
     def shutdown(self, print_stderr=False):
         stderrs = []
@@ -45,3 +46,4 @@ class Plant:
                 msg.append(str(e))
             raise RuntimeError('\n'.join(msg))
 
+        self.__running = False

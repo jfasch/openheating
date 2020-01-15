@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.base import logutil
+from openheating.plant import logutil
+from openheating.plant import dbusutil
 from openheating.dbus.config import CircuitsConfig
-from openheating.dbus import dbusutil
 from openheating.dbus import names
 from openheating.dbus import lifecycle
 from openheating.dbus.circuit import Circuit_Server

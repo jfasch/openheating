@@ -2,8 +2,8 @@ from . import testutils
 
 from ..base.error import HeatingError
 from ..dbus import names
-from ..dbus import dbusutil
 from ..plant.service import Service
+from ..plant import dbusutil
 
 import pydbus
 
@@ -43,7 +43,7 @@ class PlantTestCase(unittest.TestCase):
         self.__bus = None
     def tearDown(self):
         if self.__plant:
-            self.__plant.shutdown(self.__is_failure)
+            self.__plant.shutdown(print_stderr=self.__is_failure)
         for d in self.__tempdirs:
             d.cleanup()
         for f in self.__tempfiles:
@@ -57,7 +57,7 @@ class PlantTestCase(unittest.TestCase):
 
     def stop_plant(self):
         assert self.__plant is not None
-        self.__plant.shutdown(is_failure=False)
+        self.__plant.shutdown(print_stderr=False)
         self.__plant = None
 
     def tempdir(self, suffix=None):

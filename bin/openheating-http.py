@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from openheating.base import logutil
+from openheating.plant import logutil
+from openheating.plant import dbusutil
 from openheating.base.error import HeatingError
-from openheating.dbus import dbusutil
 
 from openheating.web.faschingbauer_app import FaschingbauerApp
 from openheating.web import instance

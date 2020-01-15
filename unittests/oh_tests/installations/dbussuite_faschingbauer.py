@@ -44,8 +44,6 @@ class FaschingbauerTest(PlantTestCase):
         switch_center = SwitchCenter_Client(self.bus)
         self.assertIn('ww', switch_center.all_names())
 
-        signal.pause()
-
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FaschingbauerTest))
 

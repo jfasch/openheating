@@ -1,4 +1,3 @@
-from openheating.dbus import dbusutil
 from openheating.dbus import lifecycle
 from openheating.testutils import testutils
 from openheating.testutils.plant_testcase import PlantTestCase

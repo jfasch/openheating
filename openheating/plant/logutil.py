@@ -37,17 +37,3 @@ def configure_from_argparse(args):
 
 def get_log_config_from_argparse(args):
     return ['--log-level', _level2str(args.log_level)]
-
-async def handle_task_exceptions(awaitable):
-    '''To be wrapped around coroutines when they are run by something like
-    loop.run_until_complete(coro). Logs exceptions of type Exception
-    and terminates the process with failure exitstatus.
-
-    I failed to get loop.set_exception_handler() to work. No
-    idea. asyncio is harder than it seems.'''
-
-    try:
-        await awaitable
-    except Exception:
-        logging.exception('Unhandled exception')
-        sys.exit(1)
