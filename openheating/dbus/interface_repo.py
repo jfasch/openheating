@@ -26,6 +26,9 @@ _repo[THERMOMETER] = '''
     <arg type='t' name='timestamp' direction='in'/>
     <arg type='d' name='temperature' direction='in'/>
   </method>
+  <method name='force_update'>
+    <arg type='t' name='timestamp' direction='in'/>
+  </method>
 </interface>
 '''.format(name=THERMOMETER)
 

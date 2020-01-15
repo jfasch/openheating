@@ -13,10 +13,6 @@ Stack (Hanging)
   
       * poll_until(predicate, timeout)
 
-    * cleanup
-
-      * move logutil, dbusutil, config to plant/
-
 * toplevel main()-like thing. 
 
   * watchdog. could for example periodically check thermometers in
@@ -32,8 +28,6 @@ Stack (Hanging)
 
 * plant runner service
 
-  * see how we can write to temperature/switch files and force an
-    update
   * add missing services
 
     * BoilerService
@@ -47,6 +41,25 @@ Stack (Hanging)
     * same with the config files. installed or from source, that's
       basically the question. should be consistent with the exes.
     * fix plant.pyconf
+
+* see how we can write to temperature/switch files and force an update
+  that is seen immediately
+
+  * Thermometer.force_update(), maybe as a convenience function in
+    PlantTestCase
+
+    * instantiate client in PlantTestCase.start_plant())
+    * move preliminary setup code from
+      ThermometersSimulation.test__force_update_of_file_thermometer()
+      to PlantTestCase
+    * watch out for 'jjj'
+    * eliminate Thermometer.inject_sample() in favor of force_update()
+      from FileThermometer
+
+  * re-enable other tests in ThermometersSimulation
+  * PlantTestCase: provide timeline (eliminating all other occurrences
+    of itertools.count)
+  * move dbus/config.py to plant/
 
 Todo
 ====

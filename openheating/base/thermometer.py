@@ -40,6 +40,13 @@ class FileThermometer(Thermometer):
         with open(self.__path) as f:
             return float(f.read())
 
+    def set_temperature(self, value):
+        '''not a Thermometer interface method. writes value to the backing file.'''
+        # better error out early than late
+        assert type(value) in (int, float)
+        with open(self.__path, 'w') as f:
+            f.write(str(value))
+
 class DummyThermometer(Thermometer):
     def __init__(self, name, description, value):
         super().__init__()
