@@ -58,9 +58,12 @@ Stack (Hanging)
     of itertools.count)
   * move dbus/config.py to plant/
 
-* move preliminary setup code from
-  ThermometersSimulation.test__force_update_of_file_thermometer() to
-  PlantTestCase
+* cleanup
+
+  * dbussuite_thermometers.py: move preliminary setup code from
+    ThermometersSimulation.test__force_update_of_file_thermometer() to
+    PlantTestCase
+  * remove Thermometer.inject_sample()
 
 Todo
 ====

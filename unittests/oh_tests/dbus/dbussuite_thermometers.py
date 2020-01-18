@@ -177,9 +177,9 @@ class ThermometersSimulation(PlantTestCase):
         
 
 suite = unittest.TestSuite()
-# jjj suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersOK))
-# jjj suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersInjectSamples))
-# jjj suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersError))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersOK))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersInjectSamples))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersError))
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ThermometersSimulation))
 
 if __name__ == '__main__':
