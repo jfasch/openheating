@@ -49,9 +49,6 @@ Stack (Hanging)
     PlantTestCase
 
     * instantiate client in PlantTestCase.start_plant())
-    * move preliminary setup code from
-      ThermometersSimulation.test__force_update_of_file_thermometer()
-      to PlantTestCase
     * watch out for 'jjj'
     * eliminate Thermometer.inject_sample() in favor of force_update()
       from FileThermometer
@@ -60,6 +57,10 @@ Stack (Hanging)
   * PlantTestCase: provide timeline (eliminating all other occurrences
     of itertools.count)
   * move dbus/config.py to plant/
+
+* move preliminary setup code from
+  ThermometersSimulation.test__force_update_of_file_thermometer() to
+  PlantTestCase
 
 Todo
 ====
