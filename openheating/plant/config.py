@@ -54,17 +54,17 @@ class ThermometersConfig:
 class SwitchesConfig:
     def __init__(self):
         self.__simulated_switches_dir = None
-        self.__switches = []
+        self.__switches = [] # [(name, description, thermometer)]
 
     def get_simulated_switches_dir(self):
         return self.__simulated_switches_dir
     def set_simulated_switches_dir(self, path):
         self.__simulated_switches_dir = path
     
-    def add_switch(self, sw):
-        if sw.get_name() in [have.get_name() for have in self.__switches]:
-            raise DuplicateName(sw.get_name())
-        self.__switches.append(sw)
+    def add_switch(self, name, description, sw):
+        if name in [name for name,_,_ in self.__switches]:
+            raise DuplicateName(name)
+        self.__switches.append((name, description, sw))
     def get_switches(self):
         return self.__switches
 

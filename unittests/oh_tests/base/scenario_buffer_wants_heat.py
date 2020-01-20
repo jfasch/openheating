@@ -11,7 +11,7 @@ import itertools
 
 class BufferWantsHeatTest(unittest.TestCase):
     def setUp(self):
-        self.__pump = InMemorySwitch('pump', 'some pump', False)
+        self.__pump = InMemorySwitch(False)
         self.__heater_thermometer = InMemoryThermometer(10)
         self.__buffer_thermometer = InMemoryThermometer(10)
 

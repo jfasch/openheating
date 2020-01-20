@@ -15,7 +15,7 @@ def output(name, description, chiplabel, offset):
     return switch(name=name, description=description, 
                   chiplabel=chiplabel, offset=offset, direction=DIRECTION_OUT)
 
-def switch(name, description, chiplabel, offset, direction):
+def switch(chiplabel, offset, direction):
     if direction == DIRECTION_IN:
         gpiod_type = gpiod.LINE_REQ_DIR_IN
     elif direction == DIRECTION_OUT:
@@ -43,13 +43,12 @@ def switch(name, description, chiplabel, offset, direction):
     except OSError as e:
         raise HeatingError('gpio: cannot request {}: {}'.format(consumer, str(e)))
 
-    return _GPIOSwitch(name=name, description=description, line=line)
+    return _GPIOSwitch(line=line)
 
-def pushbutton(name, description, chiplabel, offset, debounce_limit):
+def pushbutton(chiplabel, offset, debounce_limit):
     line = _get_chip(chiplabel).get_line(offset)
-    line.request(consumer='openheating:'+name, type=gpiod.LINE_REQ_EV_FALLING_EDGE)
-    return _GPIOPushButton(name=name, description=description, 
-                           line=line, debounce_limit=debounce_limit, 
+    line.request(consumer='openheating:pushbutton@{}:{}'.format(chiplabel, offset), type=gpiod.LINE_REQ_EV_FALLING_EDGE)
+    return _GPIOPushButton(line=line, debounce_limit=debounce_limit, 
                            loop=asyncio.get_event_loop())
 
 # one uses a chip to retrieve a gpio handle. the chip must remain open
@@ -67,17 +66,9 @@ DIRECTION_IN = 0
 DIRECTION_OUT = 1
 
 class _GPIOSwitch(Switch):
-    def __init__(self, name, description, line):
+    def __init__(self, line):
         super().__init__()
-        self.__name = name
-        self.__description = description
         self.__line = line
-
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
 
     def set_state(self, state):
         self.__line.set_value(state and 1 or 0)
@@ -86,21 +77,13 @@ class _GPIOSwitch(Switch):
         return (self.__line.get_value() == 1) and True or False
 
 class _GPIOPushButton:
-    def __init__(self, name, description, line, loop, debounce_limit):
-        self.__name = name
-        self.__description = description
+    def __init__(self, line, loop, debounce_limit):
         self.__line = line
         self.__debounce_limit = debounce_limit
         self.__loop = loop
         self.__debouncers = set()
 
         self.__loop.add_reader(line.event_get_fd(), self.__notify)
-
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
 
     class Debouncer:
         def __init__(self):

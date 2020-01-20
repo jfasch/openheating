@@ -36,11 +36,11 @@ if args.simulated_switches_dir is not None:
 config.parse(args.config, bus=bus)
 
 objects = [
-    ('/', SwitchCenter_Server(switches=config.get_switches()))
+    ('/', SwitchCenter_Server(names=[name for name,_,_ in config.get_switches()]))
 ]
 
-for switch in config.get_switches():
-    objects.append(('/switches/'+switch.get_name(), Switch_Server(switch=switch)))
+for name, description, switch in config.get_switches():
+    objects.append(('/switches/'+name, Switch_Server(switch=switch)))
 
 lifecycle.run_server(
     loop=loop,

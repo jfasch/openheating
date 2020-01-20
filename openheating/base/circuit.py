@@ -61,10 +61,10 @@ class Circuit(metaclass=ABCMeta):
 
     def __pump_on(self):
         if not self.__pump.get_state():
-            logging.debug('{}: pump {} on'.format(self.__name, self.__pump.get_name()))
+            logging.debug('{}: pump on'.format(self.__name))
             self.__pump.set_state(True)
 
     def __pump_off(self):
         if self.__pump.get_state():
-            logging.debug('{}: pump {} off'.format(self.__name, self.__pump.get_name()))
+            logging.debug('{}: pump off'.format(self.__name))
             self.__pump.set_state(False)

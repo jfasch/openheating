@@ -18,7 +18,7 @@ class SwitchesTest(PlantTestCase):
         config=self.tempfile(
             lines=[
                 'from openheating.base.switch import InMemorySwitch',
-                'ADD_SWITCH(InMemorySwitch("TestSwitch", "Test Switch", False))',
+                'ADD_SWITCH("TestSwitch", "Test Switch", InMemorySwitch(False))',
 
                 'assert GET_SIMULATED_SWITCHES_DIR() is None, GET_SIMULATED_SWITCHES_DIR()',
             ]
@@ -27,8 +27,6 @@ class SwitchesTest(PlantTestCase):
 
         center_client = SwitchCenter_Client(self.bus)
         switch_client = center_client.get_switch('TestSwitch')
-        self.assertEqual(switch_client.get_name(), 'TestSwitch')
-        self.assertEqual(switch_client.get_description(), 'Test Switch')
         self.assertEqual(switch_client.get_state(), False)
         switch_client.set_state(True)
         self.assertEqual(switch_client.get_state(), True)
@@ -38,7 +36,7 @@ class SwitchesTest(PlantTestCase):
         config=self.tempfile(
             lines=[
                 'from openheating.base.switch import InMemorySwitch',
-                'ADD_SWITCH(InMemorySwitch("TestSwitch", "Test Switch", False))',
+                'ADD_SWITCH("TestSwitch", "Test Switch", InMemorySwitch(False))',
 
                 'assert GET_SIMULATED_SWITCHES_DIR() == "{}", GET_SIMULATED_SWITCHES_DIR()'.format(swdir),
             ]

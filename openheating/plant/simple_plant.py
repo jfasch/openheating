@@ -25,7 +25,7 @@ class SimplePlant(Plant):
         # thermometers and switches for use by test code
         self.__consumer_thermometer = FileThermometer(path=consumer_thermometer_file)
         self.__producer_thermometer = FileThermometer(path=producer_thermometer_file)
-        self.__pump_switch = FileSwitch('pump', 'pump', path=pump_switch_file)
+        self.__pump_switch = FileSwitch(path=pump_switch_file)
 
         thermometers_config = make_tempfile(
             lines=[
@@ -43,7 +43,7 @@ class SimplePlant(Plant):
         switches_config = make_tempfile(
             lines=[
                 'from openheating.base.switch import FileSwitch',
-                'ADD_SWITCH(FileSwitch("pump", "the pump", path="{}", initial_value=False))'.format(pump_switch_file),
+                'ADD_SWITCH("pump", "the pump", FileSwitch(path="{}", initial_value=False))'.format(pump_switch_file),
             ],
             suffix='.switches-config'
         )

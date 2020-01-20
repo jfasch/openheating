@@ -31,8 +31,8 @@ class SwitchCenter_Client:
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.SWITCHCENTER))
 class SwitchCenter_Server:
-    def __init__(self, switches):
-        self.__switches = switches
+    def __init__(self, names):
+        self.__names = names
 
     def all_names(self):
-        return [sw.get_name() for sw in self.__switches]
+        return self.__names

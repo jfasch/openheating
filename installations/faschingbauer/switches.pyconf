@@ -7,7 +7,7 @@ import os
 
 
 _switches = [
-    ('ww_nimm',  'Nimm diw Warmwasserpumpe!',  17),
+    ('ww_nimm',  'Nimm die Warmwasserpumpe!',  17),
     ('ww',  'Schalt die Warmwasserpumpe!',  27),
     ('relay_2',  'Relay 2',  22),
     ('relay_3',  'Relay 3',  10),
@@ -27,15 +27,15 @@ _switches = [
 
 if GET_SIMULATED_SWITCHES_DIR():
     for name, description, _ in _switches:
-        ADD_SWITCH(
-            FileSwitch(name, description,
+        ADD_SWITCH(name, description,
+                   FileSwitch(
                        os.path.join(GET_SIMULATED_SWITCHES_DIR(), name),
                        initial_value = False)
         )
 else:
     for name, description, pin in _switches:
-        ADD_SWITCH(
-            gpio.output(name, description,
-                        chiplabel = 'pinctrl-bcm2835', 
-                        offset = pin)
+        ADD_SWITCH(name, description,
+                   gpio.output(
+                       chiplabel = 'pinctrl-bcm2835', 
+                       offset = pin)
         )
