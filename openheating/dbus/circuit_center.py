@@ -31,8 +31,8 @@ class CircuitCenter_Client:
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.CIRCUITCENTER))
 class CircuitCenter_Server:
-    def __init__(self, circuits):
-        self.__circuits = circuits
+    def __init__(self, names):
+        self.__names = names
 
     def all_names(self):
-        return [c.get_name() for c in self.__circuits]
+        return self.__names

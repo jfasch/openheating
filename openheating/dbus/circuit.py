@@ -42,14 +42,16 @@ class Circuit_Client:
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.CIRCUIT))
 class Circuit_Server:
-    def __init__(self, circuit):
+    def __init__(self, name, description, circuit):
+        self.__name = name
+        self.__description = description
         self.__circuit = circuit
 
     def get_name(self):
-        return self.__circuit.get_name()
+        return self.__name
 
     def get_description(self):
-        return self.__circuit.get_description()
+        return self.__description
 
     def activate(self):
         return self.__circuit.activate()

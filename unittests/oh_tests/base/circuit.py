@@ -14,8 +14,7 @@ class CircuitTest(unittest.TestCase):
         self.__producer = InMemoryThermometer(10)
         self.__consumer = InMemoryThermometer(10)
         self.__circuit = Circuit(
-            name='name',
-            description='description',
+            debugstr='blah',
             pump=self.__pump,
             producer=self.__producer,
             consumer=self.__consumer,

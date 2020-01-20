@@ -7,14 +7,13 @@ from abc import ABCMeta, abstractmethod
 
 
 class Circuit(metaclass=ABCMeta):
-    def __init__(self, name, description, pump, producer, consumer, diff_low, diff_high):
-        self.__name = name
-        self.__description = description
+    def __init__(self, pump, producer, consumer, diff_low, diff_high, debugstr):
+        self.__debugstr = debugstr
         self.__pump = pump
         self.__producer = producer
         self.__consumer = consumer
         self.__diff_hysteresis = Hysteresis(
-            name='Hysteresis({})'.format(name),
+            debugstr='Hysteresis({})'.format(debugstr),
             low=diff_low,
             high=diff_high,
             below_low=self.__pump_off,
@@ -22,20 +21,14 @@ class Circuit(metaclass=ABCMeta):
         self.__active = False
         self.__last_ts = None
 
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
-
     def activate(self):
         if not self.__active:
-            logging.debug('{}: activated'.format(self.__name))
+            logging.debug('{}: activated'.format(self.__debugstr))
             self.__active = True
 
     def deactivate(self):
         if self.__active:
-            logging.debug('{}: deactivated'.format(self.__name))
+            logging.debug('{}: deactivated'.format(self.__debugstr))
             self.__pump_off()
             self.__active = False
 
@@ -55,16 +48,16 @@ class Circuit(metaclass=ABCMeta):
 
         tprod = self.__producer.get_temperature()
         tcons = self.__consumer.get_temperature()
-        logging.debug('{}: producer {}, consumer {}, diff {}'.format(self.__name, tprod, tcons, tprod-tcons))
+        logging.debug('{}: producer {}, consumer {}, diff {}'.format(self.__debugstr, tprod, tcons, tprod-tcons))
 
         self.__diff_hysteresis.add_sample(timestamp, tprod-tcons)
 
     def __pump_on(self):
         if not self.__pump.get_state():
-            logging.debug('{}: pump on'.format(self.__name))
+            logging.debug('{}: pump on'.format(self.__debugstr))
             self.__pump.set_state(True)
 
     def __pump_off(self):
         if self.__pump.get_state():
-            logging.debug('{}: pump off'.format(self.__name))
+            logging.debug('{}: pump off'.format(self.__debugstr))
             self.__pump.set_state(False)

@@ -27,6 +27,8 @@ class SwitchesTest(PlantTestCase):
 
         center_client = SwitchCenter_Client(self.bus)
         switch_client = center_client.get_switch('TestSwitch')
+        self.assertEqual(switch_client.get_name(), 'TestSwitch')
+        self.assertEqual(switch_client.get_description(), 'Test Switch')
         self.assertEqual(switch_client.get_state(), False)
         switch_client.set_state(True)
         self.assertEqual(switch_client.get_state(), True)

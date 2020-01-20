@@ -82,12 +82,12 @@ class SwitchesConfig:
 
 class CircuitsConfig:
     def __init__(self):
-        self.__circuits = []
+        self.__circuits = [] # [(name, description, thermometer)]
 
-    def add_circuit(self, c):
-        if c.get_name() in [have.get_name() for have in self.__circuits]:
-            raise DuplicateName(c.get_name())
-        self.__circuits.append(c)
+    def add_circuit(self, name, description, c):
+        if name in [name for name,_,_ in self.__circuits]:
+            raise DuplicateName(name)
+        self.__circuits.append((name, description, c))
     def get_circuits(self):
         return self.__circuits
 

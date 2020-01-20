@@ -40,7 +40,8 @@ objects = [
 ]
 
 for name, description, switch in config.get_switches():
-    objects.append(('/switches/'+name, Switch_Server(switch=switch)))
+    objects.append(('/switches/'+name, 
+                    Switch_Server(name=name, description=description, switch=switch)))
 
 lifecycle.run_server(
     loop=loop,

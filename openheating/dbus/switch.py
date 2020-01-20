@@ -35,14 +35,16 @@ class Switch_Client(Switch):
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.SWITCH))
 class Switch_Server:
-    def __init__(self, switch):
+    def __init__(self, name, description, switch):
+        self.__name = name
+        self.__description = description
         self.__switch = switch
 
     def get_name(self):
-        return self.__switch.get_name()
+        return self.__name
 
     def get_description(self):
-        return self.__switch.get_description()
+        return self.__description
 
     def set_state(self, state):
         self.__switch.set_state(state)

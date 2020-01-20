@@ -84,9 +84,6 @@ Stack (Hanging)
 
   * Remove SimplePlant.consumer_file_thermometer etc
 
-* For consistency, remove name from circuits too (leave description in
-  place for debug messages)
-
 Todo
 ====
 

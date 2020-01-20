@@ -11,7 +11,7 @@ class SimpleBuffer:
         self.__circuit = circuit
 
         self.__hysteresis = Hysteresis(
-            name='Hysteresis({})'.format(name),
+            debugstr='Hysteresis({})'.format(name),
             low=low,
             high=high,
             below_low=self._dont_be_satisfied,

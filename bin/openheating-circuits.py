@@ -28,12 +28,12 @@ config = CircuitsConfig()
 config.parse(args.config, bus=bus)
 
 objects = [
-    ('/', CircuitCenter_Server(circuits=config.get_circuits()))
+    ('/', CircuitCenter_Server(names=[name for name,_,_ in config.get_circuits()]))
 ]
 
-for circuit in config.get_circuits():
-    objects.append(('/circuits/'+circuit.get_name(), 
-                    Circuit_Server(circuit=circuit)))
+for name, description, circuit in config.get_circuits():
+    objects.append(('/circuits/'+name,
+                    Circuit_Server(name=name, description=description, circuit=circuit)))
 
 lifecycle.run_server(
     loop=loop,

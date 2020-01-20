@@ -26,6 +26,11 @@ class CircuitsTest(PlantTestCase):
         self.force_temperature_update(next(self.__timeline))
 
     @PlantTestCase.intercept_failure
+    def test__name_description(self):
+        self.assertEqual(self.__clients.circuit.get_name(), "TestCircuit")
+        self.assertEqual(self.__clients.circuit.get_description(), "Test Circuit")
+
+    @PlantTestCase.intercept_failure
     def test__activate_deactivate(self):
         self.__clients.circuit.activate()
         self.assertTrue(self.__clients.circuit.is_active())

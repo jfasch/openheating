@@ -16,8 +16,7 @@ class BufferWantsHeatTest(unittest.TestCase):
         self.__buffer_thermometer = InMemoryThermometer(10)
 
         self.__circuit = Circuit(
-            name='testcircuit',
-            description='description',
+            debugstr='testcircuit',
             pump=self.__pump,
             producer=self.__heater_thermometer,
             consumer=self.__buffer_thermometer,
