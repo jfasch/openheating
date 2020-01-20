@@ -71,9 +71,7 @@ Stack (Hanging)
   updates. PlantTestCase defines the tempdir, so he should know where
   the thermometers live. its just that the .pyconf snippet defines the
   thermometers names, so these might not be the same as the
-  thermometer names. couple these together (REMOVING BLOODY NAME AND
-  DESCRIPTION FROM THERMOMETER, AND MAKING IT A PROPERTY OF THE CONFIG
-  INSTEAD), and provide
+  thermometer names. couple these together and provide
 
   * PlantTestCase.set_temperature(name, temperature)
   * PlantTestCase.update_temperature(name)
@@ -82,7 +80,12 @@ Stack (Hanging)
 
   * PlantTestCase.set_temperature(name, temperature, timestamp)
 
-  Remove SimplePlant.consumer_file_thermometer etc
+  Further:
+
+  * Remove SimplePlant.consumer_file_thermometer etc
+
+* For consistency, remove name and description from switches and
+  circuits too
 
 Todo
 ====

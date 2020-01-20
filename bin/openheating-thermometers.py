@@ -45,15 +45,17 @@ if args.update_interval is not None:
     config.set_update_interval(args.update_interval)
 
 objects = [
-    ('/', ThermometerCenter_Server(thermometers=config.get_thermometers()))
+    ('/', ThermometerCenter_Server(names=[name for name,_,_ in config.get_thermometers()]))
 ]
 
-for thermometer in config.get_thermometers():
+for name, description, thermometer in config.get_thermometers():
     history = History(duration=datetime.timedelta(days=1))
-    objects.append(('/thermometers/'+thermometer.get_name(),
+    objects.append(('/thermometers/'+name,
                     Thermometer_Server(
-                        update_interval=config.get_update_interval(),
+                        name=name,
+                        description=description,
                         thermometer=thermometer,
+                        update_interval=config.get_update_interval(),
                         history=history)))
 
 lifecycle.run_server(

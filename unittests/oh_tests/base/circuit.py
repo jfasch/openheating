@@ -11,8 +11,8 @@ class CircuitTest(unittest.TestCase):
 
     def setUp(self):
         self.__pump = InMemorySwitch('pump', 'some pump', False)
-        self.__producer = InMemoryThermometer('producer', 'some producer', 10)
-        self.__consumer = InMemoryThermometer('consumer', 'some consumer', 10)
+        self.__producer = InMemoryThermometer(10)
+        self.__consumer = InMemoryThermometer(10)
         self.__circuit = Circuit(
             name='name',
             description='description',

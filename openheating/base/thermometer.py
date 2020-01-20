@@ -6,16 +6,6 @@ import tempfile
 
 class Thermometer(metaclass=ABCMeta):
     @abstractmethod
-    def get_name(self):
-        assert False, 'abstract'
-        return 'name'
-
-    @abstractmethod
-    def get_description(self):
-        assert False, 'abstract'
-        return 'description'
-
-    @abstractmethod
     def get_temperature(self):
         assert False, 'abstract'
         return 23.4
@@ -23,19 +13,13 @@ class Thermometer(metaclass=ABCMeta):
 class FileThermometer(Thermometer):
     'Thermometer that reads its temperature from a file'
 
-    def __init__(self, name, description, path, initial_value=None):
-        self.__name = name
-        self.__description = description
+    def __init__(self, path, initial_value=None):
         self.__path = path
 
         if initial_value is not None:
             with open(self.__path, 'w') as f:
                 f.write(str(initial_value)+'\n')
 
-    def get_name(self):
-        return self.__name
-    def get_description(self):
-        return self.__description
     def get_temperature(self):
         with open(self.__path) as f:
             return float(f.read())
@@ -48,17 +32,9 @@ class FileThermometer(Thermometer):
             f.write(str(value))
 
 class InMemoryThermometer(Thermometer):
-    def __init__(self, name, description, value):
+    def __init__(self, value):
         super().__init__()
-        self.__name = name
-        self.__description = description
         self.__value = value
-
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
 
     def get_temperature(self):
         return self.__value
@@ -67,17 +43,9 @@ class InMemoryThermometer(Thermometer):
         self.__value = value
 
 class ErrorThermometer(Thermometer):
-    def __init__(self, name, description, n_ok_before_error):
+    def __init__(self, n_ok_before_error):
         super().__init__()
-        self.__name = name
-        self.__description = description
         self.__n_ok_before_error = n_ok_before_error
-
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
 
     def get_temperature(self):
         if self.__n_ok_before_error > 0:

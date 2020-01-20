@@ -59,14 +59,13 @@ class TemperatureHistory_Client:
 @node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETER, 
                                                interface_repo.TEMPERATUREHISTORY))
 class Thermometer_Server:
-    def __init__(self, update_interval, thermometer, history):
+    def __init__(self, name, description, thermometer, update_interval, history):
         assert isinstance(thermometer, Thermometer)
 
+        self.__name = name
+        self.__description = description
         self.__thermometer = thermometer
 
-        # get name from thermometer once and forever, to prevent
-        # errors during runtime.
-        self.__name = self.__thermometer.get_name()
         self.__history = history
 
         self.__current_temperature = None
@@ -80,10 +79,10 @@ class Thermometer_Server:
         self.__update_timer_tag = None
 
     def get_name(self):
-        return self.__thermometer.get_name()
+        return self.__name
 
     def get_description(self):
-        return self.__thermometer.get_description()
+        return self.__description
 
     def get_temperature(self):
         if self.__current_error:

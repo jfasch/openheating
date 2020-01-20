@@ -44,8 +44,8 @@ class ThermometerCenter_Client:
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETERCENTER))
 class ThermometerCenter_Server:
-    def __init__(self, thermometers):
-        self.__thermometers = thermometers
+    def __init__(self, names):
+        self.__names = names
 
     def all_names(self):
-        return [t.get_name() for t in self.__thermometers]
+        return self.__names

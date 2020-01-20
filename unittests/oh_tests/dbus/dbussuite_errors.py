@@ -22,12 +22,7 @@ class ErrorsTest(PlantTestCase):
         thermometers_config = self.tempfile(
             lines=[
                 "from openheating.base.thermometer import ErrorThermometer",
-                "ADD_THERMOMETER(",
-                "    ErrorThermometer(",
-                "        name='Error',",
-                "        description='Error Thermometer',",
-                "        n_ok_before_error=0),",
-                ")",
+                "ADD_THERMOMETER('Error', 'Error Thermometer', ErrorThermometer(n_ok_before_error=0)),",
             ],
             suffix='.thermometers-config',
         )
@@ -47,12 +42,7 @@ class ErrorsTest(PlantTestCase):
         thermometers_config = self.tempfile(
             lines=[
                 "from openheating.base.w1 import W1Thermometer",
-                "ADD_THERMOMETER(",
-                "    W1Thermometer(",
-                "        name='w1_erroneous',",
-                "        description='Some Thermometer',",
-                "        path='/a/b/00-00000000'),",
-                ")",
+                "ADD_THERMOMETER('w1_erroneous', 'Some Thermometer', W1Thermometer(path='/a/b/00-00000000')),",
             ],
             suffix='.thermometers-config',
         )
@@ -75,7 +65,6 @@ class ErrorsTest(PlantTestCase):
         self.assertIn('message', w1_error.details)
 
         w1_specifics = w1_error.details['w1']
-        self.assertEqual(w1_specifics['name'], 'w1_erroneous')
         self.assertEqual(w1_specifics['issue'], 'file read error')
         self.assertEqual(w1_specifics['file'], '/a/b/00-00000000/w1_slave')
 

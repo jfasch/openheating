@@ -18,7 +18,7 @@ class ThermometersOK(PlantTestCase):
         config = self.tempfile(
             lines=[
                 "from openheating.base.thermometer import InMemoryThermometer",
-                "ADD_THERMOMETER(InMemoryThermometer('TestThermometer', 'Test Thermometer', 42))",
+                "ADD_THERMOMETER('TestThermometer', 'Test Thermometer', InMemoryThermometer(42))",
             ],
             suffix='.thermometers-config',
         )
@@ -48,7 +48,7 @@ class ThermometersError(PlantTestCase):
         config=self.tempfile(
             lines=[
                 "from openheating.base.thermometer import ErrorThermometer",
-                "ADD_THERMOMETER(ErrorThermometer('ErrorThermometer', 'Error Thermometer', n_ok_before_error = False))",
+                "ADD_THERMOMETER('ErrorThermometer', 'Error Thermometer', ErrorThermometer(n_ok_before_error = False))",
             ],
             suffix='.thermometers-config',
         )
@@ -111,8 +111,7 @@ class ThermometersSimulation(PlantTestCase):
         config=self.tempfile(
             lines=[
                 'from openheating.base.thermometer import FileThermometer',
-                'ADD_THERMOMETER(FileThermometer(name="test", description="test", ',
-                '                path="{}", initial_value=20))'.format(test_thermometer_path),
+                'ADD_THERMOMETER("test", "test", FileThermometer(path="{}", initial_value=20))'.format(test_thermometer_path),
             ],
             suffix='.thermometers-config',
         )
@@ -135,7 +134,7 @@ class ThermometersSimulation(PlantTestCase):
         self.assertAlmostEqual(test_thermometer_client.get_temperature(), 20)
 
         # modify temperature by writing to the file
-        test_thermometer = FileThermometer(name='test', description='test', path=test_thermometer_path)
+        test_thermometer = FileThermometer(path=test_thermometer_path)
         test_thermometer.set_temperature(30)
 
         test_thermometer_client.force_update(0)

@@ -23,16 +23,16 @@ class SimplePlant(Plant):
         pump_switch_file = switches_dir.name + '/pump'
 
         # thermometers and switches for use by test code
-        self.__consumer_thermometer = FileThermometer('consumer', 'consumer', path=consumer_thermometer_file)
-        self.__producer_thermometer = FileThermometer('producer', 'producer', path=producer_thermometer_file)
+        self.__consumer_thermometer = FileThermometer(path=consumer_thermometer_file)
+        self.__producer_thermometer = FileThermometer(path=producer_thermometer_file)
         self.__pump_switch = FileSwitch('pump', 'pump', path=pump_switch_file)
 
         thermometers_config = make_tempfile(
             lines=[
                 'from openheating.base.thermometer import FileThermometer',
 
-                'ADD_THERMOMETER(FileThermometer("consumer", "the consumer", path="{}"))'.format(consumer_thermometer_file),
-                'ADD_THERMOMETER(FileThermometer("producer", "the producer", path="{}"))'.format(producer_thermometer_file),
+                'ADD_THERMOMETER("consumer", "the consumer", FileThermometer(path="{}"))'.format(consumer_thermometer_file),
+                'ADD_THERMOMETER("producer", "the producer", FileThermometer(path="{}"))'.format(producer_thermometer_file),
                 # suppress periodic temperature reads; we
                 # inject
                 'SET_UPDATE_INTERVAL(0)',

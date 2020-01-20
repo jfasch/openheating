@@ -17,7 +17,7 @@ class ThermometersConfig:
     def __init__(self):
         self.__simulated_thermometers_dir = None
         self.__update_interval = 5
-        self.__thermometers = []
+        self.__thermometers = [] # [(name, description, thermometer)]
 
     def get_simulated_thermometers_dir(self):
         return self.__simulated_thermometers_dir
@@ -29,10 +29,10 @@ class ThermometersConfig:
     def set_update_interval(self, secs):
         self.__update_interval = secs
 
-    def add_thermometer(self, th):
-        if th.get_name() in [have.get_name() for have in self.__thermometers]:
-            raise DuplicateName(th.get_name())
-        self.__thermometers.append(th)
+    def add_thermometer(self, name, description, th):
+        if name in [name for name,_,_ in self.__thermometers]:
+            raise DuplicateName(name)
+        self.__thermometers.append((name, description, th))
 
     def get_thermometers(self):
         return self.__thermometers

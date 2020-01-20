@@ -17,20 +17,16 @@ _re_temp = re.compile(r'^.* t=(\d+)$')
 def available_thermometers():
     for entry in os.listdir(_w1dir):
         try:
-            yield W1Thermometer(
-                name=entry,
-                description='dummy-description', 
-                path=os.path.join(_w1dir, entry))
+            yield W1Thermometer(path=os.path.join(_w1dir, entry))
         except W1Thermometer.BadPath:
             continue
 
 class W1ReadError(HeatingError):
-    def __init__(self, name, filename):
+    def __init__(self, filename):
         super().__init__(details={
             'category': 'w1',
-            'message': '{}: cannot read file {}'.format(name, filename),
+            'message': 'cannot read file {}'.format(filename),
             'w1': {
-                'name': name,
                 'issue': 'file read error',
                 'file': filename,
             },
@@ -41,19 +37,10 @@ class W1Thermometer(Thermometer):
         def __init__(self, msg):
             super().__init__(msg)
 
-    def __init__(self, name, description, path):
+    def __init__(self, path):
         super().__init__()
-
-        self.name = name
-        self.description = description
         self.path = path
         self.type, self.id = self.__type_id_from_path(path)
-
-    def get_name(self):
-        return self.name
-
-    def get_description(self):
-        return self.description
 
     def get_temperature(self):
         filename = os.path.join(self.path, 'w1_slave')
@@ -61,7 +48,7 @@ class W1Thermometer(Thermometer):
             with open(filename) as w1_slave:
                 lines = w1_slave.readlines()
         except (FileNotFoundError, IOError):
-            raise W1ReadError(name=self.name, filename=filename)
+            raise W1ReadError(filename=filename)
 
         temperature = None
         for line in lines:
