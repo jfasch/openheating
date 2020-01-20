@@ -2,6 +2,7 @@ from . import testutils
 
 from ..base.error import HeatingError
 from ..dbus import names
+from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..plant.service import Service
 from ..plant import dbusutil
 
@@ -78,3 +79,8 @@ class PlantTestCase(unittest.TestCase):
         if self.__bus is None:
             self.__bus = pydbus.SessionBus()
         return self.__bus
+
+    def force_temperature_update(self, timestamp):
+        '''Via DBus client, force an update of all thermometers'''
+        client = ThermometerCenter_Client(self.bus)
+        client.force_update(timestamp)

@@ -11,7 +11,7 @@ class CircuitsTest(PlantTestCase):
     def setUp(self):
         super().setUp()
 
-        self.__plant = SimplePlant(make_tempfile=self.tempfile)
+        self.__plant = SimplePlant(bus=self.bus, make_tempfile=self.tempfile, make_tempdir=self.tempdir)
         self.start_plant(self.__plant)
         self.__clients = self.__plant.create_clients()
 
@@ -19,9 +19,11 @@ class CircuitsTest(PlantTestCase):
         self.__timeline = itertools.count()
 
         # provide initial values
-        self.__clients.producer_thermometer.inject_sample(timestamp=next(self.__timeline), temperature=10)
-        self.__clients.consumer_thermometer.inject_sample(timestamp=next(self.__timeline), temperature=10)
-        self.__clients.pump_switch.set_state(False)
+        self.__plant.producer_file_thermometer.set_temperature(10)
+        self.__plant.consumer_file_thermometer.set_temperature(10)
+        self.__plant.pump_file_switch.set_state(False)
+
+        self.force_temperature_update(next(self.__timeline))
 
     @PlantTestCase.intercept_failure
     def test__activate_deactivate(self):
@@ -42,7 +44,8 @@ class CircuitsTest(PlantTestCase):
         self.assertFalse(self.__clients.pump_switch.get_state())
 
         # produce heat
-        self.__clients.producer_thermometer.inject_sample(timestamp=next(self.__timeline), temperature=50)
+        self.__plant.producer_file_thermometer.set_temperature(50)
+        self.force_temperature_update(timestamp=next(self.__timeline))
         # paranoia
         self.assertAlmostEqual(self.__clients.producer_thermometer.get_temperature(), 50)
 
@@ -50,7 +53,8 @@ class CircuitsTest(PlantTestCase):
         self.assertTrue(self.__clients.pump_switch.get_state())
 
         # consume heat, but do not yet trigger hysteresis.
-        self.__clients.consumer_thermometer.inject_sample(timestamp=next(self.__timeline), temperature=45)
+        self.__plant.consumer_file_thermometer.set_temperature(45)
+        self.force_temperature_update(timestamp=next(self.__timeline))
         # paranoia
         self.assertAlmostEqual(self.__clients.consumer_thermometer.get_temperature(), 45)
 
@@ -59,7 +63,8 @@ class CircuitsTest(PlantTestCase):
         self.assertTrue(self.__clients.pump_switch.get_state())
         
         # consume even more heat; difference goes below 3
-        self.__clients.consumer_thermometer.inject_sample(timestamp=next(self.__timeline), temperature=48)
+        self.__plant.consumer_file_thermometer.set_temperature(48)
+        self.force_temperature_update(timestamp=next(self.__timeline))
         # paranoia
         self.assertAlmostEqual(self.__clients.consumer_thermometer.get_temperature(), 48)
 

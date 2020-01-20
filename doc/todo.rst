@@ -54,8 +54,6 @@ Stack (Hanging)
       from FileThermometer
 
   * re-enable other tests in ThermometersSimulation
-  * PlantTestCase: provide timeline (eliminating all other occurrences
-    of itertools.count)
   * move dbus/config.py to plant/
 
 * cleanup
@@ -63,7 +61,30 @@ Stack (Hanging)
   * dbussuite_thermometers.py: move preliminary setup code from
     ThermometersSimulation.test__force_update_of_file_thermometer() to
     PlantTestCase
-  * remove Thermometer.inject_sample()
+  * PlantTestCase: provide timeline (eliminating all other occurrences
+    of itertools.count)
+  * PlantTestCase: add more integrated way of doing thermometer
+    updates. PlantTestCase defines the tempdir, so he should know
+    where the thermometers live. its just that the .pyconf snippet
+    defines the thermometers names, so these might not be the same as
+    the thermometer names. couple these together (REMOVING BLOODY NAME
+    AND DESCRIPTION FROM THERMOMETER, AND MAKING IT A PROPERTY OF THE
+    CONFIG INSTEAD), and provide
+
+    * PlantTestCase.set_temperature(name, temperature)
+    * PlantTestCase.update_temperature(name)
+
+    Or even 
+
+    * PlantTestCase.set_temperature(name, temperature, timestamp)
+
+    Remove SimplePlant.consumer_file_thermometer etc
+
+  * SimplePlant: remove create_clients(), in favor of client
+    properties
+  * do we still need DummyThermometer?
+  * do we need both ThermometerService(background_updates=(bool), ...)
+    *and* config SET_UPDATE_INTERVAL(0)? suppose not
 
 Todo
 ====

@@ -33,6 +33,11 @@ class ThermometerCenter_Client:
                 path='/thermometers/'+name, 
                 iface=interface_repo.TEMPERATUREHISTORY))
 
+    @error.maperror
+    def force_update(self, timestamp):
+        for name in self.all_names():
+            self.get_thermometer(name).force_update(timestamp)
+
     def __get_object_iface(self, busname, path, iface):
         return self.__bus.get(busname, path)[iface]
 

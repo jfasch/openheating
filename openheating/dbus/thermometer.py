@@ -41,10 +41,6 @@ class Thermometer_Client(Thermometer):
         return self.proxy.get_temperature()
 
     @error.maperror
-    def inject_sample(self, timestamp, temperature):
-        self.proxy.inject_sample(timestamp, temperature)
-
-    @error.maperror
     def force_update(self, timestamp):
         self.proxy.force_update(timestamp)
 
@@ -93,13 +89,6 @@ class Thermometer_Server:
         if self.__current_error:
             raise self.__current_error
         return self.__current_temperature
-
-    def inject_sample(self, timestamp, temperature):
-        if self.__update_interval != 0:
-            e = HeatingError('cannot inject sample when doing background updates')
-            e.set_tag('INJECT_WHILE_BACKGROUND_UPDATE')
-            raise e
-        self.__make_current(timestamp=timestamp, temperature=temperature)
 
     def force_update(self, timestamp):
         if self.__update_interval != 0:

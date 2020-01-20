@@ -22,10 +22,6 @@ _repo[THERMOMETER] = '''
   <method name='get_temperature'>
     <arg type='d' name='response' direction='out'/>
   </method>
-  <method name='inject_sample'>
-    <arg type='t' name='timestamp' direction='in'/>
-    <arg type='d' name='temperature' direction='in'/>
-  </method>
   <method name='force_update'>
     <arg type='t' name='timestamp' direction='in'/>
   </method>

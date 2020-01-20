@@ -1,6 +1,8 @@
 from . import service
 from .plant import Plant
 
+from openheating.base.thermometer import FileThermometer
+from openheating.base.switch import FileSwitch
 from openheating.dbus.circuit_center import CircuitCenter_Client
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus.switch_center import SwitchCenter_Client
@@ -11,13 +13,26 @@ from collections import namedtuple
 
 
 class SimplePlant(Plant):
-    def __init__(self, make_tempfile):
+    def __init__(self, bus, make_tempfile, make_tempdir):
+        thermometers_dir = make_tempdir(suffix='.thermometers')
+        switches_dir = make_tempdir(suffix='.switches')
+
+        consumer_thermometer_file = thermometers_dir.name + '/consumer'
+        producer_thermometer_file = thermometers_dir.name + '/producer'
+
+        pump_switch_file = switches_dir.name + '/pump'
+
+        # thermometers and switches for use by test code
+        self.__consumer_thermometer = FileThermometer('consumer', 'consumer', path=consumer_thermometer_file)
+        self.__producer_thermometer = FileThermometer('producer', 'producer', path=producer_thermometer_file)
+        self.__pump_switch = FileSwitch('pump', 'pump', path=pump_switch_file)
+
         thermometers_config = make_tempfile(
             lines=[
-                'from openheating.base.thermometer import DummyThermometer',
+                'from openheating.base.thermometer import FileThermometer',
 
-                'ADD_THERMOMETER(DummyThermometer("consumer", "the consumer", 0))',
-                'ADD_THERMOMETER(DummyThermometer("producer", "the producer", 0))',
+                'ADD_THERMOMETER(FileThermometer("consumer", "the consumer", path="{}"))'.format(consumer_thermometer_file),
+                'ADD_THERMOMETER(FileThermometer("producer", "the producer", path="{}"))'.format(producer_thermometer_file),
                 # suppress periodic temperature reads; we
                 # inject
                 'SET_UPDATE_INTERVAL(0)',
@@ -27,8 +42,8 @@ class SimplePlant(Plant):
 
         switches_config = make_tempfile(
             lines=[
-                'from openheating.base.switch import DummySwitch',
-                'ADD_SWITCH(DummySwitch("pump", "the pump", False))',
+                'from openheating.base.switch import FileSwitch',
+                'ADD_SWITCH(FileSwitch("pump", "the pump", path="{}", initial_value=False))'.format(pump_switch_file),
             ],
             suffix='.switches-config'
         )
@@ -81,3 +96,26 @@ class SimplePlant(Plant):
             producer_thermometer=producer_thermometer,
             consumer_thermometer=consumer_thermometer,
             pump_switch=pump_switch)
+
+    @property
+    def consumer_file_thermometer(self):
+        return self.__consumer_thermometer
+    @property
+    def producer_file_thermometer(self):
+        return self.__producer_thermometer
+    @property
+    def pump_file_switch(self):
+        return self.__pump_switch
+
+    @property
+    def consumer_dbus_thermometer(self):
+        assert False
+    @property
+    def producer_dbus_thermometer(self):
+        assert False
+    @property
+    def pump_dbus_switch(self):
+        assert False
+    @property
+    def pump_dbus_circuit(self):
+        assert False
