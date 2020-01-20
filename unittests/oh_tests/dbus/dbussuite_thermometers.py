@@ -17,8 +17,8 @@ class ThermometersOK(PlantTestCase):
         super().setUp()
         config = self.tempfile(
             lines=[
-                "from openheating.base.thermometer import FixedThermometer",
-                "ADD_THERMOMETER(FixedThermometer('TestThermometer', 'Test Thermometer', 42))",
+                "from openheating.base.thermometer import InMemoryThermometer",
+                "ADD_THERMOMETER(InMemoryThermometer('TestThermometer', 'Test Thermometer', 42))",
             ],
             suffix='.thermometers-config',
         )

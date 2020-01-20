@@ -1,5 +1,5 @@
-from openheating.base.switch import DummySwitch
-from openheating.base.thermometer import DummyThermometer
+from openheating.base.switch import InMemorySwitch
+from openheating.base.thermometer import InMemoryThermometer
 from openheating.base.circuit import Circuit
 from openheating.base.error import ClockSkewError
 
@@ -10,9 +10,9 @@ import datetime
 class CircuitTest(unittest.TestCase):
 
     def setUp(self):
-        self.__pump = DummySwitch('pump', 'some pump', False)
-        self.__producer = DummyThermometer('producer', 'some producer', 10)
-        self.__consumer = DummyThermometer('consumer', 'some consumer', 10)
+        self.__pump = InMemorySwitch('pump', 'some pump', False)
+        self.__producer = InMemoryThermometer('producer', 'some producer', 10)
+        self.__consumer = InMemoryThermometer('consumer', 'some consumer', 10)
         self.__circuit = Circuit(
             name='name',
             description='description',

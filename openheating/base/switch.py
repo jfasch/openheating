@@ -45,7 +45,7 @@ class FileSwitch(Switch):
             return bool(eval(f.read()))
 
 
-class DummySwitch(Switch):
+class InMemorySwitch(Switch):
     def __init__(self, name, description, state):
         super().__init__()
         self.__name = name

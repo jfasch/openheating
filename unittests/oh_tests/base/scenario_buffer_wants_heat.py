@@ -1,5 +1,5 @@
-from openheating.base.switch import DummySwitch
-from openheating.base.thermometer import DummyThermometer
+from openheating.base.switch import InMemorySwitch
+from openheating.base.thermometer import InMemoryThermometer
 from openheating.base.circuit import Circuit
 from openheating.base.poller import Poller
 from openheating.base.simple_buffer import SimpleBuffer
@@ -11,9 +11,9 @@ import itertools
 
 class BufferWantsHeatTest(unittest.TestCase):
     def setUp(self):
-        self.__pump = DummySwitch('pump', 'some pump', False)
-        self.__heater_thermometer = DummyThermometer('heater', 'some heater', 10)
-        self.__buffer_thermometer = DummyThermometer('buffer', 'some buffer', 10)
+        self.__pump = InMemorySwitch('pump', 'some pump', False)
+        self.__heater_thermometer = InMemoryThermometer('heater', 'some heater', 10)
+        self.__buffer_thermometer = InMemoryThermometer('buffer', 'some buffer', 10)
 
         self.__circuit = Circuit(
             name='testcircuit',

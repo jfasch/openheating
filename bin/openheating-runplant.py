@@ -2,10 +2,10 @@
 
 from openheating.plant import logutil
 from openheating.plant import dbusutil
+from openheating.plant.config import RunnerConfig
 from openheating.dbus import names
 from openheating.dbus import lifecycle
 from openheating.dbus.runner import Runner_Server
-from openheating.dbus.config import RunnerConfig
 from openheating.plant.plant import Plant
 
 from gi.repository import GLib

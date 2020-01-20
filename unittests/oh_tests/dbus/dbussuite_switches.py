@@ -17,8 +17,8 @@ class SwitchesTest(PlantTestCase):
     def test__basic(self):
         config=self.tempfile(
             lines=[
-                'from openheating.base.switch import DummySwitch',
-                'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
+                'from openheating.base.switch import InMemorySwitch',
+                'ADD_SWITCH(InMemorySwitch("TestSwitch", "Test Switch", False))',
 
                 'assert GET_SIMULATED_SWITCHES_DIR() is None, GET_SIMULATED_SWITCHES_DIR()',
             ]
@@ -37,8 +37,8 @@ class SwitchesTest(PlantTestCase):
         swdir = self.__tmpdir.name+'/some/dir/to/contain/switches'
         config=self.tempfile(
             lines=[
-                'from openheating.base.switch import DummySwitch',
-                'ADD_SWITCH(DummySwitch("TestSwitch", "Test Switch", False))',
+                'from openheating.base.switch import InMemorySwitch',
+                'ADD_SWITCH(InMemorySwitch("TestSwitch", "Test Switch", False))',
 
                 'assert GET_SIMULATED_SWITCHES_DIR() == "{}", GET_SIMULATED_SWITCHES_DIR()'.format(swdir),
             ]

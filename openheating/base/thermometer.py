@@ -47,7 +47,7 @@ class FileThermometer(Thermometer):
         with open(self.__path, 'w') as f:
             f.write(str(value))
 
-class DummyThermometer(Thermometer):
+class InMemoryThermometer(Thermometer):
     def __init__(self, name, description, value):
         super().__init__()
         self.__name = name
@@ -65,23 +65,6 @@ class DummyThermometer(Thermometer):
 
     def set_temperature(self, value):
         self.__value = value
-
-class FixedThermometer(Thermometer):
-    def __init__(self, name, description, temperature):
-        super().__init__()
-        self.__name = name
-        self.__description = description
-        self.__temperature = temperature
-
-    def get_name(self):
-        return self.__name
-
-    def get_description(self):
-        return self.__description
-
-    def get_temperature(self):
-        return self.__temperature
-
 
 class ErrorThermometer(Thermometer):
     def __init__(self, name, description, n_ok_before_error):
