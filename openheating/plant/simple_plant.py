@@ -18,6 +18,7 @@ class SimplePlant(Plant):
             [
                 service.ThermometerService(
                     simulation_dir=make_tempdir(suffix='.thermometers').name,
+                    background_updates=False,
                     config=make_tempfile(
                         lines=[
                             'from openheating.base.thermometer import FileThermometer',
@@ -26,7 +27,6 @@ class SimplePlant(Plant):
                             'ADD_THERMOMETER("producer", "the producer")',
                             # suppress periodic temperature reads; we
                             # inject
-                            'SET_UPDATE_INTERVAL(0)',
                         ],
                         suffix='.thermometers-config',
                     ).name),

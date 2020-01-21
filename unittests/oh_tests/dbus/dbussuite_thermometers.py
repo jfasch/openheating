@@ -144,11 +144,10 @@ class ThermometersSimulation(PlantTestCase):
             ],
             suffix='.thermometers-config',
         )
-        self.start_plant(Plant([service.ThermometerService(config=config.name, 
-                                                           # jjj: move
-                                                           # to
-                                                           # PlantTestCase
-                                                           background_updates=False)]))
+        self.start_plant(Plant([
+            service.ThermometerService(config=config.name, 
+                                       background_updates=False),
+        ]))
 
         # paranoia: see if thermometer is there, and it has the
         # configured initial temperature value
@@ -157,7 +156,6 @@ class ThermometersSimulation(PlantTestCase):
 
         test_thermometer_client = center_client.get_thermometer('test')
 
-        # jjj move to PlantTestCase, right after plant startup
         test_thermometer_client.force_update(timestamp=0)
 
         self.assertAlmostEqual(test_thermometer_client.get_temperature(), 20)

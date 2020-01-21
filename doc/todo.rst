@@ -42,36 +42,6 @@ Stack (Hanging)
       basically the question. should be consistent with the exes.
     * fix plant.pyconf
 
-* see how we can write to temperature/switch files and force an update
-  that is seen immediately
-
-  * Thermometer.force_update(), maybe as a convenience function in
-    PlantTestCase
-
-    * instantiate client in PlantTestCase.start_plant())
-    * watch out for 'jjj'
-    * eliminate Thermometer.inject_sample() in favor of force_update()
-      from FileThermometer
-
-  * re-enable other tests in ThermometersSimulation
-
-* cleanup
-
-  * dbussuite_thermometers.py: move preliminary setup code from
-    ThermometersSimulation.test__force_update_of_file_thermometer() to
-    PlantTestCase
-  * PlantTestCase: provide timeline (eliminating all other occurrences
-    of itertools.count)
-  * SimplePlant: remove create_clients(), in favor of client
-    properties
-  * do we need both ThermometerService(background_updates=(bool), ...)
-    *and* config SET_UPDATE_INTERVAL(0)? suppose not
-
-* dbussuite_circuits and dbussuite_faschingbauer += PlantTestCase
-  convenience
-
-* remove circuits name, description from base. add in config.
-
 Todo
 ====
 
