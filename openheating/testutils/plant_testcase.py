@@ -81,12 +81,12 @@ class PlantTestCase(unittest.TestCase):
         self.__switch_service = None
 
     def tempdir(self, suffix=None):
-        d = tempfile.TemporaryDirectory(prefix=self.__class__.__name__, suffix=suffix)
+        d = tempfile.TemporaryDirectory(prefix=self.__class__.__name__+'.', suffix=suffix)
         self.__tempdirs.append(d)
         return d
         
     def tempfile(self, lines=None, suffix=None):
-        f = tempfile.NamedTemporaryFile(prefix=self.__class__.__name__, suffix=suffix, mode='w')
+        f = tempfile.NamedTemporaryFile(prefix=self.__class__.__name__+'.', suffix=suffix, mode='w')
         self.__tempfiles.append(f)
         if lines is not None:
             f.write('\n'.join(lines))
