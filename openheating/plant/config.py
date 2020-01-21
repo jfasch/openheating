@@ -1,4 +1,8 @@
 from openheating.base.error import HeatingError
+from openheating.base.thermometer import FileThermometer
+
+import logging
+import os.path
 
 
 class DuplicateName(HeatingError):
@@ -14,15 +18,10 @@ class BadName(HeatingError):
         self.name = name
 
 class ThermometersConfig:
-    def __init__(self):
-        self.__simulated_thermometers_dir = None
+    def __init__(self, simulation_dir):
+        self.__simulation_dir = simulation_dir
         self.__update_interval = 5
         self.__thermometers = [] # [(name, description, thermometer)]
-
-    def get_simulated_thermometers_dir(self):
-        return self.__simulated_thermometers_dir
-    def set_simulated_thermometers_dir(self, path):
-        self.__simulated_thermometers_dir = path
 
     def get_update_interval(self):
         return self.__update_interval
@@ -32,6 +31,12 @@ class ThermometersConfig:
     def add_thermometer(self, name, description, th):
         if name in [name for name,_,_ in self.__thermometers]:
             raise DuplicateName(name)
+
+        if self.__simulation_dir is not None:
+            thfile = os.path.join(self.__simulation_dir, name)
+            logging.info('simulation mode: thermometer {}: ignoring {} in favor of {}'.format(name, str(th), thfile))
+            th = FileThermometer(thfile, initial_value=20) # initial_value actually creates the file
+
         self.__thermometers.append((name, description, th))
 
     def get_thermometers(self):
@@ -40,7 +45,6 @@ class ThermometersConfig:
     def parse(self, path, bus):
         context = {
             'GET_BUS': lambda: bus,
-            'GET_SIMULATED_THERMOMETERS_DIR': self.get_simulated_thermometers_dir,
             'GET_UPDATE_INTERVAL': self.get_update_interval,
             'SET_UPDATE_INTERVAL': self.set_update_interval,
             'ADD_THERMOMETER': self.add_thermometer,

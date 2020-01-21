@@ -11,7 +11,7 @@ configdir = find_project_root() + '/installations/faschingbauer'
 
 ADD_SERVICE(ThermometerService(
     config = configdir + '/thermometers.pyconf',
-    simulated_thermometers_dir = GET_SIMULATION_DIR() + '/thermometers',
+    simulation_dir = GET_SIMULATION_DIR() + '/thermometers',
 ))
 ADD_SERVICE(SwitchService(
     config = configdir + '/switches.pyconf',

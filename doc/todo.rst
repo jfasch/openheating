@@ -84,6 +84,16 @@ Stack (Hanging)
 
   * Remove SimplePlant.consumer_file_thermometer etc
 
+* switches service: simulation: ADD_SWITCH(name, description, switch)
+  ignores switch instance and creates file switch instead.
+
+  * make all that a set of PlantTestCase convenience methods. start in
+    dbussuite_thermometers.ThermometersSimulation
+  * remove GET_*() from config
+
+* make all that a set of PlantTestCase convenience methods. start in
+  dbussuite_thermometers.ThermometersSimulation
+
 Todo
 ====
 

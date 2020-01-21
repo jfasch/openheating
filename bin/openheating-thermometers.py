@@ -21,9 +21,8 @@ parser.add_argument('--config', help='Configuration file')
 parser.add_argument('--update-interval', 
                     help='Temperature read interval (seconds); '
                     'default 5; 0 to disable updates', type=int)
-parser.add_argument('--simulated-thermometers-dir', metavar='DIR', 
-                    help='Create "thermometer" files in DIR, and read temperatures from there. '
-                    'DIR is created, and is passed into the config as "SIMULATED_THERMOMETERS_DIR".')
+parser.add_argument('--simulation-dir', metavar='DIR', 
+                    help='Create "thermometer" files in DIR, and read temperatures from there.')
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
@@ -33,11 +32,9 @@ logutil.configure_from_argparse(args)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
-config = ThermometersConfig()
-if args.simulated_thermometers_dir is not None:
-    os.makedirs(args.simulated_thermometers_dir, exist_ok=True)
-    config.set_simulated_thermometers_dir(args.simulated_thermometers_dir)
-
+if args.simulation_dir is not None:
+    os.makedirs(args.simulation_dir, exist_ok=True)
+config = ThermometersConfig(simulation_dir=args.simulation_dir)
 config.parse(args.config, bus=bus)
 
 # update_interval: cmdline overrides config

@@ -9,6 +9,7 @@ from openheating.plant.plant import Plant
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 
 import os.path
+import itertools
 import unittest
 
 
@@ -68,6 +69,7 @@ class ThermometersSimulation(PlantTestCase):
     def setUp(self):
         super().setUp()
         self.__tmpdir = self.tempdir()
+        self.__timeline = itertools.count()
 
     def tearDown(self):
         super().tearDown()
@@ -76,7 +78,14 @@ class ThermometersSimulation(PlantTestCase):
         thdir = self.__tmpdir.name+'/some/dir/to/contain/thermometers'
         config=self.tempfile(
             lines=[
-                'assert GET_SIMULATED_THERMOMETERS_DIR() == "{}"'.format(thdir)
+                'from openheating.base.thermometer import InMemoryThermometer',
+
+                # simulation is on. we expect the InMemoryThermometer
+                # to be ignored, in favor of an implicitly created
+                # FileThermometer instance. that instance is tied to
+                # file thdir/test_name which exists after the
+                # thermometer service has started.
+                'ADD_THERMOMETER("test_name", "test description", InMemoryThermometer(42))',
             ],
             suffix='.thermometers-config',
         )
@@ -84,21 +93,44 @@ class ThermometersSimulation(PlantTestCase):
             [
                 service.ThermometerService(
                     config=config.name,
-                    simulated_thermometers_dir=thdir
+                    simulation_dir=thdir,
+                    background_updates=False,
                 ),
             ]
         ))
 
-        self.assertTrue(os.path.isdir(thdir)) # has been created by service
+        self.assertTrue(os.path.isfile(thdir+'/test_name')) # has been created by service
+
+        # modify temperature
+        file_thermometer = FileThermometer(thdir+'/test_name')
+        file_thermometer.set_temperature(7)
+
+        # force service to do an update
+        client = self.get_thermometer_client('test_name')
+        client.force_update(next(self.__timeline))
+
+        self.assertAlmostEqual(client.get_temperature(), 7)
 
     def test__simulated_thermometers_dir__not_passed(self):
+        temperature_file = self.tempfile(suffix='.temperature')
         config=self.tempfile(
             lines=[
-                'assert GET_SIMULATED_THERMOMETERS_DIR() is None',
+                'from openheating.base.thermometer import FileThermometer',
+
+                # simulation is off. we expect the thermometer to be
+                # added as-is.
+                'ADD_THERMOMETER(',
+                '      "test_name", "test description",',
+                '      FileThermometer("{}", initial_value=42))'.format(temperature_file.name),
             ],
             suffix='.thermometers-config',
         )
         self.start_plant(Plant([service.ThermometerService(config=config.name)]))
+
+        # simulation is off, so thermometer must have been taken as-is
+        # => file contains the initial value as specified by config.
+        file_thermometer = FileThermometer(temperature_file.name)
+        self.assertAlmostEqual(file_thermometer.get_temperature(), 42)
 
     def test__force_update_of_file_thermometer(self):
         # usually thermometer updates are done by the thermometer

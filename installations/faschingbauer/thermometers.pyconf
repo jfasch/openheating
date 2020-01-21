@@ -21,13 +21,5 @@ _thermometers = [
     ('VorlaufWarmwasser', 'Vorlauf Warmwasser', '/sys/bus/w1/devices/28-02131d9920aa'),
 ]
 
-if GET_SIMULATED_THERMOMETERS_DIR():
-    for name, description, _ in _thermometers:
-        ADD_THERMOMETER(
-            name, description,
-            FileThermometer(os.path.join(GET_SIMULATED_THERMOMETERS_DIR(), name),
-                            initial_value=20)
-        )
-else:
-    for name, description, path in _thermometers:
-        ADD_THERMOMETER(name, description, W1Thermometer(path))
+for name, description, path in _thermometers:
+    ADD_THERMOMETER(name, description, W1Thermometer(path))

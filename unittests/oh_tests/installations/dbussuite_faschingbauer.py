@@ -22,7 +22,7 @@ class FaschingbauerTest(PlantTestCase):
         self.start_plant(Plant([
             service.ThermometerService(
                 config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'thermometers.pyconf'),
-                simulated_thermometers_dir=self.__thermometers_dir),
+                simulation_dir=self.__thermometers_dir),
             service.SwitchService(
                 config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'switches.pyconf'),
                 simulated_switches_dir=self.__switches_dir),

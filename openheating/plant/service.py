@@ -156,10 +156,10 @@ def _indent_str(s):
     return s.replace('\n', '\n    ')
 
 class ThermometerService(Service):
-    def __init__(self, config, background_updates=True, simulated_thermometers_dir=None):
+    def __init__(self, config, background_updates=True, simulation_dir=None):
         args = ['--config', config]
-        if simulated_thermometers_dir is not None:
-            args += ['--simulated-thermometers-dir', simulated_thermometers_dir]
+        if simulation_dir is not None:
+            args += ['--simulation-dir', simulation_dir]
         if not background_updates:
             args += ['--update-interval', '0']
 

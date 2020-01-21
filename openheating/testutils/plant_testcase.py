@@ -80,6 +80,11 @@ class PlantTestCase(unittest.TestCase):
             self.__bus = pydbus.SessionBus()
         return self.__bus
 
+    def get_thermometer_client(self, name):
+        '''Get a client object for a thermometer with name'''
+        center = ThermometerCenter_Client(self.bus)
+        return center.get_thermometer(name)
+
     def force_temperature_update(self, timestamp):
         '''Via DBus client, force an update of all thermometers'''
         client = ThermometerCenter_Client(self.bus)
