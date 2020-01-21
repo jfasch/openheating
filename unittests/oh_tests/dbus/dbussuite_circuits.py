@@ -11,72 +11,61 @@ class CircuitsTest(PlantTestCase):
     def setUp(self):
         super().setUp()
 
-        self.__plant = SimplePlant(bus=self.bus, make_tempfile=self.tempfile, make_tempdir=self.tempdir)
-        self.start_plant(self.__plant)
-        self.__clients = self.__plant.create_clients()
+        self.start_plant(SimplePlant(bus=self.bus,
+                                     make_tempfile=self.tempfile,
+                                     make_tempdir=self.tempdir))
 
         # timestamps for injected samples
         self.__timeline = itertools.count()
 
         # provide initial values
-        self.__plant.producer_file_thermometer.set_temperature(10)
-        self.__plant.consumer_file_thermometer.set_temperature(10)
-        self.__plant.pump_file_switch.set_state(False)
-
-        self.force_temperature_update(next(self.__timeline))
-
-    @PlantTestCase.intercept_failure
-    def test__name_description(self):
-        self.assertEqual(self.__clients.circuit.get_name(), "TestCircuit")
-        self.assertEqual(self.__clients.circuit.get_description(), "Test Circuit")
+        self.set_temperature_files_and_update({'producer': 10, 'consumer': 10},
+                                              timestamp=next(self.__timeline))
+        self.set_switchstate_file('pump', False)
 
     @PlantTestCase.intercept_failure
     def test__activate_deactivate(self):
-        self.__clients.circuit.activate()
-        self.assertTrue(self.__clients.circuit.is_active())
+        self.activate_circuit('TestCircuit')
+        self.assertTrue(self.is_circuit_active('TestCircuit'))
 
-        self.__clients.circuit.deactivate()
-        self.assertFalse(self.__clients.circuit.is_active())
+        self.deactivate_circuit('TestCircuit')
+        self.assertFalse(self.is_circuit_active('TestCircuit'))
 
     @PlantTestCase.intercept_failure
     def test__pump_on_off(self):
-        # paranoia. we injected samples to give 10 degrees.
-        self.assertAlmostEqual(self.__clients.consumer_thermometer.get_temperature(), 10)
-        self.assertAlmostEqual(self.__clients.producer_thermometer.get_temperature(), 10)
+        # paranoia. we initialized thermometers to give 10 degrees.
+        self.assertAlmostEqual(self.get_temperature_dbus('consumer'), 10)
+        self.assertAlmostEqual(self.get_temperature_dbus('producer'), 10)
 
-        self.__clients.circuit.activate()
-        self.__clients.circuit.poll(0) # epoch
-        self.assertFalse(self.__clients.pump_switch.get_state())
+        self.activate_circuit('TestCircuit')
+        self.poll_circuit('TestCircuit', timestamp=0) # epoch
+        self.assertFalse(self.get_switchstate_file('pump'))
 
         # produce heat
-        self.__plant.producer_file_thermometer.set_temperature(50)
-        self.force_temperature_update(timestamp=next(self.__timeline))
-        # paranoia
-        self.assertAlmostEqual(self.__clients.producer_thermometer.get_temperature(), 50)
+        self.set_temperature_file_and_update('producer', 50, timestamp=next(self.__timeline))
+        # paranoia (testing test-code)
+        self.assertAlmostEqual(self.get_temperature_dbus('producer'), 50)
 
-        self.__clients.circuit.poll(next(self.__timeline))
-        self.assertTrue(self.__clients.pump_switch.get_state())
+        self.poll_circuit('TestCircuit', timestamp=next(self.__timeline))
+        self.assertTrue(self.get_switchstate_file('pump'))
 
         # consume heat, but do not yet trigger hysteresis.
-        self.__plant.consumer_file_thermometer.set_temperature(45)
-        self.force_temperature_update(timestamp=next(self.__timeline))
-        # paranoia
-        self.assertAlmostEqual(self.__clients.consumer_thermometer.get_temperature(), 45)
+        self.set_temperature_file_and_update('consumer', 45, timestamp=next(self.__timeline))
+        # paranoia (testing test-code)
+        self.assertAlmostEqual(self.get_temperature_dbus('consumer'), 45)
 
         # pump still on (hysteresis lower bound is 3)
-        self.__clients.circuit.poll(next(self.__timeline))
-        self.assertTrue(self.__clients.pump_switch.get_state())
+        self.poll_circuit('TestCircuit', timestamp=next(self.__timeline))
+        self.assertTrue(self.get_switchstate_file('pump'))
         
         # consume even more heat; difference goes below 3
-        self.__plant.consumer_file_thermometer.set_temperature(48)
-        self.force_temperature_update(timestamp=next(self.__timeline))
-        # paranoia
-        self.assertAlmostEqual(self.__clients.consumer_thermometer.get_temperature(), 48)
+        self.set_temperature_file_and_update('consumer', 48, timestamp=next(self.__timeline))
+        # paranoia (testing test-code)
+        self.assertAlmostEqual(self.get_temperature_dbus('consumer'), 48)
 
         # pump off
-        self.__clients.circuit.poll(next(self.__timeline))
-        self.assertFalse(self.__clients.pump_switch.get_state())
-        
+        self.poll_circuit('TestCircuit', timestamp=next(self.__timeline))
+        self.assertFalse(self.get_switchstate_file('pump'))
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(CircuitsTest))

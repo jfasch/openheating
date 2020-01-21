@@ -67,25 +67,10 @@ Stack (Hanging)
   * do we need both ThermometerService(background_updates=(bool), ...)
     *and* config SET_UPDATE_INTERVAL(0)? suppose not
 
-* PlantTestCase: add more integrated way of doing thermometer
-  updates. PlantTestCase defines the tempdir, so he should know where
-  the thermometers live. its just that the .pyconf snippet defines the
-  thermometers names, so these might not be the same as the
-  thermometer names. couple these together and provide
-
-  * PlantTestCase.set_temperature(name, temperature)
-  * PlantTestCase.update_temperature(name)
-
-  Or even 
-
-  * PlantTestCase.set_temperature(name, temperature, timestamp)
-
-  Further:
-
-  * Remove SimplePlant.consumer_file_thermometer etc
-
 * dbussuite_circuits and dbussuite_faschingbauer += PlantTestCase
   convenience
+
+* remove circuits name, description from base. add in config.
 
 Todo
 ====

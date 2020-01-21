@@ -1,7 +1,6 @@
 from .error import HeatingError
 
 from abc import ABCMeta, abstractmethod
-import tempfile
 
 
 class Thermometer(metaclass=ABCMeta):

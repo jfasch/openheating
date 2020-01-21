@@ -5,6 +5,7 @@ from ..base.thermometer import FileThermometer
 from ..base.switch import FileSwitch
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
+from ..dbus.circuit_center import CircuitCenter_Client
 from ..plant.service import Service, ThermometerService, SwitchService
 from ..plant import dbusutil
 
@@ -113,10 +114,21 @@ class PlantTestCase(unittest.TestCase):
         # modify temperature
         thfile = os.path.join(self.__thermometer_service.simulation_dir, name)
         self.assertTrue(os.path.isfile(thfile))
-        FileThermometer(thfile).set_temperature(7)
+        FileThermometer(thfile).set_temperature(value)
 
         # force service to do an update
         self.__thermometer_service.thermometer_client(self.bus, name).force_update(timestamp)
+
+    def set_temperature_files_and_update(self, namevaluedict, timestamp):
+        ''''namevaluedict' is a dictionary { 'name': float(value) },
+        containing values to be written to the associated simulation
+        files. Write those, and force-update all relevant dbus
+        thermometer objects so the current temperature is available
+        for subsequent reads.
+
+        '''
+        for name, value in namevaluedict.items():
+            self.set_temperature_file_and_update(name, value, timestamp)
 
     def get_temperature_dbus(self, name):
         '''Over dbus, get the current temperature of the dbus object
@@ -164,3 +176,14 @@ class PlantTestCase(unittest.TestCase):
         self.assertIsNotNone(self.__switch_service.simulation_dir)
         FileSwitch(os.path.join(self.__switch_service.simulation_dir, name)).set_state(value)
 
+    def activate_circuit(self, name):
+        return CircuitCenter_Client(self.bus).get_circuit(name).activate()
+
+    def deactivate_circuit(self, name):
+        return CircuitCenter_Client(self.bus).get_circuit(name).deactivate()
+
+    def is_circuit_active(self, name):
+        return CircuitCenter_Client(self.bus).get_circuit(name).is_active()
+
+    def poll_circuit(self, name, timestamp):
+        return CircuitCenter_Client(self.bus).get_circuit(name).poll(timestamp=timestamp)
