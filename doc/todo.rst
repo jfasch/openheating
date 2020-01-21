@@ -84,14 +84,8 @@ Stack (Hanging)
 
   * Remove SimplePlant.consumer_file_thermometer etc
 
-* switches service: simulation: ADD_SWITCH(name, description, switch)
-  ignores switch instance and creates file switch instead.
-
-  * make all that a set of PlantTestCase convenience methods. start in
-    dbussuite_thermometers.ThermometersSimulation
-  * remove GET_*() from config
-  * inspect dbussuite_switches and dbussuite_thermometers for
-    opportunities
+* dbussuite_circuits and dbussuite_faschingbauer += PlantTestCase
+  convenience
 
 Todo
 ====
@@ -290,3 +284,15 @@ Todo
     https://www.raspberrypi.org/documentation/configuration/device-tree.md#part4.6,
     UART0 takes the pins of GPIO 14,15, so I configured it away. 15
     still does not work though.
+
+* heatingisms
+
+  * PID controller
+
+    * example here: http://cgkit.sourceforge.net/doc2/pidcontroller.html#PIDController
+    * explanation: http://en.wikipedia.org/wiki/PID_controller
+
+  * Curve to adjust radiator temperature based on outside temperature
+
+    * Heizkurve (german):
+      http://www.heizungsfinder.de/heizung/heizkurve-einstellen

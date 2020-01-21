@@ -74,18 +74,13 @@ class ThermometersSimulation(PlantTestCase):
     def tearDown(self):
         super().tearDown()
 
-    def test__simulated_thermometers_dir__passed(self):
+    def test__simulation_dir__passed(self):
         thdir = self.__tmpdir.name+'/some/dir/to/contain/thermometers'
         config=self.tempfile(
             lines=[
                 'from openheating.base.thermometer import InMemoryThermometer',
-
-                # simulation is on. we expect the InMemoryThermometer
-                # to be ignored, in favor of an implicitly created
-                # FileThermometer instance. that instance is tied to
-                # file thdir/test_name which exists after the
-                # thermometer service has started.
-                'ADD_THERMOMETER("test_name", "test description", InMemoryThermometer(42))',
+                'assert IS_SIMULATION',
+                'ADD_THERMOMETER("test_name", "test description", None)',
             ],
             suffix='.thermometers-config',
         )
@@ -111,11 +106,13 @@ class ThermometersSimulation(PlantTestCase):
         # dbus communication.
         self.assertAlmostEqual(self.get_temperature_dbus('test_name'), 7)
 
-    def test__simulated_thermometers_dir__not_passed(self):
+    def test__simulation_dir__not_passed(self):
         temperature_file = self.tempfile(suffix='.temperature')
         config=self.tempfile(
             lines=[
                 'from openheating.base.thermometer import FileThermometer',
+
+                'assert not IS_SIMULATION',
 
                 # simulation is off. we expect the thermometer to be
                 # added as-is.
@@ -127,10 +124,10 @@ class ThermometersSimulation(PlantTestCase):
         )
         self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
-        # simulation is off, so thermometer must have been taken as-is
-        # => file contains the initial value as specified by config.
-        file_thermometer = FileThermometer(temperature_file.name)
-        self.assertAlmostEqual(file_thermometer.get_temperature(), 42)
+        # simulation is off, so the thermometer must have been taken
+        # as-is => file contains the initial value as specified by
+        # config.
+        self.assertAlmostEqual(FileThermometer(temperature_file.name).get_temperature(), 42)
 
     def test__force_update_of_file_thermometer(self):
         # usually thermometer updates are done by the thermometer

@@ -1,5 +1,6 @@
 from openheating.base.error import HeatingError
 from openheating.base.thermometer import FileThermometer
+from openheating.base.switch import FileSwitch
 
 import logging
 import os.path
@@ -25,19 +26,9 @@ class ThermometersConfig:
 
     def get_update_interval(self):
         return self.__update_interval
+
     def set_update_interval(self, secs):
         self.__update_interval = secs
-
-    def add_thermometer(self, name, description, th):
-        if name in [name for name,_,_ in self.__thermometers]:
-            raise DuplicateName(name)
-
-        if self.__simulation_dir is not None:
-            thfile = os.path.join(self.__simulation_dir, name)
-            logging.info('simulation mode: thermometer {}: ignoring {} in favor of {}'.format(name, str(th), thfile))
-            th = FileThermometer(thfile, initial_value=20) # initial_value actually creates the file
-
-        self.__thermometers.append((name, description, th))
 
     def get_thermometers(self):
         return self.__thermometers
@@ -45,44 +36,65 @@ class ThermometersConfig:
     def parse(self, path, bus):
         context = {
             'GET_BUS': lambda: bus,
-            'GET_UPDATE_INTERVAL': self.get_update_interval,
             'SET_UPDATE_INTERVAL': self.set_update_interval,
-            'ADD_THERMOMETER': self.add_thermometer,
-            'GET_THERMOMETERS': self.get_thermometers,
+            'ADD_THERMOMETER': self.__add_thermometer,
+            'IS_SIMULATION': self.__simulation_dir is not None,
         }
         with open(path) as f:
             source = f.read()
             code = compile(source, path, 'exec')
             exec(code, context)
 
+    def __add_thermometer(self, name, description, th=None):
+        if name in [name for name,_,_ in self.__thermometers]:
+            raise DuplicateName(name)
+
+        if self.__simulation_dir is None:
+            if th is None:
+                raise HeatingError('cannot ADD_THERMOMETER "{}" as None when not simulating'.format(name))
+        else:
+            if th is not None:
+                raise HeatingError('cannot ADD_THERMOMETER "{}" as not None when simulating'.format(name))
+            thfile = os.path.join(self.__simulation_dir, name)
+            logging.info('simulation mode: thermometer "{}": ignoring {} in favor of {}'.format(name, str(th), thfile))
+            th = FileThermometer(thfile, initial_value=20) # initial_value actually creates the file
+
+        self.__thermometers.append((name, description, th))
+
 class SwitchesConfig:
-    def __init__(self):
-        self.__simulated_switches_dir = None
+    def __init__(self, simulation_dir):
+        self.__simulation_dir = simulation_dir
         self.__switches = [] # [(name, description, thermometer)]
 
-    def get_simulated_switches_dir(self):
-        return self.__simulated_switches_dir
-    def set_simulated_switches_dir(self, path):
-        self.__simulated_switches_dir = path
-    
-    def add_switch(self, name, description, sw):
-        if name in [name for name,_,_ in self.__switches]:
-            raise DuplicateName(name)
-        self.__switches.append((name, description, sw))
     def get_switches(self):
         return self.__switches
 
     def parse(self, path, bus):
         context = {
             'GET_BUS': lambda: bus,
-            'GET_SIMULATED_SWITCHES_DIR': self.get_simulated_switches_dir,
-            'ADD_SWITCH': self.add_switch,
-            'GET_SWITCHES': self.get_switches,
+            'ADD_SWITCH': self.__add_switch,
+            'IS_SIMULATION': self.__simulation_dir is not None,
         }
         with open(path) as f:
             source = f.read()
             code = compile(source, path, 'exec')
             exec(code, context)
+
+    def __add_switch(self, name, description, sw=None):
+        if name in [name for name,_,_ in self.__switches]:
+            raise DuplicateName(name)
+
+        if self.__simulation_dir is None:
+            if sw is None:
+                raise HeatingError('cannot ADD_SWITCH "{}" as None when not simulating'.format(name))
+        else:
+            if sw is not None:
+                raise HeatingError('cannot ADD_SWITCH "{}" as not None when simulating'.format(name))
+            swfile = os.path.join(self.__simulation_dir, name)
+            logging.info('simulation mode: switch "{}": ignoring {} in favor of {}'.format(name, str(sw), swfile))
+            sw = FileSwitch(swfile, initial_value=False) # initial_value actually creates the file
+
+        self.__switches.append((name, description, sw))
 
 class CircuitsConfig:
     def __init__(self):

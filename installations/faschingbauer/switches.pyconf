@@ -25,17 +25,8 @@ _switches = [
     ('relay_15', 'Relay 15', 21),
 ]
 
-if GET_SIMULATED_SWITCHES_DIR():
-    for name, description, _ in _switches:
-        ADD_SWITCH(name, description,
-                   FileSwitch(
-                       os.path.join(GET_SIMULATED_SWITCHES_DIR(), name),
-                       initial_value = False)
-        )
-else:
-    for name, description, pin in _switches:
-        ADD_SWITCH(name, description,
-                   gpio.output(
-                       chiplabel = 'pinctrl-bcm2835', 
-                       offset = pin)
-        )
+for name, description, pin in _switches:
+    if IS_SIMULATION:
+        ADD_SWITCH(name, description)
+    else:
+        ADD_SWITCH(name, description, gpio.output(chiplabel = 'pinctrl-bcm2835', offset = pin))

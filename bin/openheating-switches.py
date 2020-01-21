@@ -16,9 +16,8 @@ import os
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus switch service')
 parser.add_argument('--config', help='Configuration file')
-parser.add_argument('--simulated-switches-dir', metavar='DIR', 
-                    help='Create "switch" files in DIR, and read/write states from/to there. '
-                    'DIR is created, and is passed into the config as "SIMULATED_SWITCHES_DIR".')
+parser.add_argument('--simulation-dir', metavar='DIR', 
+                    help='Create "switch" files in DIR, and read/write states from/to there.')
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
@@ -28,11 +27,9 @@ logutil.configure_from_argparse(args)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
-config = SwitchesConfig()
-if args.simulated_switches_dir is not None:
-    os.makedirs(args.simulated_switches_dir, exist_ok=True)
-    config.set_simulated_switches_dir(args.simulated_switches_dir)
-
+if args.simulation_dir is not None:
+    os.makedirs(args.simulation_dir, exist_ok=True)
+config = SwitchesConfig(simulation_dir=args.simulation_dir)
 config.parse(args.config, bus=bus)
 
 objects = [

@@ -11,9 +11,8 @@ def input(name, description, chiplabel, offset):
     return switch(name=name, description=description, 
                   chiplabel=chiplabel, offset=offset, direction=DIRECTION_IN)
 
-def output(name, description, chiplabel, offset):
-    return switch(name=name, description=description, 
-                  chiplabel=chiplabel, offset=offset, direction=DIRECTION_OUT)
+def output(chiplabel, offset):
+    return switch(chiplabel=chiplabel, offset=offset, direction=DIRECTION_OUT)
 
 def switch(chiplabel, offset, direction):
     if direction == DIRECTION_IN:

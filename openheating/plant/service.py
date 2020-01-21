@@ -3,6 +3,7 @@ from . import dbusutil
 from ..base.error import HeatingError
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
+from ..dbus.switch_center import SwitchCenter_Client
 
 import pydbus
 
@@ -182,14 +183,24 @@ class ThermometerService(Service):
         return ThermometerCenter_Client(bus).get_thermometer(name)        
 
 class SwitchService(Service):
-    def __init__(self, config, simulated_switches_dir=None):
+    def __init__(self, config, simulation_dir=None):
+        self.__simulation_dir = simulation_dir
+
         args = ['--config', config]
-        if simulated_switches_dir is not None:
-            args += ['--simulated-switches-dir', simulated_switches_dir]
+        if self.__simulation_dir is not None:
+            args += ['--simulation-dir', self.__simulation_dir]
 
         super().__init__(exe='openheating-switches.py',
                          busname=names.Bus.SWITCHES,
                          args=args)
+
+    @property
+    def simulation_dir(self):
+        return self.__simulation_dir
+
+    def switch_client(self, bus, name):
+        '''convenience method, for use by tests'''
+        return SwitchCenter_Client(bus).get_switch(name)
 
 class CircuitService(Service):
     def __init__(self, config):
@@ -220,10 +231,10 @@ class ManagedObjectTesterService(Service):
         )
 
 class PlantRunnerService(Service):
-    def __init__(self, config, simulated_dir):
+    def __init__(self, config, simulation_dir):
         args = ['--config', config]
-        if simulated_dir is not None:
-            args += ['--simulation-dir', simulated_dir]
+        if simulation_dir is not None:
+            args += ['--simulation-dir', simulation_dir]
 
         super().__init__(exe='openheating-runplant.py',
                          busname=names.Bus.RUNNER,

@@ -15,7 +15,7 @@ ADD_SERVICE(ThermometerService(
 ))
 ADD_SERVICE(SwitchService(
     config = configdir + '/switches.pyconf',
-    simulated_switches_dir = GET_SIMULATION_DIR() + '/switches',
+    simulation_dir = GET_SIMULATION_DIR() + '/switches',
 ))
 ADD_SERVICE(CircuitService(
     config = configdir + '/circuits.pyconf',

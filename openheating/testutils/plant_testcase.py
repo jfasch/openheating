@@ -2,6 +2,7 @@ from . import testutils
 
 from ..base.error import HeatingError
 from ..base.thermometer import FileThermometer
+from ..base.switch import FileSwitch
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..plant.service import Service, ThermometerService, SwitchService
@@ -129,3 +130,37 @@ class PlantTestCase(unittest.TestCase):
         '''Via DBus client, force an update of all thermometers'''
         client = ThermometerCenter_Client(self.bus)
         client.force_update(timestamp)
+
+    def get_switchstate_dbus(self, name):
+        '''Talking to the dbus object associated with 'name', get the switch
+        state.
+        '''
+        self.assertIsNotNone(self.__switch_service)
+        return self.__switch_service.switch_client(self.bus, name).get_state()
+
+    def set_switchstate_dbus(self, name, value):
+        '''Talking to the dbus object associated with 'name', set the switch
+        state.
+
+        '''
+        self.assertIsNotNone(self.__switch_service)
+        self.__switch_service.switch_client(self.bus, name).set_state(value)
+
+    def get_switchstate_file(self, name):
+        '''Reading the switch-file associated with 'name', get the switch
+        state.
+
+        '''
+        self.assertIsNotNone(self.__switch_service)
+        self.assertIsNotNone(self.__switch_service.simulation_dir)
+        return FileSwitch(os.path.join(self.__switch_service.simulation_dir, name)).get_state()
+
+    def set_switchstate_file(self, name, value):
+        '''Writing the switch-file associated with 'name', set the switch
+        state.
+
+        '''
+        self.assertIsNotNone(self.__switch_service)
+        self.assertIsNotNone(self.__switch_service.simulation_dir)
+        FileSwitch(os.path.join(self.__switch_service.simulation_dir, name)).set_state(value)
+
