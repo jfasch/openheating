@@ -2,6 +2,7 @@ from . import dbusutil
 
 from ..base.error import HeatingError
 from ..dbus import names
+from ..dbus.thermometer_center import ThermometerCenter_Client
 
 import pydbus
 
@@ -157,15 +158,28 @@ def _indent_str(s):
 
 class ThermometerService(Service):
     def __init__(self, config, background_updates=True, simulation_dir=None):
+        self.__simulation_dir = simulation_dir
+
         args = ['--config', config]
-        if simulation_dir is not None:
-            args += ['--simulation-dir', simulation_dir]
+        if self.__simulation_dir is not None:
+            args += ['--simulation-dir', self.__simulation_dir]
         if not background_updates:
             args += ['--update-interval', '0']
 
         super().__init__(exe='openheating-thermometers.py',
                          busname=names.Bus.THERMOMETERS,
                          args=args)
+
+    @property
+    def simulation_dir(self):
+        return self.__simulation_dir
+
+    def center_client(self, bus):
+        '''convenience method, for use by tests'''
+        return ThermometerCenter_Client(bus)
+    def thermometer_client(self, bus, name):
+        '''convenience method, for use by tests'''
+        return ThermometerCenter_Client(bus).get_thermometer(name)        
 
 class SwitchService(Service):
     def __init__(self, config, simulated_switches_dir=None):

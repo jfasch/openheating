@@ -1,13 +1,15 @@
 from . import testutils
 
 from ..base.error import HeatingError
+from ..base.thermometer import FileThermometer
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
-from ..plant.service import Service
+from ..plant.service import Service, ThermometerService, SwitchService
 from ..plant import dbusutil
 
 import pydbus
 
+import os.path
 import tempfile
 import unittest
 
@@ -42,6 +44,12 @@ class PlantTestCase(unittest.TestCase):
         self.__tempdirs = []
         self.__tempfiles = []
         self.__bus = None
+
+        # we do extra stuff with those, like maintain tempdirs, and
+        # provide convenience methods for tests
+        self.__thermometer_service = None
+        self.__switch_service = None
+
     def tearDown(self):
         if self.__plant:
             self.__plant.shutdown(print_stderr=self.__is_failure)
@@ -50,16 +58,27 @@ class PlantTestCase(unittest.TestCase):
         for f in self.__tempfiles:
             f.close()
 
+        self.__thermometer_service = None
+        self.__switch_service = None
+
     def start_plant(self, plant):
         self.__plant = plant
         self.__plant.startup(find_exe=testutils.find_executable, 
                              bus_kind=dbusutil.BUS_KIND_SESSION,
                              common_args=['--log-level', 'debug'])
 
+        for s in self.__plant.running_services:
+            if isinstance(s, ThermometerService):
+                self.__thermometer_service = s
+            if isinstance(s, SwitchService):
+                self.__switch_service = s
+            
     def stop_plant(self):
         assert self.__plant is not None
         self.__plant.shutdown(print_stderr=False)
         self.__plant = None
+        self.__thermometer_service = None
+        self.__switch_service = None
 
     def tempdir(self, suffix=None):
         d = tempfile.TemporaryDirectory(prefix=self.__class__.__name__, suffix=suffix)
@@ -80,10 +99,31 @@ class PlantTestCase(unittest.TestCase):
             self.__bus = pydbus.SessionBus()
         return self.__bus
 
-    def get_thermometer_client(self, name):
-        '''Get a client object for a thermometer with name'''
-        center = ThermometerCenter_Client(self.bus)
-        return center.get_thermometer(name)
+    def set_temperature_file_and_update(self, name, value, timestamp):
+        '''Write temperature of thermometer 'name' to associated simulation
+        file. Force an update on the dbus themometer object associated
+        with 'name', so the current temperature is available for
+        subsequent reads.
+
+        '''
+        self.assertIsNotNone(self.__thermometer_service)
+        self.assertIsNotNone(self.__thermometer_service.simulation_dir)
+
+        # modify temperature
+        thfile = os.path.join(self.__thermometer_service.simulation_dir, name)
+        self.assertTrue(os.path.isfile(thfile))
+        FileThermometer(thfile).set_temperature(7)
+
+        # force service to do an update
+        self.__thermometer_service.thermometer_client(self.bus, name).force_update(timestamp)
+
+    def get_temperature_dbus(self, name):
+        '''Over dbus, get the current temperature of the dbus object
+        associated with 'name'.
+
+        '''
+        self.assertIsNotNone(self.__thermometer_service)
+        return self.__thermometer_service.thermometer_client(self.bus, name).get_temperature()
 
     def force_temperature_update(self, timestamp):
         '''Via DBus client, force an update of all thermometers'''

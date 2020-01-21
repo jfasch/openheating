@@ -11,6 +11,10 @@ class Plant:
     def running(self):
         return self.__running
 
+    @property
+    def running_services(self):
+        return self.__running_services
+
     def startup(self, find_exe, bus_kind, common_args):
         started = []
         start_error = None

@@ -90,9 +90,8 @@ Stack (Hanging)
   * make all that a set of PlantTestCase convenience methods. start in
     dbussuite_thermometers.ThermometersSimulation
   * remove GET_*() from config
-
-* make all that a set of PlantTestCase convenience methods. start in
-  dbussuite_thermometers.ThermometersSimulation
+  * inspect dbussuite_switches and dbussuite_thermometers for
+    opportunities
 
 Todo
 ====

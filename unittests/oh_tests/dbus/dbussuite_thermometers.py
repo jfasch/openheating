@@ -101,15 +101,15 @@ class ThermometersSimulation(PlantTestCase):
 
         self.assertTrue(os.path.isfile(thdir+'/test_name')) # has been created by service
 
-        # modify temperature
-        file_thermometer = FileThermometer(thdir+'/test_name')
-        file_thermometer.set_temperature(7)
+        # modify temperature via PlantTestCase convenience
+        # method. that goes to the file, sets the temperature, and
+        # forces a temperature update in the thermometer service.
+        self.set_temperature_file_and_update(name='test_name', value=7, 
+                                             timestamp=next(self.__timeline))
 
-        # force service to do an update
-        client = self.get_thermometer_client('test_name')
-        client.force_update(next(self.__timeline))
-
-        self.assertAlmostEqual(client.get_temperature(), 7)
+        # again, verify using convenience method. this time regular
+        # dbus communication.
+        self.assertAlmostEqual(self.get_temperature_dbus('test_name'), 7)
 
     def test__simulated_thermometers_dir__not_passed(self):
         temperature_file = self.tempfile(suffix='.temperature')
