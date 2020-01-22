@@ -56,8 +56,8 @@ class ThermometersConfig:
             if th is not None:
                 raise HeatingError('cannot ADD_THERMOMETER "{}" as not None when simulating'.format(name))
             thfile = os.path.join(self.__simulation_dir, name)
-            logging.info('simulation mode: thermometer "{}": ignoring {} in favor of {}'.format(name, str(th), thfile))
             th = FileThermometer(thfile, initial_value=20) # initial_value actually creates the file
+            logging.info('simulation mode; {} is in file {}'.format(name, thfile))
 
         self.__thermometers.append((name, description, th))
 
@@ -91,8 +91,8 @@ class SwitchesConfig:
             if sw is not None:
                 raise HeatingError('cannot ADD_SWITCH "{}" as not None when simulating'.format(name))
             swfile = os.path.join(self.__simulation_dir, name)
-            logging.info('simulation mode: switch "{}": ignoring {} in favor of {}'.format(name, str(sw), swfile))
             sw = FileSwitch(swfile, initial_value=False) # initial_value actually creates the file
+            logging.info('simulation mode; {} is in file {}'.format(name, swfile))
 
         self.__switches.append((name, description, sw))
 
