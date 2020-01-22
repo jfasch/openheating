@@ -32,17 +32,19 @@ if args.simulation_dir is not None:
 config = SwitchesConfig(simulation_dir=args.simulation_dir)
 config.parse(args.config, bus=bus)
 
-objects = [
-    ('/', SwitchCenter_Server(names=[name for name,_,_ in config.get_switches()]))
-]
+switch_objects = [] # for center to know
+path_n_objects = [] # [(path, object)], to publish
 
 for name, description, switch in config.get_switches():
-    objects.append(('/switches/'+name, 
-                    Switch_Server(name=name, description=description, switch=switch)))
+    swobj = Switch_Server(name=name, description=description, switch=switch)
+    switch_objects.append(swobj)
+    path_n_objects.append(('/switches/'+name, swobj))
+
+path_n_objects.append(('/', SwitchCenter_Server(objects=switch_objects)))
 
 lifecycle.run_server(
     loop=loop,
     bus=bus,
     busname=names.Bus.SWITCHES,
-    objects=objects,
+    objects=path_n_objects,
 )

@@ -41,23 +41,25 @@ config.parse(args.config, bus=bus)
 if args.update_interval is not None:
     config.set_update_interval(args.update_interval)
 
-objects = [
-    ('/', ThermometerCenter_Server(names=[name for name,_,_ in config.get_thermometers()]))
-]
+thermometer_objects = [] # for center to know
+path_n_objects = [] # [(path, object)], to publish
 
 for name, description, thermometer in config.get_thermometers():
     history = History(duration=datetime.timedelta(days=1))
-    objects.append(('/thermometers/'+name,
-                    Thermometer_Server(
-                        name=name,
-                        description=description,
-                        thermometer=thermometer,
-                        update_interval=config.get_update_interval(),
-                        history=history)))
+    thobj = Thermometer_Server(
+        name=name,
+        description=description,
+        thermometer=thermometer,
+        update_interval=config.get_update_interval(),
+        history=history)
+    thermometer_objects.append(thobj)
+    path_n_objects.append(('/thermometers/'+name, thobj))
+
+path_n_objects.append(('/', ThermometerCenter_Server(objects=thermometer_objects)))
 
 lifecycle.run_server(
     loop=loop,
     bus=bus,
     busname=names.Bus.THERMOMETERS,
-    objects=objects,
+    objects=path_n_objects,
 )

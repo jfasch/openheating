@@ -27,17 +27,19 @@ bus = dbusutil.bus_from_argparse(args)
 config = CircuitsConfig()
 config.parse(args.config, bus=bus)
 
-objects = [
-    ('/', CircuitCenter_Server(names=[name for name,_,_ in config.get_circuits()]))
-]
+circuit_objects = [] # for center to know
+path_n_objects = [] # [(path, object)], to publish
 
 for name, description, circuit in config.get_circuits():
-    objects.append(('/circuits/'+name,
-                    Circuit_Server(name=name, description=description, circuit=circuit)))
+    cobj = Circuit_Server(name=name, description=description, circuit=circuit)
+    circuit_objects.append(cobj)
+    path_n_objects.append(('/circuits/'+name, cobj))
+
+path_n_objects.append(('/', CircuitCenter_Server(objects=circuit_objects)))
 
 lifecycle.run_server(
     loop=loop,
     bus=bus,
     busname=names.Bus.CIRCUITS,
-    objects=objects,
+    objects=path_n_objects,
 )
