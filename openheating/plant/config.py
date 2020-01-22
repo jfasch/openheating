@@ -121,7 +121,13 @@ class CircuitsConfig:
 class RunnerConfig:
     def __init__(self):
         self.__services = []
+        self.__interval = 4
         self.__simulation_dir = None
+
+    def get_interval(self):
+        return self.__interval
+    def set_interval(self, secs):
+        self.__interval = secs
 
     def get_simulation_dir(self):
         return self.__simulation_dir
@@ -136,6 +142,7 @@ class RunnerConfig:
     def parse(self, path, bus):
         context = {
             'GET_BUS': lambda: bus,
+            'SET_INTERVAL': self.set_interval,
             'GET_SIMULATION_DIR': self.get_simulation_dir,
             'ADD_SERVICE': self.add_service,
             'GET_SERVICES': self.get_services,
