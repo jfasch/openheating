@@ -21,7 +21,7 @@ dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
 
-logutil.configure_from_argparse(args)
+logutil.configure_from_argparse(args, componentname=names.Bus.ERRORS)
 loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 

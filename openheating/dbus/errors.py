@@ -23,8 +23,6 @@ class Errors_Client:
         return [node.DBusHeatingError.from_json(js) for js in self.__iface.get_errors()]
 
 
-logger = logging.getLogger('dbus-errors')
-
 @lifecycle.managed(startup='_start', shutdown='_stop')
 @node.Definition(interfaces=interface_repo.get(interface_repo.ERRORS))
 class Errors_Server:
@@ -43,9 +41,9 @@ class Errors_Server:
             e = node.DBusHeatingError.from_json(json_str)
             self.__errors.append(e)
         except json.JSONDecodeError as e:
-            logger.exception('cannot parse error details')
+            logging.exception('cannot parse error details')
 
     def _start(self):
-        logger.info('starting')
+        logging.info('starting')
     def _stop(self):
-        logger.info('stopping')
+        logging.info('stopping')

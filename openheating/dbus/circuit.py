@@ -3,6 +3,9 @@ from . import error
 from . import interface_repo
 
 from ..base.circuit import Circuit
+from ..base import timeutil
+
+import logging
 
 
 class Circuit_Client:
@@ -46,6 +49,7 @@ class Circuit_Server:
         self.__name = name
         self.__description = description
         self.__circuit = circuit
+        self.__logger = logging.getLogger(self.__name)
 
     def get_name(self):
         return self.__name
@@ -54,13 +58,16 @@ class Circuit_Server:
         return self.__description
 
     def activate(self):
+        self.__logger.debug('activate')
         return self.__circuit.activate()
 
     def deactivate(self):
+        self.__logger.debug('deactivate')
         return self.__circuit.deactivate()
 
     def is_active(self):
         return self.__circuit.is_active()
 
     def poll(self, timestamp):
+        self.__logger.debug('poll, ts={}({})'.format(timestamp, timeutil.unix2dt(timestamp)))
         return self.__circuit.poll(timestamp)

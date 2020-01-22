@@ -32,8 +32,10 @@ def add_log_options(parser):
                         type=_str2level,
                         default=logging.WARNING)
 
-def configure_from_argparse(args):
-    logging.basicConfig(level=args.log_level)
+def configure_from_argparse(args, componentname):
+    logging.basicConfig(
+        level=args.log_level,
+        format='%(asctime)s:%(levelname)s:{componentname}:%(name)s: %(message)s'.format(componentname=componentname))
 
 def get_log_config_from_argparse(args):
     return ['--log-level', _level2str(args.log_level)]

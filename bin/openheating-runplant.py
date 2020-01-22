@@ -23,7 +23,7 @@ dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
 
-logutil.configure_from_argparse(args)
+logutil.configure_from_argparse(args, componentname=names.Bus.RUNNER)
 
 loop = GLib.MainLoop()
 buskind = dbusutil.buskind_from_argparse(args)

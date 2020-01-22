@@ -15,8 +15,6 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 
-logger = logging.getLogger('dbus-thermometer')
-
 class Thermometer_Client(Thermometer):
     def __init__(self, proxy):
         self.proxy = proxy
@@ -78,6 +76,8 @@ class Thermometer_Server:
         self.__update_interval = update_interval
         self.__update_timer_tag = None
 
+        self.__logger = logging.getLogger(self.__name)
+
     def get_name(self):
         return self.__name
 
@@ -100,7 +100,7 @@ class Thermometer_Server:
     def __schedule_update(self):
         # submit work to the background thread, *not* waiting for the
         # returned future object (alas, we don't want to block)
-        logger.debug('{}: scheduling update'.format(self.__name))
+        self.__logger.debug('scheduling update')
         self.__background_thread.submit(self.__update)
         return True # re-arm timer
 
@@ -116,11 +116,10 @@ class Thermometer_Server:
 
         try:
             current_temperature = self.__thermometer.get_temperature()
-            logger.debug('{} (update-thread): sensor has {} degrees'.format(
-                self.__name, current_temperature))
+            self.__logger.debug('(update-thread): sensor has {} degrees'.format(current_temperature))
             GLib.idle_add(self.__receive_update, time.time(), current_temperature, None)
         except Exception as e:
-            logger.exception('{} (update-thread): thermometer error'.format(self.__name))
+            self.__logger.exception('(update-thread): thermometer error')
             GLib.idle_add(self.__receive_update, time.time(), None, e)
 
     def __receive_update(self, timestamp, temperature, error):
@@ -132,29 +131,29 @@ class Thermometer_Server:
             self.__history.add(timestamp, temperature)
         self.__current_error = error
         if error is not None:
-            logger.error('{} error: {}'.format(self.__name, error))
+            self.__logger.error('{}'.format(error))
             self.emit_error(error)
 
     def _startup(self):
-        logger.info('{} starting'.format(self.__name))
+        self.__logger.info('starting')
 
         if self.__update_interval == 0:
-            logger.info('{}: no background updates desired'.format(self.__name))
+            self.__logger.info('no background updates desired')
         else:
             try:
                 temperature = self.__thermometer.get_temperature()
                 self.__make_current(timestamp=time.time(), temperature=temperature, error=None)
-                logger.debug('{} startup: successfully read temperature -> {}'.format(self.__name, temperature))
+                self.__logger.debug('startup: successfully read temperature -> {}'.format(temperature))
             except HeatingError as e:
-                logger.exception('{} startup: cannot read temperature'.format(self.__name))
+                self.__logger.exception('startup: cannot read temperature')
                 self.__make_current(timestamp=time.time(), temperature=None, error=e)
 
-            logger.info('{}: schedule temperature updates every {} seconds'.format(self.__name, self.__update_interval))
+            self.__logger.info('schedule temperature updates every {} seconds'.format(self.__update_interval))
             self.__background_thread = ThreadPoolExecutor(max_workers=1)
             self.__update_timer_tag = GLib.timeout_add_seconds(self.__update_interval, self.__schedule_update)
 
     def _shutdown(self):
-        logger.info('{}: stopping'.format(self.__name))
+        self.__logger.info('stopping')
         if self.__update_interval != 0:
             self.__background_thread.shutdown(wait=True)
             GLib.source_remove(self.__update_timer_tag)

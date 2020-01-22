@@ -1,3 +1,6 @@
+import datetime
+
+
 def delta2unix(delta):
     try:
         num = delta.total_seconds()
@@ -11,3 +14,6 @@ def dt2unix(dt):
         return dt.timestamp()
     except AttributeError:
         return dt
+
+def unix2dt(ts):
+    return datetime.datetime.fromtimestamp(ts)

@@ -4,6 +4,8 @@ from . import interface_repo
 
 from ..base.switch import Switch
 
+import logging
+
 
 class Switch_Client(Switch):
     def __init__(self, proxy):
@@ -39,6 +41,7 @@ class Switch_Server:
         self.__name = name
         self.__description = description
         self.__switch = switch
+        self.__logger = logging.getLogger(self.__name)
 
     def get_name(self):
         return self.__name
@@ -47,6 +50,7 @@ class Switch_Server:
         return self.__description
 
     def set_state(self, state):
+        self.__logger.debug('set {}'.format(state and '1' or '0'))
         self.__switch.set_state(state)
         
     def get_state(self):

@@ -21,7 +21,7 @@ parser.add_argument('--templates', default='./templates', help='Jinja2 templates
 parser.add_argument('--static', default='./static', help='static/ directory (default: ./static)')
 args = parser.parse_args()
 
-logutil.configure_from_argparse(args)
+logutil.configure_from_argparse(args, componentname='org.openheating.http')
 instance.app = FaschingbauerApp(
     flask_args = {
         'template_folder': args.templates,

@@ -5,8 +5,6 @@ import signal
 import os
 
 
-lifecycle_logger = logging.getLogger('lifecycle')
-
 class managed:
     '''Class decorator to mark a class as participating in the
     startup/shutdown game
@@ -45,7 +43,7 @@ def run_server(loop, bus, busname, objects=None, signals=None):
     * subscribe for DBus signals
     '''
 
-    lifecycle_logger.info('starting objects')
+    logging.info('starting objects')
 
     if objects is None:
         objects = []
@@ -94,7 +92,7 @@ def run_server(loop, bus, busname, objects=None, signals=None):
 
     loop.run()
 
-    lifecycle_logger.info('stopping objects')
+    logging.info('stopping objects')
     for _, o in objects:
         shutdown = getattr(o, '_oh_lifecycle_shutdown', None)
         if shutdown is not None:

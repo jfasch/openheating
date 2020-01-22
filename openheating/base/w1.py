@@ -7,8 +7,6 @@ import os.path
 import logging
 
 
-logger = logging.getLogger('w1')
-
 _w1dir = '/sys/bus/w1/devices'
 _re_devdir = re.compile(r'^(\d+)-([0-9a-z]+)$')
 _re_crc = re.compile(r'^.*: crc=\S+\s+(\S*)$')
@@ -55,7 +53,7 @@ class W1Thermometer(Thermometer):
             crc_match = _re_crc.search(line)
             if crc_match:
                   if crc_match.group(1) != 'YES':
-                      logger.exception('{}: CRC error reading file {}'.format(self.name, filename))
+                      logging.exception('{}: CRC error reading file {}'.format(self.name, filename))
                       raise W1ReadError(name=self.name, filename=filename)
 
             temp_match = _re_temp.search(line)
