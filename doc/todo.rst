@@ -42,6 +42,9 @@ Stack (Hanging)
       basically the question. should be consistent with the exes.
     * fix plant.pyconf
 
+  * Runner polling interval via .pyconf
+  * Service += poll()
+
 Todo
 ====
 

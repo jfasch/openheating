@@ -17,7 +17,10 @@ class Runner_Server:
         self.__plant.startup(
             find_exe=self.__find_exe,
             bus_kind=self.__bus_kind,
-            common_args=self.__common_args)
+            common_args=self.__common_args,
+            # don't eat children's stderr but rather let it go
+            capture_stderr=False,
+        )
 
     def _stop(self):
         self.__plant.shutdown()

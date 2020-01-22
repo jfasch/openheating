@@ -4,6 +4,7 @@ from openheating.plant.plant import Plant
 from openheating.plant import service
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus.switch_center import SwitchCenter_Client
+from openheating.dbus.circuit_center import CircuitCenter_Client
 
 import unittest
 import os.path
@@ -19,6 +20,10 @@ class FaschingbauerTest(PlantTestCase):
 
     @PlantTestCase.intercept_failure
     def test__basic(self):
+        # run the plant components directly (simply to check if the
+        # basis is ok before we start hammering on it running as a
+        # compound system).
+
         self.start_plant(Plant([
             service.ThermometerService(
                 config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'thermometers.pyconf'),
@@ -43,6 +48,10 @@ class FaschingbauerTest(PlantTestCase):
 
         switch_center = SwitchCenter_Client(self.bus)
         self.assertIn('ww', switch_center.all_names())
+
+        circuit_center = CircuitCenter_Client(self.bus)
+        self.assertIn('ww', circuit_center.all_names())
+        
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FaschingbauerTest))

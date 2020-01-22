@@ -22,14 +22,19 @@ class Service:
         self.__bus_kind = None
         self.__process = None # valid once started
         self.__cmdline = None # valid once started
+        self.__capture_stderr = None # bool; valid once started
 
     @property
     def busname(self):
         return self.__busname
 
-    def start(self, find_exe, bus_kind, common_args):
+    def start(self, find_exe, bus_kind, common_args, capture_stderr):
+        assert type(capture_stderr) is bool
         assert self.__bus_kind is None
+        assert self.__capture_stderr is None
+
         self.__bus_kind = bus_kind
+        self.__capture_stderr = capture_stderr
 
         the_exe = find_exe(self.__exe)
         if the_exe is None:
@@ -45,7 +50,10 @@ class Service:
 
         # start service, and wait until its busname appears.
         self.__insist_busname_available()
-        self.__process = subprocess.Popen(argv, stderr=subprocess.PIPE, universal_newlines=True)
+        if self.__capture_stderr:
+            self.__process = subprocess.Popen(argv, stderr=subprocess.PIPE, universal_newlines=True)
+        else:
+            self.__process = subprocess.Popen(argv, universal_newlines=True)
         self.__insist_busname_taken()
 
     def stop(self):
@@ -66,8 +74,6 @@ class Service:
             self.__process.kill()
             self.__process.wait()
 
-        _, stderr = self.__process.communicate()
-
         # wait for busname to disappear
         with self._bus() as bus:
             proxy = bus.get('org.freedesktop.DBus', '/org/freedesktop/DBus')['org.freedesktop.DBus']
@@ -81,6 +87,11 @@ class Service:
                 # hmm. process has terminated? name still taken?
                 self.fail('{busname} still on the bus after "{cmdline}" has exited (?)'.format(
                     busname=self.__busname, cmdline=' '.join(self.__argv)))
+
+        if self.__capture_stderr:
+            _, stderr = self.__process.communicate()
+        else:
+            stderr = '(not captured)'
 
         if self.__process.returncode != 0:
             raise HeatingError('stop: name {busname} exited with status {status}, '

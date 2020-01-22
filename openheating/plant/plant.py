@@ -1,11 +1,14 @@
 from openheating.base.error import HeatingError
 
+import sys
+
 
 class Plant:
     def __init__(self, services):
-        self.__registered_services = services
+        self.__registered_services = services[:]
         self.__running_services = []
         self.__running = False
+        self.__capture_stderr = None # bool; valid after startup
 
     @property
     def running(self):
@@ -15,19 +18,25 @@ class Plant:
     def running_services(self):
         return self.__running_services
 
-    def startup(self, find_exe, bus_kind, common_args):
+    def startup(self, find_exe, bus_kind, common_args, capture_stderr):
+        assert type(capture_stderr) is bool
+        self.__capture_stderr = capture_stderr
+
         started = []
         start_error = None
         while len(self.__registered_services):
             s = self.__registered_services[0]
-            s.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args)
+            s.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args, capture_stderr=self.__capture_stderr)
             del self.__registered_services[0]
             self.__running_services.insert(0, s)
         self.__running = True
 
     def shutdown(self, print_stderr=False):
+        assert not print_stderr or self.__capture_stderr, 'can only print stderr when captured'
+
         stderrs = []
         errors = []
+
         for s in reversed(self.__running_services):
             try:
                 stderr = s.stop()

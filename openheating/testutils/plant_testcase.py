@@ -67,7 +67,10 @@ class PlantTestCase(unittest.TestCase):
         self.__plant = plant
         self.__plant.startup(find_exe=testutils.find_executable, 
                              bus_kind=dbusutil.BUS_KIND_SESSION,
-                             common_args=['--log-level', 'debug'])
+                             common_args=['--log-level', 'debug'],
+                             # we print stderr on failure
+                             capture_stderr=True,
+        )
 
         for s in self.__plant.running_services:
             if isinstance(s, ThermometerService):
