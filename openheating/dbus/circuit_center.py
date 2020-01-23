@@ -25,14 +25,24 @@ class CircuitCenter_Client:
                 path='/circuits/'+name, 
                 iface=interface_repo.CIRCUIT))
 
+    @error.maperror
+    def poll(self, timestamp):
+        return self.__iface.poll(timestamp)
+
     def __get_object_iface(self, busname, path, iface):
         return self.__bus.get(busname, path)[iface]
 
 
-@node.Definition(interfaces=interface_repo.get(interface_repo.CIRCUITCENTER))
+@node.Definition(interfaces=interface_repo.get(
+    interface_repo.CIRCUITCENTER, 
+    interface_repo.POLLABLE))
 class CircuitCenter_Server:
     def __init__(self, objects):
         self.__objects = objects
 
     def all_names(self):
         return [o.get_name() for o in self.__objects]
+
+    def poll(self, timestamp):
+        for o in self.__objects:
+            o.poll(timestamp)

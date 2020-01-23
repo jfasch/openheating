@@ -10,7 +10,10 @@ from openheating.testutils.testutils import find_project_root
 
 configdir = find_project_root() + '/installations/faschingbauer'
 
-SET_INTERVAL(5)
+if IS_SIMULATION:
+    SET_INTERVAL(0) # no automatic polling
+else:
+    SET_INTERVAL(5)
 
 ADD_SERVICE(ThermometerService(
     config = configdir + '/thermometers.pyconf',

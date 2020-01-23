@@ -40,10 +40,15 @@ Stack (Hanging)
     * replace find_exe with exe_dir or None (->search in path)
     * same with the config files. installed or from source, that's
       basically the question. should be consistent with the exes.
-    * fix plant.pyconf
+    * fix plant.pyconf (remove GET_SIMULATION_DIR(), basically)
+
+* runner polls pollable services
 
   * Service += poll()
-
+  * Runner += poll() (for explicit/manual polling)
+  * FaschingbauerTest.test__manual_poll(): move manual polling into
+    PlantTestCase convenience toolset
+  * provide timeline as PlantTestCase convenience
 
 Todo
 ====

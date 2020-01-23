@@ -43,7 +43,9 @@ class Circuit_Client:
     def poll(self, timestamp):
         return self.__proxy.poll(timestamp)
 
-@node.Definition(interfaces=interface_repo.get(interface_repo.CIRCUIT))
+@node.Definition(interfaces=interface_repo.get(
+    interface_repo.CIRCUIT,
+    interface_repo.POLLABLE))
 class Circuit_Server:
     def __init__(self, name, description, circuit):
         self.__name = name

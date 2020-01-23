@@ -10,6 +10,30 @@ def get(*ifacenames):
     return ret
 
 
+POLLABLE = names.DOMAIN + '.Pollable'
+_repo[POLLABLE] = '''
+<interface name='{name}'>
+  <method name='poll'>
+    <arg type='t' name='timestamp' direction='in'/>
+  </method>
+</interface>
+'''.format(name=POLLABLE)
+
+ERROREMITTER = names.DOMAIN + '.ErrorEmitter'
+_repo[ERROREMITTER] = '''
+<interface name='{name}'>
+  <signal name="error">
+    <arg type="s" name="what" direction="out"/>
+  </signal>
+</interface>
+'''.format(name=ERROREMITTER)
+
+RUNNER = names.DOMAIN + '.Runner'
+_repo[RUNNER] = '''
+<interface name='{name}'>
+</interface>
+'''.format(name=RUNNER)
+
 THERMOMETER = names.DOMAIN + '.Thermometer'
 _repo[THERMOMETER] = '''
 <interface name='{name}'>
@@ -28,6 +52,26 @@ _repo[THERMOMETER] = '''
 </interface>
 '''.format(name=THERMOMETER)
 
+TEMPERATUREHISTORY = names.DOMAIN + '.TemperatureHistory'
+_repo[TEMPERATUREHISTORY] = '''
+<interface name='{name}'>
+  <method name='distill'>
+    <arg type='t' name='granularity' direction='in'/>
+    <arg type='t' name='duration' direction='in'/>
+    <arg type='a(td)' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=TEMPERATUREHISTORY)
+
+THERMOMETERCENTER = names.DOMAIN + '.ThermometerCenter'
+_repo[THERMOMETERCENTER] = '''
+<interface name='{name}'>
+  <method name='all_names'>
+    <arg type='as' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=THERMOMETERCENTER)
+
 SWITCH = names.DOMAIN + '.Switch'
 _repo[SWITCH] = '''
 <interface name='{name}'>
@@ -45,6 +89,15 @@ _repo[SWITCH] = '''
   </method>
 </interface>
 '''.format(name=SWITCH)
+
+SWITCHCENTER = names.DOMAIN + '.SwitchCenter'
+_repo[SWITCHCENTER] = '''
+<interface name='{name}'>
+  <method name='all_names'>
+    <arg type='as' name='response' direction='out'/>
+  </method>
+</interface>
+'''.format(name=SWITCHCENTER)
 
 CIRCUIT = names.DOMAIN + '.Circuit'
 _repo[CIRCUIT] = '''
@@ -68,15 +121,6 @@ _repo[CIRCUIT] = '''
 </interface>
 '''.format(name=CIRCUIT)
 
-SWITCHCENTER = names.DOMAIN + '.SwitchCenter'
-_repo[SWITCHCENTER] = '''
-<interface name='{name}'>
-  <method name='all_names'>
-    <arg type='as' name='response' direction='out'/>
-  </method>
-</interface>
-'''.format(name=SWITCHCENTER)
-
 CIRCUITCENTER = names.DOMAIN + '.CircuitCenter'
 _repo[CIRCUITCENTER] = '''
 <interface name='{name}'>
@@ -85,35 +129,6 @@ _repo[CIRCUITCENTER] = '''
   </method>
 </interface>
 '''.format(name=CIRCUITCENTER)
-
-ERROREMITTER = names.DOMAIN + '.ErrorEmitter'
-_repo[ERROREMITTER] = '''
-<interface name='{name}'>
-  <signal name="error">
-    <arg type="s" name="what" direction="out"/>
-  </signal>
-</interface>
-'''.format(name=ERROREMITTER)
-
-TEMPERATUREHISTORY = names.DOMAIN + '.TemperatureHistory'
-_repo[TEMPERATUREHISTORY] = '''
-<interface name='{name}'>
-  <method name='distill'>
-    <arg type='t' name='granularity' direction='in'/>
-    <arg type='t' name='duration' direction='in'/>
-    <arg type='a(td)' name='response' direction='out'/>
-  </method>
-</interface>
-'''.format(name=TEMPERATUREHISTORY)
-
-THERMOMETERCENTER = names.DOMAIN + '.ThermometerCenter'
-_repo[THERMOMETERCENTER] = '''
-<interface name='{name}'>
-  <method name='all_names'>
-    <arg type='as' name='response' direction='out'/>
-  </method>
-</interface>
-'''.format(name=THERMOMETERCENTER)
 
 ERRORS = names.DOMAIN + '.Errors'
 _repo[ERRORS] = '''
@@ -141,8 +156,3 @@ _repo[EXCEPTIONTESTER] = '''
 </interface>
 '''.format(name=EXCEPTIONTESTER)
 
-RUNNER = names.DOMAIN + '.Runner'
-_repo[RUNNER] = '''
-<interface name='{name}'>
-</interface>
-'''.format(name=RUNNER)

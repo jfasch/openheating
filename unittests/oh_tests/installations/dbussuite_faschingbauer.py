@@ -9,6 +9,7 @@ from openheating.dbus.circuit_center import CircuitCenter_Client
 import unittest
 import os.path
 import signal
+import itertools
 
 
 class FaschingbauerTest(PlantTestCase):
@@ -17,6 +18,8 @@ class FaschingbauerTest(PlantTestCase):
         self.__simulation_dir = self.tempdir(suffix='.simulation')
         self.__thermometers_dir = self.__simulation_dir.name + '/thermometers'
         self.__switches_dir = self.__simulation_dir.name + '/switches'
+
+        self.__timeline = itertools.count()
 
     @PlantTestCase.intercept_failure
     def test__basic(self):
@@ -52,6 +55,35 @@ class FaschingbauerTest(PlantTestCase):
         circuit_center = CircuitCenter_Client(self.bus)
         self.assertIn('ww', circuit_center.all_names())
         
+    @PlantTestCase.intercept_failure
+    def test__manual_poll(self):
+        self.start_plant(Plant([
+            service.PlantRunnerService(
+                config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
+                simulation_dir=self.__simulation_dir.name),
+        ]))
+
+        # paranoia: verify initial state. ("20" is set in the
+        # thermometer config code when simulation is wanted. probably
+        # not the best idea.)
+        self.assertAlmostEqual(self.get_temperature_dbus('SpeicherOben'), 20)
+        self.assertAlmostEqual(self.get_temperature_dbus('Holzbrenner'), 20)
+        self.assertFalse(self.get_switchstate_dbus('ww'))
+        self.assertFalse(self.is_circuit_active('ww'))
+
+        runner_client = Runner_Client(self.bus)
+
+        # activate circuit, and poll. no effect (no temperature
+        # difference).
+        self.activate_circuit('ww')
+        self.poll_plant(next(self.__timeline))
+        self.assertFalse(self.get_switchstate_file('ww'))
+        
+        # set holz temperature, poll again, effect
+        self.set_temperature_file_and_update('Holzbrenner', 40)
+        self.poll_plant(next(self.__timeline))
+        self.assertTrue(self.get_switchstate_file('ww'))
+
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(FaschingbauerTest))

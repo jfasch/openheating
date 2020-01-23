@@ -143,6 +143,7 @@ class RunnerConfig:
         context = {
             'GET_BUS': lambda: bus,
             'SET_INTERVAL': self.set_interval,
+            'IS_SIMULATION': self.__simulation_dir is not None,
             'GET_SIMULATION_DIR': self.get_simulation_dir,
             'ADD_SERVICE': self.add_service,
             'GET_SERVICES': self.get_services,
