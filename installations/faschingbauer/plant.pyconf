@@ -3,6 +3,7 @@
 from openheating.plant.service import ThermometerService
 from openheating.plant.service import SwitchService
 from openheating.plant.service import CircuitService
+from openheating.plant.service import ErrorService
 
 from openheating.testutils.testutils import find_project_root
 
@@ -22,3 +23,4 @@ ADD_SERVICE(SwitchService(
 ADD_SERVICE(CircuitService(
     config = configdir + '/circuits.pyconf',
 ))
+ADD_SERVICE(ErrorService())
