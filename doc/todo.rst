@@ -53,14 +53,11 @@ Stack (Hanging)
   * openheating-runplant.py is only another way to start a plant:
     interactively.
 
-* flatten plant startup
-
-  PlantRunnerService is currently the only service in the
-  Faschingbauer plant. That service starts all the contained ones,
-  which are not known to test cases in this constellation.
-
-  What's needed is a full list of services to start, *including* the
-  "main" service (the one that polls the others).
+* cleanup
+  
+  * check that config does not contain a main component already
+  * fix dbussuite_faschingbauer.py
+  * fix openheating-runplant.py
 
 Todo
 ====
