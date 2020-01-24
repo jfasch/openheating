@@ -4,12 +4,17 @@ from ..base.error import HeatingError
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..dbus.switch_center import SwitchCenter_Client
+from ..dbus.pollable_client import Pollable_Client
 
 import pydbus
 
 import tempfile
 import subprocess
 
+
+class BusnameTimeout(HeatingError):
+    def __init__(self, msg):
+        super().__init__(msg)
 
 class Service:
     def __init__(self, busname, exe, args=None):
@@ -102,6 +107,9 @@ class Service:
 
         return stderr
 
+    def poll(self, bus, timestamp):
+        logging.debug('poll {}, timestamp {}: nothing to do'.format(self.busname, timestamp))
+
     def _oh_bus_arg(self):
         'openheating service commandline option for bus selection'
         if self.__bus_kind == dbusutil.BUS_KIND_SESSION:
@@ -160,13 +168,20 @@ class Service:
             self.__process.terminate()
             self.__process.wait()
             _, stderr = self.__process.communicate()
-            raise HeatingError('start: name {busname} did not appear within timeout: "{cmdline}", stderr:\n{stderr}'.format(
+            raise BusnameTimeout('start: name {busname} did not appear within timeout: "{cmdline}", stderr:\n{stderr}'.format(
                 busname=self.__busname, 
-                cmdline=service_cmdline,
+                cmdline=self.__cmdline,
                 stderr=_indent_str(stderr)))
 
 def _indent_str(s):
-    return s.replace('\n', '\n    ')
+    return '\n'.join(['  * '+line for line in s.split('\n')])
+
+class MainService(Service):
+    def __init__(self, config):
+        super().__init__(
+            exe='openheating-main.py',
+            busname=names.Bus.MAIN,
+            args=['--config', config])
 
 class ThermometerService(Service):
     def __init__(self, config, background_updates=True, simulation_dir=None):
@@ -241,12 +256,26 @@ class ManagedObjectTesterService(Service):
             args=['--stamp-directory', stampdir],
         )
 
-class PlantRunnerService(Service):
-    def __init__(self, config, simulation_dir):
-        args = ['--config', config]
-        if simulation_dir is not None:
-            args += ['--simulation-dir', simulation_dir]
+class PollWitnessService(Service):
+    def __init__(self, witness):
+        super().__init__(
+            exe='openheating-poll-witness.py',
+            busname=names.Bus.POLLWITNESS,
+            args=['--witness', witness])
 
-        super().__init__(exe='openheating-runplant.py',
-                         busname=names.Bus.RUNNER,
-                         args=args)
+    def poll(self, bus, timestamp):
+        client = Pollable_Client(bus=bus, busname=names.Bus.POLLWITNESS, path='/')
+        client.poll(timestamp)
+
+class CrashTestDummyService(Service):
+    def __init__(self, no_busname=False, exit_before_busname_taken=False):
+        args=[]
+        if no_busname:
+            args.append('--no-busname')
+        if exit_before_busname_taken:
+            args.append('--exit-before-busname-taken')
+
+        super().__init__(
+            exe='openheating-crash-test-dummy.py',
+            busname=names.Bus.CRASHTESTDUMMY,
+            args=args)

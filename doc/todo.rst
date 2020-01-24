@@ -49,6 +49,21 @@ Stack (Hanging)
   * FaschingbauerTest.test__manual_poll(): move manual polling into
     PlantTestCase convenience toolset
   * provide timeline as PlantTestCase convenience
+  * rename "runner" to "main". simply bin/openheating.py
+  * openheating-runplant.py is only another way to start a plant:
+    interactively.
+
+* flatten plant startup
+
+  PlantRunnerService is currently the only service in the
+  Faschingbauer plant. That service starts all the contained ones,
+  which are not known to test cases in this constellation.
+
+  What's needed is a full list of services to start, *including* the
+  "main" service (the one that polls the others).
+
+* cleanup: implement __get_object_iface (many of them in terms of
+  dbus._util.*). examine all client wrappers.
 
 Todo
 ====

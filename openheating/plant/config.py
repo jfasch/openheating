@@ -118,7 +118,7 @@ class CircuitsConfig:
             code = compile(source, path, 'exec')
             exec(code, context)
 
-class RunnerConfig:
+class PlantConfig:
     def __init__(self):
         self.__services = []
         self.__interval = 4

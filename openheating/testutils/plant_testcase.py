@@ -6,6 +6,7 @@ from ..base.switch import FileSwitch
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..dbus.circuit_center import CircuitCenter_Client
+from ..dbus.main import MainPollable_Client
 from ..plant.service import Service, ThermometerService, SwitchService
 from ..plant import dbusutil
 
@@ -36,7 +37,7 @@ class PlantTestCase(unittest.TestCase):
             try:
                 return testmethod(*args, **kwargs)
             except:
-                self.__failure = True
+                self.__is_failure = True
                 raise
         return wrapper
 
@@ -190,3 +191,6 @@ class PlantTestCase(unittest.TestCase):
 
     def poll_circuit(self, name, timestamp):
         return CircuitCenter_Client(self.bus).get_circuit(name).poll(timestamp=timestamp)
+
+    def poll_main(self, timestamp):
+        return MainPollable_Client(self.bus).poll(timestamp=timestamp)

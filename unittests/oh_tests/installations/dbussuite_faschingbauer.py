@@ -57,6 +57,8 @@ class FaschingbauerTest(PlantTestCase):
         
     @PlantTestCase.intercept_failure
     def test__manual_poll(self):
+        self.fail('re-enable after flattening out plant services')
+
         self.start_plant(Plant([
             service.PlantRunnerService(
                 config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
