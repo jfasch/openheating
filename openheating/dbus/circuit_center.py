@@ -2,13 +2,15 @@ from . import interface_repo
 from . import node
 from . import error
 from . import names
+from . import _util
 from .circuit import Circuit_Client
 
 
 class CircuitCenter_Client:
     def __init__(self, bus):
         self.__bus = bus
-        self.__iface = self.__get_object_iface(
+        self.__iface = _util.get_iface(
+            bus=bus,
             busname=names.Bus.CIRCUITS,
             path='/',
             iface=interface_repo.CIRCUITCENTER)
@@ -19,18 +21,15 @@ class CircuitCenter_Client:
 
     @error.maperror
     def get_circuit(self, name):
-        return Circuit_Client(
-            proxy=self.__get_object_iface(
-                busname=names.Bus.CIRCUITS,
-                path='/circuits/'+name, 
-                iface=interface_repo.CIRCUIT))
+        return Circuit_Client(proxy=_util.get_iface(
+            bus=self.__bus, 
+            busname=names.Bus.CIRCUITS,
+            path='/circuits/'+name, 
+            iface=interface_repo.CIRCUIT))
 
     @error.maperror
     def poll(self, timestamp):
         return self.__iface.poll(timestamp)
-
-    def __get_object_iface(self, busname, path, iface):
-        return self.__bus.get(busname, path)[iface]
 
 
 @node.Definition(interfaces=interface_repo.get(

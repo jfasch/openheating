@@ -2,13 +2,15 @@ from . import interface_repo
 from . import node
 from . import error
 from . import names
+from . import _util
 from .thermometer import Thermometer_Client, TemperatureHistory_Client
 
 
 class ThermometerCenter_Client:
     def __init__(self, bus):
         self.__bus = bus
-        self.__iface = self.__get_object_iface(
+        self.__iface = _util.get_iface(
+            bus=bus,
             busname=names.Bus.THERMOMETERS,
             path='/',
             iface=interface_repo.THERMOMETERCENTER)
@@ -19,27 +21,24 @@ class ThermometerCenter_Client:
 
     @error.maperror
     def get_thermometer(self, name):
-        return Thermometer_Client(
-            proxy=self.__get_object_iface(
-                busname=names.Bus.THERMOMETERS,
-                path='/thermometers/'+name, 
-                iface=interface_repo.THERMOMETER))
+        return Thermometer_Client(proxy=_util.get_iface(
+            bus=self.__bus,
+            busname=names.Bus.THERMOMETERS,
+            path='/thermometers/'+name, 
+            iface=interface_repo.THERMOMETER))
 
     @error.maperror
     def get_history(self, name):
-        return TemperatureHistory_Client(
-            proxy=self.__get_object_iface(
-                busname=names.Bus.THERMOMETERS,
-                path='/thermometers/'+name, 
-                iface=interface_repo.TEMPERATUREHISTORY))
+        return TemperatureHistory_Client(proxy=_util.get_iface(
+            bus=self.__bus,
+            busname=names.Bus.THERMOMETERS,
+            path='/thermometers/'+name, 
+            iface=interface_repo.TEMPERATUREHISTORY))
 
     @error.maperror
     def force_update(self, timestamp):
         for name in self.all_names():
             self.get_thermometer(name).force_update(timestamp)
-
-    def __get_object_iface(self, busname, path, iface):
-        return self.__bus.get(busname, path)[iface]
 
 
 @node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETERCENTER))

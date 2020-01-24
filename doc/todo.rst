@@ -62,9 +62,6 @@ Stack (Hanging)
   What's needed is a full list of services to start, *including* the
   "main" service (the one that polls the others).
 
-* cleanup: implement __get_object_iface (many of them in terms of
-  dbus._util.*). examine all client wrappers.
-
 Todo
 ====
 
