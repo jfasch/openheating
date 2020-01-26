@@ -93,10 +93,7 @@ class Service:
                 self.fail('{busname} still on the bus after "{cmdline}" has exited (?)'.format(
                     busname=self.__busname, cmdline=' '.join(self.__argv)))
 
-        if self.__capture_stderr:
-            _, stderr = self.__process.communicate()
-        else:
-            stderr = '(not captured)'
+        stderr = self.__communicate_get_stderr()
 
         if self.__process.returncode != 0:
             raise HeatingError('stop: name {busname} exited with status {status}, '
@@ -152,14 +149,11 @@ class Service:
 
             # busname not yet taken. see if process has exited.
             try:
-                self.__process.wait(timeout=0)
-                _, stderr = self.__process.communicate()
-
                 raise HeatingError('start: {busname} not taken within timeout, "{cmdline}" has exited with status {status}, stderr:\n{stderr}'.format(
                     busname=self.__busname,
                     cmdline=self.__cmdline,
                     status=self.__process.returncode,
-                    stderr=_indent_str(stderr)))
+                    stderr=_indent_str(self.__communicate_get_stderr())))
             except subprocess.TimeoutExpired:
                 continue
         else:
@@ -167,11 +161,19 @@ class Service:
             # 1 second). terminate service process.
             self.__process.terminate()
             self.__process.wait()
-            _, stderr = self.__process.communicate()
+
             raise BusnameTimeout('start: name {busname} did not appear within timeout: "{cmdline}", stderr:\n{stderr}'.format(
                 busname=self.__busname, 
                 cmdline=self.__cmdline,
-                stderr=_indent_str(stderr)))
+                stderr=_indent_str(self.__communicate_get_stderr())))
+
+    def __communicate_get_stderr(self):
+        _, stderr = self.__process.communicate()
+        if self.__capture_stderr:
+            return stderr
+        assert stderr is None
+        return '(stderr not captured)'
+
 
 def _indent_str(s):
     return '\n'.join(['  * '+line for line in s.split('\n')])
@@ -268,12 +270,10 @@ class PollWitnessService(Service):
         client.poll(timestamp)
 
 class CrashTestDummyService(Service):
-    def __init__(self, no_busname=False, exit_before_busname_taken=False):
+    def __init__(self, no_busname=False):
         args=[]
         if no_busname:
             args.append('--no-busname')
-        if exit_before_busname_taken:
-            args.append('--exit-before-busname-taken')
 
         super().__init__(
             exe='openheating-crash-test-dummy.py',

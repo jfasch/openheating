@@ -4,26 +4,31 @@ from openheating.plant.service import ThermometerService
 from openheating.plant.service import SwitchService
 from openheating.plant.service import CircuitService
 from openheating.plant.service import ErrorService
+from openheating.plant.service import CrashTestDummyService
 
+# fix that
 from openheating.testutils.testutils import find_project_root
-
-
 configdir = find_project_root() + '/installations/faschingbauer'
 
 if IS_SIMULATION:
-    SET_INTERVAL(0) # no automatic polling
+    thermometer_simulation_dir = GET_SIMULATION_DIR() + '/thermometers',
+    switch_simulation_dir = GET_SIMULATION_DIR() + '/switches',
 else:
-    SET_INTERVAL(5)
+    thermometer_simulation_dir = None
+    switch_simulation_dir = None
 
 ADD_SERVICE(ThermometerService(
     config = configdir + '/thermometers.pyconf',
-    simulation_dir = GET_SIMULATION_DIR() + '/thermometers',
+    simulation_dir = thermometer_simulation_dir,
 ))
 ADD_SERVICE(SwitchService(
     config = configdir + '/switches.pyconf',
-    simulation_dir = GET_SIMULATION_DIR() + '/switches',
+    simulation_dir = switch_simulation_dir,
 ))
 ADD_SERVICE(CircuitService(
     config = configdir + '/circuits.pyconf',
 ))
 ADD_SERVICE(ErrorService())
+
+# testing service crashes
+# ADD_SERVICE(CrashTestDummyService(no_busname=True))

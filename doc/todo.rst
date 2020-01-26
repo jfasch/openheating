@@ -55,9 +55,19 @@ Stack (Hanging)
 
 * cleanup
   
+  * PlantConfig: do not pass bus - "main" must not use it in its
+    config, and so must nobody else.
   * check that config does not contain a main component already
   * fix dbussuite_faschingbauer.py
-  * fix openheating-runplant.py
+  * openheating-* (services): wrap config-reading into proper logging
+
+* fix openheating-runplant.py
+* plant-running test: when one service crashes, tear down the entire
+  plant -> signal handling?
+
+  * child handling in openheating-runplant.py (shutdown when we see
+    one)
+  * merge child handling into plant?
 
 Todo
 ====
