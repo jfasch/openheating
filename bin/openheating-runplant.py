@@ -36,9 +36,14 @@ buskind = dbusutil.buskind_from_argparse(args)
 bus = dbusutil.bus_from_argparse(args)
 
 plant_config = PlantConfig()
+
+# parse config with simluation settnigs in place
 plant_config.set_simulation_dir(args.simulation_dir)
 plant_config.parse(args.config)
+
+# add "main" service on top of what's there
 plant_config.add_service(MainService(config=args.config))
+
 
 the_plant = Plant(services=plant_config.get_services())
 
@@ -51,10 +56,13 @@ try:
         capture_stderr=False, # let stderr through
     )
 
-    signal.pthread_sigmask(signal.SIG_BLOCK, (signal.SIGINT, signal.SIGTERM))
+    signal.pthread_sigmask(signal.SIG_BLOCK, (signal.SIGINT, signal.SIGTERM, signal.SIGCHLD))
     while True:
-        sig = signal.sigwait((signal.SIGINT, signal.SIGTERM))
+        sig = signal.sigwait((signal.SIGINT, signal.SIGTERM, signal.SIGCHLD))
         if sig in (signal.SIGINT, signal.SIGTERM):
+            break
+        if sig == signal.SIGCHLD:
+            logging.error('child process died')
             break
         logging.error('wakeup for nothing?')
 finally:
