@@ -1,6 +1,8 @@
 import argparse
 import logging
 import sys
+import traceback
+import textwrap
 
 
 _levels = (
@@ -33,9 +35,22 @@ def add_log_options(parser):
                         default=logging.WARNING)
 
 def configure_from_argparse(args, componentname):
-    logging.basicConfig(
-        level=args.log_level,
-        format='%(asctime)s:%(levelname)s:{componentname}:%(name)s: %(message)s'.format(componentname=componentname))
+    class IndentExceptionFormatter(logging.Formatter):
+        def __init__(self, *args, exc_prefix, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.__exc_prefix = exc_prefix
+        def formatException(self, exc_info):
+            block = ''.join(traceback.format_exception(*exc_info))
+            block = textwrap.indent(text=block, prefix=self.__exc_prefix)
+            return block
+    
+    formatter = IndentExceptionFormatter(
+        '%(asctime)s:%(levelname)s:{componentname}:%(name)s: %(message)s'.format(componentname=componentname),
+        exc_prefix='    *** ')
+    stderr_handler = logging.StreamHandler(stream=sys.stderr)
+    stderr_handler.setFormatter(formatter)
+    stderr_handler.setLevel(args.log_level)
+    logging.getLogger().addHandler(stderr_handler)
 
 def get_log_config_from_argparse(args):
     return ['--log-level', _level2str(args.log_level)]
