@@ -24,7 +24,7 @@ loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 config = PlantConfig()
-config.parse(args.config, bus=bus)
+config.parse(args.config)
 
 main_object = Main_Server(bus=bus, services=config.get_services())
 

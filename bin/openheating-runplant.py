@@ -36,6 +36,7 @@ buskind = dbusutil.buskind_from_argparse(args)
 bus = dbusutil.bus_from_argparse(args)
 
 plant_config = PlantConfig()
+plant_config.set_simulation_dir(args.simulation_dir)
 plant_config.parse(args.config)
 plant_config.add_service(MainService(config=args.config))
 
