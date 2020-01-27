@@ -3,16 +3,6 @@ Stack (Hanging)
 
 * hotwater circuit overtake
 
-  * any commented-out tests in dbussuite_circuits?
-  * openheating-circuits.py
-  
-    * pyconf
-    * can we abstract *_Center? CircuitCenter would be the third.
-    * http: menu for circuits
-    * tests
-  
-      * poll_until(predicate, timeout)
-
 * toplevel main()-like thing. 
 
   * watchdog. could for example periodically check thermometers in
@@ -51,6 +41,9 @@ Stack (Hanging)
     * service: generate unit file (tests!)
     * generate the generator (.ac_subst). it runs early during boot,
       so it will be best to hardcode all paths into the executable.
+
+* http: menu for circuits
+
 
 Todo
 ====
