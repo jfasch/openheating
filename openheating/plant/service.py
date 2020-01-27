@@ -10,6 +10,7 @@ import pydbus
 
 import tempfile
 import subprocess
+import logging
 
 
 class BusnameTimeout(HeatingError):
@@ -54,6 +55,7 @@ class Service:
         self.__cmdline = ' '.join(argv)
 
         # start service, and wait until its busname appears.
+        logging.debug('starting {} ({})'.format(self.__busname, ' '.join(argv)))
         self.__insist_busname_available()
         if self.__capture_stderr:
             self.__process = subprocess.Popen(argv, stderr=subprocess.PIPE, universal_newlines=True)

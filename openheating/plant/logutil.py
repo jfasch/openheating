@@ -35,6 +35,7 @@ def add_log_options(parser):
                         default=logging.WARNING)
 
 def configure_from_argparse(args, componentname):
+    # specialize logging.Formatter to format exceptions as I like
     class IndentExceptionFormatter(logging.Formatter):
         def __init__(self, *args, exc_prefix, **kwargs):
             super().__init__(*args, **kwargs)
@@ -49,8 +50,17 @@ def configure_from_argparse(args, componentname):
         exc_prefix='    *** ')
     stderr_handler = logging.StreamHandler(stream=sys.stderr)
     stderr_handler.setFormatter(formatter)
-    stderr_handler.setLevel(args.log_level)
-    logging.getLogger().addHandler(stderr_handler)
+    
+    rootlogger = logging.getLogger()
+    rootlogger.addHandler(stderr_handler)
+    rootlogger.setLevel(args.log_level)
 
 def get_log_config_from_argparse(args):
+    '''Given a parsed args structure, determine the arguments that have
+    lead to its logging settings.
+
+    This is used to pass logging setting to child processes; pure
+    convenience.
+
+    '''
     return ['--log-level', _level2str(args.log_level)]

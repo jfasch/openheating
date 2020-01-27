@@ -44,16 +44,14 @@ plant_config.parse(args.config)
 # add "main" service on top of what's there
 plant_config.add_service(MainService(config=args.config))
 
-
 the_plant = Plant(services=plant_config.get_services())
 
 try:
     the_plant.startup(
-        find_exe=testutils.find_executable, # fix that somehow
-        bus_kind=buskind,
-        common_args=[], # could use that to pass common debug and log
-                        # settings in
-        capture_stderr=False, # let stderr through
+        find_exe = testutils.find_executable, # fix that somehow
+        bus_kind = buskind,
+        common_args = logutil.get_log_config_from_argparse(args),
+        capture_stderr = False, # let stderr through
     )
 
     signal.pthread_sigmask(signal.SIG_BLOCK, (signal.SIGINT, signal.SIGTERM, signal.SIGCHLD))

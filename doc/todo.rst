@@ -26,7 +26,7 @@ Stack (Hanging)
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
 
-* plant runner service
+* plant-running
 
   * add missing services
 
@@ -38,20 +38,19 @@ Stack (Hanging)
   * Service.start()
 
     * replace find_exe with exe_dir or None (->search in path)
-    * same with the config files. installed or from source, that's
-      basically the question. should be consistent with the exes.
-    * fix plant.pyconf (remove GET_SIMULATION_DIR(), basically)
+    * same with config directory
+    * all in all: find a way to properly ifferentiate between
 
-* runner polls pollable services
+      * from source -> testutils
+      * installed -> need bindir, libdir etc from setup.py
 
-  * Service += poll()
-  * Runner += poll() (for explicit/manual polling)
-  * FaschingbauerTest.test__manual_poll(): move manual polling into
-    PlantTestCase convenience toolset
-  * provide timeline as PlantTestCase convenience
-  * rename "runner" to "main". simply bin/openheating.py
-  * openheating-runplant.py is only another way to start a plant:
-    interactively.
+    * fix plant.pyconf accordingly
+
+  * systemd generator
+
+    * service: generate unit file (tests!)
+    * generate the generator (.ac_subst). it runs early during boot,
+      so it will be best to hardcode all paths into the executable.
 
 Todo
 ====
