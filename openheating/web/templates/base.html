@@ -17,7 +17,12 @@
 	{% for entry in menu.entries %}
 	<div class="oh-menu-entry">
 	  <a href="{{entry.url}}">
-    	    <img src="{{entry.image_url}}" alt="{{entry.alt}}"/>
+    	    <img
+	      {% if entry.image_url %}
+	      src="{{entry.image_url}}"
+	      {% endif %}
+	      alt="{{entry.alt}}"
+	      />
           </a>
 	</div>
 	{% endfor %}

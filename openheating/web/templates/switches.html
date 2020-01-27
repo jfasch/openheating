@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h2>Switches</h2>
+
+<table>
+
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>State</th>
+  <tr>
+
+  {% for name, switch in app.switches.items() %}
+  <tr>
+    <td>{{name}}</td>
+    <td>{{switch.get_description()}}</td>
+    <td>{{switch.get_state()}}</td>
+
+  </tr>
+  {% endfor %}
+  
+</table>
+
+{% endblock %}
