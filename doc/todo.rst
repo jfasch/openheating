@@ -65,10 +65,6 @@ Stack (Hanging)
 * plant-running test: when one service crashes, tear down the entire
   plant -> signal handling?
 
-  * add
-    openheating-crash-test-dummy.py --crash-in-operation-after-nsecs
-    5, and see what happens
-
 Todo
 ====
 

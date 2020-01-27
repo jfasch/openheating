@@ -31,4 +31,7 @@ ADD_SERVICE(CircuitService(
 ADD_SERVICE(ErrorService())
 
 # testing service crashes
-# ADD_SERVICE(CrashTestDummyService(no_busname=True))
+ADD_SERVICE(CrashTestDummyService(
+    # no_busname=True,
+    crash_in_operation_after_nsecs=3,
+))
