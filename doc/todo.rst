@@ -53,18 +53,6 @@ Stack (Hanging)
   * openheating-runplant.py is only another way to start a plant:
     interactively.
 
-* cleanup
-  
-  * PlantConfig: do not pass bus - "main" must not use it in its
-    config, and so must nobody else.
-  * check that config does not contain a main component already
-  * fix dbussuite_faschingbauer.py
-  * openheating-* (services): wrap config-reading into proper logging
-
-* fix openheating-runplant.py
-* plant-running test: when one service crashes, tear down the entire
-  plant -> signal handling?
-
 Todo
 ====
 

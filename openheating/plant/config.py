@@ -128,8 +128,10 @@ class PlantConfig:
     def set_simulation_dir(self, path):
         self.__simulation_dir = path
 
-    def add_service(self, s):
-        self.__services.append(s)
+    def add_service(self, service):
+        if service.busname in [s.busname for s in self.__services]:
+            raise DuplicateName(service.busname)
+        self.__services.append(service)
     def get_services(self):
         return self.__services
 
