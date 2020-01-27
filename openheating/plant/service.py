@@ -149,6 +149,8 @@ class Service:
 
             # busname not yet taken. see if process has exited.
             try:
+                self.__process.wait(timeout=0)
+
                 raise HeatingError('start: {busname} not taken within timeout, "{cmdline}" has exited with status {status}, stderr:\n{stderr}'.format(
                     busname=self.__busname,
                     cmdline=self.__cmdline,
@@ -270,10 +272,12 @@ class PollWitnessService(Service):
         client.poll(timestamp)
 
 class CrashTestDummyService(Service):
-    def __init__(self, no_busname=False):
+    def __init__(self, no_busname=False, crash_in_operation_after_nsecs=False):
         args=[]
         if no_busname:
             args.append('--no-busname')
+        if crash_in_operation_after_nsecs:
+            args += ('--crash-in-operation-after-nsecs', str(crash_in_operation_after_nsecs))
 
         super().__init__(
             exe='openheating-crash-test-dummy.py',
