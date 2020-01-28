@@ -2,6 +2,7 @@ from . import menu
 
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus.switch_center import SwitchCenter_Client
+from openheating.dbus.circuit_center import CircuitCenter_Client
 from openheating.dbus.errors import Errors_Client
 
 import flask
@@ -26,6 +27,11 @@ class FaschingbauerApp:
         for name in self.switch_center_client.all_names():
             self.switches[name] = self.switch_center_client.get_switch(name)
 
+        self.circuit_center_client = CircuitCenter_Client(dbus_connection)
+        self.circuits = {}
+        for name in self.circuit_center_client.all_names():
+            self.circuits[name] = self.circuit_center_client.get_circuit(name)
+
         self.errors_client = Errors_Client(dbus_connection)
 
     def thermometer_names(self):
@@ -41,6 +47,7 @@ class FaschingbauerApp:
         from . import thermometers
         from . import thermometer
         from . import switches
+        from . import circuits
         from . import errors
 
         self.flask.run(*args, **kwargs)
@@ -63,6 +70,11 @@ class FaschingbauerApp:
                     url=flask.url_for('switches'),
                     image_url=None,
                     alt='Switches',
+                ),
+                menu.Entry(
+                    url=flask.url_for('circuits'),
+                    image_url=None,
+                    alt='Circuits',
                 ),
                 menu.Entry(
                     url=flask.url_for('errors'),

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h2>Circuits</h2>
+
+<table>
+
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Active</th>
+  <tr>
+
+  {% for name, circuit in app.circuits.items() %}
+  <tr>
+    <td>{{name}}</td>
+    <td>{{circuit.get_description()}}</td>
+    <td>{{circuit.is_active()}}</td>
+  </tr>
+  {% endfor %}
+  
+</table>
+
+{% endblock %}
