@@ -6,6 +6,7 @@
 
 <table>
 
+<form method="post">
   <tr>
     <th>Name</th>
     <th>Description</th>
@@ -16,11 +17,23 @@
   <tr>
     <td>{{name}}</td>
     <td>{{switch.get_description()}}</td>
-    <td>{{switch.get_state()}}</td>
-
+    <td>
+	<input type="checkbox" name="{{name}}.state"
+	       {% if switch.get_state() %}
+	         value="True"
+	         checked
+	       {% else %}
+	         value="False"
+	         unchecked
+	       {% endif %}
+	       />
+    </td>
   </tr>
   {% endfor %}
   
 </table>
+
+<input type="submit" value="Execute"/>
+</form>
 
 {% endblock %}
