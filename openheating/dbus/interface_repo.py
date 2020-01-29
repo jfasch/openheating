@@ -115,6 +115,12 @@ _repo[CIRCUIT] = '''
   <method name='is_active'>
     <arg type='b' name='response' direction='out'/>
   </method>
+  <method name='get_producer_temperature'>
+    <arg type='d' name='response' direction='out'/>
+  </method>
+  <method name='get_consumer_temperature'>
+    <arg type='d' name='response' direction='out'/>
+  </method>
   <method name='poll'>
     <arg type='t' name='timestamp' direction='in'/>
   </method>

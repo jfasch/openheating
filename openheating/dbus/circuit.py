@@ -40,6 +40,14 @@ class Circuit_Client:
         return self.__proxy.is_active()
 
     @error.maperror
+    def get_producer_temperature(self):
+        return self.__proxy.get_producer_temperature()
+
+    @error.maperror
+    def get_consumer_temperature(self):
+        return self.__proxy.get_consumer_temperature()
+
+    @error.maperror
     def poll(self, timestamp):
         return self.__proxy.poll(timestamp)
 
@@ -69,6 +77,12 @@ class Circuit_Server:
 
     def is_active(self):
         return self.__circuit.is_active()
+
+    def get_producer_temperature(self):
+        return self.__circuit.producer_thermometer.get_temperature()
+
+    def get_consumer_temperature(self):
+        return self.__circuit.consumer_thermometer.get_temperature()
 
     def poll(self, timestamp):
         self.__logger.debug('poll, ts={}({})'.format(timestamp, timeutil.unix2dt(timestamp)))

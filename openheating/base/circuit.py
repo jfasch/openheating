@@ -21,6 +21,14 @@ class Circuit(metaclass=ABCMeta):
         self.__active = False
         self.__last_ts = None
 
+    @property
+    def producer_thermometer(self):
+        return self.__producer
+
+    @property
+    def consumer_thermometer(self):
+        return self.__consumer
+
     def activate(self):
         if not self.__active:
             logging.debug('{}: activated'.format(self.__debugstr))

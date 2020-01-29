@@ -4,11 +4,14 @@
 
 <h2>Circuits</h2>
 
-<table>
+<form method="post">
 
+<table>
   <tr>
     <th>Name</th>
     <th>Description</th>
+    <th>Producer</th>
+    <th>Consumer</th>
     <th>Active</th>
   <tr>
 
@@ -16,10 +19,24 @@
   <tr>
     <td>{{name}}</td>
     <td>{{circuit.get_description()}}</td>
-    <td>{{circuit.is_active()}}</td>
+    <td>{{circuit.get_producer_temperature()}}</td>
+    <td>{{circuit.get_consumer_temperature()}}</td>
+    <td><input type="checkbox" name="{{name}}.active"
+	       {% if circuit.is_active() %}
+	         value="True"
+	         checked
+	       {% else %}
+	         value="False"
+	         unchecked
+	       {% endif %}
+	       />
+    </td>
   </tr>
   {% endfor %}
   
 </table>
+
+<input type="submit" value="Execute"/>
+</form>
 
 {% endblock %}
