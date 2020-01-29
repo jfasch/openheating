@@ -27,10 +27,6 @@ class CircuitCenter_Client:
             path='/circuits/'+name, 
             iface=interface_repo.CIRCUIT))
 
-    @error.maperror
-    def poll(self, timestamp):
-        return self.__iface.poll(timestamp)
-
 
 @node.Definition(interfaces=interface_repo.get(
     interface_repo.CIRCUITCENTER, 

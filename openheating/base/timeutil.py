@@ -1,4 +1,5 @@
 import datetime
+import time
 
 
 def delta2unix(delta):
@@ -17,3 +18,6 @@ def dt2unix(dt):
 
 def unix2dt(ts):
     return datetime.datetime.fromtimestamp(ts)
+
+def now_ts():
+    return time.time()

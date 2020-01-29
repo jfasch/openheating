@@ -26,7 +26,10 @@ bus = dbusutil.bus_from_argparse(args)
 config = PlantConfig()
 config.parse(args.config)
 
-main_object = Main_Server(bus=bus, services=config.get_services())
+main_object = Main_Server(
+    bus=bus,
+    services=config.get_services(),
+    interval=5)
 
 lifecycle.run_server(
     loop=loop,

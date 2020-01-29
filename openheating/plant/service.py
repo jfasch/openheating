@@ -241,6 +241,10 @@ class CircuitService(Service):
                          busname=names.Bus.CIRCUITS,
                          args=['--config', config])
 
+    def poll(self, bus, timestamp):
+        pollable_client = Pollable_Client(bus=bus, busname=names.Bus.CIRCUITS, path='/')
+        return pollable_client.poll(timestamp)
+
 class ErrorService(Service):
     def __init__(self):
         super().__init__(

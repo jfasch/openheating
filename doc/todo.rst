@@ -25,11 +25,13 @@ Stack (Hanging)
     * OilBurnerService
     * MixerService
 
-  * Service.start()
+  * Service refactoring
 
+    * split services up into ServiceDefinition (for Main) and
+      ServiceRunner (for tests and oh-runplant).
     * replace find_exe with exe_dir or None (->search in path)
     * same with config directory
-    * all in all: find a way to properly ifferentiate between
+    * all in all: find a way to properly differentiate between
 
       * from source -> testutils
       * installed -> need bindir, libdir etc from setup.py
@@ -41,8 +43,6 @@ Stack (Hanging)
     * service: generate unit file (tests!)
     * generate the generator (.ac_subst). it runs early during boot,
       so it will be best to hardcode all paths into the executable.
-
-* http: menu for circuits
 
 Todo
 ====
