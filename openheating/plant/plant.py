@@ -8,11 +8,7 @@ import sys
 
 def create_plant_with_main(plant_config_file):
     plant_config = config.PlantConfig()
-    plant_config.parse(
-        plant_config_file, 
-        # applicable only when services are started. we
-        # don't do that - fix that mismatch sometime.
-        bus=None)
+    plant_config.parse(plant_config_file)
     
     services = plant_config.get_services()
     services.append(MainService(config=plant_config_file))
