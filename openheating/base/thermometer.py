@@ -16,8 +16,10 @@ class FileThermometer(Thermometer):
         self.__path = path
 
         if initial_value is not None:
-            with open(self.__path, 'w') as f:
-                f.write(str(initial_value)+'\n')
+            try:
+                with open(self.__path, 'x') as f:
+                    f.write(str(initial_value)+'\n')
+            except FileExistsError: pass
 
     def get_temperature(self):
         with open(self.__path) as f:
