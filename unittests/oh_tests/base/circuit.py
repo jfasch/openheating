@@ -69,6 +69,20 @@ class CircuitTest(unittest.TestCase):
 
         self.assertFalse(self.__pump.get_state())
 
+    def test__pump_off_when_deactivated(self):
+        # paranoia
+        self.assertFalse(self.__circuit.is_active())
+        self.assertFalse(self.__pump.get_state())
+
+        self.__circuit.activate()
+        self.__producer.set_temperature(30)
+        self.__circuit.poll(0)
+        self.assertTrue(self.__pump.get_state())
+
+        self.__circuit.deactivate()
+        self.assertFalse(self.__pump.get_state())
+        
+
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(CircuitTest)
 
 if __name__ == '__main__':

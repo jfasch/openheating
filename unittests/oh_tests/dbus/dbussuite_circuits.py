@@ -11,9 +11,12 @@ class CircuitsTest(PlantTestCase):
     def setUp(self):
         super().setUp()
 
-        self.start_plant(SimplePlant(bus=self.bus,
-                                     make_tempfile=self.tempfile,
-                                     make_tempdir=self.tempdir))
+        self.start_plant(
+            plant=SimplePlant(bus=self.bus,
+                              make_tempfile=self.tempfile,
+                              make_tempdir=self.tempdir),
+            thermometer_background_updates=False,
+        )
 
         # timestamps for injected samples
         self.__timeline = itertools.count()
@@ -65,6 +68,21 @@ class CircuitsTest(PlantTestCase):
 
         # pump off
         self.poll_circuit('TestCircuit', timestamp=next(self.__timeline))
+        self.assertFalse(self.get_switchstate_file('pump'))
+
+    def test__pump_off_when_deactivated(self):
+        # paranoia
+        self.assertFalse(self.is_circuit_active('TestCircuit'))
+        self.assertFalse(self.get_switchstate_file('pump'))
+
+        self.activate_circuit('TestCircuit')
+        self.assertFalse(self.get_switchstate_file('pump'))
+        self.set_temperature_file_and_update('producer', 30, timestamp=next(self.__timeline))
+
+        self.poll_circuit('TestCircuit', timestamp=next(self.__timeline))
+        self.assertTrue(self.get_switchstate_file('pump'))
+
+        self.deactivate_circuit('TestCircuit')
         self.assertFalse(self.get_switchstate_file('pump'))
 
 suite = unittest.TestSuite()
