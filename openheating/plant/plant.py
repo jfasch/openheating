@@ -6,8 +6,10 @@ from openheating.base.error import HeatingError
 import sys
 
 
-def create_plant_with_main(plant_config_file):
+def create_plant_with_main(plant_config_file, simulation_dir=None):
     plant_config = config.PlantConfig()
+    if simulation_dir is not None:
+        plant_config.set_simulation_dir(simulation_dir)
     plant_config.parse(plant_config_file)
     
     services = plant_config.get_services()
@@ -24,6 +26,10 @@ class Plant:
     @property
     def running(self):
         return self.__running
+
+    @property
+    def registered_services(self):
+        return self.__registered_services
 
     @property
     def running_services(self):

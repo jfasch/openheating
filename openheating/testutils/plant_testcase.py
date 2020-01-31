@@ -64,8 +64,17 @@ class PlantTestCase(unittest.TestCase):
         self.__thermometer_service = None
         self.__switch_service = None
 
-    def start_plant(self, plant):
+    def start_plant(self, plant, thermometer_background_updates):
         self.__plant = plant
+
+        for s in self.__plant.registered_services:
+            if isinstance(s, ThermometerService):
+                self.__thermometer_service = s
+                if not thermometer_background_updates:
+                    self.__thermometer_service.set_update_interval(0)
+            if isinstance(s, SwitchService):
+                self.__switch_service = s
+            
         self.__plant.startup(find_exe=testutils.find_executable, 
                              bus_kind=dbusutil.BUS_KIND_SESSION,
                              common_args=['--log-level', 'debug'],
@@ -73,12 +82,6 @@ class PlantTestCase(unittest.TestCase):
                              capture_stderr=True,
         )
 
-        for s in self.__plant.running_services:
-            if isinstance(s, ThermometerService):
-                self.__thermometer_service = s
-            if isinstance(s, SwitchService):
-                self.__switch_service = s
-            
     def stop_plant(self):
         assert self.__plant is not None
         self.__plant.shutdown(print_stderr=False)

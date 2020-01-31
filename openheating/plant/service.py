@@ -34,6 +34,9 @@ class Service:
     def busname(self):
         return self.__busname
 
+    def add_specific_args(self, args):
+        self.__specific_args += args
+
     def start(self, find_exe, bus_kind, common_args, capture_stderr):
         assert type(capture_stderr) is bool
         assert self.__bus_kind is None
@@ -206,6 +209,9 @@ class ThermometerService(Service):
     @property
     def simulation_dir(self):
         return self.__simulation_dir
+
+    def set_update_interval(self, secs):
+        self.add_specific_args(['--update-interval', str(secs)])
 
     def center_client(self, bus):
         '''convenience method, for use by tests'''

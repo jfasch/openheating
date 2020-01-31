@@ -1,10 +1,11 @@
 from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.testutils import testutils
-from openheating.plant.plant import Plant
+from openheating.plant.plant import Plant, create_plant_with_main
 from openheating.plant import service
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus.switch_center import SwitchCenter_Client
 from openheating.dbus.circuit_center import CircuitCenter_Client
+from openheating.dbus.main import MainPollable_Client
 
 import unittest
 import os.path
@@ -40,11 +41,12 @@ class FaschingbauerTest(PlantTestCase):
 
     @PlantTestCase.intercept_failure
     def test__run_plant(self):
-        self.start_plant(Plant([
-            service.PlantRunnerService(
-                config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
-                simulation_dir=self.__simulation_dir.name),
-        ]))
+        self.start_plant(
+            create_plant_with_main(
+                os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
+                simulation_dir=self.__simulation_dir.name,
+                thermometer_center
+))
 
         thermometer_center = ThermometerCenter_Client(self.bus)
         self.assertIn('Raum', thermometer_center.all_names())
@@ -57,13 +59,12 @@ class FaschingbauerTest(PlantTestCase):
         
     @PlantTestCase.intercept_failure
     def test__manual_poll(self):
-        self.fail('re-enable after flattening out plant services')
-
-        self.start_plant(Plant([
-            service.PlantRunnerService(
-                config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
+        self.start_plant(
+            plant=create_plant_with_main(
+                os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
                 simulation_dir=self.__simulation_dir.name),
-        ]))
+            thermometer_background_updates=False,
+        )
 
         # paranoia: verify initial state. ("20" is set in the
         # thermometer config code when simulation is wanted. probably
@@ -73,17 +74,15 @@ class FaschingbauerTest(PlantTestCase):
         self.assertFalse(self.get_switchstate_dbus('ww'))
         self.assertFalse(self.is_circuit_active('ww'))
 
-        runner_client = Runner_Client(self.bus)
-
         # activate circuit, and poll. no effect (no temperature
         # difference).
         self.activate_circuit('ww')
-        self.poll_plant(next(self.__timeline))
+        self.poll_main(next(self.__timeline))
         self.assertFalse(self.get_switchstate_file('ww'))
         
         # set holz temperature, poll again, effect
-        self.set_temperature_file_and_update('Holzbrenner', 40)
-        self.poll_plant(next(self.__timeline))
+        self.set_temperature_file_and_update('Holzbrenner', 40, timestamp=next(self.__timeline))
+        self.poll_main(next(self.__timeline))
         self.assertTrue(self.get_switchstate_file('ww'))
 
 

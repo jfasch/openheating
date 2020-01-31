@@ -40,9 +40,11 @@ Stack (Hanging)
 
   * systemd generator
 
-    * service: generate unit file (tests!)
+    * service: generate unit files (tests!)
     * generate the generator (.ac_subst). it runs early during boot,
       so it will be best to hardcode all paths into the executable.
+
+* split Service into Definition and Runner (o so)
 
 Todo
 ====
