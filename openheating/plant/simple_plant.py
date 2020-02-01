@@ -18,7 +18,6 @@ class SimplePlant(Plant):
             [
                 service.ThermometerService(
                     simulation_dir=make_tempdir(suffix='.thermometers').name,
-                    background_updates=False,
                     config=make_tempfile(
                         lines=[
                             'from openheating.base.thermometer import FileThermometer',

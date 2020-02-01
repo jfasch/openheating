@@ -64,7 +64,7 @@ class ThermometersError(PlantTestCase):
         )
         self.start_plant(
             plant=Plant([service.ThermometerService(config=config.name)]),
-            thermometer_background_updates=False)
+            thermometer_background_updates=True)
 
     def test__sensor_error_at_startup(self):
         # do nothing. this is only there to test if startup succeeds
@@ -100,7 +100,6 @@ class ThermometersSimulation(PlantTestCase):
                 service.ThermometerService(
                     config=config.name,
                     simulation_dir=thdir,
-                    background_updates=False,
                 ),
             ]),
             thermometer_background_updates=False,
@@ -160,9 +159,7 @@ class ThermometersSimulation(PlantTestCase):
             suffix='.thermometers-config',
         )
         self.start_plant(
-            plant=Plant([service.ThermometerService(config=config.name, 
-                                                    background_updates=False),
-            ]),
+            plant=Plant([service.ThermometerService(config=config.name)]),
             thermometer_background_updates=False,
         )
 

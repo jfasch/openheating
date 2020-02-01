@@ -47,10 +47,11 @@ Stack (Hanging)
 * split Service into Definition and Runner (o so)
 * fix PlantTestCase.start_plant()
 
-  * service.ThermometerService "background_updates" ctor argument
   * PlantTestCase.force_temperature_update(): when background updates
     are disabled, read initial temperature at startup? remove
     PlantTestCase.force_temperature_update() altogether.
+
+    dbussuite_thermometers.ThermometersError.test__sensor_error_at_startup()
 
 Todo
 ====

@@ -193,14 +193,12 @@ class MainService(Service):
             args=['--config', config])
 
 class ThermometerService(Service):
-    def __init__(self, config, background_updates=True, simulation_dir=None):
+    def __init__(self, config, simulation_dir=None):
         self.__simulation_dir = simulation_dir
 
         args = ['--config', config]
         if self.__simulation_dir is not None:
             args += ['--simulation-dir', self.__simulation_dir]
-        if not background_updates:
-            args += ['--update-interval', '0']
 
         super().__init__(exe='openheating-thermometers.py',
                          busname=names.Bus.THERMOMETERS,
