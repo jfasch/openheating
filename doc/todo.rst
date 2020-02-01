@@ -45,6 +45,12 @@ Stack (Hanging)
       so it will be best to hardcode all paths into the executable.
 
 * split Service into Definition and Runner (o so)
+* fix PlantTestCase.start_plant()
+
+  * service.ThermometerService "background_updates" ctor argument
+  * PlantTestCase.force_temperature_update(): when background updates
+    are disabled, read initial temperature at startup? remove
+    PlantTestCase.force_temperature_update() altogether.
 
 Todo
 ====

@@ -18,7 +18,12 @@ class ManagedTest(PlantTestCase):
         self.__directory = self.tempdir()
         
     def test__basic(self):
-        self.start_plant(Plant([service.ManagedObjectTesterService(stampdir=self.__directory.name)]))
+        self.start_plant(
+            plant=Plant([
+                service.ManagedObjectTesterService(stampdir=self.__directory.name),
+            ]),
+            thermometer_background_updates=False,
+        )
         self.stop_plant()
         self.assertTrue(os.path.isfile(self.__directory.name+'/started'))
         self.assertTrue(os.path.isfile(self.__directory.name+'/stopped'))

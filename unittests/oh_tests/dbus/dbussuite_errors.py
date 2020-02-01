@@ -27,12 +27,13 @@ class ErrorsTest(PlantTestCase):
             suffix='.thermometers-config',
         )
 
-        self.start_plant(Plant(
-            [
+        self.start_plant(
+            plant=Plant([
                 service.ErrorService(),
                 service.ThermometerService(config=thermometers_config.name),                    
-            ]
-        ))
+            ]),
+            thermometer_background_updates=False,
+        )
         
         client = Errors_Client(self.bus)
         self.__wait_error_occurred(client)
@@ -47,12 +48,15 @@ class ErrorsTest(PlantTestCase):
             suffix='.thermometers-config',
         )
 
-        self.start_plant(Plant(
-            [
+        self.start_plant(
+            plant=Plant([
                 service.ErrorService(),
                 service.ThermometerService(config=thermometers_config.name),
-            ]
-        ))
+            ]),
+            # "background updates" make thermometer service read
+            # temperatures at startup.
+            thermometer_background_updates=True,
+        )
 
         client = Errors_Client(self.bus)
         self.__wait_error_occurred(client)

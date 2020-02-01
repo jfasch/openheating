@@ -26,12 +26,13 @@ class MainTest(PlantTestCase):
         # here we start a plant that corresponds to the plant
         # config. we do this manually, by replicating what's in the
         # config, and adding a main component on top of it.
-        self.start_plant(plant.Plant(
-            [
+        self.start_plant(
+            plant=plant.Plant([
                 PollWitnessService(witness=self.__poll_witness_file.name),
                 MainService(config=self.__plant_config_file.name),
-            ]
-        ))
+            ]),
+            thermometer_background_updates=False,
+        )
 
         self.poll_main(timestamp=0)
 
@@ -45,7 +46,10 @@ class MainTest(PlantTestCase):
         # plant config, adding all boilerplate like a main component
         # automatically
         the_plant = plant.create_plant_with_main(self.__plant_config_file.name)
-        self.start_plant(the_plant)
+        self.start_plant(
+            plant=the_plant,
+            thermometer_background_updates=False,
+        )
 
         self.poll_main(timestamp=0)
 

@@ -17,11 +17,12 @@ class CrashingServiceTest(PlantTestCase):
     @PlantTestCase.intercept_failure
     def test__busname_does_not_appear(self):
         with self.assertRaises(BusnameTimeout):
-            self.start_plant(Plant(
-                [
+            self.start_plant(
+                plant=Plant([
                     CrashTestDummyService(no_busname=True),
-                ]
-            ))
+                ]),
+                thermometer_background_updates=False,                            
+            )
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(CrashingServiceTest))
