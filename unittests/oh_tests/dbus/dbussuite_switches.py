@@ -18,7 +18,7 @@ class SwitchesTest(PlantTestCase):
         config=self.tempfile(
             lines=[
                 'from openheating.base.switch import InMemorySwitch',
-                'ADD_SWITCH("TestSwitch", "Test Switch", InMemorySwitch(False))',
+                'ADD_SWITCH("TestSwitch", "Test Switch", InMemorySwitch, False)',
             ]
         )
         self.start_plant(Plant([service.SwitchService(config=config.name)]))
@@ -80,7 +80,7 @@ class SwitchesTest(PlantTestCase):
                 # added as-is.
                 'ADD_SWITCH(',
                 '      "test_name", "test description",',
-                '      FileSwitch("{}", initial_value=True))'.format(switch_file.name),
+                '      FileSwitch, "{}", initial_value=True)'.format(switch_file.name),
             ],
             suffix='.switches-config',
         )

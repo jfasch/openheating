@@ -61,6 +61,9 @@ Stack (Hanging)
     * openheating-runplant.py: do not add Main manually; use helper
       from plant.py
 
+* circuits: type and args instead of objects. for no reason other than
+  consistency though.
+
 Todo
 ====
 

@@ -46,7 +46,7 @@ def _configs(make_tempfile):
         lines=[
             'from openheating.base.switch import FileSwitch',
             'assert IS_SIMULATION',
-            'ADD_SWITCH("pump", "the pump")',
+            'ADD_SWITCH("pump", "the pump", None)',
         ],
         suffix='.switches-config'
     )
