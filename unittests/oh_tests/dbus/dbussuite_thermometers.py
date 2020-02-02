@@ -19,7 +19,7 @@ class ThermometersOK(PlantTestCase):
         config = self.tempfile(
             lines=[
                 "from openheating.base.thermometer import InMemoryThermometer",
-                "ADD_THERMOMETER('TestThermometer', 'Test Thermometer', InMemoryThermometer(42))",
+                "ADD_THERMOMETER('TestThermometer', 'Test Thermometer', InMemoryThermometer, 42)",
             ],
             suffix='.thermometers-config',
         )
@@ -49,7 +49,7 @@ class ThermometersError(PlantTestCase):
         config=self.tempfile(
             lines=[
                 "from openheating.base.thermometer import ErrorThermometer",
-                "ADD_THERMOMETER('ErrorThermometer', 'Error Thermometer', ErrorThermometer(n_ok_before_error = False))",
+                "ADD_THERMOMETER('ErrorThermometer', 'Error Thermometer', ErrorThermometer, n_ok_before_error = False)",
             ],
             suffix='.thermometers-config',
         )
@@ -114,7 +114,7 @@ class ThermometersSimulation(PlantTestCase):
                 # added as-is.
                 'ADD_THERMOMETER(',
                 '      "test_name", "test description",',
-                '      FileThermometer("{}", initial_value=42))'.format(temperature_file.name),
+                '      FileThermometer, "{}", initial_value=42)'.format(temperature_file.name),
             ],
             suffix='.thermometers-config',
         )
@@ -136,7 +136,7 @@ class ThermometersSimulation(PlantTestCase):
         config=self.tempfile(
             lines=[
                 'from openheating.base.thermometer import FileThermometer',
-                'ADD_THERMOMETER("test", "test", FileThermometer(path="{}", initial_value=20))'.format(test_thermometer_path),
+                'ADD_THERMOMETER("test", "test", FileThermometer, path="{}", initial_value=20)'.format(test_thermometer_path),
             ],
             suffix='.thermometers-config',
         )

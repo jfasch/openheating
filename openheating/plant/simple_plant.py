@@ -31,15 +31,13 @@ def create_with_main(simulation_dir, make_tempfile, make_tempdir):
 def _configs(make_tempfile):
     thermometers_config = make_tempfile(
         lines=[
-            'from openheating.base.thermometer import FileThermometer',
-
             'assert IS_SIMULATION',
 
             # this plant is supposed to only be
             # operated in simulation mode, so we don't
             # give real thermometers.
-            'ADD_THERMOMETER("consumer", "the consumer")',
-            'ADD_THERMOMETER("producer", "the producer")',
+            'ADD_THERMOMETER("consumer", "the consumer", None)',
+            'ADD_THERMOMETER("producer", "the producer", None)',
         ],
         suffix='.thermometers-config',
     )
@@ -64,8 +62,6 @@ def _configs(make_tempfile):
             'consumer_thermometer = thermometer_center.get_thermometer("consumer")',
             'producer_thermometer = thermometer_center.get_thermometer("producer")',
             'pump_switch = switch_center.get_switch("pump")',
-
-            'assert IS_SIMULATION',
 
             'ADD_CIRCUIT("TestCircuit", "Test Circuit",',
             '            Circuit(pump=pump_switch, producer=producer_thermometer, consumer=consumer_thermometer,',
