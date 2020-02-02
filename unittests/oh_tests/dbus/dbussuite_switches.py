@@ -21,10 +21,7 @@ class SwitchesTest(PlantTestCase):
                 'ADD_SWITCH("TestSwitch", "Test Switch", InMemorySwitch(False))',
             ]
         )
-        self.start_plant(
-            plant=Plant([service.SwitchService(config=config.name)]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([service.SwitchService(config=config.name)]))
 
         center_client = SwitchCenter_Client(self.bus)
         switch_client = center_client.get_switch('TestSwitch')
@@ -44,15 +41,11 @@ class SwitchesTest(PlantTestCase):
             ]
         )
 
-        self.start_plant(
-            plant=Plant([ 
-                service.SwitchService(
-                    config=config.name,
-                    simulation_dir=swdir,
-                ),
-            ]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([ 
+            service.SwitchService(
+                config=config.name,
+                simulation_dir=swdir,
+            )]))
         
         self.assertTrue(os.path.isdir(swdir)) # created by service process
         self.assertTrue(os.path.isfile(swdir+'/TestSwitch'))
@@ -91,10 +84,7 @@ class SwitchesTest(PlantTestCase):
             ],
             suffix='.switches-config',
         )
-        self.start_plant(
-            plant=Plant([service.SwitchService(config=config.name)]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([service.SwitchService(config=config.name)]))
  
         # simulation is off, so the switch must have been taken as-is
         # => file contains the initial value as specified by config.

@@ -1,6 +1,6 @@
 from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.testutils import testutils
-from openheating.plant.simple_plant import SimplePlant
+from openheating.plant import simple_plant
 
 import unittest
 import time
@@ -11,12 +11,9 @@ class CircuitsTest(PlantTestCase):
     def setUp(self):
         super().setUp()
 
-        self.start_plant(
-            plant=SimplePlant(bus=self.bus,
-                              make_tempfile=self.tempfile,
-                              make_tempdir=self.tempdir),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(simple_plant.create_without_main(
+            make_tempfile=self.tempfile,
+            make_tempdir=self.tempdir))
 
         # timestamps for injected samples
         self.__timeline = itertools.count()

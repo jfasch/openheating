@@ -16,13 +16,10 @@ import json
 class ExceptionTest(PlantTestCase):
     def setUp(self):
         super().setUp()
-        self.start_plant(
-            plant=Plant([
-                service.ExceptionTesterService(),
-                service.ErrorService()
-            ]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([
+            service.ExceptionTesterService(),
+            service.ErrorService()
+        ]))
 
     @PlantTestCase.intercept_failure
     def test__HeatingError(self):

@@ -28,30 +28,24 @@ class FaschingbauerTest(PlantTestCase):
         # basis is ok before we start hammering on it running as a
         # compound system).
 
-        self.start_plant(
-            plant=Plant([
-                service.ThermometerService(
-                    config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'thermometers.pyconf'),
-                    simulation_dir=self.__thermometers_dir),
-                service.SwitchService(
-                    config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'switches.pyconf'),
-                    simulation_dir=self.__switches_dir),
-                service.CircuitService(
-                    config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'circuits.pyconf')),
-            ]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([
+            service.ThermometerService(
+                config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'thermometers.pyconf'),
+                simulation_dir=self.__thermometers_dir),
+            service.SwitchService(
+                config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'switches.pyconf'),
+                simulation_dir=self.__switches_dir),
+            service.CircuitService(
+                config=os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'circuits.pyconf')),
+        ]))
 
     @PlantTestCase.intercept_failure
     def test__run_plant(self):
         self.start_plant(
-            plant=create_plant_with_main(
+            create_plant_with_main(
                 os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
                 simulation_dir=self.__simulation_dir.name,
-            ),
-            thermometer_background_updates=False,
-        )
-
+            ))
 
         thermometer_center = ThermometerCenter_Client(self.bus)
         self.assertIn('Raum', thermometer_center.all_names())
@@ -65,11 +59,10 @@ class FaschingbauerTest(PlantTestCase):
     @PlantTestCase.intercept_failure
     def test__manual_poll(self):
         self.start_plant(
-            plant=create_plant_with_main(
+            create_plant_with_main(
                 os.path.join(testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf'),
-                simulation_dir=self.__simulation_dir.name),
-            thermometer_background_updates=False,
-        )
+                simulation_dir=self.__simulation_dir.name,
+            ))
 
         # hmmm. "no background updates" means that temperature is not
         # initially read. is this really necessary?

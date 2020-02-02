@@ -23,16 +23,7 @@ class ThermometersOK(PlantTestCase):
             ],
             suffix='.thermometers-config',
         )
-        self.start_plant(
-            plant=Plant([
-                service.ThermometerService(config=config.name),
-            ]),
-            thermometer_background_updates=False,
-        )
-
-        # we're not doing background updates, so explicitly force an
-        # initial read
-        self.force_temperature_update(timestamp=0)
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
     def test__start_stop(self):
         center_client = ThermometerCenter_Client(self.bus)
@@ -62,9 +53,7 @@ class ThermometersError(PlantTestCase):
             ],
             suffix='.thermometers-config',
         )
-        self.start_plant(
-            plant=Plant([service.ThermometerService(config=config.name)]),
-            thermometer_background_updates=True)
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
     def test__sensor_error_at_startup(self):
         # do nothing. this is only there to test if startup succeeds
@@ -95,15 +84,11 @@ class ThermometersSimulation(PlantTestCase):
             ],
             suffix='.thermometers-config',
         )
-        self.start_plant(
-            plant=Plant([
-                service.ThermometerService(
-                    config=config.name,
-                    simulation_dir=thdir,
-                ),
-            ]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([
+            service.ThermometerService(
+                config=config.name,
+                simulation_dir=thdir,
+            )]))
 
         self.assertTrue(os.path.isfile(thdir+'/test_name')) # has been created by service
 
@@ -133,10 +118,7 @@ class ThermometersSimulation(PlantTestCase):
             ],
             suffix='.thermometers-config',
         )
-        self.start_plant(
-            plant=Plant([service.ThermometerService(config=config.name)]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
         # simulation is off, so the thermometer must have been taken
         # as-is => file contains the initial value as specified by
@@ -158,10 +140,7 @@ class ThermometersSimulation(PlantTestCase):
             ],
             suffix='.thermometers-config',
         )
-        self.start_plant(
-            plant=Plant([service.ThermometerService(config=config.name)]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
 
         # paranoia: see if thermometer is there, and it has the
         # configured initial temperature value
@@ -169,8 +148,6 @@ class ThermometersSimulation(PlantTestCase):
         self.assertIn('test', center_client.all_names())
 
         test_thermometer_client = center_client.get_thermometer('test')
-
-        test_thermometer_client.force_update(timestamp=0)
 
         self.assertAlmostEqual(test_thermometer_client.get_temperature(), 20)
 

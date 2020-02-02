@@ -21,14 +21,7 @@ class BadName(HeatingError):
 class ThermometersConfig:
     def __init__(self, simulation_dir):
         self.__simulation_dir = simulation_dir
-        self.__update_interval = 5
         self.__thermometers = [] # [(name, description, thermometer)]
-
-    def get_update_interval(self):
-        return self.__update_interval
-
-    def set_update_interval(self, secs):
-        self.__update_interval = secs
 
     def get_thermometers(self):
         return self.__thermometers
@@ -36,7 +29,6 @@ class ThermometersConfig:
     def parse(self, path, bus):
         context = {
             'GET_BUS': lambda: bus,
-            'SET_UPDATE_INTERVAL': self.set_update_interval,
             'ADD_THERMOMETER': self.__add_thermometer,
             'IS_SIMULATION': self.__simulation_dir is not None,
         }

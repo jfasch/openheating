@@ -2,6 +2,7 @@ from . import interface_repo
 from . import node
 from . import error
 from . import lifecycle
+from .pollable_client import Pollable_Client
 
 from ..base.thermometer import Thermometer
 from ..base.error import HeatingError
@@ -42,6 +43,10 @@ class Thermometer_Client(Thermometer):
     def force_update(self, timestamp):
         self.proxy.force_update(timestamp)
 
+class ThermometerPollable_Client(Pollable_Client):
+    def __init__(self, bus):
+        super().__init__(bus=bus, busname=names.Bus.THERMOMETERS, path='/')
+
 class TemperatureHistory_Client:
     def __init__(self, proxy):
         self.__proxy = proxy
@@ -55,9 +60,10 @@ class TemperatureHistory_Client:
 
 @lifecycle.managed(startup='_startup', shutdown='_shutdown', onbus='_onbus')
 @node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETER, 
-                                               interface_repo.TEMPERATUREHISTORY))
+                                               interface_repo.TEMPERATUREHISTORY,
+                                               interface_repo.POLLABLE))
 class Thermometer_Server:
-    def __init__(self, name, description, thermometer, update_interval, history):
+    def __init__(self, name, description, thermometer, history):
         assert isinstance(thermometer, Thermometer)
 
         self.__name = name
@@ -69,12 +75,7 @@ class Thermometer_Server:
         self.__current_temperature = None
         self.__current_error = HeatingError('reading temperature too early, not yet initialized')
 
-        # schedule periodic temperature updates in a *background
-        # thread*. this is because w1 bitbanging blocks for almost a
-        # second per temperature read.
         self.__background_thread = None
-        self.__update_interval = update_interval
-        self.__update_timer_tag = None
 
         self.__logger = logging.getLogger(self.__name)
 
@@ -90,19 +91,13 @@ class Thermometer_Server:
         return self.__current_temperature
 
     def force_update(self, timestamp):
-        if self.__update_interval != 0:
-            raise HeatingError('cannot force_update when doing background updates')
         self.__make_current(timestamp=timestamp, temperature=self.__thermometer.get_temperature())
 
     def distill(self, granularity, duration):
         return list(self.__history.distill(granularity=granularity, duration=duration))
 
-    def __schedule_update(self):
-        # submit work to the background thread, *not* waiting for the
-        # returned future object (alas, we don't want to block)
-        self.__logger.debug('scheduling update')
+    def poll(self, timestamp):
         self.__background_thread.submit(self.__update)
-        return True # re-arm timer
 
     def __update(self):
         # in the background thread now, take as long as we want (about
@@ -137,26 +132,28 @@ class Thermometer_Server:
     def _startup(self):
         self.__logger.info('starting')
 
-        if self.__update_interval == 0:
-            self.__logger.info('no background updates desired')
-        else:
-            try:
-                temperature = self.__thermometer.get_temperature()
-                self.__make_current(timestamp=time.time(), temperature=temperature, error=None)
-                self.__logger.debug('startup: successfully read temperature -> {}'.format(temperature))
-            except HeatingError as e:
-                self.__logger.exception('startup: cannot read temperature')
-                self.__make_current(timestamp=time.time(), temperature=None, error=e)
+        # iniial temperature read, just to have something in case
+        # someone asks. this carries timestamp 0/epoch; cannot simply
+        # take wall clock time here - unittests fake the time, and
+        # replays bring their own (past) timestamps.
 
-            self.__logger.info('schedule temperature updates every {} seconds'.format(self.__update_interval))
-            self.__background_thread = ThreadPoolExecutor(max_workers=1)
-            self.__update_timer_tag = GLib.timeout_add_seconds(self.__update_interval, self.__schedule_update)
+        # further temperature reads are initiated using poll() which
+        # brings us the timestamp as a parameter. it's only the first
+        # measurement that has epoch timestamp.
+        try:
+            temperature = self.__thermometer.get_temperature()
+            self.__make_current(timestamp=0, temperature=temperature, error=None)
+            self.__logger.debug('startup: successfully read temperature -> {}'.format(temperature))
+        except HeatingError as e:
+            self.__logger.exception('startup: cannot read temperature')
+            self.__make_current(timestamp=0, temperature=None, error=e)
+
+        # start background thread to perform future temperature reads.
+        self.__background_thread = ThreadPoolExecutor(max_workers=1)
 
     def _shutdown(self):
         self.__logger.info('stopping')
-        if self.__update_interval != 0:
-            self.__background_thread.shutdown(wait=True)
-            GLib.source_remove(self.__update_timer_tag)
+        self.__background_thread.shutdown(wait=True)
 
     def _onbus(self):
         if self.__current_error is not None:

@@ -18,9 +18,6 @@ import os
 
 parser = argparse.ArgumentParser(description='OpenHeating: DBus thermometer service')
 parser.add_argument('--config', help='Configuration file')
-parser.add_argument('--update-interval', 
-                    help='Temperature read interval (seconds); '
-                    'default 5; 0 to disable updates', type=int)
 parser.add_argument('--simulation-dir', metavar='DIR', 
                     help='Create "thermometer" files in DIR, and read temperatures from there.')
 dbusutil.argparse_add_bus(parser)
@@ -37,10 +34,6 @@ if args.simulation_dir is not None:
 config = ThermometersConfig(simulation_dir=args.simulation_dir)
 config.parse(args.config, bus=bus)
 
-# update_interval: cmdline overrides config
-if args.update_interval is not None:
-    config.set_update_interval(args.update_interval)
-
 thermometer_objects = [] # for center to know
 path_n_objects = [] # [(path, object)], to publish
 
@@ -50,7 +43,6 @@ for name, description, thermometer in config.get_thermometers():
         name=name,
         description=description,
         thermometer=thermometer,
-        update_interval=config.get_update_interval(),
         history=history)
     thermometer_objects.append(thobj)
     path_n_objects.append(('/thermometers/'+name, thobj))

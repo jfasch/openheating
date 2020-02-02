@@ -64,14 +64,12 @@ class PlantTestCase(unittest.TestCase):
         self.__thermometer_service = None
         self.__switch_service = None
 
-    def start_plant(self, plant, thermometer_background_updates):
+    def start_plant(self, plant):
         self.__plant = plant
 
         for s in self.__plant.registered_services:
             if isinstance(s, ThermometerService):
                 self.__thermometer_service = s
-                if not thermometer_background_updates:
-                    self.__thermometer_service.set_update_interval(0)
             if isinstance(s, SwitchService):
                 self.__switch_service = s
             
@@ -108,6 +106,13 @@ class PlantTestCase(unittest.TestCase):
             self.__bus = pydbus.SessionBus()
         return self.__bus
 
+    def set_temperature_file_without_update(self, name, value, timestamp):
+        '''Write temperature of thermometer 'name' to associated simulation
+        file. No update is kicked; that is left to the user.
+
+        '''
+        self.__set_temperature_file(name, value)
+
     def set_temperature_file_and_update(self, name, value, timestamp):
         '''Write temperature of thermometer 'name' to associated simulation
         file. Force an update on the dbus themometer object associated
@@ -118,10 +123,7 @@ class PlantTestCase(unittest.TestCase):
         self.assertIsNotNone(self.__thermometer_service)
         self.assertIsNotNone(self.__thermometer_service.simulation_dir)
 
-        # modify temperature
-        thfile = os.path.join(self.__thermometer_service.simulation_dir, name)
-        self.assertTrue(os.path.isfile(thfile))
-        FileThermometer(thfile).set_temperature(value)
+        self.__set_temperature_file(name, value)
 
         # force service to do an update
         self.__thermometer_service.thermometer_client(self.bus, name).force_update(timestamp)
@@ -197,3 +199,8 @@ class PlantTestCase(unittest.TestCase):
 
     def poll_main(self, timestamp):
         return MainPollable_Client(self.bus).poll(timestamp=timestamp)
+
+    def __set_temperature_file(self, name, value):
+        thfile = os.path.join(self.__thermometer_service.simulation_dir, name)
+        self.assertTrue(os.path.isfile(thfile))
+        FileThermometer(thfile).set_temperature(value)

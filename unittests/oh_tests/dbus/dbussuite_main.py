@@ -1,6 +1,7 @@
 from openheating.plant import plant
 from openheating.plant import config
 from openheating.plant.service import PollWitnessService, MainService
+from openheating.plant import simple_plant
 
 from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.testutils import testutils
@@ -26,13 +27,9 @@ class MainTest(PlantTestCase):
         # here we start a plant that corresponds to the plant
         # config. we do this manually, by replicating what's in the
         # config, and adding a main component on top of it.
-        self.start_plant(
-            plant=plant.Plant([
-                PollWitnessService(witness=self.__poll_witness_file.name),
-                MainService(config=self.__plant_config_file.name),
-            ]),
-            thermometer_background_updates=False,
-        )
+        self.start_plant(plant.Plant([
+            PollWitnessService(witness=self.__poll_witness_file.name),
+            MainService(config=self.__plant_config_file.name)]))
 
         self.poll_main(timestamp=0)
 
@@ -45,11 +42,7 @@ class MainTest(PlantTestCase):
         # use a helper routine that creates a service list from the
         # plant config, adding all boilerplate like a main component
         # automatically
-        the_plant = plant.create_plant_with_main(self.__plant_config_file.name)
-        self.start_plant(
-            plant=the_plant,
-            thermometer_background_updates=False,
-        )
+        self.start_plant(plant.create_plant_with_main(self.__plant_config_file.name))
 
         self.poll_main(timestamp=0)
 
@@ -58,9 +51,41 @@ class MainTest(PlantTestCase):
             timestamp = int(s)
             self.assertEqual(timestamp, 0)
 
+class MainWithThermometersTest(PlantTestCase):
+    def test__main_polls_thermometers(self):
+        self.start_plant(simple_plant.create_with_main(
+            simulation_dir=self.tempdir(suffix='.simulation').name,
+            make_tempfile=self.tempfile,
+            make_tempdir=self.tempdir))
 
+        # paranoia. see if thermometers have been read at startup, and
+        # no "not initialized" exception is raised.
+        self.get_temperature_dbus('producer')
+        self.get_temperature_dbus('consumer')
+
+        # set temperatures, *not* kicking the async update.
+        self.set_temperature_file_without_update('producer', 42)
+        self.set_temperature_file_without_update('consumer', 666)
+
+        # poll once. Main will poll() Thermometers, kicking a
+        # background thread to do the read asynchronously.
+        self.poll_main(timestamp=42)
+
+        # spin a while until the asynchronous read has made it onto
+        # the surface.
+        for _ in range(20):
+            time.sleep(0.2)
+            producer_temperature = self.get_temperature_dbus('producer')
+            consumer_temperature = self.get_temperature_dbus('consumer')
+            if abs(producer_temperature - 42) < 0.5 and abs(consumer_temperature - 666) < 0.5:  # almost equal
+                break
+        else:
+            self.fail()
+                
 suite = unittest.TestSuite()
-suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MainTest))
+print('jjjjjjjjjjjj main test comment back in')
+#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MainTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MainWithThermometersTest))
 
 if __name__ == '__main__':
     testutils.run(suite)

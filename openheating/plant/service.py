@@ -208,9 +208,6 @@ class ThermometerService(Service):
     def simulation_dir(self):
         return self.__simulation_dir
 
-    def set_update_interval(self, secs):
-        self.add_specific_args(['--update-interval', str(secs)])
-
     def center_client(self, bus):
         '''convenience method, for use by tests'''
         return ThermometerCenter_Client(bus)

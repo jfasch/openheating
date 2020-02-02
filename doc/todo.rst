@@ -45,13 +45,21 @@ Stack (Hanging)
       so it will be best to hardcode all paths into the executable.
 
 * split Service into Definition and Runner (o so)
-* fix PlantTestCase.start_plant()
+* thermometer service: no self-timers for background updates
 
-  * PlantTestCase.force_temperature_update(): when background updates
-    are disabled, read initial temperature at startup? remove
-    PlantTestCase.force_temperature_update() altogether.
+  * at startup, read all thermometers synchronously *in any case*
+  * initiate background updates via poll(), just like everybody else.
 
-    dbussuite_thermometers.ThermometersError.test__sensor_error_at_startup()
+    * PlantTestCase.force_temperature_update(): replace with
+      PlantTestCase.poll_thermometer(name) and
+      PlantTestCase.poll_thermometers()
+    * what about
+      dbussuite_thermometers.ThermometersError.test__sensor_error_at_startup()
+
+  * cleanup
+
+    * openheating-runplant.py: do not add Main manually; use helper
+      from plant.py
 
 Todo
 ====

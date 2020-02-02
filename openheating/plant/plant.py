@@ -7,6 +7,7 @@ import sys
 
 
 def create_plant_with_main(plant_config_file, simulation_dir=None):
+    print('jjjjjjjjjjjjjjjjjjjjjjj create_plant_with_main simulation_dir =', simulation_dir)
     plant_config = config.PlantConfig()
     if simulation_dir is not None:
         plant_config.set_simulation_dir(simulation_dir)
