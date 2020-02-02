@@ -18,28 +18,6 @@ class BadName(HeatingError):
         super().__init__(msg='{} is not a valid name (has to be a Python identifier'.format(name))
         self.name = name
 
-class CircuitsConfig:
-    def __init__(self):
-        self.__circuits = [] # [(name, description, thermometer)]
-
-    def add_circuit(self, name, description, c):
-        if name in [name for name,_,_ in self.__circuits]:
-            raise DuplicateName(name)
-        self.__circuits.append((name, description, c))
-    def get_circuits(self):
-        return self.__circuits
-
-    def parse(self, path, bus):
-        context = {
-            'GET_BUS': lambda: bus,
-            'ADD_CIRCUIT': self.add_circuit,
-            'GET_CIRCUITS': self.get_circuits,
-        }
-        with open(path) as f:
-            source = f.read()
-            code = compile(source, path, 'exec')
-            exec(code, context)
-
 class PlantConfig:
     def __init__(self):
         self.__services = []
