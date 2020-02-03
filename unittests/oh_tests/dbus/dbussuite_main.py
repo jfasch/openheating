@@ -1,6 +1,7 @@
 from openheating.plant import plant
 from openheating.plant import config
-from openheating.plant.service import PollWitnessService, MainService
+from openheating.plant.service_def import PollWitnessService
+from openheating.plant.service_def import MainService
 from openheating.plant import simple_plant
 
 from openheating.testutils.plant_testcase import PlantTestCase
@@ -18,7 +19,7 @@ class MainTest(PlantTestCase):
         self.__poll_witness_file = self.tempfile(suffix='.poll-witness')
         self.__plant_config_file = self.tempfile(
             lines=[
-                'from openheating.plant.service import PollWitnessService',
+                'from openheating.plant.service_def import PollWitnessService',
                 'ADD_SERVICE(PollWitnessService(witness="{}"))'.format(self.__poll_witness_file.name),
             ],
             suffix='.plant-config')

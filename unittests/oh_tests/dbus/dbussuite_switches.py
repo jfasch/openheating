@@ -1,6 +1,6 @@
 from openheating.base.switch import FileSwitch
 from openheating.dbus.switch_center import SwitchCenter_Client
-from openheating.plant import service
+from openheating.plant.service_def import SwitchService
 from openheating.plant.plant import Plant
 from openheating.testutils import testutils
 from openheating.testutils.plant_testcase import PlantTestCase
@@ -22,7 +22,7 @@ class SwitchesTest(PlantTestCase):
             ]
         )
         self.start_plant(
-            Plant([service.SwitchService(config=config.name)]),
+            Plant([SwitchService(config=config.name)]),
             simulation=True)
 
         center_client = SwitchCenter_Client(self.bus)
@@ -44,7 +44,7 @@ class SwitchesTest(PlantTestCase):
         )
 
         self.start_plant(
-            Plant([service.SwitchService(config=config.name)]),
+            Plant([SwitchService(config=config.name)]),
             simulation=True)
         
         self.assertTrue(os.path.isfile(self.switches_dir+'/TestSwitch'))
@@ -84,7 +84,7 @@ class SwitchesTest(PlantTestCase):
             suffix='.switches-config',
         )
         self.start_plant(
-            Plant([service.SwitchService(config=config.name)]),
+            Plant([SwitchService(config=config.name)]),
             simulation=False)
  
         # simulation is off, so the switch must have been taken as-is

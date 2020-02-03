@@ -1,4 +1,4 @@
-from . import service
+from . import service_def
 from . import plant
 
 from openheating.base.thermometer import FileThermometer
@@ -13,9 +13,9 @@ def create_without_main(make_tempfile, make_tempdir):
     thermometers_config, switches_config, circuits_config, _ = _configs(make_tempfile)
 
     return plant.Plant([
-        service.ThermometerService(config=thermometers_config.name),
-        service.SwitchService(config=switches_config.name),
-        service.CircuitService(config=circuits_config.name),
+        service_def.ThermometerService(config=thermometers_config.name),
+        service_def.SwitchService(config=switches_config.name),
+        service_def.CircuitService(config=circuits_config.name),
     ])
 
 def create_with_main(make_tempfile, make_tempdir):
@@ -69,9 +69,9 @@ def _configs(make_tempfile):
 
     plant_config = make_tempfile(
         lines=[
-            'from openheating.plant.service import ThermometerService',
-            'from openheating.plant.service import SwitchService',
-            'from openheating.plant.service import CircuitService',
+            'from openheating.plant.service_def import ThermometerService',
+            'from openheating.plant.service_def import SwitchService',
+            'from openheating.plant.service_def import CircuitService',
 
             'ADD_SERVICE(ThermometerService(',
             '    config = "{}",'.format(thermometers_config.name),

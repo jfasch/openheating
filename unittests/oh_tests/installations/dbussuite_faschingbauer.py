@@ -1,7 +1,9 @@
 from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.testutils import testutils
 from openheating.plant.plant import Plant, create_plant_with_main
-from openheating.plant import service
+from openheating.plant.service_def import ThermometerService
+from openheating.plant.service_def import SwitchService
+from openheating.plant.service_def import CircuitService
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus.switch_center import SwitchCenter_Client
 from openheating.dbus.circuit_center import CircuitCenter_Client
@@ -29,11 +31,11 @@ class FaschingbauerTest(PlantTestCase):
         # compound system).
 
         self.start_plant(Plant([
-            service.ThermometerService(config=os.path.join(
+            ThermometerService(config=os.path.join(
                 testutils.find_project_root(), 'installations', 'faschingbauer', 'thermometers.pyconf')),
-            service.SwitchService(config=os.path.join(
+            SwitchService(config=os.path.join(
                 testutils.find_project_root(), 'installations', 'faschingbauer', 'switches.pyconf')),
-            service.CircuitService(config=os.path.join(
+            CircuitService(config=os.path.join(
                 testutils.find_project_root(), 'installations', 'faschingbauer', 'circuits.pyconf')),
         ]))
 

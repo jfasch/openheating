@@ -19,9 +19,9 @@ class MainPollable_Client(Pollable_Client):
 @lifecycle.managed(startup='_startup', shutdown='_shutdown')
 @node.Definition(interfaces=interface_repo.get(interface_repo.POLLABLE))
 class Main_Server:
-    def __init__(self, bus, services, interval):
+    def __init__(self, bus, servicedefs, interval):
         self.__bus = bus
-        self.__services = services
+        self.__servicedefs = servicedefs
         self.__poll_interval = interval
         self.__poll_timer_tag = None   # valid after _startup()
 
@@ -48,5 +48,7 @@ class Main_Server:
         return True  # rearm timer
 
     def __do_poll(self, timestamp):
-        for s in self.__services:
-            s.poll(self.__bus, timestamp=timestamp)
+        for servicedef in self.__servicedefs:
+            for path in servicedef.pollable_paths:
+                client = Pollable_Client(bus=self.__bus, busname=servicedef.busname, path=path)
+                client.poll(timestamp=timestamp)

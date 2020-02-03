@@ -1,7 +1,7 @@
 from openheating.dbus import lifecycle
 from openheating.testutils import testutils
 from openheating.testutils.plant_testcase import PlantTestCase
-from openheating.plant import service
+from openheating.plant.service_def import ManagedObjectTesterService
 from openheating.plant.plant import Plant
 
 from gi.repository import GLib
@@ -19,7 +19,7 @@ class ManagedTest(PlantTestCase):
         
     def test__basic(self):
         self.start_plant(Plant([
-            service.ManagedObjectTesterService(stampdir=self.__directory.name),
+            ManagedObjectTesterService(stampdir=self.__directory.name),
         ]))
         self.stop_plant()
         self.assertTrue(os.path.isfile(self.__directory.name+'/started'))

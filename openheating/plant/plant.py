@@ -1,7 +1,7 @@
 from .config_plant import PlantConfig
-from .service import MainService
-from .service import ThermometerService
-from .service import SwitchService
+from .service_def import MainService
+from .service_def import ThermometerService
+from .service_def import SwitchService
 from .service_runner import ServiceRunner
 
 from openheating.base.error import HeatingError
@@ -14,12 +14,12 @@ def create_plant_with_main(plant_config_file):
     plant_config = PlantConfig()
     plant_config.parse(plant_config_file)
     
-    services = plant_config.get_services()
-    services.append(MainService(config=plant_config_file))
-    return Plant(services)
+    servicedefs = plant_config.get_servicedefs()
+    servicedefs.append(MainService(config=plant_config_file))
+    return Plant(servicedefs)
 
 class Plant:
-    def __init__(self, services):
+    def __init__(self, servicedefs):
         self.__running = False
         self.__capture_stderr = None # bool; valid after startup
 
@@ -27,7 +27,7 @@ class Plant:
         self.__thermometers_dir = None
         self.__switches_dir = None
 
-        self.__services = services[:]
+        self.__servicedefs = servicedefs[:]
         self.__service_runners = []
 
         # thermometers and switches are special, especially for tests
@@ -35,11 +35,11 @@ class Plant:
         self.__thermometer_service = None
         self.__switch_service = None
 
-        for s in self.__services:
-            if isinstance(s, ThermometerService):
-                self.__thermometer_service = s
-            if isinstance(s, SwitchService):
-                self.__switch_service = s
+        for servicedef in self.__servicedefs:
+            if isinstance(servicedef, ThermometerService):
+                self.__thermometer_service = servicedef
+            if isinstance(servicedef, SwitchService):
+                self.__switch_service = servicedef
 
     @property
     def running(self):
@@ -77,8 +77,8 @@ class Plant:
 
         started = []
         start_error = None
-        for service in self.__services:
-            runner = ServiceRunner(service)
+        for servicedef in self.__servicedefs:
+            runner = ServiceRunner(servicedef)
             runner.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args, capture_stderr=self.__capture_stderr)
             self.__service_runners.append(runner)
         self.__running = True

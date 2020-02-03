@@ -1,10 +1,10 @@
 # -*- python -*-
 
-from openheating.plant.service import ThermometerService
-from openheating.plant.service import SwitchService
-from openheating.plant.service import CircuitService
-from openheating.plant.service import ErrorService
-from openheating.plant.service import CrashTestDummyService
+from openheating.plant.service_def import ThermometerService
+from openheating.plant.service_def import SwitchService
+from openheating.plant.service_def import CircuitService
+from openheating.plant.service_def import ErrorService
+from openheating.plant.service_def import CrashTestDummyService
 
 # fix that for the installed case
 from openheating.testutils.testutils import find_project_root

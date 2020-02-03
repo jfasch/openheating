@@ -6,30 +6,31 @@ from ..dbus.pollable_client import Pollable_Client
 import logging
 
 
-class Service:
-    def __init__(self, busname, exe, args=None):
+class ServiceDefinition:
+    def __init__(self, busname, exe, args=None, pollable_paths=None):
         self.busname = busname
         self.exe = exe
         self.args = []
         if args:
             self.args += args
-
-    def poll(self, bus, timestamp):
-        logging.debug('poll {}, timestamp {}: nothing to do'.format(self.busname, timestamp))
-
-class MainService(Service):
+        self.pollable_paths = []
+        if pollable_paths:
+            self.pollable_paths += pollable_paths
+            
+class MainService(ServiceDefinition):
     def __init__(self, config):
         super().__init__(
             exe='openheating-main.py',
             busname=names.Bus.MAIN,
             args=['--config', config])
 
-class ThermometerService(Service):
+class ThermometerService(ServiceDefinition):
     def __init__(self, config):
         args = ['--config', config]
         super().__init__(exe='openheating-thermometers.py',
                          busname=names.Bus.THERMOMETERS,
-                         args=args)
+                         args=args,
+                         pollable_paths=['/'])
     def set_simulation_dir(self, d):
         self.args += ['--simulation-dir', d]
     def center_client(self, bus):
@@ -38,11 +39,8 @@ class ThermometerService(Service):
     def thermometer_client(self, bus, name):
         '''convenience method, for use by tests'''
         return ThermometerCenter_Client(bus).get_thermometer(name)
-    def poll(self, bus, timestamp):
-        pollable_client = Pollable_Client(bus=bus, busname=names.Bus.THERMOMETERS, path='/')
-        return pollable_client.poll(timestamp)
 
-class SwitchService(Service):
+class SwitchService(ServiceDefinition):
     def __init__(self, config):
         args = ['--config', config]
         super().__init__(exe='openheating-switches.py',
@@ -54,31 +52,28 @@ class SwitchService(Service):
         '''convenience method, for use by tests'''
         return SwitchCenter_Client(bus).get_switch(name)
 
-class CircuitService(Service):
+class CircuitService(ServiceDefinition):
     def __init__(self, config):
         assert type(config) is str
         super().__init__(exe='openheating-circuits.py',
                          busname=names.Bus.CIRCUITS,
-                         args=['--config', config])
+                         args=['--config', config],
+                         pollable_paths=['/'])
 
-    def poll(self, bus, timestamp):
-        pollable_client = Pollable_Client(bus=bus, busname=names.Bus.CIRCUITS, path='/')
-        return pollable_client.poll(timestamp)
-
-class ErrorService(Service):
+class ErrorService(ServiceDefinition):
     def __init__(self):
         super().__init__(
             exe='openheating-errors.py',
             busname=names.Bus.ERRORS)
 
-class ExceptionTesterService(Service):
+class ExceptionTesterService(ServiceDefinition):
     def __init__(self):
         super().__init__(
             exe='openheating-exception-tester.py',
             busname=names.Bus.EXCEPTIONTESTER,
         )
 
-class ManagedObjectTesterService(Service):
+class ManagedObjectTesterService(ServiceDefinition):
     def __init__(self, stampdir):
         super().__init__(
             exe='openheating-managedobject-tester.py',
@@ -86,18 +81,15 @@ class ManagedObjectTesterService(Service):
             args=['--stamp-directory', stampdir],
         )
 
-class PollWitnessService(Service):
+class PollWitnessService(ServiceDefinition):
     def __init__(self, witness):
         super().__init__(
             exe='openheating-poll-witness.py',
             busname=names.Bus.POLLWITNESS,
-            args=['--witness', witness])
+            args=['--witness', witness],
+            pollable_paths=['/'])
 
-    def poll(self, bus, timestamp):
-        client = Pollable_Client(bus=bus, busname=names.Bus.POLLWITNESS, path='/')
-        client.poll(timestamp)
-
-class CrashTestDummyService(Service):
+class CrashTestDummyService(ServiceDefinition):
     def __init__(self, no_busname=False, crash_in_operation_after_nsecs=False):
         args=[]
         if no_busname:

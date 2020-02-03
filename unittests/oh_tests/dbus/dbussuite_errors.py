@@ -6,7 +6,8 @@ from openheating.dbus.errors import Errors_Client
 
 from openheating.testutils import testutils
 from openheating.testutils.plant_testcase import PlantTestCase
-from openheating.plant import service
+from openheating.plant.service_def import ErrorService
+from openheating.plant.service_def import ThermometerService
 from openheating.plant.plant import Plant
 
 import unittest
@@ -29,8 +30,8 @@ class ErrorsTest(PlantTestCase):
 
         self.start_plant(
             Plant([
-                service.ErrorService(),
-                service.ThermometerService(config=thermometers_config.name),
+                ErrorService(),
+                ThermometerService(config=thermometers_config.name),
             ]),
             simulation=False, # do instiate ErrorThermometer
         )
@@ -50,8 +51,8 @@ class ErrorsTest(PlantTestCase):
 
         self.start_plant(
             Plant([
-                service.ErrorService(),
-                service.ThermometerService(config=thermometers_config.name),
+                ErrorService(),
+                ThermometerService(config=thermometers_config.name),
             ]),
             simulation=False, # want to see w1 error
         )

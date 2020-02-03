@@ -28,7 +28,7 @@ config.parse(args.config)
 
 main_object = Main_Server(
     bus=bus,
-    services=config.get_services(),
+    servicedefs=config.get_servicedefs(),
     interval=5)
 
 lifecycle.run_server(

@@ -8,8 +8,8 @@ from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..dbus.circuit_center import CircuitCenter_Client
 from ..dbus.main import MainPollable_Client
 from ..plant import dbusutil
-from ..plant.service import ThermometerService
-from ..plant.service import SwitchService
+from ..plant.service_def import ThermometerService
+from ..plant.service_def import SwitchService
 
 import pydbus
 

@@ -1,17 +1,17 @@
 class PlantConfig:
     def __init__(self):
-        self.__services = []
+        self.__servicedefs = []
 
-    def add_service(self, service):
-        if service.busname in [s.busname for s in self.__services]:
-            raise DuplicateName(service.busname)
-        self.__services.append(service)
-    def get_services(self):
-        return self.__services
+    def add_servicedef(self, servicedef):
+        if servicedef.busname in [s.busname for s in self.__servicedefs]:
+            raise DuplicateName(servicedef.busname)
+        self.__servicedefs.append(servicedef)
+    def get_servicedefs(self):
+        return self.__servicedefs
 
     def parse(self, path):
         context = {
-            'ADD_SERVICE': self.add_service,
+            'ADD_SERVICE': self.add_servicedef,
         }
         with open(path) as f:
             source = f.read()

@@ -2,7 +2,8 @@ from openheating.base.error import HeatingError
 
 from openheating.testutils import testutils
 from openheating.testutils.plant_testcase import PlantTestCase
-from openheating.plant import service
+from openheating.plant.service_def import ExceptionTesterService
+from openheating.plant.service_def import ErrorService
 from openheating.plant.plant import Plant
 
 from openheating.dbus.exception_tester import ExceptionTester_Client
@@ -17,8 +18,8 @@ class ExceptionTest(PlantTestCase):
     def setUp(self):
         super().setUp()
         self.start_plant(Plant([
-            service.ExceptionTesterService(),
-            service.ErrorService()
+            ExceptionTesterService(),
+            ErrorService()
         ]))
 
     @PlantTestCase.intercept_failure

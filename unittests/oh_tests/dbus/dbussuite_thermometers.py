@@ -3,7 +3,7 @@ from openheating.base.thermometer import FileThermometer
 
 from openheating.testutils import testutils
 from openheating.testutils.plant_testcase import PlantTestCase
-from openheating.plant import service
+from openheating.plant.service_def import ThermometerService
 from openheating.plant.plant import Plant
 
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
@@ -23,7 +23,7 @@ class ThermometersOK(PlantTestCase):
             ],
             suffix='.thermometers-config',
         )
-        self.start_plant(Plant([service.ThermometerService(config=config.name)]))
+        self.start_plant(Plant([ThermometerService(config=config.name)]))
 
     def test__start_stop(self):
         # inject the temperature we want into the simulation file.
@@ -52,7 +52,7 @@ class ThermometersError(PlantTestCase):
             suffix='.thermometers-config',
         )
         self.start_plant(
-            Plant([service.ThermometerService(config=config.name)]),
+            Plant([ThermometerService(config=config.name)]),
             simulation=False, # so ErrorThermometer is taken as specified
         )
 

@@ -3,7 +3,7 @@
 from openheating.plant import logutil
 from openheating.plant import dbusutil
 from openheating.plant.config_plant import PlantConfig
-from openheating.plant.service import MainService
+from openheating.plant.service_def import MainService
 from openheating.plant.plant import Plant
 from openheating.dbus import names
 from openheating.testutils import testutils
@@ -38,9 +38,9 @@ plant_config = PlantConfig()
 plant_config.parse(args.config)
 
 # add "main" service on top of what's there
-plant_config.add_service(MainService(config=args.config))
+plant_config.add_servicedef(MainService(config=args.config))
 
-the_plant = Plant(services=plant_config.get_services())
+the_plant = Plant(servicedefs=plant_config.get_servicedefs())
 if args.simulation_dir is not None:
     thermometer_dir, switch_dir = the_plant.enable_simulation_mode(args.simulation_dir)
     print('starting in simulation mode:', file=sys.stderr)

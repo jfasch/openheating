@@ -43,12 +43,10 @@ Stack (Hanging)
 
   * ThermometerService.center_client()
   * ThermometerService.thermometer_client()
-  * ThermometerService.poll()
   * SwitchService.switch_client()
-  * CircuitService.poll()
-  * PollWitnessService.poll()
-  * rename Service -> ServiceDefinition (?)
   * ServiceRunner only as return type from runservice.start() or so.
+  * where to go with all those preinstantiated classes like
+    ThermometerService? they do nothing, basically.
 
 Todo
 ====
