@@ -1,5 +1,6 @@
 from openheating.plant.plant import Plant
-from openheating.plant.service import CrashTestDummyService, BusnameTimeout
+from openheating.plant.service import CrashTestDummyService
+from openheating.plant.service_runner import BusnameTimeout
 
 from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.testutils import testutils

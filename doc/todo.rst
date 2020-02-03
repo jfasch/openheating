@@ -18,17 +18,8 @@ Stack (Hanging)
 
 * plant-running
 
-  * add missing services
-
-    * BoilerService
-    * WoodOvenService
-    * OilBurnerService
-    * MixerService
-
   * Service refactoring
 
-    * split services up into ServiceDefinition (for Main) and
-      ServiceRunner (for tests and oh-runplant).
     * replace find_exe with exe_dir or None (->search in path)
     * same with config directory
     * all in all: find a way to properly differentiate between
@@ -36,37 +27,28 @@ Stack (Hanging)
       * from source -> testutils
       * installed -> need bindir, libdir etc from setup.py
 
-    * fix plant.pyconf accordingly
-
   * systemd generator
 
     * service: generate unit files (tests!)
     * generate the generator (.ac_subst). it runs early during boot,
       so it will be best to hardcode all paths into the executable.
 
-* split Service into Definition and Runner (o so)
-* thermometer service: no self-timers for background updates
+  * Service.poll() is client stuff. rethink that; that's what the
+    org.openheating.Pollable interface is there for.
 
-  * at startup, read all thermometers synchronously *in any case*
-  * initiate background updates via poll(), just like everybody else.
+    * just need the busname and the object path where to find the
+      pollables
+    * make this ordinary properties of the Service class.
+    * generic client/poll functionality
 
-    * PlantTestCase.force_temperature_update(): replace with
-      PlantTestCase.poll_thermometer(name) and
-      PlantTestCase.poll_thermometers()
-    * what about
-      dbussuite_thermometers.ThermometersError.test__sensor_error_at_startup()
-
-  * cleanup
-
-    * openheating-runplant.py: do not add Main manually; use helper
-      from plant.py
-
-* fix dbussuite_main.py
-
-  * do we still need InMemoryThermometer?
-  * do we still need Plant.registered_services and
-    Plant.running_services?
-
+  * ThermometerService.center_client()
+  * ThermometerService.thermometer_client()
+  * ThermometerService.poll()
+  * SwitchService.switch_client()
+  * CircuitService.poll()
+  * PollWitnessService.poll()
+  * rename Service -> ServiceDefinition (?)
+  * ServiceRunner only as return type from runservice.start() or so.
 
 Todo
 ====

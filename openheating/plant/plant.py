@@ -2,6 +2,7 @@ from .config_plant import PlantConfig
 from .service import MainService
 from .service import ThermometerService
 from .service import SwitchService
+from .service_runner import ServiceRunner
 
 from openheating.base.error import HeatingError
 
@@ -26,15 +27,15 @@ class Plant:
         self.__thermometers_dir = None
         self.__switches_dir = None
 
-        self.__registered_services = services[:]
-        self.__running_services = []
+        self.__services = services[:]
+        self.__service_runners = []
 
         # thermometers and switches are special, especially for tests
         # and/or simulation. sniff on those, out of pure convenience.
         self.__thermometer_service = None
         self.__switch_service = None
 
-        for s in self.__registered_services:
+        for s in self.__services:
             if isinstance(s, ThermometerService):
                 self.__thermometer_service = s
             if isinstance(s, SwitchService):
@@ -52,12 +53,8 @@ class Plant:
         return self.__switch_service
 
     @property
-    def registered_services(self):
-        return self.__registered_services
-
-    @property
-    def running_services(self):
-        return self.__running_services
+    def services(self):
+        return self.__services
 
     def enable_simulation_mode(self, simulation_dir):
         self.__simulation_dir = simulation_dir
@@ -80,11 +77,10 @@ class Plant:
 
         started = []
         start_error = None
-        while len(self.__registered_services):
-            s = self.__registered_services[0]
-            s.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args, capture_stderr=self.__capture_stderr)
-            del self.__registered_services[0]
-            self.__running_services.insert(0, s)
+        for service in self.__services:
+            runner = ServiceRunner(service)
+            runner.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args, capture_stderr=self.__capture_stderr)
+            self.__service_runners.append(runner)
         self.__running = True
 
     def shutdown(self, print_stderr=False):
@@ -93,10 +89,10 @@ class Plant:
         stderrs = []
         errors = []
 
-        for s in reversed(self.__running_services):
+        for runner in reversed(self.__service_runners):
             try:
-                stderr = s.stop()
-                stderrs.append((s.busname, stderr))
+                stderr = runner.stop()
+                stderrs.append((runner.servicedef.busname, stderr))
             except Exception as e:
                 errors.append(e)
 
