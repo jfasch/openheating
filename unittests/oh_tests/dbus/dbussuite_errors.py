@@ -22,14 +22,18 @@ class ErrorsTest(PlantTestCase):
         thermometers_config = self.tempfile(
             lines=[
                 "from openheating.base.thermometer import ErrorThermometer",
-                "ADD_THERMOMETER('Error', 'Error Thermometer', ErrorThermometer(n_ok_before_error=0)),",
+                "ADD_THERMOMETER('Error', 'Error Thermometer', ErrorThermometer, n_ok_before_error=0),",
             ],
             suffix='.thermometers-config',
         )
 
-        self.start_plant(Plant([
-            service.ErrorService(),
-            service.ThermometerService(config=thermometers_config.name)]))
+        self.start_plant(
+            Plant([
+                service.ErrorService(),
+                service.ThermometerService(config=thermometers_config.name),
+            ]),
+            simulation=False, # do instiate ErrorThermometer
+        )
         
         client = Errors_Client(self.bus)
         self.__wait_error_occurred(client)
@@ -39,15 +43,18 @@ class ErrorsTest(PlantTestCase):
         thermometers_config = self.tempfile(
             lines=[
                 "from openheating.base.w1 import W1Thermometer",
-                "ADD_THERMOMETER('w1_erroneous', 'Some Thermometer', W1Thermometer(path='/a/b/00-00000000')),",
+                "ADD_THERMOMETER('w1_erroneous', 'Some Thermometer', W1Thermometer, path='/a/b/00-00000000'),",
             ],
             suffix='.thermometers-config',
         )
 
-        self.start_plant(Plant([
-            service.ErrorService(),
-            service.ThermometerService(config=thermometers_config.name),
-        ]))
+        self.start_plant(
+            Plant([
+                service.ErrorService(),
+                service.ThermometerService(config=thermometers_config.name),
+            ]),
+            simulation=False, # want to see w1 error
+        )
 
         client = Errors_Client(self.bus)
         self.__wait_error_occurred(client)

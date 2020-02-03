@@ -61,6 +61,13 @@ Stack (Hanging)
     * openheating-runplant.py: do not add Main manually; use helper
       from plant.py
 
+* fix dbussuite_main.py
+
+  * PlantTestCase.start_plant(): pass simulation flag into
+    Plant.startup(). how's that currently being done? I believe that's
+    the config's non-simu-awareness.
+  * do we still need InMemoryThermometer?
+
 Todo
 ====
 

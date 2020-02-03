@@ -23,12 +23,12 @@ class ThermometersConfig:
             code = compile(source, path, 'exec')
             exec(code, context)
 
-    def __add_thermometer(self, name, description, cls, *args, **kwargs):
+    def __add_thermometer(self, name, description, fun, *args, **kwargs):
         if name in [name for name,_,_ in self.__thermometers]:
             raise DuplicateName(name)
 
         if self.__simulation_dir is None:
-            th = cls(*args, **kwargs)
+            th = fun(*args, **kwargs)
         else:
             # ignore thermometer, and create a simulated one.
             thfile = os.path.join(self.__simulation_dir, name)

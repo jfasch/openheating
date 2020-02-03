@@ -53,6 +53,14 @@ class PlantTestCase(unittest.TestCase):
         self.__thermometer_service = None
         self.__switch_service = None
 
+        # this is where thermometers and switches go.
+        self.__simulation_dir = self.tempdir(suffix='.simulation').name
+        self.__thermometers_dir = self.__simulation_dir + '/thermometers'
+        self.__switches_dir = self.__simulation_dir + '/switches'
+
+        os.mkdir(self.__thermometers_dir)
+        os.mkdir(self.__switches_dir)
+
     def tearDown(self):
         if self.__plant:
             self.__plant.shutdown(print_stderr=self.__is_failure)
@@ -64,14 +72,25 @@ class PlantTestCase(unittest.TestCase):
         self.__thermometer_service = None
         self.__switch_service = None
 
-    def start_plant(self, plant):
+    @property
+    def simulation_dir(self): return self.__simulation_dir
+    @property
+    def thermometers_dir(self): return self.__thermometers_dir
+    @property
+    def switches_dir(self): return self.__switches_dir
+    
+    def start_plant(self, plant, simulation=True):
         self.__plant = plant
 
         for s in self.__plant.registered_services:
             if isinstance(s, ThermometerService):
                 self.__thermometer_service = s
+                if simulation:
+                    self.__thermometer_service.set_simulation_dir(self.__thermometers_dir)
             if isinstance(s, SwitchService):
                 self.__switch_service = s
+                if simulation:
+                    self.__switch_service.set_simulation_dir(self.__switches_dir)
             
         self.__plant.startup(find_exe=testutils.find_executable, 
                              bus_kind=dbusutil.BUS_KIND_SESSION,
@@ -88,12 +107,12 @@ class PlantTestCase(unittest.TestCase):
         self.__switch_service = None
 
     def tempdir(self, suffix=None):
-        d = tempfile.TemporaryDirectory(prefix=self.__class__.__name__+'.', suffix=suffix)
+        d = tempfile.TemporaryDirectory(prefix='openheating-{}-'.format(self.__class__.__name__), suffix=suffix)
         self.__tempdirs.append(d)
         return d
         
     def tempfile(self, lines=None, suffix=None):
-        f = tempfile.NamedTemporaryFile(prefix=self.__class__.__name__+'.', suffix=suffix, mode='w')
+        f = tempfile.NamedTemporaryFile(prefix='openheating-{}-'.format(self.__class__.__name__), suffix=suffix, mode='w')
         self.__tempfiles.append(f)
         if lines is not None:
             f.write('\n'.join(lines))
@@ -106,7 +125,7 @@ class PlantTestCase(unittest.TestCase):
             self.__bus = pydbus.SessionBus()
         return self.__bus
 
-    def set_temperature_file_without_update(self, name, value, timestamp):
+    def set_temperature_file_without_update(self, name, value):
         '''Write temperature of thermometer 'name' to associated simulation
         file. No update is kicked; that is left to the user.
 
@@ -121,7 +140,7 @@ class PlantTestCase(unittest.TestCase):
 
         '''
         self.assertIsNotNone(self.__thermometer_service)
-        self.assertIsNotNone(self.__thermometer_service.simulation_dir)
+        self.assertIsNotNone(self.__thermometers_dir)
 
         self.__set_temperature_file(name, value)
 
@@ -173,8 +192,8 @@ class PlantTestCase(unittest.TestCase):
 
         '''
         self.assertIsNotNone(self.__switch_service)
-        self.assertIsNotNone(self.__switch_service.simulation_dir)
-        return FileSwitch(os.path.join(self.__switch_service.simulation_dir, name)).get_state()
+        self.assertIsNotNone(self.__switches_dir)
+        return FileSwitch(os.path.join(self.__switches_dir, name)).get_state()
 
     def set_switchstate_file(self, name, value):
         '''Writing the switch-file associated with 'name', set the switch
@@ -182,8 +201,8 @@ class PlantTestCase(unittest.TestCase):
 
         '''
         self.assertIsNotNone(self.__switch_service)
-        self.assertIsNotNone(self.__switch_service.simulation_dir)
-        FileSwitch(os.path.join(self.__switch_service.simulation_dir, name)).set_state(value)
+        self.assertIsNotNone(self.__switches_dir)
+        FileSwitch(os.path.join(self.__switches_dir, name)).set_state(value)
 
     def activate_circuit(self, name):
         return CircuitCenter_Client(self.bus).get_circuit(name).activate()
@@ -201,6 +220,6 @@ class PlantTestCase(unittest.TestCase):
         return MainPollable_Client(self.bus).poll(timestamp=timestamp)
 
     def __set_temperature_file(self, name, value):
-        thfile = os.path.join(self.__thermometer_service.simulation_dir, name)
+        thfile = os.path.join(self.__thermometers_dir, name)
         self.assertTrue(os.path.isfile(thfile))
         FileThermometer(thfile).set_temperature(value)

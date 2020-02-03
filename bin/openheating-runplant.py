@@ -2,7 +2,7 @@
 
 from openheating.plant import logutil
 from openheating.plant import dbusutil
-from openheating.plant.config import PlantConfig
+from openheating.plant.config_plant import PlantConfig
 from openheating.plant.service import MainService
 from openheating.plant.plant import Plant
 from openheating.dbus import names
@@ -36,9 +36,6 @@ buskind = dbusutil.buskind_from_argparse(args)
 bus = dbusutil.bus_from_argparse(args)
 
 plant_config = PlantConfig()
-
-# parse config with simluation settnigs in place
-plant_config.set_simulation_dir(args.simulation_dir)
 plant_config.parse(args.config)
 
 # add "main" service on top of what's there

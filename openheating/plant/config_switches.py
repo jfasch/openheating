@@ -23,12 +23,12 @@ class SwitchesConfig:
             code = compile(source, path, 'exec')
             exec(code, context)
 
-    def __add_switch(self, name, description, cls, *args, **kwargs):
+    def __add_switch(self, name, description, fun, *args, **kwargs):
         if name in [name for name,_,_ in self.__switches]:
             raise DuplicateName(name)
 
         if self.__simulation_dir is None:
-            sw = cls(*args, **kwargs)
+            sw = fun(*args, **kwargs)
         else:
             swfile = os.path.join(self.__simulation_dir, name)
             sw = FileSwitch(swfile, initial_value=False) # initial_value actually creates the file

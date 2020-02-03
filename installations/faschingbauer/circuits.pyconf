@@ -11,9 +11,10 @@ holzbrenner_thermometer = thermometer_center.get_thermometer('Holzbrenner')
 ww_pumpe = switch_center.get_switch('ww')
 
 ADD_CIRCUIT('ww', 'Warmwasserkreis',
-            Circuit(
-                debugstr='Warmwasserkreis',
-                pump=ww_pumpe,
-                producer=holzbrenner_thermometer, consumer=speicheroben_thermometer,
-                diff_low=3, diff_high=10)
+            Circuit,
+
+            debugstr='Warmwasserkreis',
+            pump=ww_pumpe,
+            producer=holzbrenner_thermometer, consumer=speicheroben_thermometer,
+            diff_low=3, diff_high=10,
 )

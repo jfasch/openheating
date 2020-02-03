@@ -2,7 +2,7 @@
 
 from openheating.plant import logutil
 from openheating.plant import dbusutil
-from openheating.plant.config import PlantConfig
+from openheating.plant.config_plant import PlantConfig
 from openheating.dbus import names
 from openheating.dbus import lifecycle
 from openheating.dbus.main import Main_Server

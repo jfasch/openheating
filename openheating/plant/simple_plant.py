@@ -13,20 +13,15 @@ def create_without_main(make_tempfile, make_tempdir):
     thermometers_config, switches_config, circuits_config, _ = _configs(make_tempfile)
 
     return plant.Plant([
-        service.ThermometerService(
-            simulation_dir=make_tempdir(suffix='.thermometers').name,
-            config=thermometers_config.name),
-        service.SwitchService(
-            simulation_dir=make_tempdir(suffix='.switches').name,
-            config=switches_config.name),
-        service.CircuitService(
-            config=circuits_config.name),
+        service.ThermometerService(config=thermometers_config.name),
+        service.SwitchService(config=switches_config.name),
+        service.CircuitService(config=circuits_config.name),
     ])
 
-def create_with_main(simulation_dir, make_tempfile, make_tempdir):
+def create_with_main(make_tempfile, make_tempdir):
     thermometers_config, switches_config, circuits_config, plant_config = _configs(make_tempfile)
 
-    return plant.create_plant_with_main(plant_config.name, simulation_dir=simulation_dir)
+    return plant.create_plant_with_main(plant_config.name)
 
 def _configs(make_tempfile):
     thermometers_config = make_tempfile(
@@ -78,15 +73,11 @@ def _configs(make_tempfile):
             'from openheating.plant.service import SwitchService',
             'from openheating.plant.service import CircuitService',
 
-            'assert IS_SIMULATION',
-
             'ADD_SERVICE(ThermometerService(',
             '    config = "{}",'.format(thermometers_config.name),
-            '    simulation_dir = GET_SIMULATION_DIR() + "/thermometers"',
             '))',
             'ADD_SERVICE(SwitchService(',
             '    config = "{}",'.format(switches_config.name),
-            '    simulation_dir = GET_SIMULATION_DIR() + "/switches"',
             '))',
             'ADD_SERVICE(CircuitService(',
             '    config = "{}"'.format(circuits_config.name),

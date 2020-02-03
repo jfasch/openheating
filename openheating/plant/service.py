@@ -193,44 +193,31 @@ class MainService(Service):
             args=['--config', config])
 
 class ThermometerService(Service):
-    def __init__(self, config, simulation_dir=None):
-        self.__simulation_dir = simulation_dir
-
+    def __init__(self, config):
         args = ['--config', config]
-        if self.__simulation_dir is not None:
-            args += ['--simulation-dir', self.__simulation_dir]
-
         super().__init__(exe='openheating-thermometers.py',
                          busname=names.Bus.THERMOMETERS,
                          args=args)
-
-    @property
-    def simulation_dir(self):
-        return self.__simulation_dir
-
+    def set_simulation_dir(self, d):
+        self.add_specific_args(['--simulation-dir', d])
     def center_client(self, bus):
         '''convenience method, for use by tests'''
         return ThermometerCenter_Client(bus)
     def thermometer_client(self, bus, name):
         '''convenience method, for use by tests'''
-        return ThermometerCenter_Client(bus).get_thermometer(name)        
+        return ThermometerCenter_Client(bus).get_thermometer(name)
+    def poll(self, bus, timestamp):
+        pollable_client = Pollable_Client(bus=bus, busname=names.Bus.THERMOMETERS, path='/')
+        return pollable_client.poll(timestamp)
 
 class SwitchService(Service):
-    def __init__(self, config, simulation_dir=None):
-        self.__simulation_dir = simulation_dir
-
+    def __init__(self, config):
         args = ['--config', config]
-        if self.__simulation_dir is not None:
-            args += ['--simulation-dir', self.__simulation_dir]
-
         super().__init__(exe='openheating-switches.py',
                          busname=names.Bus.SWITCHES,
                          args=args)
-
-    @property
-    def simulation_dir(self):
-        return self.__simulation_dir
-
+    def set_simulation_dir(self, d):
+        self.add_specific_args(['--simulation-dir', d])
     def switch_client(self, bus, name):
         '''convenience method, for use by tests'''
         return SwitchCenter_Client(bus).get_switch(name)

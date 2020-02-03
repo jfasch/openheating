@@ -22,7 +22,4 @@ _thermometers = [
 ]
 
 for name, description, path in _thermometers:
-    if IS_SIMULATION:
-        ADD_THERMOMETER(name, description)
-    else:
-        ADD_THERMOMETER(name, description, W1Thermometer(path))
+    ADD_THERMOMETER(name, description, W1Thermometer, path)

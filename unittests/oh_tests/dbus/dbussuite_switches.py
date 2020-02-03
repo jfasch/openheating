@@ -14,14 +14,16 @@ class SwitchesTest(PlantTestCase):
         super().setUp()
         self.__tmpdir = self.tempdir()
 
-    def test__basic(self):
+    def test__dbus_functionality(self):
         config=self.tempfile(
             lines=[
                 'from openheating.base.switch import InMemorySwitch',
                 'ADD_SWITCH("TestSwitch", "Test Switch", InMemorySwitch, False)',
             ]
         )
-        self.start_plant(Plant([service.SwitchService(config=config.name)]))
+        self.start_plant(
+            Plant([service.SwitchService(config=config.name)]),
+            simulation=True)
 
         center_client = SwitchCenter_Client(self.bus)
         switch_client = center_client.get_switch('TestSwitch')
@@ -31,24 +33,21 @@ class SwitchesTest(PlantTestCase):
         switch_client.set_state(True)
         self.assertEqual(switch_client.get_state(), True)
 
-    def test__simulation_dir__passed(self):
-        swdir = self.__tmpdir.name+'/some/dir/to/contain/switches'
+    def test__simulation(self):
         config=self.tempfile(
             lines=[
                 'from openheating.base.switch import InMemorySwitch',
                 'assert IS_SIMULATION',
                 'ADD_SWITCH("TestSwitch", "Test Switch", None)',
-            ]
+            ],
+            suffix='.switches-pyconf',
         )
 
-        self.start_plant(Plant([ 
-            service.SwitchService(
-                config=config.name,
-                simulation_dir=swdir,
-            )]))
+        self.start_plant(
+            Plant([service.SwitchService(config=config.name)]),
+            simulation=True)
         
-        self.assertTrue(os.path.isdir(swdir)) # created by service process
-        self.assertTrue(os.path.isfile(swdir+'/TestSwitch'))
+        self.assertTrue(os.path.isfile(self.switches_dir+'/TestSwitch'))
 
         # read initial switch state (thereby verifying that the file
         # has been created by the service, and initialized with
@@ -68,7 +67,7 @@ class SwitchesTest(PlantTestCase):
         self.set_switchstate_file('TestSwitch', True)
         self.assertTrue(self.get_switchstate_dbus('TestSwitch'))
 
-    def test__simulation_dir__not_passed(self):
+    def test__no_simulation(self):
         switch_file = self.tempfile(suffix='.switch')
         config=self.tempfile(
             lines=[
@@ -84,7 +83,9 @@ class SwitchesTest(PlantTestCase):
             ],
             suffix='.switches-config',
         )
-        self.start_plant(Plant([service.SwitchService(config=config.name)]))
+        self.start_plant(
+            Plant([service.SwitchService(config=config.name)]),
+            simulation=False)
  
         # simulation is off, so the switch must have been taken as-is
         # => file contains the initial value as specified by config.

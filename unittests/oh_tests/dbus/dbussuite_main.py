@@ -7,6 +7,8 @@ from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.testutils import testutils
 
 import unittest
+import time
+import signal
 
 
 class MainTest(PlantTestCase):
@@ -54,7 +56,6 @@ class MainTest(PlantTestCase):
 class MainWithThermometersTest(PlantTestCase):
     def test__main_polls_thermometers(self):
         self.start_plant(simple_plant.create_with_main(
-            simulation_dir=self.tempdir(suffix='.simulation').name,
             make_tempfile=self.tempfile,
             make_tempdir=self.tempdir))
 
@@ -80,11 +81,11 @@ class MainWithThermometersTest(PlantTestCase):
             if abs(producer_temperature - 42) < 0.5 and abs(consumer_temperature - 666) < 0.5:  # almost equal
                 break
         else:
+            signal.pause()
             self.fail()
                 
 suite = unittest.TestSuite()
-print('jjjjjjjjjjjj main test comment back in')
-#suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MainTest))
+suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MainTest))
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MainWithThermometersTest))
 
 if __name__ == '__main__':

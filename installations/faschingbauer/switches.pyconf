@@ -26,7 +26,4 @@ _switches = [
 ]
 
 for name, description, pin in _switches:
-    if IS_SIMULATION:
-        ADD_SWITCH(name, description)
-    else:
-        ADD_SWITCH(name, description, gpio.output(chiplabel = 'pinctrl-bcm2835', offset = pin))
+    ADD_SWITCH(name, description, gpio.output, chiplabel = 'pinctrl-bcm2835', offset = pin)

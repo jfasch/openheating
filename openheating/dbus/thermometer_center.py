@@ -41,10 +41,16 @@ class ThermometerCenter_Client:
             self.get_thermometer(name).force_update(timestamp)
 
 
-@node.Definition(interfaces=interface_repo.get(interface_repo.THERMOMETERCENTER))
+@node.Definition(interfaces=interface_repo.get(
+    interface_repo.THERMOMETERCENTER,
+    interface_repo.POLLABLE))
 class ThermometerCenter_Server:
     def __init__(self, objects):
         self.__objects = objects
 
     def all_names(self):
         return [o.get_name() for o in self.__objects]
+
+    def poll(self, timestamp):
+        for o in self.__objects:
+            o.poll(timestamp)

@@ -19,7 +19,7 @@ class CircuitsConfig:
             code = compile(source, path, 'exec')
             exec(code, context)
 
-    def __add_circuit(self, name, description, cls, *args, **kwargs):
+    def __add_circuit(self, name, description, fun, *args, **kwargs):
         if name in [name for name,_,_ in self.__circuits]:
             raise DuplicateName(name)
-        self.__circuits.append((name, description, cls(*args, **kwargs)))
+        self.__circuits.append((name, description, fun(*args, **kwargs)))
