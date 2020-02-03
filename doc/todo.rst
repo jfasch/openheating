@@ -63,10 +63,10 @@ Stack (Hanging)
 
 * fix dbussuite_main.py
 
-  * PlantTestCase.start_plant(): pass simulation flag into
-    Plant.startup(). how's that currently being done? I believe that's
-    the config's non-simu-awareness.
   * do we still need InMemoryThermometer?
+  * do we still need Plant.registered_services and
+    Plant.running_services?
+
 
 Todo
 ====

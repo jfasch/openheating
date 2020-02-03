@@ -7,8 +7,9 @@ from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..dbus.circuit_center import CircuitCenter_Client
 from ..dbus.main import MainPollable_Client
-from ..plant.service import Service, ThermometerService, SwitchService
 from ..plant import dbusutil
+from ..plant.service import ThermometerService
+from ..plant.service import SwitchService
 
 import pydbus
 
@@ -49,17 +50,16 @@ class PlantTestCase(unittest.TestCase):
         self.__bus = None
 
         # we do extra stuff with those, like maintain tempdirs, and
-        # provide convenience methods for tests
+        # provide convenience methods for tests. valid from
+        # start_plant() to tearDown()
         self.__thermometer_service = None
         self.__switch_service = None
 
-        # this is where thermometers and switches go.
-        self.__simulation_dir = self.tempdir(suffix='.simulation').name
-        self.__thermometers_dir = self.__simulation_dir + '/thermometers'
-        self.__switches_dir = self.__simulation_dir + '/switches'
-
-        os.mkdir(self.__thermometers_dir)
-        os.mkdir(self.__switches_dir)
+        # this is where thermometers and switches go. valid from
+        # start_plant() (if called with simulation=True) to tearDown()
+        self.__simulation_dir = None
+        self.__thermometers_dir = None
+        self.__switches_dir = None
 
     def tearDown(self):
         if self.__plant:
@@ -82,21 +82,23 @@ class PlantTestCase(unittest.TestCase):
     def start_plant(self, plant, simulation=True):
         self.__plant = plant
 
-        for s in self.__plant.registered_services:
-            if isinstance(s, ThermometerService):
-                self.__thermometer_service = s
-                if simulation:
-                    self.__thermometer_service.set_simulation_dir(self.__thermometers_dir)
-            if isinstance(s, SwitchService):
-                self.__switch_service = s
-                if simulation:
-                    self.__switch_service.set_simulation_dir(self.__switches_dir)
-            
-        self.__plant.startup(find_exe=testutils.find_executable, 
-                             bus_kind=dbusutil.BUS_KIND_SESSION,
-                             common_args=['--log-level', 'debug'],
-                             # we print stderr on failure
-                             capture_stderr=True,
+        # plant remembers the "special" services for us
+        self.__thermometer_service = self.__plant.thermometer_service
+        self.__switch_service = self.__plant.switch_service
+
+        if simulation:
+            # create simulation base directory, and tell plant about
+            # it.
+            self.__simulation_dir = self.tempdir(suffix='.simulation').name
+            self.__thermometers_dir, self.__switches_dir = \
+                self.__plant.enable_simulation_mode(simulation_dir=self.__simulation_dir)
+
+        self.__plant.startup(
+            find_exe=testutils.find_executable, 
+            bus_kind=dbusutil.BUS_KIND_SESSION,
+            common_args=['--log-level', 'debug'],
+            # we print stderr on failure
+            capture_stderr=True,
         )
 
     def stop_plant(self):

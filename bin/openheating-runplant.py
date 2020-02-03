@@ -20,8 +20,7 @@ import logging
 parser = argparse.ArgumentParser(description='OpenHeating: run a plant manually (for testing and simulating)')
 parser.add_argument('--config', help='Configuration file')
 parser.add_argument('--simulation-dir', metavar='DIR', 
-                    help='Create switch and thermometer files in DIR/switches and DIR/thermometers, respectively. '
-                    'The subdirectory names are passed directly to the switch and thermometer services')
+                    help='Create switch and thermometer files in subdirectories of DIR')
 dbusutil.argparse_add_bus(parser)
 logutil.add_log_options(parser)
 args = parser.parse_args()
@@ -42,6 +41,12 @@ plant_config.parse(args.config)
 plant_config.add_service(MainService(config=args.config))
 
 the_plant = Plant(services=plant_config.get_services())
+if args.simulation_dir is not None:
+    thermometer_dir, switch_dir = the_plant.enable_simulation_mode(args.simulation_dir)
+    print('starting in simulation mode:', file=sys.stderr)
+    print('    thermometers in ', thermometer_dir, file=sys.stderr)
+    print('    switches     in ', switch_dir, file=sys.stderr)
+
 
 try:
     the_plant.startup(
