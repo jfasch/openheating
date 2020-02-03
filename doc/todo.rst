@@ -41,9 +41,6 @@ Stack (Hanging)
     * make this ordinary properties of the Service class.
     * generic client/poll functionality
 
-  * ThermometerService.center_client()
-  * ThermometerService.thermometer_client()
-  * SwitchService.switch_client()
   * ServiceRunner only as return type from runservice.start() or so.
   * where to go with all those preinstantiated classes like
     ThermometerService? they do nothing, basically.

@@ -5,6 +5,7 @@ from ..base.thermometer import FileThermometer
 from ..base.switch import FileSwitch
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
+from ..dbus.switch_center import SwitchCenter_Client
 from ..dbus.circuit_center import CircuitCenter_Client
 from ..dbus.main import MainPollable_Client
 from ..plant import dbusutil
@@ -49,12 +50,6 @@ class PlantTestCase(unittest.TestCase):
         self.__tempfiles = []
         self.__bus = None
 
-        # we do extra stuff with those, like maintain tempdirs, and
-        # provide convenience methods for tests. valid from
-        # start_plant() to tearDown()
-        self.__thermometer_service = None
-        self.__switch_service = None
-
         # this is where thermometers and switches go. valid from
         # start_plant() (if called with simulation=True) to tearDown()
         self.__simulation_dir = None
@@ -69,9 +64,6 @@ class PlantTestCase(unittest.TestCase):
         for f in self.__tempfiles:
             f.close()
 
-        self.__thermometer_service = None
-        self.__switch_service = None
-
     @property
     def simulation_dir(self): return self.__simulation_dir
     @property
@@ -81,10 +73,6 @@ class PlantTestCase(unittest.TestCase):
     
     def start_plant(self, plant, simulation=True):
         self.__plant = plant
-
-        # plant remembers the "special" services for us
-        self.__thermometer_service = self.__plant.thermometer_service
-        self.__switch_service = self.__plant.switch_service
 
         if simulation:
             # create simulation base directory, and tell plant about
@@ -105,8 +93,6 @@ class PlantTestCase(unittest.TestCase):
         assert self.__plant is not None
         self.__plant.shutdown(print_stderr=False)
         self.__plant = None
-        self.__thermometer_service = None
-        self.__switch_service = None
 
     def tempdir(self, suffix=None):
         d = tempfile.TemporaryDirectory(prefix='openheating-{}-'.format(self.__class__.__name__), suffix=suffix)
@@ -141,13 +127,12 @@ class PlantTestCase(unittest.TestCase):
         subsequent reads.
 
         '''
-        self.assertIsNotNone(self.__thermometer_service)
         self.assertIsNotNone(self.__thermometers_dir)
 
         self.__set_temperature_file(name, value)
 
         # force service to do an update
-        self.__thermometer_service.thermometer_client(self.bus, name).force_update(timestamp)
+        self._create_thermometer_client(name).force_update(timestamp)
 
     def set_temperature_files_and_update(self, namevaluedict, timestamp):
         ''''namevaluedict' is a dictionary { 'name': float(value) },
@@ -165,36 +150,30 @@ class PlantTestCase(unittest.TestCase):
         associated with 'name'.
 
         '''
-        self.assertIsNotNone(self.__thermometer_service)
-        return self.__thermometer_service.thermometer_client(self.bus, name).get_temperature()
+        return self._create_thermometer_client(name).get_temperature()
 
     def force_temperature_update(self, timestamp):
         '''Via DBus client, force an update of all thermometers'''
-        client = ThermometerCenter_Client(self.bus)
-        client.force_update(timestamp)
+        self._create_thermometer_center_client().force_update(timestamp)
 
     def get_switchstate_dbus(self, name):
         '''Talking to the dbus object associated with 'name', get the switch
         state.
         '''
-        self.assertIsNotNone(self.__switch_service)
-        return self.__switch_service.switch_client(self.bus, name).get_state()
+        return self._create_switch_client(name).get_state()
 
     def set_switchstate_dbus(self, name, value):
         '''Talking to the dbus object associated with 'name', set the switch
         state.
 
         '''
-        self.assertIsNotNone(self.__switch_service)
-        self.__switch_service.switch_client(self.bus, name).set_state(value)
+        return self._create_switch_client(name).set_state(value)
 
     def get_switchstate_file(self, name):
         '''Reading the switch-file associated with 'name', get the switch
         state.
 
         '''
-        self.assertIsNotNone(self.__switch_service)
-        self.assertIsNotNone(self.__switches_dir)
         return FileSwitch(os.path.join(self.__switches_dir, name)).get_state()
 
     def set_switchstate_file(self, name, value):
@@ -202,8 +181,6 @@ class PlantTestCase(unittest.TestCase):
         state.
 
         '''
-        self.assertIsNotNone(self.__switch_service)
-        self.assertIsNotNone(self.__switches_dir)
         FileSwitch(os.path.join(self.__switches_dir, name)).set_state(value)
 
     def activate_circuit(self, name):
@@ -225,3 +202,16 @@ class PlantTestCase(unittest.TestCase):
         thfile = os.path.join(self.__thermometers_dir, name)
         self.assertTrue(os.path.isfile(thfile))
         FileThermometer(thfile).set_temperature(value)
+
+    def _create_thermometer_center_client(self):
+        return ThermometerCenter_Client(self.bus)
+
+    def _create_thermometer_client(self, name):
+        return self._create_thermometer_center_client().get_thermometer(name)
+        
+    def _create_switch_center_client(self):
+        return SwitchCenter_Client(self.bus)
+
+    def _create_switch_client(self, name):
+        return self._create_switch_center_client().get_switch(name)
+        

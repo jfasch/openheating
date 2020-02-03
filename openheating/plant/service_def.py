@@ -33,12 +33,6 @@ class ThermometerService(ServiceDefinition):
                          pollable_paths=['/'])
     def set_simulation_dir(self, d):
         self.args += ['--simulation-dir', d]
-    def center_client(self, bus):
-        '''convenience method, for use by tests'''
-        return ThermometerCenter_Client(bus)
-    def thermometer_client(self, bus, name):
-        '''convenience method, for use by tests'''
-        return ThermometerCenter_Client(bus).get_thermometer(name)
 
 class SwitchService(ServiceDefinition):
     def __init__(self, config):
@@ -48,9 +42,6 @@ class SwitchService(ServiceDefinition):
                          args=args)
     def set_simulation_dir(self, d):
         self.args += ['--simulation-dir', d]
-    def switch_client(self, bus, name):
-        '''convenience method, for use by tests'''
-        return SwitchCenter_Client(bus).get_switch(name)
 
 class CircuitService(ServiceDefinition):
     def __init__(self, config):
