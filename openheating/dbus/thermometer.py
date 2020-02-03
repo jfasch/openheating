@@ -97,9 +97,9 @@ class Thermometer_Server:
         return list(self.__history.distill(granularity=granularity, duration=duration))
 
     def poll(self, timestamp):
-        self.__background_thread.submit(self.__update)
+        self.__background_thread.submit(self.__update, timestamp)
 
-    def __update(self):
+    def __update(self, timestamp):
         # in the background thread now, take as long as we want (about
         # a second) to read the temperature from the sensor. when
         # done, push what we have into the GLib main loop and do
@@ -112,10 +112,10 @@ class Thermometer_Server:
         try:
             current_temperature = self.__thermometer.get_temperature()
             self.__logger.debug('(update-thread): sensor has {} degrees'.format(current_temperature))
-            GLib.idle_add(self.__receive_update, time.time(), current_temperature, None)
+            GLib.idle_add(self.__receive_update, timestamp, current_temperature, None)
         except Exception as e:
             self.__logger.exception('(update-thread): thermometer error')
-            GLib.idle_add(self.__receive_update, time.time(), None, e)
+            GLib.idle_add(self.__receive_update, timestamp, None, e)
 
     def __receive_update(self, timestamp, temperature, error):
         self.__make_current(timestamp=timestamp, temperature=temperature, error=error)
