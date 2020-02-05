@@ -6,7 +6,7 @@ After=openheating-thermometers.service
 [Service]
 User=openheating
 Environment=PYTHONPATH=${libdir}
-ExecStart=${bindir}/openheating-http.py --system --templates ${sharedir}/web/templates/ --static ${sharedir}/web/static
+ExecStart=${bindir}/openheating-http.py --system --templates ${webdir}/web/templates --static ${webdir}/web/static
 Type=notify
 
 [Install]

@@ -35,7 +35,7 @@ Stack (Hanging)
       * eliminate systemd/*.service.ac_subst files
       * eliminate setup.install_data_like_ac_subst
 
-Todo
+ Todo
 ====
 
 * blink

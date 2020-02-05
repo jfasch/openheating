@@ -70,6 +70,7 @@ class install_data_like_ac_subst(install_data):
             'bindir': self.bindir,
             'libdir': self.libdir,
             'sharedir': self.sharedir,
+            'webdir': os.path.join(self.sharedir, 'web'),
         })
 
         rel_dirname, src_filename = os.path.split(filename)
