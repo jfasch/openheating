@@ -6,13 +6,11 @@ from openheating.plant.service_def import CircuitService
 from openheating.plant.service_def import ErrorService
 from openheating.plant.service_def import CrashTestDummyService
 
-# fix that for the installed case
-from openheating.testutils.testutils import find_project_root
-configdir = find_project_root() + '/installations/faschingbauer'
+from openheating.plant import locations__ac_subst
 
-ADD_SERVICE(ThermometerService(config = configdir + '/thermometers.pyconf'))
-ADD_SERVICE(SwitchService(config = configdir + '/switches.pyconf'))
-ADD_SERVICE(CircuitService(config = configdir + '/circuits.pyconf'))
+ADD_SERVICE(ThermometerService(config = locations__ac_subst.confdir + '/thermometers.pyconf'))
+ADD_SERVICE(SwitchService(config = locations__ac_subst.confdir + '/switches.pyconf'))
+ADD_SERVICE(CircuitService(config = locations__ac_subst.confdir + '/circuits.pyconf'))
 ADD_SERVICE(ErrorService())
 
 # testing service crashes

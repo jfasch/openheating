@@ -30,20 +30,10 @@ Stack (Hanging)
   * systemd generator
 
     * service: generate unit files (tests!)
-    * generate the generator (.ac_subst). it runs early during boot,
-      so it will be best to hardcode all paths into the executable.
+    * once all that works
 
-  * Service.poll() is client stuff. rethink that; that's what the
-    org.openheating.Pollable interface is there for.
-
-    * just need the busname and the object path where to find the
-      pollables
-    * make this ordinary properties of the Service class.
-    * generic client/poll functionality
-
-  * ServiceRunner only as return type from runservice.start() or so.
-  * where to go with all those preinstantiated classes like
-    ThermometerService? they do nothing, basically.
+      * eliminate systemd/*.service.ac_subst files
+      * eliminate setup.install_data_like_ac_subst
 
 Todo
 ====

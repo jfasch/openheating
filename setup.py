@@ -2,9 +2,12 @@
 
 from distutils.core import setup
 from distutils.command.install_data import install_data
+from distutils.command.build_py import build_py
 
 import os
 import string
+import tempfile
+
 
 # PROBLEM: install systemd unit files. these usually refer to
 # executables to be started. we do not want to hardcode the paths
@@ -80,8 +83,45 @@ class install_data_like_ac_subst(install_data):
 
         return build_filename
 
+class build_py_like_ac_subst(build_py):
+    def initialize_options(self):
+        self.bindir = None
+        self.libdir = None
+        self.sharedir = None
+        super().initialize_options()
+
+    def finalize_options(self):
+        super().finalize_options()
+        self.set_undefined_options('install', ('install_scripts', 'bindir'))
+        self.set_undefined_options('install', ('install_lib', 'libdir'))
+        self.set_undefined_options('install', ('install_data', 'sharedir'))
+        self.sharedir = os.path.join(self.sharedir, 'share')
+
+    def copy_file(self, infile, outfile, preserve_mode=1, preserve_times=1,
+                  link=None, level=1):
+        if infile.endswith('__ac_subst.py'):
+            with open(infile) as f:
+                template = string.Template(f.read())
+
+            content = template.substitute({
+                'bindir': self.bindir,
+                'libdir': self.libdir,
+                'sharedir': self.sharedir,
+            })
+            tmpf = tempfile.NamedTemporaryFile(prefix='openheating-ac_subst-', mode='w')
+            tmpf.write(content)
+            tmpf.flush()
+            infile = tmpf.name
+
+        super().copy_file(infile=infile, outfile=outfile, 
+                          preserve_mode=preserve_mode, preserve_times=preserve_times, 
+                          link=link, level=level)
+
 setup(
-    cmdclass={'install_data': install_data_like_ac_subst},
+    cmdclass={
+        'install_data': install_data_like_ac_subst,
+        'build_py': build_py_like_ac_subst,
+    },
     name="openheating",
     license="GPLv3",
     url="http://openheating.org",
@@ -93,8 +133,9 @@ setup(
     packages=[
         'openheating',
         'openheating.base',
-        'openheating.test',
+        'openheating.testutils',
         'openheating.dbus',
+        'openheating.plant',
         'openheating.web',
     ],
 
@@ -150,11 +191,19 @@ setup(
 
     ],
     scripts=[
+        # web server (dbus client)
         'bin/openheating-http.py',
+
+        # somehing that can run a plant (obviously)
+        'bin/openheating-runplant.py',
+
+        # dbus components ("the plant")
+        'bin/openheating-main.py',
         'bin/openheating-thermometers.py',
         'bin/openheating-switches.py',
         'bin/openheating-errors.py',
 
+        # w1 testing
         'bin/openheating-w1-list.py',
     ],
 )

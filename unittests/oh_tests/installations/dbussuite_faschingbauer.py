@@ -4,6 +4,7 @@ from openheating.plant.plant import Plant, create_plant_with_main
 from openheating.plant.service_def import ThermometerService
 from openheating.plant.service_def import SwitchService
 from openheating.plant.service_def import CircuitService
+from openheating.plant import locations__ac_subst
 from openheating.dbus.thermometer_center import ThermometerCenter_Client
 from openheating.dbus.switch_center import SwitchCenter_Client
 from openheating.dbus.circuit_center import CircuitCenter_Client
@@ -31,18 +32,15 @@ class FaschingbauerTest(PlantTestCase):
         # compound system).
 
         self.start_plant(Plant([
-            ThermometerService(config=os.path.join(
-                testutils.find_project_root(), 'installations', 'faschingbauer', 'thermometers.pyconf')),
-            SwitchService(config=os.path.join(
-                testutils.find_project_root(), 'installations', 'faschingbauer', 'switches.pyconf')),
-            CircuitService(config=os.path.join(
-                testutils.find_project_root(), 'installations', 'faschingbauer', 'circuits.pyconf')),
+            ThermometerService(config=locations__ac_subst.confdir + '/thermometers.pyconf'),
+            SwitchService(config=locations__ac_subst.confdir + '/switches.pyconf'),
+            CircuitService(config=locations__ac_subst.confdir + '/circuits.pyconf'),
         ]))
 
     @PlantTestCase.intercept_failure
     def test__run_plant(self):
-        self.start_plant(create_plant_with_main(os.path.join(
-            testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf')))
+        self.start_plant(create_plant_with_main(
+            locations__ac_subst.confdir + '/plant.pyconf'))
 
         thermometer_center = ThermometerCenter_Client(self.bus)
         self.assertIn('Raum', thermometer_center.all_names())
@@ -55,8 +53,7 @@ class FaschingbauerTest(PlantTestCase):
         
     @PlantTestCase.intercept_failure
     def test__manual_poll(self):
-        self.start_plant(create_plant_with_main(os.path.join(
-            testutils.find_project_root(), 'installations', 'faschingbauer', 'plant.pyconf')))
+        self.start_plant(create_plant_with_main(locations__ac_subst.confdir + '/plant.pyconf'))
 
         # hmmm. "no background updates" means that temperature is not
         # initially read. is this really necessary?
