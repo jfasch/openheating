@@ -1,6 +1,7 @@
-from ..base.error import HeatingError
-
 from . import dbusutil
+from . import locations
+
+from ..base.error import HeatingError
 
 import pydbus
 
@@ -25,7 +26,7 @@ class ServiceRunner:
     def servicedef(self):
         return self.__servicedef
 
-    def start(self, find_exe, bus_kind, common_args, capture_stderr):
+    def start(self, bus_kind, common_args, capture_stderr):
         assert type(capture_stderr) is bool
         assert self.__bus_kind is None
         assert self.__capture_stderr is None
@@ -33,7 +34,7 @@ class ServiceRunner:
         self.__bus_kind = bus_kind
         self.__capture_stderr = capture_stderr
 
-        the_exe = find_exe(self.__servicedef.exe)
+        the_exe = locations.find_executable(self.__servicedef.exe)
         if the_exe is None:
             raise HeatingError('start: {busname}: executable {exe} not found'.format(
                 busname=self.__servicedef.busname, exe=self.servicedef.exe))

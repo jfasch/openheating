@@ -50,7 +50,6 @@ if args.simulation_dir is not None:
 
 try:
     the_plant.startup(
-        find_exe = testutils.find_executable, # fix that somehow
         bus_kind = buskind,
         common_args = logutil.get_log_config_from_argparse(args),
         capture_stderr = False, # let stderr through

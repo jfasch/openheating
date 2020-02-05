@@ -1,16 +1,18 @@
 #!/usr/bin/python3
 
+'''systemd unit file generator for openheating services. see
+systemd.generator(7).
+
+'''
+
 import sys
+# add openheating libdir so we can import
 sys.path.insert(0, '${libdir}')
 
 from openheating.plant import locations
+from openheating.plant.config_plant import PlantConfig
 
 
-print(locations.bindir)
-print(locations.libdir)
-print(locations.sharedir)
-print(locations.webdir)
-print(locations.confdir)
+normal_dir, early_dir, late_dir = sys.argv[1:3]
 
-# normal_dir, early_dir, late_dir = sys.argv[1:3]
-
+config = PlantConfig()

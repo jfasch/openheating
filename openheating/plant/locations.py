@@ -43,3 +43,14 @@ else:
 
     # faschingbauer will start to suck once there's an alternative :-)
     confdir = os.path.join(root, 'installations', 'faschingbauer')
+
+
+def find_executable(exe):
+    '''Depending on sys.argv[0], return the absolute path to the
+    executable.
+    '''
+
+    fullexe = os.path.join(bindir, exe)
+    if not (os.path.exists(fullexe) or os.path.isfile(fullexe)):
+        raise HeatingError('executable {} not found in {}'.format(exe, bindir))
+    return fullexe

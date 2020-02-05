@@ -71,7 +71,7 @@ class Plant:
         
         return self.__thermometers_dir, self.__switches_dir
 
-    def startup(self, find_exe, bus_kind, common_args, capture_stderr):
+    def startup(self, bus_kind, common_args, capture_stderr):
         assert type(capture_stderr) is bool
         self.__capture_stderr = capture_stderr
 
@@ -79,7 +79,7 @@ class Plant:
         start_error = None
         for servicedef in self.__servicedefs:
             runner = ServiceRunner(servicedef)
-            runner.start(find_exe=find_exe, bus_kind=bus_kind, common_args=common_args, capture_stderr=self.__capture_stderr)
+            runner.start(bus_kind=bus_kind, common_args=common_args, capture_stderr=self.__capture_stderr)
             self.__service_runners.append(runner)
         self.__running = True
 

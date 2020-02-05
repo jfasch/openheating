@@ -82,7 +82,6 @@ class PlantTestCase(unittest.TestCase):
                 self.__plant.enable_simulation_mode(simulation_dir=self.__simulation_dir)
 
         self.__plant.startup(
-            find_exe=testutils.find_executable, 
             bus_kind=dbusutil.BUS_KIND_SESSION,
             common_args=['--log-level', 'debug'],
             # we print stderr on failure
