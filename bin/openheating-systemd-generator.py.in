@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+
+import sys
+sys.path.insert(0, '${libdir}')
+
+from openheating.plant import locations
+
+
+print(locations.bindir)
+print(locations.libdir)
+print(locations.sharedir)
+print(locations.webdir)
+print(locations.confdir)
+
+# normal_dir, early_dir, late_dir = sys.argv[1:3]
+

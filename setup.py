@@ -1,136 +1,96 @@
 #!/usr/bin/python3
 
+
 from distutils.core import setup
+from distutils.cmd import Command
+from distutils.dist import Distribution
 from distutils.command.install_data import install_data
-from distutils.command.build_py import build_py
+from distutils.command.build import build
 
 import os
 import string
-import tempfile
+import stat
 
 
-# PROBLEM: install systemd unit files. these usually refer to
-# executables to be started. we do not want to hardcode the paths
-# (say, always install to prefix=/usr), but rather substitute the
-# install-time provided --prefix=...
+# AC_SUBST taken from autoconf, basically, as follows:
 
-# SOLUTION: 
+# * setup(): specify a 'ac_subst' parameter, defining what file is
+#   AC_SUBST'ed onto what file. (crap: distutils does not let me
+#   simply pass arbitrary parameters -> subclass 'Distribution', and
+#   pass that class to setup() as 'distclass')
 
-# do it almost like autoconf's AC_SUBST, using string.Template as
-# substitution machinery (substituting ${bindir} instead of AC's
-# @bindir@).
+# * ac_subst_generate: a distutils Command class that does the
+#   job. register that as first subcommand of the 'build' command, so
+#   it is run automatically. crap: generates files into the source
+#   tree (there is no easy other way)
 
-# subclass install_data (which does the installation work), and
-# redirect all ".ac_subst" files to make a substitution hop over the
-# builddir.
+# * cleanup of generated files: crap: I'd like to register an
+#   ac_subst_cleanup command as the last command of the build, but
+#   this is too early for install_data (and likely others). solution:
+#   class dist.cleanup() explicitly, after setup() returns.
 
-class install_data_like_ac_subst(install_data):
-    AC_SUBST_EXT = '.ac_subst'
-
+class ac_subst_generate(Command):
     def initialize_options(self):
         self.bindir = None
         self.libdir = None
-        self.builddir = None
         self.sharedir = None
-        super().initialize_options()
 
     def finalize_options(self):
-        super().finalize_options()
         self.set_undefined_options('install', ('install_scripts', 'bindir'))
         self.set_undefined_options('install', ('install_lib', 'libdir'))
-        self.set_undefined_options('build', ('build_base', 'builddir'))
         self.set_undefined_options('install', ('install_data', 'sharedir'))
-        self.builddir = os.path.join(self.builddir, 'data_like_ac_subst')
         self.sharedir = os.path.join(self.sharedir, 'share')
-        
+
     def run(self):
-        data_files = []
-        for f in self.data_files:
-            # "what could f be?" answer taken from
-            # distutils.command.install_data.run ...
-            if isinstance(f, str):
-                # a plain filename, to be installed right into
-                # ${prefix}
-                data_files.append(self._maybe_ac_subst(f))
-            else:
-                # tuple with path to install to and a list of files
-                data_files.append((f[0], [self._maybe_ac_subst(ff) for ff in f[1]]))
-
-        self.data_files = data_files
-        super().run()
-
-    def _maybe_ac_subst(self, filename):
-        if not filename.endswith(self.AC_SUBST_EXT):
-            return filename
-
-        with open(filename) as f:
-            template = string.Template(f.read())
-
-        content = template.substitute({
-            'bindir': self.bindir,
-            'libdir': self.libdir,
-            'sharedir': self.sharedir,
-            'webdir': os.path.join(self.sharedir, 'web'),
-        })
-
-        rel_dirname, src_filename = os.path.split(filename)
-        build_dirname = os.path.join(self.builddir, rel_dirname)
-        build_filename, _ = os.path.splitext(src_filename)
-        build_filename = os.path.join(build_dirname, build_filename)
-
-        os.makedirs(build_dirname, exist_ok=True)
-        with open(build_filename, 'w') as f:
-            f.write(content)
-
-        return build_filename
-
-class build_py_like_ac_subst(build_py):
-    def initialize_options(self):
-        self.bindir = None
-        self.libdir = None
-        self.sharedir = None
-        super().initialize_options()
-
-    def finalize_options(self):
-        super().finalize_options()
-        self.set_undefined_options('install', ('install_scripts', 'bindir'))
-        self.set_undefined_options('install', ('install_lib', 'libdir'))
-        self.set_undefined_options('install', ('install_data', 'sharedir'))
-        self.sharedir = os.path.join(self.sharedir, 'share')
-
-    def copy_file(self, infile, outfile, preserve_mode=1, preserve_times=1,
-                  link=None, level=1):
-        if infile.endswith('__ac_subst.py'):
+        for infile, outfile in self.distribution.ac_subst:
             with open(infile) as f:
                 template = string.Template(f.read())
+            with open(outfile, 'w') as f:
+                f.write(template.substitute({
+                    'bindir': self.bindir,
+                    'libdir': self.libdir,
+                    'sharedir': self.sharedir,
+                    'webdir': os.path.join(self.sharedir, 'web'),
+                }))
+            
+            # preserve mode and times of infile
+            instat = os.stat(infile)
+            os.utime(outfile, (instat[stat.ST_ATIME], instat[stat.ST_MTIME]))
+            os.chmod(outfile, stat.S_IMODE(instat[stat.ST_MODE]))
 
-            content = template.substitute({
-                'bindir': self.bindir,
-                'libdir': self.libdir,
-                'sharedir': self.sharedir,
-            })
-            tmpf = tempfile.NamedTemporaryFile(prefix='openheating-ac_subst-', mode='w')
-            tmpf.write(content)
-            tmpf.flush()
-            infile = tmpf.name
+build.sub_commands.insert(0, ('ac_subst_generate', lambda _: True))
 
-        super().copy_file(infile=infile, outfile=outfile, 
-                          preserve_mode=preserve_mode, preserve_times=preserve_times, 
-                          link=link, level=level)
 
-setup(
+class MyDistribution(Distribution):
+    def __init__(self, attrs):
+        ac_subst = attrs.get('ac_subst')  # [(infile, outfile)]
+        if ac_subst is None:
+            self.ac_subst = []
+        else:
+            del attrs['ac_subst']
+            self.ac_subst = ac_subst
+
+        super().__init__(attrs)
+
+    def cleanup(self):
+        for _, outfile in self.ac_subst:
+            try:
+                os.unlink(outfile)
+            except FileNotFoundError: 
+                pass
+
+
+dist = setup(
+    distclass = MyDistribution,
     cmdclass={
-        'install_data': install_data_like_ac_subst,
-        'build_py': build_py_like_ac_subst,
-    },
+        'ac_subst_generate': ac_subst_generate,
+        # jjj 'install_data': install_data_like_ac_subst,
+    }, 
     name="openheating",
-    license="GPLv3",
-    url="http://openheating.org",
-    version='0',
-    description="Heating control",
-    author="Joerg Faschingbauer",
+    license="GPLv3", url="http://openheating.org", version='0',
+    description="Heating control", author="Joerg Faschingbauer",
     author_email="jf@faschingbauer.co.at",
-
+       
     packages=[
         'openheating',
         'openheating.base',
@@ -139,31 +99,31 @@ setup(
         'openheating.plant',
         'openheating.web',
     ],
-
+       
     data_files=[
         ('share/systemd',
          [
-             'systemd/openheating-errors.service.ac_subst',
-             'systemd/openheating-http.service.ac_subst',
-             'systemd/openheating-thermometers.service.ac_subst',
-             'systemd/openheating-switches.service.ac_subst',
+             'systemd/openheating-errors.service',
+             'systemd/openheating-http.service',
+             'systemd/openheating-thermometers.service',
+             'systemd/openheating-switches.service',
          ]
         ),
-
+           
         ('share/dbus',
          [
              # system dbus policies
              'dbus/org.openheating.conf',
          ]
         ),
-
+           
         ('share/installations/faschingbauer',
          [
              'installations/faschingbauer/thermometers.pyconf',
              'installations/faschingbauer/switches.pyconf',
          ]
         ),
-
+           
         ('share/web/static/icons/www.opensecurityarchitecture.org',
          [
              'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_home.svg',
@@ -172,13 +132,13 @@ setup(
              'openheating/web/static/icons/www.opensecurityarchitecture.org/osa_warning.svg',
          ],
         ),
-
+           
         ('share/web/static',
          [
              'openheating/web/static/small.css',
          ],
         ),
-
+        
         ('share/web/templates',
          [
              'openheating/web/templates/base.html',
@@ -189,8 +149,9 @@ setup(
              'openheating/web/templates/thermometers.html',
          ],
         ),
-
+        
     ],
+
     scripts=[
         # web server (dbus client)
         'bin/openheating-http.py',
@@ -204,7 +165,29 @@ setup(
         'bin/openheating-switches.py',
         'bin/openheating-errors.py',
 
+        # unit file generator
+        'bin/openheating-systemd-generator.py',
+
         # w1 testing
         'bin/openheating-w1-list.py',
     ],
+
+    ac_subst = [
+        ('bin/openheating-systemd-generator.py.in',
+         'bin/openheating-systemd-generator.py'),
+
+        ('openheating/plant/installed.py.in',
+         'openheating/plant/installed.py'),
+
+        ('systemd/openheating-errors.service.in',
+         'systemd/openheating-errors.service'),
+        ('systemd/openheating-http.service.in',
+         'systemd/openheating-http.service'),
+        ('systemd/openheating-thermometers.service.in',
+         'systemd/openheating-thermometers.service'),
+        ('systemd/openheating-switches.service.in',
+         'systemd/openheating-switches.service')
+    ],
 )
+
+dist.cleanup()

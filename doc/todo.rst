@@ -30,10 +30,6 @@ Stack (Hanging)
   * systemd generator
 
     * service: generate unit files (tests!)
-    * once all that works
-
-      * eliminate systemd/*.service.ac_subst files
-      * eliminate setup.install_data_like_ac_subst
 
  Todo
 ====

@@ -6,11 +6,14 @@ from openheating.plant.service_def import CircuitService
 from openheating.plant.service_def import ErrorService
 from openheating.plant.service_def import CrashTestDummyService
 
-from openheating.plant import locations__ac_subst
+from openheating.plant import locations
 
-ADD_SERVICE(ThermometerService(config = locations__ac_subst.confdir + '/thermometers.pyconf'))
-ADD_SERVICE(SwitchService(config = locations__ac_subst.confdir + '/switches.pyconf'))
-ADD_SERVICE(CircuitService(config = locations__ac_subst.confdir + '/circuits.pyconf'))
+ADD_SERVICE(ThermometerService(
+    config = locations.confdir + '/thermometers.pyconf'))
+ADD_SERVICE(SwitchService(
+    config = locations.confdir + '/switches.pyconf'))
+ADD_SERVICE(CircuitService(
+    config = locations.confdir + '/circuits.pyconf'))
 ADD_SERVICE(ErrorService())
 
 # testing service crashes

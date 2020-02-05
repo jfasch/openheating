@@ -1,0 +1,5 @@
+bindir = '${bindir}'
+libdir = '${libdir}'
+sharedir = '${sharedir}'
+webdir = '${sharedir}/web'
+confdir = '/etc/openheating'

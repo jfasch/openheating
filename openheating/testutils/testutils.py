@@ -1,5 +1,5 @@
 from ..base.error import HeatingError
-from ..plant import locutil
+from ..plant import locations
 
 import os
 import unittest
@@ -19,7 +19,7 @@ def find_executable(exe):
 
     '''
 
-    root = locutil.find_project_root()
+    root = locations.find_project_root()
     fullexe = '{}/bin/{}'.format(root, exe)
     if not (os.path.exists(fullexe) or os.path.isfile(fullexe)):
         return None
