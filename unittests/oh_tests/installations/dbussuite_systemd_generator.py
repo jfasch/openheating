@@ -1,6 +1,7 @@
 from openheating.dbus import names
 from openheating.plant import plant
 from openheating.plant import locations
+from openheating.plant import service_unit
 from openheating.testutils.plant_testcase import PlantTestCase
 from openheating.testutils import testutils
 
@@ -40,12 +41,14 @@ class SystemdGeneratorTest(PlantTestCase):
         the_plant = plant.create_plant_with_main(self.__plant_configfile.name)
 
         for s in the_plant.servicedefs:
-            filename, busname, content  = s.create_unit()
+            filename, busname, content  = service_unit.create(
+                s, sourcepath=self.__plant_configfile.name, generator_exe=__name__)
             config = ConfigParser()
             config.read_string(content)
 
-            self.assertEqual(len(config['Unit']), 1)
+            self.assertEqual(len(config['Unit']), 2)
             self.assertEqual(config['Unit']['Description'], s.description)
+            self.assertEqual(config['Unit']['SourcePath'], self.__plant_configfile.name)
             self.assertEqual(len(config['Service']), 5)
             self.assertEqual(config['Service']['User'], 'openheating')
             self.assertEqual(config['Service']['Environment'], 'PYTHONPATH='+locations.libdir)

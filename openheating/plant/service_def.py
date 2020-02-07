@@ -1,14 +1,7 @@
-from . import locations
-
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..dbus.switch_center import SwitchCenter_Client
 from ..dbus.pollable_client import Pollable_Client
-
-import os.path
-import io
-import logging
-from configparser import ConfigParser
 
 
 class ServiceDefinition:
@@ -22,30 +15,6 @@ class ServiceDefinition:
         self.pollable_paths = []
         if pollable_paths:
             self.pollable_paths += pollable_paths
-
-    def create_unit(self):
-        config = ConfigParser()
-
-        config['Unit'] = {
-            'Description': self.description,
-        }
-
-        config['Service'] = {
-            'User': 'openheating',
-            'Environment': 'PYTHONPATH={}'.format(locations.libdir),
-            'ExecStart': ' '.join([os.path.join(locations.bindir, self.exe), '--system'] + self.args),
-            'Type': 'dbus',
-            'BusName': self.busname,
-        }
-        config['Install'] = {
-            'WantedBy': 'multi-user.target',
-        }
-        content = io.StringIO()
-        config.write(content)
-
-        basename, _ = os.path.splitext(self.exe)
-
-        return basename+'.service', self.busname, content.getvalue()
 
 class MainService(ServiceDefinition):
     def __init__(self, config):

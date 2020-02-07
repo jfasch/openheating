@@ -1,16 +1,13 @@
 #!/usr/bin/python3
 
-'''systemd unit file generator for openheating services. see
-systemd.generator(7).
-
-'''
-
 import sys
-# add openheating libdir so we can import
+# add openheating libdir so we can import (see setup.py how
+# placeholders are substituted)
 sys.path.insert(0, '${libdir}')
 
 from openheating.plant import locations
 from openheating.plant import plant
+from openheating.plant import service_unit
 from openheating.plant.config_plant import PlantConfig
 
 import os.path
@@ -19,7 +16,9 @@ import argparse
 
 parser = argparse.ArgumentParser(
     description='OpenHeating: systemd service unit generator '
-    '(see systemd.generator(7) for what such a generator is there for)')
+    '(see systemd.generator(7) for what such a generator is there for). In '
+    'short: it generates systemd unit files for the services defined '
+    'in /etc/openheating/plant.pyconf.')
 parser.add_argument('--config', 
                     help='Plant configuration file. This is only used '
                     'for testing. Not used in real life!')
@@ -35,6 +34,7 @@ if args.config is not None:
 the_plant = plant.create_plant_with_main(configfile)
 
 for s in the_plant.servicedefs:
-    filename, busname, content = s.create_unit()
+    filename, busname, content = service_unit.create(
+        s, sourcepath=configfile, generator_exe=sys.argv[0])
     with open(os.path.join(vars(args)['normal-dir'], filename), 'w') as f:
         f.write(content)
