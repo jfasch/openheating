@@ -4,7 +4,6 @@ HEATINGERROR = DOMAIN + '.HeatingError'
 
 class Bus:
     MAIN = DOMAIN + '.Main'
-    RUNNER = DOMAIN + '.Runner'
     THERMOMETERS = DOMAIN + '.Thermometers'
     SWITCHES = DOMAIN + '.Switches'
     CIRCUITS = DOMAIN + '.Circuits'

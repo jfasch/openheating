@@ -28,6 +28,9 @@ def find_project_root():
 root = find_project_root()
 
 if root is None:
+    # running from an installed location. setup.py has generated the
+    # location information into 'installed.py' which is only available
+    # in that - installed - case.
     from . import installed
 
     bindir = installed.bindir

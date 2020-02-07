@@ -15,9 +15,9 @@ import stat
 # AC_SUBST taken from autoconf, basically, as follows:
 
 # * setup(): specify a 'ac_subst' parameter, defining what file is
-#   AC_SUBST'ed onto what file. (crap: distutils does not let me
-#   simply pass arbitrary parameters -> subclass 'Distribution', and
-#   pass that class to setup() as 'distclass')
+#   AC_SUBST'ed onto what file. (crap: I'd want to pass an 'ac_subst'
+#   parameter to setup() but distutils won't let me -> subclass
+#   'Distribution', and pass that class to setup() as 'distclass')
 
 # * ac_subst_generate: a distutils Command class that does the
 #   job. register that as first subcommand of the 'build' command, so
@@ -84,13 +84,12 @@ dist = setup(
     distclass = MyDistribution,
     cmdclass={
         'ac_subst_generate': ac_subst_generate,
-        # jjj 'install_data': install_data_like_ac_subst,
     }, 
     name="openheating",
     license="GPLv3", url="http://openheating.org", version='0',
     description="Heating control", author="Joerg Faschingbauer",
     author_email="jf@faschingbauer.co.at",
-       
+    
     packages=[
         'openheating',
         'openheating.base',

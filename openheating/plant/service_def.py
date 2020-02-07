@@ -1,14 +1,20 @@
+from . import locations
+
 from ..dbus import names
 from ..dbus.thermometer_center import ThermometerCenter_Client
 from ..dbus.switch_center import SwitchCenter_Client
 from ..dbus.pollable_client import Pollable_Client
 
+import os.path
+import io
 import logging
+from configparser import ConfigParser
 
 
 class ServiceDefinition:
-    def __init__(self, busname, exe, args=None, pollable_paths=None):
+    def __init__(self, busname, description, exe, args=None, pollable_paths=None):
         self.busname = busname
+        self.description = description
         self.exe = exe
         self.args = []
         if args:
@@ -16,12 +22,37 @@ class ServiceDefinition:
         self.pollable_paths = []
         if pollable_paths:
             self.pollable_paths += pollable_paths
-            
+
+    def create_unit(self):
+        config = ConfigParser()
+
+        config['Unit'] = {
+            'Description': self.description,
+        }
+
+        config['Service'] = {
+            'User': 'openheating',
+            'Environment': 'PYTHONPATH={}'.format(locations.libdir),
+            'ExecStart': ' '.join([os.path.join(locations.bindir, self.exe), '--system'] + self.args),
+            'Type': 'dbus',
+            'BusName': self.busname,
+        }
+        config['Install'] = {
+            'WantedBy': 'multi-user.target',
+        }
+        content = io.StringIO()
+        config.write(content)
+
+        basename, _ = os.path.splitext(self.exe)
+
+        return basename+'.service', self.busname, content.getvalue()
+
 class MainService(ServiceDefinition):
     def __init__(self, config):
         super().__init__(
             exe='openheating-main.py',
             busname=names.Bus.MAIN,
+            description='Openheating Main Service',
             args=['--config', config])
 
 class ThermometerService(ServiceDefinition):
@@ -29,6 +60,7 @@ class ThermometerService(ServiceDefinition):
         args = ['--config', config]
         super().__init__(exe='openheating-thermometers.py',
                          busname=names.Bus.THERMOMETERS,
+                         description='Openheating Thermometer Service',
                          args=args,
                          pollable_paths=['/'])
     def set_simulation_dir(self, d):
@@ -39,6 +71,7 @@ class SwitchService(ServiceDefinition):
         args = ['--config', config]
         super().__init__(exe='openheating-switches.py',
                          busname=names.Bus.SWITCHES,
+                         description='Openheating Switch Service',
                          args=args)
     def set_simulation_dir(self, d):
         self.args += ['--simulation-dir', d]
@@ -48,6 +81,7 @@ class CircuitService(ServiceDefinition):
         assert type(config) is str
         super().__init__(exe='openheating-circuits.py',
                          busname=names.Bus.CIRCUITS,
+                         description='Openheating Circuit Service',
                          args=['--config', config],
                          pollable_paths=['/'])
 
@@ -55,13 +89,15 @@ class ErrorService(ServiceDefinition):
     def __init__(self):
         super().__init__(
             exe='openheating-errors.py',
-            busname=names.Bus.ERRORS)
+            busname=names.Bus.ERRORS,
+            description='Openheating Error Service')
 
 class ExceptionTesterService(ServiceDefinition):
     def __init__(self):
         super().__init__(
             exe='openheating-exception-tester.py',
             busname=names.Bus.EXCEPTIONTESTER,
+            description='Openheating Exception Tester Service',
         )
 
 class ManagedObjectTesterService(ServiceDefinition):
@@ -69,6 +105,7 @@ class ManagedObjectTesterService(ServiceDefinition):
         super().__init__(
             exe='openheating-managedobject-tester.py',
             busname=names.Bus.MANAGEDOBJECTTESTER,
+            description='Openheating Managed Object Tester Service',
             args=['--stamp-directory', stampdir],
         )
 
@@ -77,6 +114,7 @@ class PollWitnessService(ServiceDefinition):
         super().__init__(
             exe='openheating-poll-witness.py',
             busname=names.Bus.POLLWITNESS,
+            description='Openheating Poll Witness Service',
             args=['--witness', witness],
             pollable_paths=['/'])
 
@@ -91,4 +129,5 @@ class CrashTestDummyService(ServiceDefinition):
         super().__init__(
             exe='openheating-crash-test-dummy.py',
             busname=names.Bus.CRASHTESTDUMMY,
+            description='Openheating Crash Test Dummy Service',
             args=args)

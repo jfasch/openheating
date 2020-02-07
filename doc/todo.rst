@@ -16,21 +16,6 @@ Stack (Hanging)
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
 
-* plant-running
-
-  * Service refactoring
-
-    * replace find_exe with exe_dir or None (->search in path)
-    * same with config directory
-    * all in all: find a way to properly differentiate between
-
-      * from source -> testutils
-      * installed -> need bindir, libdir etc from setup.py
-
-  * systemd generator
-
-    * service: generate unit files (tests!)
-
  Todo
 ====
 

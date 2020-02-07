@@ -10,9 +10,31 @@ import sys
 sys.path.insert(0, '${libdir}')
 
 from openheating.plant import locations
+from openheating.plant import plant
 from openheating.plant.config_plant import PlantConfig
 
+import os.path
+import argparse
 
-normal_dir, early_dir, late_dir = sys.argv[1:3]
 
-config = PlantConfig()
+parser = argparse.ArgumentParser(
+    description='OpenHeating: systemd service unit generator '
+    '(see systemd.generator(7) for what such a generator is there for)')
+parser.add_argument('--config', 
+                    help='Plant configuration file. This is only used '
+                    'for testing. Not used in real life!')
+parser.add_argument('normal-dir')
+parser.add_argument('early-dir')
+parser.add_argument('late-dir')
+args = parser.parse_args()
+
+configfile = locations.confdir + '/plant.pyconf'
+if args.config is not None:
+    configfile = args.config
+
+the_plant = plant.create_plant_with_main(configfile)
+
+for s in the_plant.servicedefs:
+    filename, busname, content = s.create_unit()
+    with open(os.path.join(vars(args)['normal-dir'], filename), 'w') as f:
+        f.write(content)

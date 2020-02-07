@@ -53,8 +53,8 @@ class Plant:
         return self.__switch_service
 
     @property
-    def services(self):
-        return self.__services
+    def servicedefs(self):
+        return self.__servicedefs
 
     def enable_simulation_mode(self, simulation_dir):
         self.__simulation_dir = simulation_dir
