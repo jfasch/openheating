@@ -1,3 +1,6 @@
+OpenHeating Presentation Ideas
+==============================
+
 * Intro
 
   * Problem

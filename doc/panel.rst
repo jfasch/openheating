@@ -1,8 +1,11 @@
+Panel
+=====
+
 Hardware
-========
+--------
 
 Taster
-------
+- - - 
 
 * Alle fancy https://www.led-taster.de/
 
@@ -16,7 +19,7 @@ Taster
 
 
 Autostart
-=========
+---------
 
 See conf/panel/.config
 

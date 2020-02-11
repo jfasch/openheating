@@ -1,3 +1,5 @@
+:orphan:
+
 .. contents:: Table of Contents
 
 OpenHeating: Open Source Heating Control System

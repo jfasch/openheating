@@ -1,3 +1,6 @@
+Unsorted Electrical Things
+==========================
+
 * DS18x20 Onewire Sensors
 
   * RJ11 bus topology

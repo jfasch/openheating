@@ -1,5 +1,8 @@
+Hard Work
+=========
+
 Stack (Hanging)
-===============
+---------------
 
 * hotwater circuit overtake
 
@@ -16,18 +19,20 @@ Stack (Hanging)
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
 
- Todo
-====
+Todo
+----
 
 * blink
 
   * context, maybe added as a closure in @program(). geil -> add to
     presentation.
   * tests
-    1. count down until value on each run. program name sub(), subs an
+
+    * count down until value on each run. program name sub(), subs an
        object contained in a closure. together with a check, maybe
        cmp(sub(100),0).
-    1. while loop, as a logical extension.
+    * while loop, as a logical extension.
+
   * next evolution step: add python code and asyncio logic. pieces
     needed.
 
@@ -61,7 +66,7 @@ Stack (Hanging)
     waves with varying frequencies.
 
     * forever(... hmmm .. something like ... with numpy.sine() on an
-         itertools.cycle()d iterator.
+      itertools.cycle()d iterator ::
 
 	 on(red),
 	 any(
@@ -81,13 +86,12 @@ Stack (Hanging)
 	    blink(red. 0.1),
 	    wait_button(red),
 	 ),
-      )
 	 
-    * (**) @program() should work on range() too? that would be the
+    * `@program()` should work on `range()` too? that would be the
       hammer!
-    * call(pycode) takes a code object (in whatever precompiled form),
-      eval()s it (in whatever context, current?) and turns it into a
-      program. hammer!
+    * `call(pycode)` takes a code object (in whatever precompiled
+      form), `eval()` it (in whatever context, current?) and turns it
+      into a program. hammer!
 
 * populate conf/
 
