@@ -1,5 +1,5 @@
-Functional Programming with `asyncio` and `libgpiod`
-====================================================
+GLT2020 "Blink" Presentation Screenplay
+=======================================
 
 `asyncio` Basics
 ----------------

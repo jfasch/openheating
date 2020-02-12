@@ -1,12 +1,14 @@
-.. toctree::
-   :hidden:
-   :maxdepth: 100
-
-   doc/index.rst
-   doc/todo
-
 OpenHeating: Open Source Heating Control System
 ===============================================
+
+.. toctree::
+   :hidden:
+   :maxdepth: -1
+
+   doc/install/index
+   doc/index.rst
+   doc/future/index
+   doc/marketing/index
 
 An open source heating system that is being developed to solve my
 particular needs,

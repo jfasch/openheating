@@ -17,10 +17,10 @@ It's not that GPIO is a new topic in Linux and Python - everybody does
 it. This talk - live hacking, mostly - takes the opportunity to bring
 up a few questions (and try to answer them):
 
-* Which GPIO interface should I use?
+* Which GPIO interface should I use? What's wrong with RPi.GPIO?
 * Why isn't multithreading the best answer to concurrency, generally?
-* How can decorators be used to enable a functional programming
-  style, and to increase job security?
+* How can decorators be used to enable a functional programming style,
+  and to increase job security?
 
 Topics
 ------
@@ -36,10 +36,10 @@ to show.
   * Why is sysfs GPIO deprecated?
   * What's wrong with RPi.GPIO?
     
-* `Python
-  asyncio <https://docs.python.org/3/library/asyncio.html>`__. GPIO
-  interrupts are regular file descriptor based events, and it makes
-  sense to integrate those with asyncio. 
+* `Python asyncio
+  <https://docs.python.org/3/library/asyncio.html>`__. GPIO interrupts
+  are regular file descriptor based events, and it makes sense to
+  integrate those with asyncio.
 
   * Why is multithreading generally *not* the best answer to
     concurrency?
