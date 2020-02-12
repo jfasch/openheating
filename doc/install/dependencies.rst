@@ -5,7 +5,7 @@ DBus: pydbus
 ------------
 
 We distribute components over `DBus <http://dbus.freedesktop.org/>`__,
-using ``pydbus` <https://github.com/LEW21/pydbus>`__.
+using `pydbus <https://github.com/LEW21/pydbus>`__.
 
 ::
 

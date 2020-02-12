@@ -9,3 +9,4 @@ Sparse Documentation
    panel
    glt2020/index
    faschingbauer/index
+   

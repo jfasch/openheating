@@ -1,5 +1,5 @@
-Hard Work
-=========
+Hard Work To Do
+===============
 
 Stack (Hanging)
 ---------------
@@ -18,6 +18,14 @@ Stack (Hanging)
     one that writes to .Errors. HAH! maybe best *be* the error logger.
   * error handling: carry a simple table of errors to handle with a
     watchdog pull.
+
+* fix setup and installation
+
+  * remove dbus activation
+  * remove unit files except http
+  * doc: move more of doc/ to toplevel: intro, installation,
+    components, todo, panel
+  * generator: create necessary symlinks
 
 Todo
 ----

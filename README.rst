@@ -114,7 +114,7 @@ Documentation
 
 The state of documentation is a drama. Ok, the thing is in the works,
 but documentation will always be a drama. All of the existing
-documentation is in `the ``doc/`` subdirectory <dooc/>`__.
+documentation is found in :doc:`doc/index`.
 
 * For my own purposes, I maintain an `installation document
   <doc/install.rst>`__.
