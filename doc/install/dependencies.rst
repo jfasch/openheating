@@ -1,29 +1,32 @@
-Installation Notes
-==================
-
 Dependencies
-------------
+============
 
 DBus: pydbus
-............
+------------
+
+We distribute components over `DBus <http://dbus.freedesktop.org/>`__,
+using ``pydbus` <https://github.com/LEW21/pydbus>`__.
 
 ::
 
    # pip3 install --system pydbus
 
-systemd
-.......
+`systemd` Startup Notification
+------------------------------
 
-(At least) openheating-http.py uses it to notify systemd that it is
-has finished startup and is running. (The service is Type=notify, and
-not Type=dbus as most others.)
+(At least) `openheating-http.py` uses it to notify `systemd` that it
+has finished startup and is running. (The HTTP service is
+`Type=notify`, and not `Type=dbus` as the others.)
 
 ::
 
    # apt install python3-systemd
 
 Flask
-.....
+-----
+
+Web is done using `Flask
+<https://www.palletsprojects.com/p/flask/>`__. Simple and easy.
 
 ::
 
@@ -32,6 +35,9 @@ Flask
 Gradients, Interpolation, Graphs
 --------------------------------
 
+Web has fancy temperature charts, and I believe there's a spline
+interpolation done somewhere.
+
 :: 
 
    # pip3 install --system numpy scipy matplotlib
@@ -39,11 +45,11 @@ Gradients, Interpolation, Graphs
 
 (Upgrading makes sense, especially with these)
 
-GPIO: libgpiod
-..............
+GPIO: `libgpiod`
+----------------
 
-``libgpiod`` is a C library directly on top of the descriptor based
-GPIO interface.
+`libgpiod` is a C library directly on top of the descriptor based GPIO
+interface.
 
 The "integer based" sysfs interface has been deprecated a while ago
 (Linux 4.8). It would be sufficient for our purposes - plain set/get
@@ -57,7 +63,7 @@ Python binding, but unfortunately there is no Raspbian package as of
 independently from libgpiod.)
 
 Installation
-++++++++++++
+- - - - - - 
 
 This is a bit tedious (hope is that Raspbian's ``libgpiod`` package
 will bring the Python binding in future versions). ``libgpiod``
@@ -106,42 +112,7 @@ See if all is well,::
    >>> import gpiod
 
 Links
-+++++
+- - -
 
 * `libgpiod <https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/>`_
 * `Kernel Doc <https://www.kernel.org/doc/Documentation/gpio/consumer.txt>`_
-
-
-Installation
-------------
-
-$ python3 setup.py install --prefix=/some/prefix
-
-Create `openheating` user, ::
-
-   # useradd --system openheating
-
-Create and fill `/etc/openheating/`, ::
-
-   # mkdir /etc/openheating
-   # cp /some/prefix/share/installations/faschingbauer/thermometers.pyconf /etc/openheating/
-   # cp /some/prefix/share/installations/faschingbauer/switches.pyconf /etc/openheating/
-
-Install systemd unit files, ::
-
-   # cp /some/prefix/share/systemd/openheating-*.service /etc/systemd/system
-
-Configure system DBus to allow us in, ::
-
-   # cp /some/prefix/share/dbus/org.openheating.conf /etc/dbus-1/system.d/
-   # systemctl reload dbus
-
-Start necessary services, ::
-
-   # systemctl enable openheating-errors.service
-   # systemctl enable openheating-thermometers.service
-   # systemctl enable openheating-http.service
-
-   # systemctl start openheating-errors.service
-   # systemctl start openheating-thermometers.service
-   # systemctl start openheating-http.service

@@ -4,7 +4,7 @@ Sparse Documentation
 .. toctree::
    :hidden:
 
-   install
+   install/index
    dbus
    panel
    glt2020/index
