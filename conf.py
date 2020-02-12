@@ -26,7 +26,8 @@ release = '0.0.0'
 
 
 # -- General configuration ---------------------------------------------------
-master_doc = 'index'
+master_doc = 'README'  # github won't render index.rst, so we name it
+                       # README.rst
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
