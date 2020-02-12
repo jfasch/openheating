@@ -2,7 +2,10 @@ Grazer Linuxtage 2020
 =====================
 
 .. toctree::
+   :hidden:
 
-   GLT2020 CfP Proposal: "Blinking" <blink>
-   "Blinking" Screenplay <blink/Screenplay>
+   blink
+   blink/Screenplay
    heating
+
+

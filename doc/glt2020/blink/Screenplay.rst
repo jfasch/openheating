@@ -1,8 +1,6 @@
 Functional Programming with `asyncio` and `libgpiod`
 ====================================================
 
-.. contents:: Table of Contents
-
 `asyncio` Basics
 ----------------
 

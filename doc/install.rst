@@ -1,5 +1,3 @@
-.. contents:: Table of Contents
-
 Installation Notes
 ==================
 
