@@ -2,8 +2,8 @@ Stacks (Hanging)
 ================
 
 This are my stacks (yes multiple, since I normally have multiple tasks
-pending) that that I maintain at high frequency. Each frame is one
-work item that is currently being worked on. While I work on one item,
+pending) that I maintain at high frequency. Each frame is one work
+item that is currently being worked on. While I work on one item,
 another one pops up (generally something that is needed for the
 current one) and suspends the current item - forming a stack,
 basically.
@@ -32,7 +32,8 @@ Hotwater Circuit Overtake
   * remove unit files except http
   * doc: move more of doc/ to toplevel: intro, installation,
     components, todo, panel
-  * generator: create necessary symlinks
+
+* generator: create necessary symlinks
 
 SVG, Clickable, Embedded in Sphinx
 ----------------------------------

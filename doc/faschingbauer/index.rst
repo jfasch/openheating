@@ -8,122 +8,18 @@ Faschingbauer Installation Specifics
    w1/w1.rst
    electrics.rst
 
+.. image:: /_static/heating-diagram/holzofen.png
+
 .. raw:: html
 
-    <svg viewBox="0 0 250 200" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 250 200">
 
-      <rect
-	  id="holzofen"
-	  x="0" y="0" 
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+   <rect x="0" y="0" height="50" width="50" style="fill:rgb(0,0,0)" />
 
-      <a href="https://www.google.com">
-      <rect
-	  id="oelbrenner"
-	  x="0" y="150"
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-      </a>
+   <image
+	 id="holzofen"
+	 xlink:href="../../_static/heating-diagram/holzofen.png"
+	 x="70" y="0"
+	 width="50" height="50" />
 
-      <rect
-	  id="radiatoren"
-	  x="200" y="0"
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-
-      <rect
-	  id="boiler"
-	  x="200" y="150" 
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-
-      <rect
-	  id="mischer-holz-oel"
-	  x="80" y="160" 
-	  width="20" height="20"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-
-      <!-- VORLAUF OELBRENNER -->
-      <line 
-	  id="vl-oelbrenner"
-	  x1="50" y1="170" x2="80" y2="170"
-	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <!-- VORLAUF HOLZOFEN -->
-      <polyline 
-	  id="vl-holzofen"
-	  points="50,20 90,20 90,160"
-	  style="fill:none;stroke-width:2;stroke:rgb(255,0,0)"/>
-
-      <!-- RUECKLAUF HOLZOFEN -->
-      <line 
-	  id="rl-holzofen-1"
-	  x1="70" y1="183" x2="70" y2="110"
-	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
-      <line 
-	  id="rl-vl-holzofen"
-	  x1="70" y1="140" x2="90" y2="140"
-	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
-      <circle
-	  id="pumpe-holzofen"
-	  cx="70" cy="100" r="10"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-      <polyline 
-	  id="rl-holzofen-2"
-	  points="70,90 70,30 50,30"
-	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
-
-      <!-- VORLAUF WARMWASSER -->
-      <line
-	  id="vl-warmwasser-1"
-	  x1="100" y1="170" x2="160" y2="170"
-	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <circle
-	  id="pumpe-warmwasser"
-	  cx="170" cy="170" r="10"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-      <line
-	  id="vl-warmwasser-2"
-	  x1="180" y1="170" x2="200" y2="170"
-	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-
-      <!-- VORLAUF HEIZKREIS -->
-      <line
-	  id="vl-heizkreis-1"
-	  x1="140" y1="170" x2="140" y2="150"
-	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <rect
-	  id="mischer-heizkreis"
-	  x="130" y="130" 
-	  width="20" height="20"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-      <line
-	  id="vl-heizkreis-2"
-	  x1="140" y1="130" x2="140" y2="110"
-	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <circle
-	  id="pumpe-heizkreis"
-	  cx="140" cy="100" r="10"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-      <polyline
-	  id="vl-heizkreis-3"
-	  points="140,90 140,20 200,20"
-	  style="fill:none;stroke-width:2;stroke:rgb(255,0,0)"/>
-
-      <!-- RUECKLAUF HEIZKREIS -->
-      <polyline
-	  id="rl-heizkreis-1"
-	  points="200,30 120,30 120,183"
-	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
-      <line 
-	  id="rl-vl-heizkreis"
-	  x1="120" y1="140" x2="130" y2="140"
-	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
-
-      <!-- GEMEINSAMER RUECKLAUF -->
-      <line
-	  id="rl-gemeinsam"
-	  x1="50" y1="183" x2="200" y2="183"
-	  style="stroke-width:2;stroke:rgb(0,0,255)"/>
-
-    </svg>
+   </svg>

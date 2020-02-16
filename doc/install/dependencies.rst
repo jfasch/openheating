@@ -63,7 +63,7 @@ Python binding, but unfortunately there is no Raspbian package as of
 independently from libgpiod.)
 
 Installation
-- - - - - - 
+............
 
 This is a bit tedious (hope is that Raspbian's ``libgpiod`` package
 will bring the Python binding in future versions). ``libgpiod``
@@ -112,7 +112,7 @@ See if all is well,::
    >>> import gpiod
 
 Links
-- - -
+.....
 
 * `libgpiod <https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/>`_
 * `Kernel Doc <https://www.kernel.org/doc/Documentation/gpio/consumer.txt>`_
