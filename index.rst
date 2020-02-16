@@ -16,7 +16,7 @@ OpenHeating: Open Source Heating Control System
 Why Yet Another Heating System?
 -------------------------------
 
-Off the shelf heating control unit are rather limited.
+Off the shelf heating control units are rather limited.
 
 * Configuration is rather lame in all cases. Heating control's
   paradigm has always been "16 bit microcontroller and 7-segment
