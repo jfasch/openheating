@@ -1,42 +1,10 @@
-OpenHeating: Open Source Heating Control System
-===============================================
-
-.. toctree::
-   :hidden:
-   :maxdepth: -1
-
-   doc/install/index
-   doc/index.rst
-   doc/future/index
-   doc/marketing/index
-
-An open source heating system that is being developed to solve my
-particular needs,
-
-* Be able to have two *alternative heat sources*, *Oil* and *Wood*.
-* *Switch between them automatically*; for example when somebody
-  lights the wood stove, the oil burner must be taken down gracefully
-  (heat it up to its limit one last time, and reap the hot water).
-* *Configuration* ("I want the heat to start coming at four in the
-  morning so it's comfy at six when I get up") need not be better than
-  in the current off-the-shelf system. It cannot not be done worse, so
-  the first shot will be a config file that is edited with emacs. It
-  will be a web interface eventually though, undoubtedly.
-
-OpenHeating will once achieve world domination through its flexible
-design. It will be open enough to nondestructively add such things as
-
-* Using an "Algorithm" (for the technically inclined: this is "machine
-  learning") to take the weatherforecast into account for example.
-* Send out email (does anybody still use SMS?) on errors.
-* Post big data into the cloud. Not that I'm a fan of it, but others
-  sure are.
+Motivation
+==========
 
 Current Goal: Keep my House Warm
 --------------------------------
 
-But lets not push too hard, but rather start with the basics. First, a
-bit of history about heating here in my house.
+First, a bit of history about heating here in my house.
 
 Initially, somewhere around 25 years ago when the (one-family) house
 was built (near Graz/Austria), there was only one way to heat:
@@ -98,26 +66,3 @@ place; I do not update written material regularly):
 * Ah yes, error management (in fact, I started with that) (partly
   done).
 * Did I forget something?
-
-Inner Beauty
-------------
-
-* Written in Python
-* Components loosely coupled in D-Bus
-* Components managed with systemd
-* GPIOs controlled not using the `sysfs interface
-  <https://www.kernel.org/doc/Documentation/gpio/sysfs.txt>`__ (which
-  is deprecated), but rather with the newer `gpiod
-  <https://github.com/brgl/libgpiod/blob/master/README>`__.
-* Web done with `flask <https://palletsprojects.com/p/flask/>`__.
-
-Documentation
--------------
-
-The state of documentation is a drama. Ok, the thing is in the works,
-but documentation will always be a drama. All of the existing
-documentation is found in :doc:`doc/index`.
-
-* For my own purposes, I maintain an `installation document
-  <doc/install.rst>`__.
-* Same with the `todo list <doc/todo.rst>`__.

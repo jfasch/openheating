@@ -6,5 +6,4 @@ Miscellaneous Documentation
 
    dbus
    panel
-   faschingbauer/index
    
