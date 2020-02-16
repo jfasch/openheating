@@ -1,13 +1,15 @@
-Stack (Hanging)
-===============
+Stacks (Hanging)
+================
 
-This is my stack that I maintain at high frequency. Each frame is one
+This are my stacks (yes multiple, since I normally have multiple tasks
+pending) that that I maintain at high frequency. Each frame is one
 work item that is currently being worked on. While I work on one item,
 another one pops up (generally something that is needed for the
 current one) and suspends the current item - forming a stack,
 basically.
 
-* hotwater circuit overtake
+Hotwater Circuit Overtake
+-------------------------
 
 * toplevel main()-like thing
 
@@ -31,3 +33,8 @@ basically.
   * doc: move more of doc/ to toplevel: intro, installation,
     components, todo, panel
   * generator: create necessary symlinks
+
+SVG, Clickable, Embedded in Sphinx
+----------------------------------
+
+* Figure out how to write ref in raw html

@@ -1,48 +1,71 @@
-Faschingbauer Installation Specifics
-====================================
+<html>
 
-.. toctree::
-   :hidden:
+  <head>
+    <title>SVG Heating Diagram Test</title>
+    <meta charset="utf-8"/>
+    <style>
+      * { font-size: 13 }
+    </style>
+  </head>
 
-   gpio/gpio.rst
-   w1/w1.rst
-   electrics.rst
+  <body>
 
-.. raw:: html
+    <h1>h1 blah</h1>
+    <p><a href="https://www.google.com">p blah</a></p>
 
-    <svg viewBox="0 0 250 200" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 250 200">
 
-      <rect
+      <defs>
+	<g id="pump">
+	  <circle
+	      cx="10" cy="10" r="10"
+	      style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  <polyline
+	      points="20,10 4,18 4,2" />
+	</g>
+	<g id="mixer">
+	  <polyline
+	      points="0,5 0,15 10,10 0,5"
+	      style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  <polyline
+	      points="20,5 20,15 10,10 20,5"
+	      style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  <polyline
+	      points="5,0 15,0 10,10 5,0"
+	      style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	</g>
+      </defs>
+
+      <image
 	  id="holzofen"
-	  x="0" y="0" 
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
-
-      <a href="https://www.google.com">
-      <rect
-	  id="oelbrenner"
-	  x="0" y="150"
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  xlink:href="holzofen.png" 
+	  x="0" y="0"
+	  width="50" height="50" />
       </a>
 
-      <rect
+      <image
+	  id="oelbrenner"
+	  xlink:href="oelbrenner.png" 
+	  x="0" y="130"
+	  width="50" height="70"
+	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+
+      <image
 	  id="radiatoren"
+	  xlink:href="radiator.png" 
 	  x="200" y="0"
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  width="50" height="50" />
 
-      <rect
+      <image
 	  id="boiler"
-	  x="200" y="150" 
-	  width="50" height="50"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  xlink:href="boiler.png" 
+	  x="200" y="120" 
+	  width="50" height="80" />
 
-      <rect
+      <use
 	  id="mischer-holz-oel"
-	  x="80" y="160" 
-	  width="20" height="20"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  xlink:href="#mixer" 
+	  x="80" y="160" />
 
       <!-- VORLAUF OELBRENNER -->
       <line 
@@ -58,16 +81,28 @@ Faschingbauer Installation Specifics
       <!-- RUECKLAUF HOLZOFEN -->
       <line 
 	  id="rl-holzofen-1"
-	  x1="70" y1="183" x2="70" y2="110"
+	  x1="70" y1="183" x2="70" y2="150"
 	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
       <line 
 	  id="rl-vl-holzofen"
-	  x1="70" y1="140" x2="90" y2="140"
+	  x1="80" y1="140" x2="90" y2="140"
+	  style="fill:none;stroke-width:2;stroke:rgb(255,0,0)"/>
+      <use
+	  id="mischer-holz"
+	  xlink:href="#mixer" 
+	  transform="rotate(90,70,140)"
+	  x="60" y="130" />
+      <line 
+	  id="rl-holzofen-2"
+	  x1="70" y1="110" x2="70" y2="130"
 	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
-      <circle
-	  id="pumpe-holzofen"
-	  cx="70" cy="100" r="10"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+
+      <use
+	  id="pumpe-holzofen" 
+	  xlink:href="#pump" 
+	  transform="rotate(-90,70,100)"
+	  x="60" y="90" />
+      
       <polyline 
 	  id="rl-holzofen-2"
 	  points="70,90 70,30 50,30"
@@ -78,10 +113,10 @@ Faschingbauer Installation Specifics
 	  id="vl-warmwasser-1"
 	  x1="100" y1="170" x2="160" y2="170"
 	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <circle
+      <use 
 	  id="pumpe-warmwasser"
-	  cx="170" cy="170" r="10"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  xlink:href="#pump" 
+	  x="160" y="160" />
       <line
 	  id="vl-warmwasser-2"
 	  x1="180" y1="170" x2="200" y2="170"
@@ -92,19 +127,20 @@ Faschingbauer Installation Specifics
 	  id="vl-heizkreis-1"
 	  x1="140" y1="170" x2="140" y2="150"
 	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <rect
+      <use
 	  id="mischer-heizkreis"
-	  x="130" y="130" 
-	  width="20" height="20"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  xlink:href="#mixer" 
+	  transform="rotate(-90,140,140)"
+	  x="130" y="130" />
       <line
 	  id="vl-heizkreis-2"
 	  x1="140" y1="130" x2="140" y2="110"
 	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <circle
+      <use 
 	  id="pumpe-heizkreis"
-	  cx="140" cy="100" r="10"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+	  xlink:href="#pump" 
+	  transform="rotate(-90,140,100)"
+	  x="130" y="90" />
       <polyline
 	  id="vl-heizkreis-3"
 	  points="140,90 140,20 200,20"
@@ -127,3 +163,6 @@ Faschingbauer Installation Specifics
 	  style="stroke-width:2;stroke:rgb(0,0,255)"/>
 
     </svg>
+
+  </body>
+</html>
