@@ -26,4 +26,9 @@ _switches = [
 ]
 
 for name, description, pin in _switches:
+    # *in real life*: instantiates a gpio.output (which is a callable)
+    # with the rest of the arguments.
+
+    # *in simulated life*: all but name and description is ignored,
+    # and a FileSwitch instance is created.
     ADD_SWITCH(name, description, gpio.output, chiplabel = 'pinctrl-bcm2835', offset = pin)

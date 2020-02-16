@@ -7,10 +7,11 @@ OpenHeating: Open Source Heating Control System
 
    doc/install/index
    doc/motivation
-   doc/future/index
-   doc/faschingbauer/index.rst
+   doc/components/index
+   doc/faschingbauer/index
    doc/marketing/index
-   doc/misc/index.rst
+   doc/misc/index
+   doc/future/index
 
 Why Yet Another Heating System?
 -------------------------------
@@ -29,7 +30,7 @@ Off the shelf heating control unit are rather limited.
   any affordable control unit.
 
 OpenHeating addresses all these limitations, especially the "multiple
-heat sources" limitations. It runs on Linux (my installation is a
+heat sources" limitation. It runs on Linux (my installation is a
 `Raspberry <https://www.raspberrypi.org/>`__), so yes there is
 internet and many possibilities.
 
@@ -64,30 +65,38 @@ link you click points to a placeholder page - I'm working on it :-)
 	</g>
       </defs>
 
-      <image
-	  id="holzofen"
-	  xlink:href="_static/heating-diagram/holzofen.png" 
-	  x="0" y="0"
-	  width="50" height="50" />
+      <a xlink:href="doc/components/wood.html">
+        <image
+  	  id="holzofen"
+  	  xlink:href="_static/heating-diagram/holzofen.png" 
+  	  x="0" y="0"
+  	  width="50" height="50" />
+      </a>
 
-      <image
-	  id="oelbrenner"
-	  xlink:href="_static/heating-diagram/oelbrenner.png" 
-	  x="0" y="130"
-	  width="50" height="70"
-	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+      <a xlink:href="doc/components/oil.html">
+        <image
+  	  id="oelbrenner"
+  	  xlink:href="_static/heating-diagram/oelbrenner.png" 
+  	  x="0" y="130"
+  	  width="50" height="70"
+  	  style="fill:none;stroke-width:0.5;stroke:rgb(0,0,0)"/>
+      </a>
 
-      <image
-	  id="radiatoren"
-	  xlink:href="_static/heating-diagram/radiator.png" 
-	  x="200" y="0"
-	  width="50" height="50" />
+      <a xlink:href="doc/components/room.html">
+        <image
+  	  id="radiatoren"
+  	  xlink:href="_static/heating-diagram/radiator.png" 
+  	  x="200" y="0"
+  	  width="50" height="50" />
+      </a>
 
-      <image
-	  id="boiler"
-	  xlink:href="_static/heating-diagram/boiler.png" 
-	  x="200" y="120" 
-	  width="50" height="80" />
+      <a xlink:href="doc/components/boiler.html">
+        <image
+  	  id="boiler"
+  	  xlink:href="_static/heating-diagram/boiler.png" 
+  	  x="200" y="120" 
+  	  width="50" height="80" />
+      </a>
 
       <use
 	  id="mischer-holz-oel"
@@ -124,11 +133,13 @@ link you click points to a placeholder page - I'm working on it :-)
 	  x1="70" y1="110" x2="70" y2="130"
 	  style="fill:none;stroke-width:2;stroke:rgb(0,0,255)"/>
 
-      <use
-	  id="pumpe-holzofen" 
-	  xlink:href="#pump" 
-	  transform="rotate(-90,70,100)"
-	  x="60" y="90" />
+      <a xlink:href="doc/components/circuits.html">
+        <use
+  	  id="pumpe-holzofen" 
+  	  xlink:href="#pump" 
+  	  transform="rotate(-90,70,100)"
+  	  x="60" y="90" />
+      </a>
       
       <polyline 
 	  id="rl-holzofen-2"
@@ -140,10 +151,12 @@ link you click points to a placeholder page - I'm working on it :-)
 	  id="vl-warmwasser-1"
 	  x1="100" y1="170" x2="160" y2="170"
 	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <use
-	  id="pumpe-warmwasser"
-	  xlink:href="#pump" 
-	  x="160" y="160" />
+      <a xlink:href="doc/components/circuits.html">
+        <use
+  	  id="pumpe-warmwasser"
+  	  xlink:href="#pump" 
+  	  x="160" y="160" />
+      </a>
       <line
 	  id="vl-warmwasser-2"
 	  x1="180" y1="170" x2="200" y2="170"
@@ -154,20 +167,24 @@ link you click points to a placeholder page - I'm working on it :-)
 	  id="vl-heizkreis-1"
 	  x1="140" y1="170" x2="140" y2="150"
 	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <use
-	  id="mischer-heizkreis"
-	  xlink:href="#mixer" 
-	  transform="rotate(-90,140,140)"
-	  x="130" y="130" />
+      <a xlink:href="doc/components/circuits.html">
+        <use
+  	  id="mischer-heizkreis"
+  	  xlink:href="#mixer" 
+  	  transform="rotate(-90,140,140)"
+  	  x="130" y="130" />
+      </a>
       <line
 	  id="vl-heizkreis-2"
 	  x1="140" y1="130" x2="140" y2="110"
 	  style="stroke-width:2;stroke:rgb(255,0,0)"/>
-      <use 
-	  id="pumpe-heizkreis"
-	  xlink:href="#pump" 
-	  transform="rotate(-90,140,100)"
-	  x="130" y="90" />
+      <a xlink:href="doc/components/circuits.html">
+        <use 
+  	  id="pumpe-heizkreis"
+  	  xlink:href="#pump" 
+  	  transform="rotate(-90,140,100)"
+  	  x="130" y="90" />
+      </a>
       <polyline
 	  id="vl-heizkreis-3"
 	  points="140,90 140,20 200,20"

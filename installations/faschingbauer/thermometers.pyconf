@@ -22,4 +22,9 @@ _thermometers = [
 ]
 
 for name, description, path in _thermometers:
+    # *in real life*: instantiates a W1Thermometer (which is a
+    # callable) with one argument, path - like ``W1Thermometer(path)``
+
+    # *in simulated life*: all but name and description is ignored,
+    # and a FileThermometer instance is created.
     ADD_THERMOMETER(name, description, W1Thermometer, path)

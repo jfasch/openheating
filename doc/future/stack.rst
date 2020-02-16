@@ -35,7 +35,10 @@ Hotwater Circuit Overtake
 
 * generator: create necessary symlinks
 
-SVG, Clickable, Embedded in Sphinx
-----------------------------------
+Component Documentation
+-----------------------
 
-* Figure out how to write ref in raw html
+* Bloody "not implemented" pages
+
+  * room refers to hysteresis
+  * boiler likewise
