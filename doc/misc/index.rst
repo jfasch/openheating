@@ -2,8 +2,8 @@ Miscellaneous Documentation
 ============================
 
 .. toctree::
-   :hidden:
 
    dbus
    panel
+   gh-pages/index
    

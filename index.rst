@@ -14,12 +14,14 @@ OpenHeating: Open Source Heating Control System
    doc/future/index
 
 .. toctree::
-   :caption: Source Code
+   :caption: Development
    :hidden:
    :maxdepth: -1
 
    doc/github
    doc/components/index
+   doc/simulation/index
+   doc/unittests/index
 
 Why Yet Another Heating System?
 -------------------------------
