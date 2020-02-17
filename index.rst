@@ -2,16 +2,22 @@ OpenHeating: Open Source Heating Control System
 ===============================================
 
 .. toctree::
+   :caption: Documentation
    :hidden:
    :maxdepth: -1
 
    doc/install/index
    doc/motivation
-   doc/components/index
    doc/faschingbauer/index
    doc/marketing/index
    doc/misc/index
    doc/future/index
+
+.. toctree::
+   :caption: Source Code
+
+   doc/github
+   doc/components/index
 
 Why Yet Another Heating System?
 -------------------------------

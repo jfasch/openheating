@@ -2,7 +2,7 @@ Faschingbauer Installation Specifics
 ====================================
 
 .. toctree::
-   :hidden:
+   :maxdepth: 1
 
    gpio/gpio.rst
    w1/w1.rst

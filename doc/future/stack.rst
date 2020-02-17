@@ -1,9 +1,9 @@
 Stacks (Hanging)
 ================
 
-This are my stacks (yes multiple, since I normally have multiple tasks
-pending) that I maintain at high frequency. Each frame is one work
-item that is currently being worked on. While I work on one item,
+These are my stacks (yes multiple, since I normally have multiple
+tasks pending) that I maintain at high frequency. Each frame is one
+work item that is currently being worked on. While I work on one item,
 another one pops up (generally something that is needed for the
 current one) and suspends the current item - forming a stack,
 basically.

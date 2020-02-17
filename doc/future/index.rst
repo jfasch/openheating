@@ -2,13 +2,13 @@ What the Future Maybe Brings
 ============================
 
 .. toctree::
-   :hidden:
+   :maxdepth: 1
 
    stack
    ideas
 
 OpenHeating will once achieve world domination through its flexible
-design. It will be open enough to nondestructively add such things as
+design. It is open enough to nondestructively add such things as
 
 * Using an "Algorithm" (for the technically inclined: this is "machine
   learning") to take the weatherforecast into account for example.

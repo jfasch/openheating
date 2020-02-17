@@ -35,6 +35,7 @@ master_doc = 'index'
 extensions = [
     'sphinx.ext.todo',
     'openheating.sphinx.rstjinja',
+    'sphinx_rtd_theme',
 ]
 todo_include_todos = True
 

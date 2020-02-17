@@ -16,7 +16,7 @@ import argparse
 
 parser = argparse.ArgumentParser(
     description='OpenHeating: systemd service unit generator '
-    '(see systemd.generator(7) for what such a generator is there for). In '
+    '(see systemd.generator(7) what such a generator is there for). In '
     'short: it generates systemd unit files for the services defined '
     'in /etc/openheating/plant.pyconf.')
 parser.add_argument('--config', 
