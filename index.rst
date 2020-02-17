@@ -15,6 +15,8 @@ OpenHeating: Open Source Heating Control System
 
 .. toctree::
    :caption: Source Code
+   :hidden:
+   :maxdepth: -1
 
    doc/github
    doc/components/index

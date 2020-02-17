@@ -3,10 +3,10 @@
 
 .. contents::
 
-Source
-------
+Executable
+----------
 
-See :download:`/bin/openheating-thermometers.py`
+:download:`/bin/openheating-thermometers.py`
 
 Description
 -----------
@@ -21,6 +21,12 @@ Description
 * Implements simulation mode where temperatures are read from files
   rather than real hardware. Really cool when you are on a train and
   the backpack is too small for an entire heating plant.
+
+Objects Provided
+----------------
+
+.. autoclass:: openheating.dbus.thermometer.Thermometer_Server
+.. autoclass:: openheating.dbus.thermometer_center.ThermometerCenter_Server
 
 .. _thermometers_config:
 
