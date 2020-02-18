@@ -22,28 +22,7 @@ OpenHeating: Open Source Heating Control System
    doc/components/index
    doc/simulation/index
    doc/unittests/index
-
-Why Yet Another Heating System?
--------------------------------
-
-Off the shelf heating control units are rather limited.
-
-* Configuration is rather lame in all cases. Heating control's
-  paradigm has always been "16 bit microcontroller and 7-segment
-  displays" as it seems.
-* Cannot control an arbitrary number of heating circuits. Chances are
-  that you have to buy a new (and more expensive) control unit when
-  you decide to add one more circuit to the system.
-* Cannot coordinate multiple heat sources. For example, here in `my
-  <http://www.faschingbauer.co.at/>`__ house there is an old and dirty
-  oil firing, and a newer wood stove in the living room. No way with
-  any affordable control unit.
-
-OpenHeating addresses all these limitations, especially the "multiple
-heat sources" limitation. It runs on Linux (my installation is a
-`Raspberry <https://www.raspberrypi.org/>`__), so yes there is
-internet and many possibilities.
-
+   
 This is a diagram of the situation in my house; click on the symbols
 to get to the software components behind them. Don't be upset if a
 link you click points to a placeholder page - I'm working on it :-)
@@ -218,6 +197,26 @@ link you click points to a placeholder page - I'm working on it :-)
 
     </svg>
 
+Why Yet Another Heating System?
+-------------------------------
+
+Off the shelf heating control units are rather limited.
+
+* Configuration is rather lame in all cases. Heating control's
+  paradigm has always been "16 bit microcontroller and 7-segment
+  displays" as it seems.
+* Cannot control an arbitrary number of heating circuits. Chances are
+  that you have to buy a new (and more expensive) control unit when
+  you decide to add one more circuit to the system.
+* Cannot coordinate multiple heat sources. For example, here in `my
+  <http://www.faschingbauer.co.at/>`__ house there is an old and dirty
+  oil firing, and a newer wood stove in the living room. No way with
+  any affordable control unit.
+
+OpenHeating addresses all these limitations, especially the "multiple
+heat sources" limitation. It runs on Linux (my installation is a
+`Raspberry <https://www.raspberrypi.org/>`__), so yes there is
+internet and many possibilities.
 
 Inner Beauty
 ------------
