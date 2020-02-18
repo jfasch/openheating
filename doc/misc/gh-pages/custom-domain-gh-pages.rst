@@ -9,6 +9,11 @@ on the internet that suggest that adding a custom domain to a *project
 page* has been cumbersome in the past - these days are over,
 apparently. Following is what I did.
 
+.. contents::
+
+Configure a Subdomain, ``www.openheating.org``
+----------------------------------------------
+
 1. For the ``openheating-pages`` project, configure a custom domain
 
    (Enforcing HTTPS also makes sense, while we are at it)
@@ -26,8 +31,9 @@ apparently. Following is what I did.
 
    At your DNS provider, create a ``CNAME`` DNS record for
    ``www.openheating.org`` and set its value to point to
-   ``jfasch.github.io``. Wait some time (minutes?) for the changes to
-   propagate. Check like so,
+   ``jfasch.github.io``. Wait a day before you publish the new site
+   URL - it may take some time until the changes have propagated to
+   othe name servers. Check like so,
 
    .. code-block:: shell
 
@@ -61,3 +67,23 @@ apparently. Following is what I did.
 
 3. Done; surf to `https://www.openheating.org
    <https://www.openheating.org>`__.
+
+Configure an Apex Domain, ``openheating.org``
+---------------------------------------------
+
+We have the subdomain ``www.openheating.org`` in place, pointing to
+our site; now we want ``openheating.org`` to go to the same
+site. Github automatically, magically, apparently, redirects between
+apex and subdomains. Consequentially, it is just a matter of DNS
+configuration: at the DNS provider, arrange that ``openheating.org``
+points to one or more of Github's static IP addresses; these are
+
+.. code-block::
+
+   185.199.108.153
+   185.199.109.153
+   185.199.110.153
+   185.199.111.153
+
+Go to the DNS provider, and arrange that the DNS *address* (A) record
+for ``openheating.org`` points to one or all of these addresses.

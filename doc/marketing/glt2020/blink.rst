@@ -53,9 +53,9 @@ to show.
 Use Case
 --------
 
-This talk is a about a spin-off of my long term `OpenHeating
-project <https://github.com/jfasch/openheating>`__ which will never be
-done. It's easier with a spin-off - *a retro style control panel*.
+This talk is a about a spin-off of my long term `OpenHeating project
+<https://www.openheating.org>`__ which will never be done. It's easier
+with a spin-off - *a retro style control panel*.
 
 Nowadays control panels of, say, heating control systems consist of a
 monitor with a touch screen, a lot of fancy (web) programming, and
