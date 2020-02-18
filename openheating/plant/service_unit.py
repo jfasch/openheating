@@ -24,7 +24,6 @@ def create(servicedef, sourcepath, generator_exe):
         'WantedBy=multi-user.target',
         '',
     ]
-    basename, _ = os.path.splitext(servicedef.exe)
 
-    return basename+'.service', servicedef.busname, '\n'.join(lines)
+    return servicedef.unitname+'.service', servicedef.busname, '\n'.join(lines)
 
