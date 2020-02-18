@@ -15,7 +15,11 @@ def create_plant_with_main(plant_config_file):
     plant_config.parse(plant_config_file)
     
     servicedefs = plant_config.get_servicedefs()
-    servicedefs.append(MainService(config=plant_config_file))
+
+    main = MainService(config=plant_config_file,
+                       wants=[s.unitname for s in servicedefs])
+    servicedefs.append(main)
+
     return Plant(servicedefs)
 
 class Plant:

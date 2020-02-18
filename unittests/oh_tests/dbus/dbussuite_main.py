@@ -30,9 +30,13 @@ class MainTest(PlantTestCase):
         # here we start a plant that corresponds to the plant
         # config. we do this manually, by replicating what's in the
         # config, and adding a main component on top of it.
+        poll_witness = PollWitnessService(witness=self.__poll_witness_file.name)
+
         self.start_plant(plant.Plant([
-            PollWitnessService(witness=self.__poll_witness_file.name),
-            MainService(config=self.__plant_config_file.name)]))
+            poll_witness,
+            MainService(config=self.__plant_config_file.name,
+                        wants=[poll_witness.unitname])
+        ]))
 
         self.poll_main(timestamp=0)
 

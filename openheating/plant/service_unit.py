@@ -19,11 +19,19 @@ def create(servicedef, sourcepath, generator_exe):
             servicedef.args),
         'Type=dbus',
         'BusName='+servicedef.busname,
-        '',
-        '[Install]',
-        'WantedBy=multi-user.target',
-        '',
     ]
 
-    return servicedef.unitname+'.service', servicedef.busname, '\n'.join(lines)
+    if len(servicedef.wantedby):
+        lines += [
+            '',
+            '[Install]',
+            '# technically, [Install] is not interpreted by systemd,',
+            '# but by sytemctl\'s "enable" and "disable" commands (to',
+            '# create and remove symlinks). so this is completely ',
+            '# irrelevant for generated units',
+        ]
+        for w in servicedef.wantedby:
+            lines.append('WantedBy='+w)
+
+    return '\n'.join(lines)
 

@@ -41,7 +41,7 @@ class SystemdGeneratorTest(PlantTestCase):
         the_plant = plant.create_plant_with_main(self.__plant_configfile.name)
 
         for s in the_plant.servicedefs:
-            filename, busname, content  = service_unit.create(
+            content  = service_unit.create(
                 s, sourcepath=self.__plant_configfile.name, generator_exe=__name__)
             config = ConfigParser()
             config.read_string(content)
@@ -66,30 +66,41 @@ class SystemdGeneratorTest(PlantTestCase):
             i = args.index('--system')
             del args[i]
 
-            if busname == names.Bus.THERMOMETERS:
+            if s.busname == names.Bus.THERMOMETERS:
+                self.assertEqual(len(s.wants), 0)
                 i = args.index('--config')
                 del args[i]
                 self.assertEqual(args[i], locations.confdir + '/thermometers.pyconf')
                 del args[i]
-            elif busname == names.Bus.MAIN:
+            elif s.busname == names.Bus.MAIN:
+                self.assertEqual(len(s.wants), 4)
+                self.assertIn('openheating-thermometers.service', s.wants)
+                self.assertIn('openheating-switches.service', s.wants)
+                self.assertIn('openheating-circuits.service', s.wants)
+                self.assertIn('openheating-errors.service', s.wants)
                 i = args.index('--config')
                 del args[i]
                 self.assertEqual(args[i], self.__plant_configfile.name)
                 del args[i]
-            elif busname == names.Bus.SWITCHES:
+            elif s.busname == names.Bus.SWITCHES:
+                self.assertEqual(len(s.wants), 0)
                 i = args.index('--config')
                 del args[i]
                 self.assertEqual(args[i], locations.confdir + '/switches.pyconf')
                 del args[i]
-            elif busname == names.Bus.CIRCUITS:
+            elif s.busname == names.Bus.CIRCUITS:
+                self.assertEqual(len(s.wants), 2)
+                self.assertIn('openheating-thermometers.service', s.wants)
+                self.assertIn('openheating-switches.service', s.wants)
                 i = args.index('--config')
                 del args[i]
                 self.assertEqual(args[i], locations.confdir + '/circuits.pyconf')
                 del args[i]
-            elif busname == names.Bus.ERRORS:
+            elif s.busname == names.Bus.ERRORS:
+                self.assertEqual(len(s.wants), 0)
                 pass
             else:
-                self.fail('unexpected busname '+busname)
+                self.fail('unexpected busname '+s.busname)
 
             self.assertEqual(len(args), 0)
 
@@ -101,11 +112,43 @@ class SystemdGeneratorTest(PlantTestCase):
                                     normal_dir.name, early_dir.name, late_dir.name])
         self.assertEqual(completed.returncode, 0)
 
-        entries = os.listdir(normal_dir.name)
-        self.assertIn('openheating-thermometers.service', entries)
-        self.assertIn('openheating-switches.service', entries)
-        self.assertIn('openheating-circuits.service', entries)
-        self.assertIn('openheating-errors.service', entries)
+        # we know that the generator uses normal-dir; check if he put
+        # the unit files there.
+        main_unit = os.path.join(normal_dir.name, 'openheating-main.service')
+        thermometers_unit = os.path.join(normal_dir.name, 'openheating-thermometers.service')
+        switches_unit = os.path.join(normal_dir.name, 'openheating-switches.service')
+        circuits_unit = os.path.join(normal_dir.name, 'openheating-circuits.service')
+        errors_unit = os.path.join(normal_dir.name, 'openheating-errors.service')
+
+        self.assertTrue(os.path.isfile(main_unit))
+        self.assertTrue(os.path.isfile(thermometers_unit))
+        self.assertTrue(os.path.isfile(switches_unit))
+        self.assertTrue(os.path.isfile(circuits_unit))
+        self.assertTrue(os.path.isfile(errors_unit))
+
+        # all units are "WantedBy" the multiuser target; this is
+        # stated by the respective symlinks in a subdir of normal-dir.
+        wants_dir = os.path.join(normal_dir.name, 'multi-user.target.wants')
+        self.assertTrue(os.path.isdir(wants_dir))
+
+        main_link = os.path.join(wants_dir, 'openheating-main.service')
+        thermometers_link = os.path.join(wants_dir, 'openheating-thermometers.service')
+        switches_link = os.path.join(wants_dir, 'openheating-switches.service')
+        circuits_link = os.path.join(wants_dir, 'openheating-circuits.service')
+        errors_link = os.path.join(wants_dir, 'openheating-errors.service')
+
+        self.assertTrue(os.path.islink(main_link))
+        self.assertTrue(os.path.islink(thermometers_link))
+        self.assertTrue(os.path.islink(switches_link))
+        self.assertTrue(os.path.islink(circuits_link))
+        self.assertTrue(os.path.islink(errors_link))
+
+        # "WantedBy" links point to the generated units
+        self.assertEqual(os.readlink(main_link), main_unit)
+        self.assertEqual(os.readlink(thermometers_link), thermometers_unit)
+        self.assertEqual(os.readlink(switches_link), switches_unit)
+        self.assertEqual(os.readlink(circuits_link), circuits_unit)
+        self.assertEqual(os.readlink(errors_link), errors_unit)
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SystemdGeneratorTest))
