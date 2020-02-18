@@ -18,6 +18,7 @@ class ServiceDefinition:
         self.wants = wants
         self.wantedby = ['multi-user.target'] # hardcoded for now
 
+        # main will call poll() on these dbus object paths
         self.pollable_paths = []
         if pollable_paths:
             self.pollable_paths += pollable_paths

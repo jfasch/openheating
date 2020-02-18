@@ -102,10 +102,7 @@ dist = setup(
     data_files=[
         ('share/systemd',
          [
-             'systemd/openheating-errors.service',
              'systemd/openheating-http.service',
-             'systemd/openheating-thermometers.service',
-             'systemd/openheating-switches.service',
          ]
         ),
            
@@ -120,6 +117,9 @@ dist = setup(
          [
              'installations/faschingbauer/thermometers.pyconf',
              'installations/faschingbauer/switches.pyconf',
+             'installations/faschingbauer/circuits.pyconf',
+             'installations/faschingbauer/plant.pyconf',
+             'installations/faschingbauer/config.txt',
          ]
         ),
            
