@@ -141,14 +141,15 @@ dist = setup(
         ('share/web/templates',
          [
              'openheating/web/templates/base.html',
-             'openheating/web/templates/errors.html',
-             'openheating/web/templates/history_macros.html',
              'openheating/web/templates/faschingbauer_home.html',
              'openheating/web/templates/thermometer.html',
              'openheating/web/templates/thermometers.html',
+             'openheating/web/templates/circuits.html',
+             'openheating/web/templates/switches.html',
+             'openheating/web/templates/errors.html',
+             'openheating/web/templates/history_macros.html',
          ],
         ),
-        
     ],
 
     scripts=[
@@ -162,6 +163,7 @@ dist = setup(
         'bin/openheating-main.py',
         'bin/openheating-thermometers.py',
         'bin/openheating-switches.py',
+        'bin/openheating-circuits.py',
         'bin/openheating-errors.py',
 
         # unit file generator
@@ -178,14 +180,8 @@ dist = setup(
         ('openheating/plant/installed.py.in',
          'openheating/plant/installed.py'),
 
-        ('systemd/openheating-errors.service.in',
-         'systemd/openheating-errors.service'),
         ('systemd/openheating-http.service.in',
          'systemd/openheating-http.service'),
-        ('systemd/openheating-thermometers.service.in',
-         'systemd/openheating-thermometers.service'),
-        ('systemd/openheating-switches.service.in',
-         'systemd/openheating-switches.service')
     ],
 )
 

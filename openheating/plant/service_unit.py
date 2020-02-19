@@ -10,6 +10,13 @@ def create(servicedef, sourcepath, generator_exe):
         '[Unit]',
         'Description='+servicedef.description,
         'SourcePath='+sourcepath,
+    ]
+
+    for w in servicedef.wants:
+        lines.append('Wants='+w)
+        lines.append('After='+w)
+
+    lines += [
         '',
         '[Service]',
         'User=openheating',

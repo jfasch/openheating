@@ -1,12 +1,12 @@
 [Unit]
 Description=Openheating HTTP Interface
-Wants=openheating-thermometers.service
-After=openheating-thermometers.service
+Wants=openheating-main.service
+After=openheating-main.service
 
 [Service]
 User=openheating
 Environment=PYTHONPATH=${libdir}
-ExecStart=${bindir}/openheating-http.py --system --templates ${webdir}/web/templates --static ${webdir}/web/static
+ExecStart=${bindir}/openheating-http.py --system --templates ${webdir}/templates --static ${webdir}/static
 Type=notify
 
 [Install]

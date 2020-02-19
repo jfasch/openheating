@@ -37,7 +37,7 @@ def switch(chiplabel, offset, direction):
     # workaround: specify "default_val=False", knowing that
     # Line.request's docstring says that default_val is deprecated.
     try:
-        consumer = 'openheating:'+name
+        consumer = 'openheating'
         line.request(consumer=consumer, type=gpiod_type, default_val=False)
     except OSError as e:
         raise HeatingError('gpio: cannot request {}: {}'.format(consumer, str(e)))

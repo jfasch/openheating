@@ -53,8 +53,8 @@ class W1Thermometer(Thermometer):
             crc_match = _re_crc.search(line)
             if crc_match:
                   if crc_match.group(1) != 'YES':
-                      logging.exception('{}: CRC error reading file {}'.format(self.name, filename))
-                      raise W1ReadError(name=self.name, filename=filename)
+                      logging.exception('CRC error reading file {}'.format(filename))
+                      raise W1ReadError(filename=filename)
 
             temp_match = _re_temp.search(line)
             if temp_match:
