@@ -49,10 +49,14 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-
-# THEMES. tried a few, looking out for good
-# navigation/location-feedback. the most customizable (so far) is the
-# "Read The Docs" theme.
+# context that jinja (and rst, via the rstjinja extension) sees.
+import openheating.plant.service_def
+import openheating.dbus.names
+html_context = {
+    # hmm. there must be a better way.
+    'openheating_service_def': openheating.plant.service_def,
+    'openheating_names': openheating.dbus.names,
+}
 
 # ---
 html_theme = 'sphinx_rtd_theme'
@@ -60,28 +64,6 @@ html_theme_options = {
     'collapse_navigation': False,
     'navigation_depth': -1,
 }
-
-# ---
-# html_theme = 'alabaster'
-# html_theme_options = {
-#     'fixed_sidebar': True,
-# }
-
-# ---
-# # https://github.com/ryan-roemer/sphinx-bootstrap-theme
-# import sphinx_bootstrap_theme
-# html_theme = 'bootstrap'
-# html_theme_options = {
-# }
-# html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
-
-# ---
-# import cloud_sptheme
-# html_theme = 'cloud'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
 
 html_static_path = ['_static']
 

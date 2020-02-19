@@ -12,6 +12,7 @@ The following components are (or will soon be) available,
 .. toctree::
    :maxdepth: 1
 
+   architecture
    main
    thermometers
    switches
@@ -20,4 +21,4 @@ The following components are (or will soon be) available,
    wood
    room
    boiler
-
+   dbus-objects

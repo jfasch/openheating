@@ -12,7 +12,7 @@ class ThermometerCenter_Client:
         self.__iface = _util.get_iface(
             bus=bus,
             busname=names.Bus.THERMOMETERS,
-            path='/',
+            path=names.ThermometerPaths.CENTER,
             iface=interface_repo.THERMOMETERCENTER)
 
     @error.maperror
@@ -24,7 +24,7 @@ class ThermometerCenter_Client:
         return Thermometer_Client(proxy=_util.get_iface(
             bus=self.__bus,
             busname=names.Bus.THERMOMETERS,
-            path='/thermometers/'+name, 
+            path=names.ThermometerPaths.THERMOMETER(name),
             iface=interface_repo.THERMOMETER))
 
     @error.maperror
@@ -32,7 +32,7 @@ class ThermometerCenter_Client:
         return TemperatureHistory_Client(proxy=_util.get_iface(
             bus=self.__bus,
             busname=names.Bus.THERMOMETERS,
-            path='/thermometers/'+name, 
+            path=names.ThermometerPaths.THERMOMETER(name),
             iface=interface_repo.TEMPERATUREHISTORY))
 
     @error.maperror
@@ -45,12 +45,22 @@ class ThermometerCenter_Client:
     interface_repo.THERMOMETERCENTER,
     interface_repo.POLLABLE))
 class ThermometerCenter_Server:
+    '''D-Bus object that ... well, sort of ... maintains thermometer
+    objects.
+
+    '''
     def __init__(self, objects):
         self.__objects = objects
 
     def all_names(self):
+        ''':returns: list strings; names of maintained thermometers.
+
+        '''
         return [o.get_name() for o in self.__objects]
 
     def poll(self, timestamp):
+        '''Polls all maintained thermometers.
+
+        '''
         for o in self.__objects:
             o.poll(timestamp)

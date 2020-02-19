@@ -63,6 +63,21 @@ class TemperatureHistory_Client:
                                                interface_repo.TEMPERATUREHISTORY,
                                                interface_repo.POLLABLE))
 class Thermometer_Server:
+    '''D-Bus object representing various aspects of a thermometer.
+
+    * **Thermometer**: Current temperature, thermometer name and
+      description.
+
+    * **Temperature history**: keeps temperature values from the past,
+      accessible for, for example, histogram generation, or gradient
+      calculation.
+
+    * **Polling**: a poll initiates a temperature read in the
+      background; the call returns immediately. Reason: Onewire
+      temperature reads take over a second, and the poller sure has
+      other things to do in the meantime.
+
+    '''
     def __init__(self, name, description, thermometer, history):
         assert isinstance(thermometer, Thermometer)
 
@@ -80,12 +95,15 @@ class Thermometer_Server:
         self.__logger = logging.getLogger(self.__name)
 
     def get_name(self):
+        '''Thermometer name'''
         return self.__name
 
     def get_description(self):
+        '''Thermometer description'''
         return self.__description
 
     def get_temperature(self):
+        '''Current temperature'''
         if self.__current_error:
             raise self.__current_error
         return self.__current_temperature
@@ -94,9 +112,23 @@ class Thermometer_Server:
         self.__make_current(timestamp=timestamp, temperature=self.__thermometer.get_temperature())
 
     def distill(self, granularity, duration):
+        '''Extract values from temperature history
+
+        :param granularity: minimum gap between two samples (in
+                seconds or datetime.timedelta)
+
+        :param duration: time span from now in the past (in seconds or
+                         datetime.timedelta)
+
+        '''
         return list(self.__history.distill(granularity=granularity, duration=duration))
 
     def poll(self, timestamp):
+        '''Initiate a background temperature reading and return
+        immediately. When reading completes, the temperature is added
+        to the history with timestamp.
+
+        '''
         self.__background_thread.submit(self.__update, timestamp)
 
     def __update(self, timestamp):
@@ -132,7 +164,7 @@ class Thermometer_Server:
     def _startup(self):
         self.__logger.info('starting')
 
-        # iniial temperature read, just to have something in case
+        # initial temperature read, just to have something in case
         # someone asks. this carries timestamp 0/epoch; cannot simply
         # take wall clock time here - unittests fake the time, and
         # replays bring their own (past) timestamps.

@@ -13,4 +13,9 @@ class Bus:
     POLLWITNESS = DOMAIN + '.PollWitness'
     CRASHTESTDUMMY = DOMAIN + '.CrashTestDummy'
 
-
+class ThermometerPaths:
+    CENTER = '/'
+    
+    @staticmethod
+    def THERMOMETER(name):
+        return '/thermometers/'+name

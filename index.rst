@@ -22,6 +22,7 @@ OpenHeating: Open Source Heating Control System
    doc/components/index
    doc/simulation/index
    doc/unittests/index
+
    
 This is a diagram of the situation in my house; click on the symbols
 to get to the software components behind them. Don't be upset if a

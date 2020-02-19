@@ -104,7 +104,8 @@ class Definition:
     '''
 
     def __init__(self, interfaces):
-        assert interface_repo.ERROREMITTER not in [name for name,_ in interfaces]
+        assert interface_repo.ERROREMITTER not in [name for name,_ in interfaces], \
+           interface_repo.ERROREMITTER+' is an *implicit* interface of every node'
         interfaces = list(interfaces)
 
         # implicitly add the 'error' signal to emit HeatingError
@@ -151,7 +152,7 @@ class Definition:
                     def emit_error_func(self, e):
                         dbus_e = DBusHeatingError(e.details)
                         # error is a class member, but I have to use
-                        # self not class. else the signall is simply
+                        # self not class. else the signal is simply
                         # not emitted. gosh.
                         self.error(str(dbus_e))
                     setattr(klass, 'emit_error', emit_error_func)

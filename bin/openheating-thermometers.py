@@ -45,9 +45,9 @@ for name, description, thermometer in config.get_thermometers():
         thermometer=thermometer,
         history=history)
     thermometer_objects.append(thobj)
-    path_n_objects.append(('/thermometers/'+name, thobj))
+    path_n_objects.append((names.ThermometerPaths.THERMOMETER(name), thobj))
 
-path_n_objects.append(('/', ThermometerCenter_Server(objects=thermometer_objects)))
+path_n_objects.append((names.ThermometerPaths.CENTER, ThermometerCenter_Server(objects=thermometer_objects)))
 
 lifecycle.run_server(
     loop=loop,

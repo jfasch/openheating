@@ -34,11 +34,15 @@ class MainService(ServiceDefinition):
             args=['--config', config])
 
 class ThermometerService(ServiceDefinition):
+    EXE = 'openheating-thermometers.py'
+    UNITNAME = 'openheating-thermometers.service'
+    BUSNAME = names.Bus.THERMOMETERS
+
     def __init__(self, config):
         args = ['--config', config]
-        super().__init__(exe='openheating-thermometers.py',
-                         busname=names.Bus.THERMOMETERS,
-                         unitname='openheating-thermometers.service',
+        super().__init__(exe=self.EXE,
+                         busname=self.BUSNAME,
+                         unitname=self.UNITNAME,
                          description='Openheating Thermometer Service',
                          wants=[],
                          args=args,
