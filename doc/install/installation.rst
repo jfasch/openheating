@@ -10,13 +10,22 @@ Installation
 Get the Source
 --------------
 
-Clone project, and install it to `/some/prefix`,
+Clone project,
 
 .. code-block:: shell
 	     
    (jfasch)$ git clone https://github.com/jfasch/openheating.git
-   (jfasch)$ cd openheating
-   (jfasch)$ python3 setup.py install --prefix=/some/prefix
+
+Install it to ``/some/prefix``. We will refer to this directory in the
+remainder of the instructions; consider it a placeholder for some
+real-life installation directory like ``/usr/local`` (which is the
+default if ``--prefix`` is omitted).
+
+.. code-block:: shell
+	     
+   (root)$ cd openheating
+   (root)$ rm -r build   # ac_subst is not re-run (bug!)
+   (root)$ python3 setup.py install --prefix=/some/prefix
 
 Bootloader
 ----------
@@ -33,11 +42,11 @@ config over from source,
 Create User
 -----------
 
-Create `openheating` user,
+Create `openheating` user (and give it permission to use GPIOs),
 
 .. code-block:: shell
 
-   (root)$ useradd --system openheating
+   (root)$ useradd --system --groups gpio openheating
 
 OpenHeating Configuration
 -------------------------
@@ -58,20 +67,23 @@ Create and fill :file:`/etc/openheating/`,
 
 .. note::
 
-   :file:`plant.pyconf` is the main config file. It defines which
-   components are run, and what their config files are - so the above
-   list is basically an outcome of :file:`plant.pyconf`'s content.
+   ``plant.pyconf`` is the main config file. It defines which
+   components are run, and what their config files are. So, the above
+   list it a direct consequence of what's in ``plant.pyconf``.
 
-`systemd` Unit Generator
-------------------------
+`systemd` Unit Generator, and Plant Startup
+-------------------------------------------
 
-The components of a heating system are likely to vary from
-installation to installation (despite the fact that there is only one
-such installation). `systemd` unit files are *generated* from the
-:file:`plant.pyconf` file that we copied earlier.
+An OpenHeating plant consists of several independent (no, loosely
+coupled) D-Bus services that are started by systemd. As the choice of
+services may vary from plant to plant, the systemd service unit files
+are *generated* from the ``plant.pyconf` that we copied earlier. (See
+`systemd.generator(7)
+<https://www.freedesktop.org/software/systemd/man/systemd.generator.html>`__
+for more.)
 
-Copy the unit file generator into a directory where it is picked up by
-`systemd`,
+Copy the OpenHeating unit file generator into a directory where it is
+picked up by systemd,
 
 .. code-block:: shell
 
@@ -79,13 +91,19 @@ Copy the unit file generator into a directory where it is picked up by
    (root)$ cp /some/prefix/bin/openheating-systemd-generator.py \
 		/etc/systemd/system-generators/
 
-See `systemd.generator(7)
-<https://www.freedesktop.org/software/systemd/man/systemd.generator.html>`__
-for what unit file generators are.
+The generator will be invoked, and the generated units started, after
+reboot.
 
+If you want to check that all is well, reload the configuration,
 
-`systemd` Units
----------------
+.. code-block:: shell
+
+   (root)$ systemctl daemon-reload
+
+and look what ``/run/systemd/generator`` contains.
+
+HTTP Service
+------------
 
 Web is not a "component" like the others; it is currently the only
 service that has a unit file to be deployed.

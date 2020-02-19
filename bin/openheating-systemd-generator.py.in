@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
 import sys
-# add openheating libdir so we can import (see setup.py how
-# placeholders are substituted)
+
+# add openheating libdir so we can import. the directory that we
+# prepend to sys.path is a placeholder that is substituted at
+# installation time. see setup.py, "ac_subst", for how this is done.
 sys.path.insert(0, '${libdir}')
 
 from openheating.plant import locations

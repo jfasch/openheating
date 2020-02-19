@@ -71,45 +71,92 @@ requires the `autoconf archive
 <https://www.gnu.org/software/autoconf-archive/>`_ which definitely
 needs some love.
 
-Check build dependencies::
+* *Install build dependencies*
 
-   # apt install autoconf
-   # apt install libtool
+  .. code-block:: shell
 
-Build and install::
+     (root)$ apt install autoconf
+     (root)$ apt install libtool
 
-   $ mkdir ~/hrmpf
-   $ cd ~/hrmpf
-   $ git clone git://git.sv.gnu.org/autoconf-archive.git
-   $ git clone git://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
-   $ cp -r ~/hrmpf/autoconf-archive/m4 ~/hrmpf/libgpiod/m4  # see rant below
-   $ cd libgpiod
-   $ autoreconf --force --install --verbose
-   $ ./configure --prefix=/usr/local --enable-bindings-python
-   $ make
-   $ sudo make install
+* *Prepare for Build*
 
-*Rant*: I haven't found a way to set ``aclocal``'s M4 path into
-``autoconf-archive/m4``, so I simply copy it to ``libgpiod/m4/``.
+  .. note:: *Rant!*
 
-Set paths (take the ``PYTHONPATH`` value from the messages of the
-``libgpiod`` build, as it depends on the Python version you are using)::
+     I haven't found a way to set ``aclocal``'s M4 path into
+     ``autoconf-archive/m4``, so I simply copy it to ``libgpiod/m4/``.
 
-   $ export PYTHONPATH=/usr/local/lib/python3.5/site-packages:$PYTHONPATH
-   $ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+  .. code-block:: shell
 
-Better yet, create ``/etc/profile.d/openheating.sh``::
+     (jfasch)$ mkdir ~/hrmpf
+     (jfasch)$ cd ~/hrmpf
+     (jfasch)$ git clone git://git.sv.gnu.org/autoconf-archive.git
+     (jfasch)$ git clone git://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
+     (jfasch)$ cp -r ~/hrmpf/autoconf-archive/m4 ~/hrmpf/libgpiod/m4
 
-   export PYTHONPATH=/usr/local/lib/python3.5/site-packages:$PYTHONPATH
-   export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+* *Build and Install*
 
-See if all is well,::
+  .. note:: *Rant!*
 
-   $ python3
-   Python 3.5.3 (default, Sep 27 2018, 17:25:39) 
-   [GCC 6.3.0 20170516] on linux
-   Type "help", "copyright", "credits" or "license" for more information.
-   >>> import gpiod
+     We install into ``/usr``. *Reason*: OpenHeating services are
+     started by systemd, and there is no easy way to point its
+     ``PYTHONPATH`` to somewhere else.
+
+  .. code-block:: shell
+
+     (jfasch)$ cd libgpiod
+     (jfasch)$ autoreconf --force --install --verbose
+     (jfasch)$ ./configure --prefix=/usr --enable-bindings-python
+     (jfasch)$ make
+     (root)$ make install
+
+* *Fix bullshit*
+
+  .. code-block:: python
+
+     >>> import sys
+     >>> sys.version
+     '3.5.3 (default, Sep 27 2018, 17:25:39) \n[GCC 6.3.0 20170516]'
+     >>> import gpiod
+     Traceback (most recent call last):
+       File "<stdin>", line 1, in <module>
+     ImportError: No module named 'gpiod'
+
+  .. note:: *WTF!*
+
+     ``libgpiod``'s Python binding is built and installed by
+     Automake. Although I know Automake well enough to stay away as
+     much as I can (I haven't been able to *explain* it to anybody,
+     and I'm convinced that's not my fault), its Python support
+     appears to be well, and libgpiod uses it correctly as far as I
+     can see. It detects the Python version, and installs into
+     ``/usr/lib/python3.5/site-packages``. Reading `the documentation
+     for Python's site module
+     <https://docs.python.org/3.5/library/site.html>`__, Python should
+     be able to pick it up from there. 
+
+     **WTF! It that an artifact of Debian/Raspbian?**
+
+  Anyway ... knowing that we cannot simply fix that by adding
+  ``/usr/lib/python3.5/site-packages`` to the environment (via
+  ``/etc/profile.d/`` for example) because systemd does not pull that
+  in, we add it to ``/usr/lib/python3.5/sitecustomize.py``.
+
+  .. code-block:: shell
+
+     (root)$ cat <<EOF >> /usr/lib/python3.5/sitecustomize.py
+     import site
+     site.addsitedir('/usr/lib/python3.5/site-packages')
+     EOF
+
+  See if all is well,
+
+  .. code-block:: shell
+
+     $ python3
+     Python 3.5.3 (default, Sep 27 2018, 17:25:39) 
+     [GCC 6.3.0 20170516] on linux
+     Type "help", "copyright", "credits" or "license" for more information.
+     >>> import gpiod
 
 Links
 .....
