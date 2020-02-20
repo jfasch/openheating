@@ -124,15 +124,16 @@ needs some love.
   .. note:: *WTF!*
 
      ``libgpiod``'s Python binding is built and installed by
-     Automake. Although I know Automake well enough to stay away as
-     much as I can (I haven't been able to *explain* it to anybody,
-     and I'm convinced that's not my fault), its Python support
-     appears to be well, and libgpiod uses it correctly as far as I
-     can see. It detects the Python version, and installs into
+     Automake. Although `I know Automake well enough
+     <https://github.com/jfasch/confix>`__ to stay away as much as I
+     can (I haven't been able to *explain* it to anybody, and I'm
+     convinced that's not my fault), its Python support appears to be
+     well, and libgpiod uses it correctly as far as I can see. It
+     detects the Python version, and installs into
      ``/usr/lib/python3.5/site-packages``. Reading `the documentation
      for Python's site module
      <https://docs.python.org/3.5/library/site.html>`__, Python should
-     be able to pick it up from there. 
+     be able to pick it up from there.
 
      **WTF! It that an artifact of Debian/Raspbian?**
 
