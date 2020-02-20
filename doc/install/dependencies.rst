@@ -80,7 +80,7 @@ needs some love.
 
 * *Prepare for Build*
 
-  .. note:: *Rant!*
+  .. danger:: *Rant!*
 
      I haven't found a way to set ``aclocal``'s M4 path into
      ``autoconf-archive/m4``, so I simply copy it to ``libgpiod/m4/``.
@@ -95,7 +95,7 @@ needs some love.
 
 * *Build and Install*
 
-  .. note:: *Rant!*
+  .. note::
 
      We install into ``/usr``. *Reason*: OpenHeating services are
      started by systemd, and there is no easy way to point its
@@ -109,7 +109,28 @@ needs some love.
      (jfasch)$ make
      (root)$ make install
 
-* *Fix bullshit*
+* *Fix bullshit*: ``gpiod`` module not found
+
+  The previous step installed ``libgpiod``'s Python binding into
+  ``/usr/lib/python3.5/site-packages/``. (The build system uses
+  `Automake <https://www.gnu.org/software/automake/>`__ and its
+  `Python support
+  <https://www.gnu.org/software/automake/manual/html_node/Python.html>`__.)
+
+  .. code-block:: shell
+
+     $ ls -l /usr/lib/python3.5/site-packages/
+     total 248
+     -rw-r--r-- 1 root root 128878 Feb 19 13:59 gpiod.a
+     -rwxr-xr-x 1 root root    986 Feb 19 13:59 gpiod.la
+     -rwxr-xr-x 1 root root 117464 Feb 19 13:59 gpiod.so
+
+  Reading `the documentation for Python's site module
+  <https://docs.python.org/3.5/library/site.html>`__, Python should be
+  able to pick it up from there. ``gpiod.so`` is the Python ``gpiod``
+  module, a C extension in the form of a shared object.
+
+  But no,
 
   .. code-block:: python
 
@@ -121,26 +142,23 @@ needs some love.
        File "<stdin>", line 1, in <module>
      ImportError: No module named 'gpiod'
 
-  .. note:: *WTF!*
+  No ``site-packages`` in Python's module load path,
 
-     ``libgpiod``'s Python binding is built and installed by
-     Automake. Although `I know Automake well enough
-     <https://github.com/jfasch/confix>`__ to stay away as much as I
-     can (I haven't been able to *explain* it to anybody, and I'm
-     convinced that's not my fault), its Python support appears to be
-     well, and libgpiod uses it correctly as far as I can see. It
-     detects the Python version, and installs into
-     ``/usr/lib/python3.5/site-packages``. Reading `the documentation
-     for Python's site module
-     <https://docs.python.org/3.5/library/site.html>`__, Python should
-     be able to pick it up from there.
+  .. code-block:: python
+
+     >>> import sys
+     >>> sys.path
+     ['', '/usr/lib/python35.zip', '/usr/lib/python3.5', '/usr/lib/python3.5/plat-arm-linux-gnueabihf', '/usr/lib/python3.5/lib-dynload', '/usr/local/lib/python3.5/dist-packages', '/usr/lib/python3/dist-packages']
+
+  .. danger::
 
      **WTF! It that an artifact of Debian/Raspbian?**
 
   Anyway ... knowing that we cannot simply fix that by adding
   ``/usr/lib/python3.5/site-packages`` to the environment (via
   ``/etc/profile.d/`` for example) because systemd does not pull that
-  in, we add it to ``/usr/lib/python3.5/sitecustomize.py``.
+  in (SysV init doesn't too btw.), we add it to
+  ``/usr/lib/python3.5/sitecustomize.py``.
 
   .. code-block:: shell
 
