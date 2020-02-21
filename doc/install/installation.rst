@@ -77,7 +77,7 @@ Create and fill :file:`/etc/openheating/`,
 An OpenHeating plant consists of several independent (no, loosely
 coupled) D-Bus services that are started by systemd. As the choice of
 services may vary from plant to plant, the systemd service unit files
-are *generated* from the ``plant.pyconf` that we copied earlier. (See
+are *generated* from the ``plant.pyconf`` that we copied earlier. (See
 `systemd.generator(7)
 <https://www.freedesktop.org/software/systemd/man/systemd.generator.html>`__
 for more.)
