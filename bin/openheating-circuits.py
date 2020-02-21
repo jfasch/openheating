@@ -20,26 +20,24 @@ logutil.add_log_options(parser)
 args = parser.parse_args()
 
 logutil.configure_from_argparse(args, componentname=names.Bus.CIRCUITS)
-
-loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 config = CircuitsConfig()
 config.parse(args.config, bus=bus)
 
 circuit_objects = [] # for center to know
-path_n_objects = [] # [(path, object)], to publish
+path_and_objects = [] # [(path, object)], to publish
 
 for name, description, circuit in config.get_circuits():
     cobj = Circuit_Server(name=name, description=description, circuit=circuit)
     circuit_objects.append(cobj)
-    path_n_objects.append(('/circuits/'+name, cobj))
+    path_and_objects.append(('/circuits/'+name, cobj))
 
-path_n_objects.append(('/', CircuitCenter_Server(objects=circuit_objects)))
+path_and_objects.append(('/', CircuitCenter_Server(objects=circuit_objects)))
 
 lifecycle.run_server(
-    loop=loop,
+    loop=GLib.MainLoop(),
     bus=bus,
     busname=names.Bus.CIRCUITS,
-    objects=path_n_objects,
+    objects=path_and_objects,
 )

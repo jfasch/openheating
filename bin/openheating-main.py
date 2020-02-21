@@ -19,8 +19,6 @@ logutil.add_log_options(parser)
 args = parser.parse_args()
 
 logutil.configure_from_argparse(args, componentname=names.Bus.MAIN)
-
-loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 config = PlantConfig()
@@ -32,7 +30,7 @@ main_object = Main_Server(
     interval=5)
 
 lifecycle.run_server(
-    loop=loop,
+    loop=GLib.MainLoop(),
     bus=bus,
     busname=names.Bus.MAIN,
     objects=[('/', main_object)],

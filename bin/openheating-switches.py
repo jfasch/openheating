@@ -23,8 +23,6 @@ logutil.add_log_options(parser)
 args = parser.parse_args()
 
 logutil.configure_from_argparse(args, componentname=names.Bus.SWITCHES)
-
-loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 if args.simulation_dir is not None:
@@ -33,18 +31,18 @@ config = SwitchesConfig(simulation_dir=args.simulation_dir)
 config.parse(args.config, bus=bus)
 
 switch_objects = [] # for center to know
-path_n_objects = [] # [(path, object)], to publish
+path_and_objects = [] # [(path, object)], to publish
 
 for name, description, switch in config.get_switches():
     swobj = Switch_Server(name=name, description=description, switch=switch)
     switch_objects.append(swobj)
-    path_n_objects.append(('/switches/'+name, swobj))
+    path_and_objects.append(('/switches/'+name, swobj))
 
-path_n_objects.append(('/', SwitchCenter_Server(objects=switch_objects)))
+path_and_objects.append(('/', SwitchCenter_Server(objects=switch_objects)))
 
 lifecycle.run_server(
-    loop=loop,
+    loop=GLib.MainLoop(),
     bus=bus,
     busname=names.Bus.SWITCHES,
-    objects=path_n_objects,
+    objects=path_and_objects,
 )

@@ -22,15 +22,15 @@ logutil.add_log_options(parser)
 args = parser.parse_args()
 
 logutil.configure_from_argparse(args, componentname=names.Bus.ERRORS)
-loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 errors = Errors_Server()
 
 lifecycle.run_server(
-    loop=loop,
+    loop=GLib.MainLoop(),
     bus=bus,
     busname=names.Bus.ERRORS,
     objects=[('/', errors)],
-    signals=[(node.SignalMatch(interface=interface_repo.ERROREMITTER, name='error'), errors.handle_error)],
+    signals=[(node.SignalMatch(interface=interface_repo.ERROREMITTER, name='error'),
+              errors.handle_error)],
 )

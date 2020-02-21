@@ -25,8 +25,6 @@ logutil.add_log_options(parser)
 args = parser.parse_args()
 
 logutil.configure_from_argparse(args, componentname=names.Bus.THERMOMETERS)
-
-loop = GLib.MainLoop()
 bus = dbusutil.bus_from_argparse(args)
 
 if args.simulation_dir is not None:
@@ -35,7 +33,7 @@ config = ThermometersConfig(simulation_dir=args.simulation_dir)
 config.parse(args.config, bus=bus)
 
 thermometer_objects = [] # for center to know
-path_n_objects = [] # [(path, object)], to publish
+path_and_objects = [] # [(path, object)], to publish
 
 for name, description, thermometer in config.get_thermometers():
     history = History(duration=datetime.timedelta(days=1))
@@ -45,13 +43,14 @@ for name, description, thermometer in config.get_thermometers():
         thermometer=thermometer,
         history=history)
     thermometer_objects.append(thobj)
-    path_n_objects.append((names.ThermometerPaths.THERMOMETER(name), thobj))
+    path_and_objects.append((names.ThermometerPaths.THERMOMETER(name), thobj))
 
-path_n_objects.append((names.ThermometerPaths.CENTER, ThermometerCenter_Server(objects=thermometer_objects)))
+path_and_objects.append((names.ThermometerPaths.CENTER, 
+                         ThermometerCenter_Server(objects=thermometer_objects)))
 
 lifecycle.run_server(
-    loop=loop,
+    loop=GLib.MainLoop(),
     bus=bus,
     busname=names.Bus.THERMOMETERS,
-    objects=path_n_objects,
+    objects=path_and_objects,
 )
