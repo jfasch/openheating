@@ -62,8 +62,8 @@ class Plant:
 
     def enable_simulation_mode(self, simulation_dir):
         self.__simulation_dir = simulation_dir
-        self.__thermometers_dir = simulation_dir + '/thermometers'
-        self.__switches_dir = simulation_dir + '/switches'
+        self.__thermometers_dir = os.path.join(simulation_dir, 'thermometers')
+        self.__switches_dir = os.path.join(simulation_dir, 'switches')
 
         os.makedirs(self.__thermometers_dir, exist_ok=True)
         os.makedirs(self.__switches_dir, exist_ok=True)

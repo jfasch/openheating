@@ -2,9 +2,7 @@
 
 from openheating.plant import logutil
 from openheating.plant import dbusutil
-from openheating.plant.config_plant import PlantConfig
-from openheating.plant.service_def import MainService
-from openheating.plant.plant import Plant
+from openheating.plant import plant
 from openheating.dbus import names
 from openheating.testutils import testutils
 
@@ -17,7 +15,8 @@ import signal
 import logging
 
 
-parser = argparse.ArgumentParser(description='OpenHeating: run a plant manually (for testing and simulating)')
+parser = argparse.ArgumentParser(
+    description='OpenHeating: run a plant manually (for testing and simulating)')
 parser.add_argument('--config', help='Configuration file')
 parser.add_argument('--simulation-dir', metavar='DIR', 
                     help='Create switch and thermometer files in subdirectories of DIR')
@@ -34,13 +33,7 @@ loop = GLib.MainLoop()
 buskind = dbusutil.buskind_from_argparse(args)
 bus = dbusutil.bus_from_argparse(args)
 
-plant_config = PlantConfig()
-plant_config.parse(args.config)
-
-# add "main" service on top of what's there
-plant_config.add_servicedef(MainService(config=args.config))
-
-the_plant = Plant(servicedefs=plant_config.get_servicedefs())
+the_plant = plant.create_plant_with_main(args.config)
 if args.simulation_dir is not None:
     thermometer_dir, switch_dir = the_plant.enable_simulation_mode(args.simulation_dir)
     print('starting in simulation mode:', file=sys.stderr)

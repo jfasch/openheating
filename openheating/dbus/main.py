@@ -22,11 +22,11 @@ class Main_Server:
     def __init__(self, bus, servicedefs, interval):
         self.__bus = bus
         self.__servicedefs = servicedefs
-        self.__poll_interval = interval
+        self.__poll_interval = int(interval)
         self.__poll_timer_tag = None   # valid after _startup()
 
     def poll(self, timestamp):
-        logging.debug('poll (explicit), timestamp {}'.format(timestamp))
+        logging.debug('poll (by D-Bus method call), timestamp {}'.format(timestamp))
         self.__do_poll(timestamp)
 
     def _startup(self):
@@ -43,7 +43,7 @@ class Main_Server:
 
     def __poll_timer(self):
         now = timeutil.now_ts()
-        logging.debug('poll (timer), timestamp {}'.format(now))
+        logging.debug('poll (by {}s timer), timestamp {}'.format(self.__poll_interval, now))
         self.__do_poll(timestamp=now)
         return True  # rearm timer
 
