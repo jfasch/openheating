@@ -8,7 +8,7 @@ _top_thermometer_names = (
     'Raum',
     'SpeicherOben',
     'Holzbrenner',
-    'Oelbrenner',
+# disable; see thermometers.pyconf:    'Oelbrenner',
 )
 
 

@@ -5,7 +5,7 @@ import logging
 
 
 class ThermometersConfig:
-    def __init__(self, simulation_dir):
+    def __init__(self, simulation_dir=None):
         self.__simulation_dir = simulation_dir
         self.__thermometers = [] # [(name, description, thermometer)]
 
