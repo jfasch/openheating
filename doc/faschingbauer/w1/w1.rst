@@ -1,5 +1,8 @@
+Onewire
+=======
+
 RJ11 Plugs, Pins
-================
+----------------
 
 Look at plug from front, pins on top. Pins from left to right ...
 
@@ -8,73 +11,88 @@ Look at plug from front, pins on top. Pins from left to right ...
 * yellow, DATA
 * white, GND
 
-Parasitic vs. Powered
----------------------
+Stability
+---------
 
-I had problems repeatedly on one line; devices disappeared and were
-replaced by ones that were named 00-0c4000000000.
+I am repeatedly seeing problems,
 
-00 is the family (for example, 28 (decimal) would be the expected
-Maxim DS28E04-100) which is completely bogus. 0c4000000000 is the
-serial number, which his also too even to be correct.
+* **Devices disappear**, and are replaced by ones that are named like
+  ``00-0c4000000000``. Here, 00 is the family which is completely
+  bogus; for example, 28 (hex) would be the expected
+  :download:`DS18B20 <DS18B20.pdf>`.
 
-It looks like the sensors become unstable under certain
-circumstances. I can imagine that permanent power (as opposed to
-parasitic power) make the instability, if it happens, permanent as
-well. At least, unplugging the power supply cured the symptom
-*immediately*.
+* **Reading fails a CRC check**,
 
-Links
------
+  .. code-block:: shell
 
-* https://www.maximintegrated.com/en/app-notes/index.mvp/id/148
+     $ cat /sys/bus/w1/devices/28-02131d9920aa/w1_slave 
+     20 01 4b 46 7f ff 0c 10 5d : crc=5d NO
+     20 01 4b 46 7f ff 0c 10 5d t=18000
 
-w1-gpio
-=======
+* **Reading gives me a temperature of 0 degrees.**
 
-https://www.maximintegrated.com/en/app-notes/index.mvp/id/148 defines
-radius and weight, to give a definition as to how onewire networks
-should be laid out. My network initially consisted of only one line,
-exhibiting a heavy star topology. By branching off too early (ca. 1m
-away the master) into another three long lines, I introduced severe
-instabilities. Better to dedicate separate lines to faraway sensors
-families (like oil-heater, warm-water-store, and room).
+  .. code-block:: shell
 
-Raspberry Devicetree Overlay Situation
+     $ cat /sys/bus/w1/devices/28-011432f138f9/w1_slave 
+     00 00 00 00 00 00 00 00 00 : crc=00 YES
+     00 00 00 00 00 00 00 00 00 t=0
+
+  This is the worst thermometer error you can encounter because it
+  does not declare himself as such. One can imagine what sorts of
+  heating control misbhavior a room temperature of zero degrees would
+  cause.
+
+I'm not entirely sure what causes the instabilities; I'm not even sure
+if they are related. Maxim Integrated has a tutorial, `Guidelines for
+Reliable Long Line 1-Wire Networks
+<https://www.maximintegrated.com/en/app-notes/index.mvp/id/148>`__; it
+talks about *radius* and *weight*, to give a definition as to how
+onewire networks should be laid out. My network initially consisted of
+only one line, exhibiting an uncontrolled star topology. By branching
+off too early (ca. 1m away the master) into another three long lines,
+I introduced severe instabilities. Better to dedicate separate lines
+to faraway sensors families (like oil-heater, warm-water-store, and
+room).
+
+In following the advice I was able to reduce the number of sensor
+outages significantly.
+
+There still are outages; research ongoing.
+
+
+Onewire Master in Software: Bitbanging
 --------------------------------------
 
-Read on before doing this ::
+The Raspberry has no built-in support for Onewire. There is a kernel
+module that I currently use; it bitbangs the Onewire protocol in
+software. In ``/boot/config.txt``, I configured the ``w1-gpio``
+devicetree overlay like so,
 
-   # rpi-update
+.. literalinclude:: /installations/faschingbauer/config.txt
 
-I do not know if this is necessary; I unfortunately did it before
-trying if the lines below worked out of the box. Apparently this
-installs a not-yet-upstream set of overlay, of which the w1-gpio
-overlay know how to create multiple w1 lines.
+Onewire Master in Hardware: ``DS2482``
+--------------------------------------
 
-Could well be that the following Raspbian version (the one that is
-current as of this writing) supports it out of the box ... ::
+I suspect ``w1-gpio``, the software Onewire implementation, to cause
+the instabilities. Not many people report instabilities with it, but I
+can imagine that not many people have that many sensors.
 
-  $ cat /etc/debian_version 
-  9.9
-  $ uname -a
-  Linux heizung 4.19.57-v7+ #1244 SMP Thu Jul 4 18:45:25 BST 2019 armv7l GNU/Linux
+Anyway: there is the :download:`DS2482 <DS2482.pdf>`, a Onewire master
+that is an I2C device to the host. It is available as ``DS2482-100``
+(single master) or ``DS2482-800`` (array of eight masters).
 
-Anyway. In `/boot/config.txt`, you write ::
+Software support looks good,
 
-   dtoverlay=w1-gpio,gpiopin=24
-   dtoverlay=w1-gpio,gpiopin=25
-   ...
+* Raspberry has I2C
+* There is a driver for the device,
 
-Issues
-======
+  .. code-block:: shell
 
-Some sensors read 0 degrees, starting at some point::
+     $ find /lib/modules -name 'ds2482*'
+     /lib/modules/4.19.66+/kernel/drivers/w1/masters/ds2482.ko
+     /lib/modules/4.19.66-v7+/kernel/drivers/w1/masters/ds2482.ko
 
-    # cat /sys/bus/w1/devices/28-011432f138f9/w1_slave 
-    00 00 00 00 00 00 00 00 00 : crc=00 YES
-    00 00 00 00 00 00 00 00 00 t=0
+  (a quick look at the source code suggests that the module implements
+  both single- and eight-master variants)
 
-Links
-
-* https://www.raspberrypi.org/forums/viewtopic.php?t=164059
+Order placed, waiting for chips to arrive. Stay tuned.
