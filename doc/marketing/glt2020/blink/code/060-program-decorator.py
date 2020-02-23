@@ -1,27 +1,17 @@
 #!/usr/bin/python
 
 
+import led
 import asyncio
 
 
 def program(fun):
     def creator(*args, **kwargs):
         def launch():
-            return fun(*args, **kwargs)
+            # create a coroutine, readily wrapped in a asyncio Future
+            return asyncio.ensure_future(fun(*args, **kwargs))
         return launch
     return creator
-
-class LED:
-    def __init__(self):
-        self.__state = False
-    def on(self):
-        self.__state = True
-        print('on')
-    def off(self):
-        self.__state = False
-        print('off')
-
-light = LED()
 
 @program
 async def sos(led):
@@ -44,12 +34,18 @@ async def sos(led):
         await asyncio.sleep(0.2)
 
 @program
-async def forever(prog):
+async def forever(*progs):
     while True:
-        current = asyncio.ensure_future(prog())
-        await current
+        for p in progs:
+            current = p()
+            await current
 
-prog = sos(light)
+@program
+async def sleep(secs):
+    await asyncio.sleep(secs)
+
+led = led.LED_nohw()
+prog = forever(sos(led), sleep(2))
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(prog())

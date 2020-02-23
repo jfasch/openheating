@@ -45,6 +45,8 @@ interpolation done somewhere.
 
 (Upgrading makes sense, especially with these)
 
+.. _linkref_libgpiod:
+
 GPIO: `libgpiod`
 ----------------
 

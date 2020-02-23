@@ -10,7 +10,6 @@ overengineering and DBus, and most of all - Python), so there is
 definitely something to be had from it.
 
 .. toctree::
-   :hidden:
 
    glt2020/index
    heating
