@@ -182,5 +182,6 @@ needs some love.
 Links
 .....
 
-* `libgpiod <https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/>`_
-* `Kernel Doc <https://www.kernel.org/doc/Documentation/gpio/consumer.txt>`_
+* `FOSDEM talk <https://www.youtube.com/watch?v=76j3TIqTPTI>`__
+* `libgpiod <https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/>`__
+* `Kernel Doc <https://www.kernel.org/doc/Documentation/gpio/consumer.txt>`__
