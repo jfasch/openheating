@@ -5,5 +5,4 @@ Miscellaneous Documentation
 
    dbus
    panel
-   gh-pages/index
    

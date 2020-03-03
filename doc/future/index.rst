@@ -5,6 +5,8 @@ What the Future Maybe Brings
    :maxdepth: 1
 
    stack
+   panel
+   web
    ideas
 
 OpenHeating will once achieve world domination through its flexible
