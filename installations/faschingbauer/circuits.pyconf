@@ -26,5 +26,5 @@ ADD_CIRCUIT('hk', 'Heizkreis',
             debugstr='Heizkreis',
             pump=hk_pumpe,
             producer=holzbrenner_thermometer, consumer=raum_thermometer,
-            diff_low=3, diff_high=10,
+            diff_low=3, diff_high=15,
 )
