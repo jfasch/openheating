@@ -29,8 +29,8 @@ No matter what the use case, there are a couple of things that I want
 to show.
 
 * The `new GPIO userspace interface of the kernel
-  <https://lwn.net/Articles/565662/>`__, and an accompanying userspace
-  library, `libgpiod <https://github.com/brgl/libgpiod>`__.
+  <https://lwn.net/Articles/565662/>`__, through an accompanying
+  userspace library, `libgpiod <https://github.com/brgl/libgpiod>`__.
 
   * Why is complicated better than simple?
   * Why is sysfs GPIO deprecated?
