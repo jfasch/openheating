@@ -9,7 +9,9 @@ exceeded in the worst case - where all 16 LEDs are on. One needs to
 use a transistor of some form.
 
 Another problem to solve is which of the Raspberry GPIOs to use to
-drive the outputs.
+drive the outputs. Much bigger of a problem though is the lack of
+understanding of low-level electronic facts and consequences; see
+further down below for a bookmark list.
 
 .. contents::
    :local:
@@ -75,8 +77,8 @@ important is the *pullup/down POR state*. Some of the GPIOs are
 configured as pullup at POR, and others are configured as
 pulldown. See `BCM2835 ARM Peripherals
 <https://elinux.org/RPi_BCM2835_GPIOs>`__, "6.2 Alternative Function
-Assignments" for an extensive listing as to which is configured as
-what.
+Assignments" (100ff) for an extensive listing as to which is
+configured as what.
 
 It turns out that it's exactly the GPIOs whose POR pull state is
 *pullup* are not stable - this is they are not consistently able to
@@ -120,6 +122,33 @@ ULN2803A sitting in between appropriately):
    16, 13
    20, 14
    21, 15
+
+Miscellaneous
+-------------
+
+Bookmarks: Electronics etc.
+...........................
+
+* `Demystifying Microcontroller GPIO Settings
+  <https://embeddedartistry.com/blog/2018/06/04/demystifying-microcontroller-gpio-settings/>`__
+
+Using MCP23017
+..............
+
+MCP23017 is a I2C/SPI IO expander. It can drive more current than pure
+Raspi GPIOs can; I had a couple of them lying around so I gave it a
+try. Easily attached (see for example
+http://www.faschingbauer.co.at/de/howtos/gpio-mcp23017/, but dont
+forget to connect RESET to 3V3 :-) )
+
+Issues:
+
+* (using ``gpiod``) closing the chip file-descriptor does not reset
+  pins to their POR state. (This is likely the driver's fault.)
+  *Unusable*: a crashing process might leave a pump running. Or, even
+  worse, the oil burner.
+* CPU reset does not propagate to MCP23017. *Unusable*: a hard reboot
+  (one that does not terminate processes) would leave ... running.
 
 .. rubric:: Footnotes
 
