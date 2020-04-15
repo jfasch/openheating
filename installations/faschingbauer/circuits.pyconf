@@ -18,7 +18,7 @@ ADD_CIRCUIT('ww', 'Warmwasserkreis',
             debugstr='Warmwasserkreis',
             pump=ww_pumpe,
             producer=holzbrenner_thermometer, consumer=speicheroben_thermometer,
-            diff_low=3, diff_high=10,
+            diff_low=2, diff_high=5,
 )
 
 ADD_CIRCUIT('hk', 'Heizkreis',
