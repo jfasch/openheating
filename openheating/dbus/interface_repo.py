@@ -28,12 +28,6 @@ _repo[ERROREMITTER] = '''
 </interface>
 '''.format(name=ERROREMITTER)
 
-RUNNER = names.DOMAIN + '.Runner'
-_repo[RUNNER] = '''
-<interface name='{name}'>
-</interface>
-'''.format(name=RUNNER)
-
 THERMOMETER = names.DOMAIN + '.Thermometer'
 _repo[THERMOMETER] = '''
 <interface name='{name}'>
