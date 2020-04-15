@@ -1,0 +1,10 @@
+[Unit]
+Description=Instantiate DS2482 at I2C-1@0x18
+After=basic.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/bin/echo ds2482 0x18 > /sys/bus/i2c/devices/i2c-1/new_device'
+
+[Install]
+WantedBy=openheating-thermometers.service

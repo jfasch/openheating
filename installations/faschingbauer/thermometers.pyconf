@@ -22,13 +22,6 @@ _thermometers = [
 ]
 
 for name, description, path in _thermometers:
-    # disable 'Oelbrenner'. it appears to be disturbing the other;
-    # unplugged, everything fine now. giving
-    # https://www.maximintegrated.com/en/products/interface/controllers-expanders/DS2482-800.html
-    # a try, suspecting w1-gpio to be the cause.
-    if name == 'Oelbrenner': 
-        continue
-
     # *in real life*: instantiates a W1Thermometer (which is a
     # callable) with one argument, path - like ``W1Thermometer(path)``
 

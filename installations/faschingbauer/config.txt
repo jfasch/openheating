@@ -6,6 +6,7 @@
 # ------------------------------------------
 
 dtparam=ic2=on
+i2c_arm=on
 
 # free GPIO 14,15. according to
 # https://www.raspberrypi.org/documentation/configuration/device-tree.md,
@@ -27,7 +28,7 @@ dtparam=ic2=on
 # pin 7's pull{up,down} POR state is "pullup" which means I cannot use
 # it to control a relay for example. W1 is fine.
 
-# dtoverlay=w1-gpio,gpiopin=7
+#dtoverlay=w1-gpio,gpiopin=7
 
 # W1 Heiz
 # -------
@@ -35,5 +36,5 @@ dtparam=ic2=on
 # I'd have liked to use 8 (pull-POR same as 7) as second W1 line, but
 # this does not work. occupy relay-capable 26.
 
-# dtoverlay=w1-gpio,gpiopin=26
+#dtoverlay=w1-gpio,gpiopin=26
 

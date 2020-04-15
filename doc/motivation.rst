@@ -57,7 +57,7 @@ place; I do not update written material regularly):
 
 * Sensors all over the place, fancy histograms on a web page (done).
 * Switch pumps on and off, based upon temperatures in the heat source
-  and heat sink.
+  and heat sink (done).
 * A combined heat source which *contains* oil and wood (yay
   overengineering), and acts as one single heat source to the rest of
   the system.
