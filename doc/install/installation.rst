@@ -71,6 +71,14 @@ Create and fill :file:`/etc/openheating/`,
    components are run, and what their config files are. So, the above
    list it a direct consequence of what's in ``plant.pyconf``.
 
+I2C Onewire Master Config
+-------------------------
+
+.. code-block:: console
+
+   (root)$ cp /some/prefix/share/installations/faschingbauer/i2c1-ds2482-0x18.service \
+		/etc/systemd/system
+
 `systemd` Unit Generator, and Plant Startup
 -------------------------------------------
 

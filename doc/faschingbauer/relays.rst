@@ -1,5 +1,5 @@
-Relays
-======
+Switches/Relays
+===============
 
 I use 16 relays which are isolated by optocouplers. Although it might
 be possible to drive those 16 LEDs directly from the built-in
@@ -13,7 +13,7 @@ drive the outputs. Much bigger of a problem though is the lack of
 understanding of low-level electronic facts and consequences; see
 further down below for a bookmark list.
 
-.. contents::
+.. contents:: Contents
    :local:
 
 Sainsmart 8 Channel 5V Relay Board
@@ -76,9 +76,11 @@ First off, the POR *direction* of all pins is *input*. What's more
 important is the *pullup/down POR state*. Some of the GPIOs are
 configured as pullup at POR, and others are configured as
 pulldown. See `BCM2835 ARM Peripherals
-<https://elinux.org/RPi_BCM2835_GPIOs>`__, "6.2 Alternative Function
-Assignments" (100ff) for an extensive listing as to which is
-configured as what.
+<http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf>`__
+, "6.2 Alternative Function Assignments" (100ff) for an extensive
+listing describing which is configured as what (you may want to look
+at the more approachable `elinux page
+<https://elinux.org/RPi_BCM2835_GPIOs>`__).
 
 It turns out that it's exactly the GPIOs whose POR pull state is
 *pullup* are not stable - this is they are not consistently able to

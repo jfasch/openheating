@@ -120,6 +120,7 @@ dist = setup(
              'installations/faschingbauer/circuits.pyconf',
              'installations/faschingbauer/plant.pyconf',
              'installations/faschingbauer/config.txt',
+             'installations/faschingbauer/i2c1-ds2482-0x18.service',
          ]
         ),
            
