@@ -78,10 +78,11 @@ I2C Onewire Master Config
 
    (root)$ cp /some/prefix/share/installations/faschingbauer/i2c1-ds2482-0x18.service \
 		/etc/systemd/system
+   (root)$ systemctl enable i2c1-ds2482-0x18.service
 
 `systemd` Unit Generator, and Plant Startup
 -------------------------------------------
-
+xs
 An OpenHeating plant consists of several independent (no, loosely
 coupled) D-Bus services that are started by systemd. As the choice of
 services may vary from plant to plant, the systemd service unit files
@@ -134,8 +135,8 @@ Finally: Startup
 
 Start necessary services, ::
 
-   # systemctl enable openheating-http.service
-   # systemctl start openheating-http.service
+   (root)$ systemctl enable openheating-http.service
+   (root)$ systemctl start openheating-http.service
 
 .. todo::
 
