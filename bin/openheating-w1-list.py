@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 from openheating.base import w1
 from openheating.plant.config_thermometers import ThermometersConfig

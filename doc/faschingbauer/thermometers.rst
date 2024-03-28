@@ -133,7 +133,7 @@ back).
 
 * **Devices disappear**, and are replaced by ones that are named like
   ``00-0c4000000000``. Here, ``00`` is the family which is completely
-  bogus; for example, 28 (hex) would be the expected familiy. (I
+  bogus; for example, 28 (hex) would be the expected family. (I
   believe 0x28 stands for "Dallas").
 
 * **Reading fails a CRC check**,

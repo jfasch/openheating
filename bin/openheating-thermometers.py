@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 from openheating.base.history import History
 from openheating.plant import logutil

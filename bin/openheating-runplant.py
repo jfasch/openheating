@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 from openheating.plant import logutil
 from openheating.plant import dbusutil
